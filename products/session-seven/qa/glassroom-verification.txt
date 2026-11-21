@@ -1,0 +1,10 @@
+$ bun apps/video/scripts/preview-stills.js --scene glassroom --frames "1380,1410,1500,1590,1619"
+PNG qa/stills/glassroom/frame-1380.png frame=1380
+PNG qa/stills/glassroom/frame-1410.png frame=1410
+PNG qa/stills/glassroom/frame-1500.png frame=1500
+PNG qa/stills/glassroom/frame-1590.png frame=1590
+PNG qa/stills/glassroom/frame-1619.png frame=1619
+TIMING bundle=3.672s renders=4.199s total=9.889s concurrency=1
+STILLS ok count=5
+
+EXIT_CODE=0

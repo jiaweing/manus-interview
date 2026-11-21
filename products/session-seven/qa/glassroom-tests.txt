@@ -1,0 +1,25 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/glassroom.test.js:
+(pass) Glassroom paired-message illustration > exports and registers the assigned scene without another scene dependency [0.62ms]
+(pass) Glassroom paired-message illustration > source and every rendered artwork exclude unsupported wording and security badges [158.66ms]
+(pass) Glassroom paired-message illustration > exactly two participant windows, each with one short plaintext, persist through all 240 frames [98.35ms]
+(pass) Glassroom paired-message illustration > ciphertext drawing starts visibly at local 120 / absolute 1500, never one frame late [73.48ms]
+(pass) Glassroom paired-message illustration > matching sample appears in the receiving view and holds for the last two seconds [1.45ms]
+(pass) Glassroom paired-message illustration > exact caption and truthful persistent labels cover the whole end-exclusive scene [2.81ms]
+(pass) Glassroom paired-message illustration > safe geometry, monochrome surfaces, native reading size and no render-time APIs [1.92ms]
+(pass) Glassroom paired-message illustration > frame-only state and settled SVG are stable in repeated and shuffled order [8.49ms]
+Glassroom real still smoke: 9.643s
+PNG ../../../../../../tmp/s7-glassroom-smoke-JNNczF/glassroom/frame-1410.png frame=1410
+PNG ../../../../../../tmp/s7-glassroom-smoke-JNNczF/glassroom/frame-1500.png frame=1500
+PNG ../../../../../../tmp/s7-glassroom-smoke-JNNczF/glassroom/frame-1590.png frame=1590
+TIMING bundle=3.764s renders=3.811s total=9.014s concurrency=1
+STILLS ok count=3
+(pass) Glassroom paired-message illustration > real pinned-Chromium scene smoke renders three native PNGs within 90 seconds [9644.57ms]
+
+ 9 pass
+ 0 fail
+ 5146 expect() calls
+Ran 9 tests across 1 file. [10.37s]
+
+EXIT_CODE=0
