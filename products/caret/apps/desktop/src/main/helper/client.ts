@@ -86,20 +86,33 @@ export class HelperClient {
   insert(
     expectedTarget: Target,
     sessionId: string,
-    text: string
+    text: string,
+    signal?: AbortSignal
   ): Promise<InsertOutcome> {
     if (
       !(isTarget(expectedTarget) && isIdentifier(sessionId) && isText(text))
     ) {
       return Promise.reject(new Error("Invalid helper insert request"));
     }
-    return this.send({
+    if (signal?.aborted) {
+      return Promise.reject(new Error("Helper insertion cancelled"));
+    }
+    const cancel = () => this.cancelPendingInsert();
+    signal?.addEventListener("abort", cancel, { once: true });
+    const result = this.send({
       expectedTarget,
       op: "insert",
       requestId: randomUUID(),
       sessionId,
       text,
     }) as Promise<InsertOutcome>;
+    return result.finally(() => signal?.removeEventListener("abort", cancel));
+  }
+  // Terminal cancellation: no restart or replay. Closing main's input channel
+  // is observed by Win32 while waiting and at the final pre-input guard. Leave
+  // the helper alive briefly to take that guard; force-kill a hung process later.
+  cancelPendingInsert(): void {
+    this.fail(new Error("Helper insertion cancelled"), true);
   }
   close(): void {
     this.fail(new Error("Helper client closed"));
@@ -187,7 +200,7 @@ export class HelperClient {
     }
   }
 
-  private fail(error: Error): void {
+  private fail(error: Error, cancel = false): void {
     if (this.failure) {
       return;
     }
@@ -198,7 +211,14 @@ export class HelperClient {
       item.reject(error);
     }
     this.pending.clear();
-    this.child.stdin.destroy();
-    this.child.kill();
+    if (cancel) {
+      this.child.stdin.end();
+      const timer = setTimeout(() => this.child.kill(), 2500);
+      timer.unref();
+      this.child.once("exit", () => clearTimeout(timer));
+    } else {
+      this.child.stdin.destroy();
+      this.child.kill();
+    }
   }
 }

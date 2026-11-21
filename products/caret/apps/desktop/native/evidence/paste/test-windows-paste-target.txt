@@ -1,0 +1,7 @@
+COMMAND: bun run --cwd apps/desktop test:windows:paste-target
+HOST: Linux x64 (not Windows)
+
+$ bun native/scripts/paste-target.ts
+NOT RUN: needs Windows (real interactive desktop; Wine is not acceptance evidence)
+
+EXIT_CODE: 2

@@ -1,0 +1,7 @@
+COMMAND: bun run lint
+HOST: Linux x64 (not Windows)
+
+$ biome check apps/desktop
+Checked 42 files in 1759ms. No fixes applied.
+
+EXIT_CODE: 0
