@@ -1,0 +1,134 @@
+:root {
+	--radius: 0.625rem;
+	--surface: #ffffff;
+	--foreground: #000000;
+	--muted: #18181b;
+	--icon-surface: #f4f4f5;
+	font-family: Inter, sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--surface: #000000;
+		--foreground: #fafafa;
+		--muted: #e4e4e7;
+		--icon-surface: #18181b;
+	}
+}
+
+* {
+	box-sizing: border-box;
+	outline-width: 0;
+	border-width: 0;
+}
+
+html,
+body,
+#root {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	background: transparent;
+}
+
+body {
+	overflow: hidden;
+	font-size: 14px;
+	user-select: none;
+}
+
+#root {
+	padding: 8px;
+}
+
+.overlay {
+	height: 72px;
+	padding: 16px;
+	color: var(--foreground);
+	background: var(--surface);
+	border-radius: var(--radius);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.overlay--inverted {
+	--surface: #000000;
+	--foreground: #fafafa;
+	--muted: #e4e4e7;
+	--icon-surface: #18181b;
+}
+
+@media (prefers-color-scheme: dark) {
+	.overlay--inverted {
+		--surface: #ffffff;
+		--foreground: #000000;
+		--muted: #18181b;
+		--icon-surface: #f4f4f5;
+	}
+}
+
+.overlay__content {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	opacity: 1;
+	transform: translateY(0);
+	transition:
+		opacity 150ms ease-out,
+		transform 150ms ease-out;
+}
+
+@starting-style {
+	.overlay__content {
+		opacity: 0;
+		transform: translateY(3px);
+	}
+}
+
+.overlay__icon {
+	display: grid;
+	flex-shrink: 0;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	background: var(--icon-surface);
+	border-radius: var(--radius);
+}
+
+.overlay__copy {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.overlay__label {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 18px;
+	letter-spacing: -0.02em;
+}
+
+.overlay__description {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 18px;
+	color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.overlay__content {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+
+	@starting-style {
+		.overlay__content {
+			opacity: 1;
+			transform: none;
+		}
+	}
+}

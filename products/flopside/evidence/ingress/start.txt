@@ -1,0 +1,3 @@
+COMMAND=WEB_PORT=3284 SERVER_PORT=3285 bun run start
+Flopside server listening at http://127.0.0.1:3284/ (production: static Next + WS, instances=1)
+EXIT_CODE=0

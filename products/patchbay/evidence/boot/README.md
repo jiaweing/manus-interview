@@ -1,0 +1,11 @@
+# Raw scaffold verification — issue #52
+
+Generated before any CLI/kernel feature code, using Bun 1.4.5 and the repository's `scaffold/03-patchbay.sh` copied to `/home/ubuntu/work/03-patchbay-i52.sh`. The copy changes only `--git` to `--no-git`; the repository script remains untouched. Per swarm section 3, this project lives in `products/patchbay` inside the repository, not in a separate Git repository.
+
+The first attempt from the worktree's `products` directory targeted `./patchbay` and failed with exit 1: `Project name cannot start with a dot (except for '.') → at [0]`. Retrying with target `patchbay` from that same directory succeeded, exit 0. All stack choices were retained. Interactive tmux answers: Ultracite Biome; editors, agent files, hooks none; Fumadocs defaults (Next.js MDX, local search, next/og, no AI chat); WXT React; skills Project scope with default skills/agents; MCP Project scope with default servers/clients. These are dormant scaffolding, not Patchbay plugins or runtime services.
+
+The scaffold's install succeeded. WXT independently created `apps/extension/.git` despite the parent `--no-git` flag; it was removed. A recursive check excluding dependencies found no nested `.git`; `git rev-parse --show-toplevel` prints `/home/ubuntu/wt/i52-scaffold`, as required by the swarm override.
+
+`scaffold-boot.log` captures a second explicit `bun install` (exit 0), the untouched generated root `bun run check-types` (exit 0, six successful tasks), and a real boot of the untouched generated Fumadocs app using `bun run --cwd apps/fumadocs dev`: Next.js reached Ready and HTTP GET `/` returned 200. The bounded smoke check stopped the app afterward, before CLI code was added. Fumadocs warned that it has no environment schema; it still booted. This proves a generated app boots; it does **not** assert that the database-dependent generated Hono/auth/AI example, Expo, WXT, or Next web app were individually booted. They remain dormant in the final CLI, typecheck, lint, and test paths.
+
+`scaffold-generator.log` retains the generation transcript with terminal control codes removed. `.env` files and `node_modules` are ignored and never staged. The committed `.env.example` contains only empty OpenRouter placeholders.

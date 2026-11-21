@@ -11,5 +11,11 @@
       "dependsOn": ["^check-types"]
     }
   },
-  "globalEnv": ["NODE_ENV", "PUBLIC_PORT", "NEXT_INTERNAL_PORT", "TLS_CERT_FILE", "TLS_KEY_FILE"]
+  "globalEnv": [
+    "NODE_ENV",
+    "PUBLIC_PORT",
+    "NEXT_INTERNAL_PORT",
+    "TLS_CERT_FILE",
+    "TLS_KEY_FILE"
+  ]
 }

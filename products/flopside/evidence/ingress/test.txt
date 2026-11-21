@@ -1,0 +1,23 @@
+COMMAND=bun run test
+$ bun test apps/server/src
+bun test v1.4.5 (a7733435c)
+
+apps/server/src/app.test.ts:
+(pass) credential-free scaffold > Hono root returns 200 without service initialization [3.00ms]
+(pass) credential-free scaffold > Bun native WebSocket adapter is available [0.03ms]
+(pass) credential-free scaffold > generated integration routes are not mounted [1.13ms]
+
+apps/server/src/ingress.test.ts:
+(pass) native ingress (temporary transport-only) > ordinary HTTP cannot substitute for a WebSocket [0.83ms]
+(pass) native ingress (temporary transport-only) > upgrade rejects missing or foreign Origin before reaching Bun [1.02ms]
+Flopside ingress {"bootMarker":"ccc857f1-c967-49f3-b00a-933b6b6115e6","connections":1}
+Flopside ingress {"bootMarker":"ccc857f1-c967-49f3-b00a-933b6b6115e6","connections":2}
+Flopside ingress {"bootMarker":"ccc857f1-c967-49f3-b00a-933b6b6115e6","connections":1}
+Flopside ingress {"bootMarker":"ccc857f1-c967-49f3-b00a-933b6b6115e6","connections":0}
+(pass) native ingress (temporary transport-only) > same process broadcasts 1 → 2 → 1 with only a public boot marker/count [8.07ms]
+
+ 6 pass
+ 0 fail
+ 15 expect() calls
+Ran 6 tests across 2 files. [56.00ms]
+EXIT_CODE=0

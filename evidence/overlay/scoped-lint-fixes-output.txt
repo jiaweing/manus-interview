@@ -1,0 +1,190 @@
+apps/desktop/scripts/overlay-fixture.ts:81:1 lint/suspicious/useAwait ━━━━━━━━━━
+
+  × This async function lacks an await expression.
+  
+     79 │ }
+     80 │ 
+   > 81 │ async function styles(page: Page) {
+        │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   > 82 │ 	return page.evaluate(async () => {
+         ...
+  > 133 │ 	});
+  > 134 │ }
+        │ ^
+    135 │ 
+    136 │ const samples: unknown[] = [];
+  
+  i Remove this async modifier, or add an await expression in the function.
+  
+     79 │ }
+     80 │ 
+   > 81 │ async function styles(page: Page) {
+        │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   > 82 │ 	return page.evaluate(async () => {
+         ...
+  > 133 │ 	});
+  > 134 │ }
+        │ ^
+    135 │ 
+    136 │ const samples: unknown[] = [];
+  
+  i Async functions without await expressions may not need to be declared async.
+  
+
+apps/desktop/scripts/overlay-fixture.ts:153:9 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use array destructuring instead of accessing array elements by index.
+  
+    151 │ 	await page.locator(".overlay").waitFor({ state: "attached" });
+    152 │ 	const windowConfig = await app.evaluate(({ BrowserWindow }) => {
+  > 153 │ 		const win = BrowserWindow.getAllWindows()[0];
+        │ 		      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    154 │ 		const preferences = win.webContents.getLastWebPreferences();
+    155 │ 		return {
+  
+  i Array destructuring is more readable and expressive than accessing individual elements by index.
+  
+  i Replace the array index access with array destructuring syntax.
+  
+
+apps/desktop/scripts/overlay-fixture.ts:202:3 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    201 │ 	for (const theme of ["light", "dark"] as const) {
+  > 202 │ 		await page.emulateMedia({
+        │ 		^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 203 │ 			colorScheme: theme,
+  > 204 │ 			reducedMotion: "no-preference",
+  > 205 │ 		});
+        │ 		^^
+    206 │ 		for (const state of OVERLAY_STATES) {
+    207 │ 			const before = onWindows ? snapshotFocus() : undefined;
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/desktop/scripts/overlay-fixture.ts:215:4 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    213 │ 				);
+    214 │ 			}
+  > 215 │ 			await app.evaluate((_electron, next: OverlayState) => {
+        │ 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 216 │ 				(
+         ...
+  > 220 │ 				).caretOverlayFixture.setStatus(next);
+  > 221 │ 			}, state);
+        │ 			^^^^^^^^^
+    222 │ 			await page
+    223 │ 				.locator(`.overlay[data-state="${state}"]`)
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/desktop/scripts/overlay-fixture.ts:188:9 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    186 │ 			"Focus an editable Notepad control now. State cycling begins in 10 seconds; do not change focus."
+    187 │ 		);
+  > 188 │ 		await Bun.sleep(10_000);
+        │ 		      ^^^
+    189 │ 		baseline = snapshotFocus();
+    190 │ 		assert.equal(
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/desktop/src/preload/overlay.ts:39:17 lint/suspicious/noEmptyBlockStatements ━━━━━━━━━━
+
+  × Unexpected empty block.
+  
+    37 │ 			.invoke(OVERLAY_CHANNELS.snapshot)
+    38 │ 			.then(receive)
+  > 39 │ 			.catch(() => {});
+       │ 			             ^^
+    40 │ 		return () => {
+    41 │ 			active = false;
+  
+  i Empty blocks are usually the result of an incomplete refactoring. Remove the empty block or add a comment inside it if it is intentional.
+  
+
+apps/desktop/src/renderer/overlay/Overlay.tsx:62:6 lint/a11y/noSvgWithoutTitle ━━━━━━━━━━
+
+  × Alternative text title element cannot be empty
+  
+    60 │ 			<div className="overlay__content" key={state}>
+    61 │ 				<span aria-hidden="true" className="overlay__icon">
+  > 62 │ 					<svg
+       │ 					^^^^
+  > 63 │ 						fill="none"
+        ...
+  > 70 │ 						width="24"
+  > 71 │ 					>
+       │ 					^
+    72 │ 						{iconPaths[presentation.icon]}
+    73 │ 					</svg>
+  
+  i For accessibility purposes, SVGs should have an alternative text, provided via title element. If the svg element has role="img", you should add the aria-label or aria-labelledby attribute.
+  
+
+apps/desktop/src/renderer/overlay/Overlay.tsx lint/style/useFilenamingConvention ━━━━━━━━━━
+
+  × The filename should be in kebab-case.
+  
+  i The filename could be renamed to one of the following names:
+    overlay.tsx
+  
+
+apps/desktop/tests/overlay-state.test.ts:12:40 lint/suspicious/noEmptyBlockStatements ━━━━━━━━━━
+
+  × Unexpected empty block.
+  
+    11 │ // Rendering is independent of sessions, microphone, providers and clipboard.
+  > 12 │ const bridge = { onStatus: () => () => {} };
+       │                                        ^^
+    13 │ 
+    14 │ describe("overlay state-to-label contract", () => {
+  
+  i Empty blocks are usually the result of an incomplete refactoring. Remove the empty block or add a comment inside it if it is intentional.
+  
+
+apps/desktop/tests/overlay-state.test.ts:28:42 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    26 │ 				expect(html).toContain(">Paste requested</span>");
+    27 │ 				expect(view.description).toBe("Paste requested");
+  > 28 │ 				expect(view.description).not.toMatch(/accepted|inserted|success|sent/i);
+       │ 				                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    29 │ 			}
+    30 │ 		});
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+apps/desktop/tests/overlay-state.test.ts:63:27 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    61 │ 	expect(html).toContain('aria-atomic="true"');
+    62 │ 	expect(html).toContain('aria-live="polite"');
+  > 63 │ 	expect(html).not.toMatch(/<button|<input|tabindex|autofocus/i);
+       │ 	                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    64 │ });
+    65 │ 
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+Checked 11 files in 28ms. Fixed 3 files.
+Found 11 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+SCOPED_LINT_EXIT=1

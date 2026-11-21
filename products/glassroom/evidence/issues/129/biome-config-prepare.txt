@@ -1,0 +1,6 @@
+Command: python3 -c import\ json\;\ p=json.load\(open\(\"biome.json\"\)\)\;\ p\[\"linter\"\]\[\"rules\"\]\[\"nursery\"\].pop\(\"useTailwindSortedClasses\"\)\;\ open\(\".issue-129-biome.json\"\,\"w\"\).write\(json.dumps\(p\)+\"\\n\"\)
+Working directory: products/glassroom
+PUBLIC_PORT=4129 NEXT_INTERNAL_PORT=5129
+
+
+Exit code: 0

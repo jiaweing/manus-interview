@@ -2,8 +2,10 @@ import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 
 const [, , mode] = process.argv;
-if (mode !== "dev" && mode !== "start") {
-	throw new Error("Usage: bun run scripts/run-apps.ts dev|start");
+if (mode !== "dev") {
+	throw new Error(
+		"Usage: bun run scripts/run-apps.ts dev (production uses one Bun server)"
+	);
 }
 
 const root = resolve(import.meta.dir, "..");
@@ -14,13 +16,17 @@ const nextCli = resolve(
 	dirname(webRequire.resolve("next/package.json")),
 	"dist/bin/next"
 );
-const env = { ...process.env, NEXT_TELEMETRY_DISABLED: "1" };
+const env = {
+	...process.env,
+	NEXT_TELEMETRY_DISABLED: "1",
+	NODE_ENV: "development",
+};
 const children = [
 	Bun.spawn(
 		[
 			"bun",
 			nextCli,
-			mode,
+			"dev",
 			"--port",
 			process.env.WEB_PORT ?? "3000",
 			"--hostname",
@@ -28,17 +34,12 @@ const children = [
 		],
 		{ cwd: webDir, env, stderr: "inherit", stdout: "inherit" }
 	),
-	Bun.spawn(
-		mode === "dev"
-			? ["bun", "--hot", "src/index.ts"]
-			: ["bun", "dist/index.js"],
-		{
-			cwd: serverDir,
-			env,
-			stderr: "inherit",
-			stdout: "inherit",
-		}
-	),
+	Bun.spawn(["bun", "--hot", "src/index.ts"], {
+		cwd: serverDir,
+		env,
+		stderr: "inherit",
+		stdout: "inherit",
+	}),
 ];
 
 let stopping = false;

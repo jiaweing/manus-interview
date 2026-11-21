@@ -1,0 +1,2 @@
+$ tsc --noEmit -p tsconfig.overlay.json
+FIXTURE_TYPECHECK_EXIT=0
