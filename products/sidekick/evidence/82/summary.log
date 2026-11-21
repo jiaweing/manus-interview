@@ -2,10 +2,10 @@
 COMMAND: bun install --frozen-lockfile
 bun install v1.4.5 (a7733435c)
 
-20 packages installed [1.76s]
+Checked 537 installs across 608 packages (no changes) [1.63s]
 EXIT_CODE=0
 
-COMMAND: env WXT_SIDEKICK_PROXY_URL=https://sidekick-proxy.example.com bun run build:extension
+COMMAND: env WXT_SIDEKICK_PROXY_URL=https://example.com bun run build:extension
   ├─ .output/chrome-mv3/assets/inter-latin-ext-600-normal-D2bJ5OIk.woff2     36.26 kB
   ├─ .output/chrome-mv3/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff     6.50 kB
   ├─ .output/chrome-mv3/assets/inter-vietnamese-400-normal-DMkecbls.woff2    4.97 kB
@@ -16,53 +16,53 @@ COMMAND: env WXT_SIDEKICK_PROXY_URL=https://sidekick-proxy.example.com bun run b
   ├─ .output/chrome-mv3/icon/32.png                                          916 B
   ├─ .output/chrome-mv3/icon/48.png                                          1.33 kB
   └─ .output/chrome-mv3/icon/96.png                                          2.37 kB
-Σ Total size: 722.77 kB
-✔ Finished in 1.295 s
+Σ Total size: 723.21 kB
+✔ Finished in 1.008 s
 EXIT_CODE=0
 
 COMMAND: env SIDEKICK_PRIVACY_EVIDENCE=1 bun test apps/extension/src/page/snapshot-privacy.test.ts
-(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [118.16ms]
-(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [75.60ms]
-(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [76.74ms]
-(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [3.70ms]
-(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [27.81ms]
-(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [3.44ms]
-(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [22.25ms]
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [90.45ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [56.02ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [73.23ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [3.30ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [22.08ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [3.27ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [19.77ms]
 
- 29 pass
+ 124 pass
  0 fail
- 266 expect() calls
-Ran 29 tests across 1 file. [972.00ms]
+ 2444 expect() calls
+Ran 124 tests across 1 file. [1.85s]
 EXIT_CODE=0
 
 COMMAND: bun test apps/extension/src/page/snapshot-privacy.test.ts
-(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [142.39ms]
-(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [71.57ms]
-(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [81.14ms]
-(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [4.13ms]
-(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [32.82ms]
-(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [3.73ms]
-(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [22.94ms]
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [87.91ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [55.97ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [65.17ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [3.04ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [21.03ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [2.84ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [17.74ms]
 
- 29 pass
+ 124 pass
  0 fail
- 266 expect() calls
-Ran 29 tests across 1 file. [995.00ms]
+ 2444 expect() calls
+Ran 124 tests across 1 file. [1.75s]
 EXIT_CODE=0
 
 COMMAND: bun test
-(pass) OpenRouter adapter with a fake HTTP transport > malformed provider JSON is rejected without raw-body leakage [1.31ms]
-(pass) model deadline and request cancellation > default model deadline is exactly 20 seconds and aborts even an uncooperative fake adapter [20002.92ms]
-(pass) model deadline and request cancellation > an aborted request cancels the adapter and cannot return its late tool call [1.68ms]
-(pass) model deadline and request cancellation > already-aborted request never dispatches and deadline cleanup does not later abort a successful turn [10.73ms]
-(pass) model deadline and request cancellation > deadline cancellation reaches the fake provider HTTP request [11.20ms]
-(pass) generated extension bundle excludes the seeded server-key sentinel and server adapter [4.23ms]
-(pass) shared protocol imports do not include server or provider configuration [0.57ms]
+(pass) OpenRouter adapter with a fake HTTP transport > malformed provider JSON is rejected without raw-body leakage [1.01ms]
+(pass) model deadline and request cancellation > default model deadline is exactly 20 seconds and aborts even an uncooperative fake adapter [20004.33ms]
+(pass) model deadline and request cancellation > an aborted request cancels the adapter and cannot return its late tool call [6.21ms]
+(pass) model deadline and request cancellation > already-aborted request never dispatches and deadline cleanup does not later abort a successful turn [11.05ms]
+(pass) model deadline and request cancellation > deadline cancellation reaches the fake provider HTTP request [11.10ms]
+(pass) generated extension bundle excludes the seeded server-key sentinel and server adapter [5.25ms]
+(pass) shared protocol imports do not include server or provider configuration [0.81ms]
 
- 195 pass
+ 290 pass
  0 fail
- 1019 expect() calls
-Ran 195 tests across 7 files. [21.37s]
+ 3197 expect() calls
+Ran 290 tests across 7 files. [22.36s]
 EXIT_CODE=0
 
 COMMAND: bun run typecheck
@@ -73,16 +73,106 @@ EXIT_CODE=0
 
 COMMAND: bun run check
 $ ultracite check
-Checked 47 files in 446ms. No fixes applied.
+Checked 51 files in 409ms. No fixes applied.
 EXIT_CODE=0
 
 COMMAND: bun run verify:secrets
 $ bun scripts/check-secrets.ts
-Secret scan passed: 194 tracked product files, 39 extension artifacts, 24 evidence logs; no values printed.
+Secret scan passed: 208 tracked product files, 39 extension artifacts, 24 evidence logs; no values printed.
 EXIT_CODE=0
 
 COMMAND: xvfb-run -a bun apps/extension/tests/snapshot-privacy.browser.ts
 PASS packaged Chromium observer: 20,000 characters / 300 controls, targeted late evidence + live index, 21 randomized secret exclusions, ARIA role tokens, CSS/native visibility, provider serialization, snapshot/document rotation
+EXIT_CODE=0
+
+COMMAND: xvfb-run -a bun apps/extension/tests/exposure.browser.ts
+PASS exposure 84/94: fuzz-53-{"combination":1,"name":"ARIA-hIDDeN","value":"trUe "}
+PASS exposure 85/94: fuzz-54-{"combination":2,"name":"ArIa-hIDdeN","value":"\r\nTrUe\r\n"}
+PASS exposure 86/94: fuzz-55-{"combination":3,"name":"aRIA-HiddeN","value":"\r\ntrue "}
+PASS exposure 87/94: fuzz-56-{"combination":0,"name":"arIA-HiDden","value":"\tTrUE\t"}
+PASS exposure 88/94: fuzz-57-{"combination":1,"name":"ARia-HiddeN","value":" \t\n TrUE\r\n"}
+PASS exposure 89/94: fuzz-58-{"combination":2,"name":"aRia-HidDeN","value":" TrUe \t\n "}
+PASS exposure 90/94: fuzz-59-{"combination":3,"name":"ARIA-HIDdEn","value":" \t\n tRuE \t\n "}
+PASS exposure 91/94: fuzz-60-{"combination":0,"name":"aRIA-hIdDEN","value":"true\t"}
+PASS exposure 92/94: fuzz-61-{"combination":1,"name":"aria-HIDDEN","value":"\ttrUe\r\n"}
+PASS exposure 93/94: fuzz-62-{"combination":2,"name":"ARiA-hIDDen","value":" tRuE"}
+PASS exposure 94/94: fuzz-63-{"combination":3,"name":"arIa-HIdDEn","value":"\tTRue\t"}
+PASS 94 packaged Chromium exposure cases including 64 seeded fuzz variants, positive controls, initial/targeted/findText/nearby observations and adapter-serialized provider bodies
+EXIT_CODE=0
+
+COMMAND: bun test /home/ubuntu/verify/82/systematic/independent-privacy.test.ts
+(pass) existing ARIA control value stays private with role="textbox " [38.05ms]
+{"role":"textbox searchbox","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="textbox searchbox" [9.17ms]
+{"role":"combobox listbox","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="combobox listbox" [8.90ms]
+{"role":"option ","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="option " [7.69ms]
+
+ 4 pass
+ 0 fail
+ 12 expect() calls
+Ran 4 tests across 1 file. [281.00ms]
+EXIT_CODE=0
+
+COMMAND: xvfb-run -a bun /home/ubuntu/verify/82/systematic/independent-browser.ts
+  "layout": {
+    "contentVisibility": "hidden",
+    "rect": {
+      "width": 600,
+      "height": 60
+    },
+    "innerText": ""
+  },
+  "failures": [],
+  "result": "PASS",
+  "networkProviderCalls": 0
+}
+EXIT_CODE=0
+
+COMMAND: bun test /home/ubuntu/verify/82/systematic/new-aria-hidden.test.ts
+(pass) aria-hidden "true" never reaches provider [42.55ms]
+{"value":"TRUE","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden "TRUE" never reaches provider [10.67ms]
+{"value":"True","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden "True" never reaches provider [10.11ms]
+{"value":" true ","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden " true " never reaches provider [10.00ms]
+
+ 4 pass
+ 0 fail
+ 12 expect() calls
+Ran 4 tests across 1 file. [292.00ms]
+EXIT_CODE=0
+
+COMMAND: xvfb-run -a bun /home/ubuntu/verify/82/systematic/new-bypass-browser.ts
+{"kind":"autocomplete-cc-number","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-cc-name","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-section-checkout cc-exp","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"select","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"textarea","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"shadow-dom","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"iframe-srcdoc","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"iframe-data","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"hidden-label-reference","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"closed-details-label-reference","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"data-url-link-metadata","expectedPrivate":false,"leaks":{"snapshot":true,"targeted":false,"provider":true},"result":"PASS"}
+TOTAL 57, FAIL 0
+EXIT_CODE=0
+
+COMMAND: bun test /home/ubuntu/verify/82/systematic/required-fixture.test.ts
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [137.94ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [71.83ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [94.78ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [7.05ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [38.43ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [5.05ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [34.80ms]
+
+ 29 pass
+ 0 fail
+ 266 expect() calls
+Ran 29 tests across 1 file. [1042.00ms]
 EXIT_CODE=0
 
 Real OpenRouter API: not run: no key.

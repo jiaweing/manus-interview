@@ -1,0 +1,58 @@
+{"kind":"role-\"\\tTEXTBOX\\r\\nsearchbox\\t\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"role-\"unknown OPTION\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"role-\"presentation combobox\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"role-\"button slider\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"role-\"treeitem spinbutton\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"aria-hidden-\"true\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"aria-hidden-\"TRUE\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"aria-hidden-\"True\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"aria-hidden-\" true \"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"hidden","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"hidden=\"until-found\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"inert","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"display:none","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"visibility:hidden","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"visibility:collapse","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"opacity:0","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"content-visibility:hidden","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"closed-details-direct-text","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"closed-details-wrapped-text","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"closed-details-nested-summary","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"open-details-permitted-control","expectedPrivate":false,"leaks":{"snapshot":true,"targeted":true,"provider":true},"result":"PASS"}
+{"kind":"contenteditable","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"contenteditable=\"\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"contenteditable=\"true\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"contenteditable=\"TRUE\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"contenteditable=\"plaintext-only\"","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-text","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-search","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-email","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-tel","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-url","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-number","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-range","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-color","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-date","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-time","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-datetime-local","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-month","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-week","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-password","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-hidden","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-file","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-checkbox","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"input-radio","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-current-password","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-new-password","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-cc-number","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-cc-name","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"autocomplete-section-checkout cc-exp","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"select","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"textarea","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"shadow-dom","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"iframe-srcdoc","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"iframe-data","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"hidden-label-reference","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"closed-details-label-reference","expectedPrivate":true,"leaks":{"snapshot":false,"targeted":false,"provider":false},"result":"PASS"}
+{"kind":"data-url-link-metadata","expectedPrivate":false,"leaks":{"snapshot":true,"targeted":false,"provider":true},"result":"PASS"}
+TOTAL 57, FAIL 0

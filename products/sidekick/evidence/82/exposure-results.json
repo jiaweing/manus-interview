@@ -1,0 +1,857 @@
+{
+  "browser": "headed /usr/bin/chromium under xvfb-run",
+  "cases": 94,
+  "fuzzCases": 64,
+  "positiveControls": true,
+  "providerNetworkCalls": 0,
+  "providerSerializationChecked": true,
+  "result": "PASS",
+  "results": [
+    {
+      "findTextLeak": false,
+      "kind": "display:none",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "visibility:hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "visibility:collapse",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "content-visibility:hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "opacity:0",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden='hidden'",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden='false'",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden=' until-found '",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden='\tuntil-found\n'",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "inert",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "inert='false'",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "aria-hidden \"true\"",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "aria-hidden \"TRUE\"",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "aria-hidden \"True\"",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "aria-hidden \" true \"",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "aria-hidden \"\\tTrUe\\r\\n\"",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "template",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "noscript",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "script",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "style",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "datalist",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "closed dialog",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "closed details direct text and descendants",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "closed details without summary",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "closed details second summary",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "closed details nested open summary",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden until-found native unrevealed content",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "hidden until-found unrevealed content",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "native checkVisibility auto-skipped",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-0-{\"combination\":0,\"name\":\"aRiA-HIDden\",\"value\":\"tRue \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-1-{\"combination\":1,\"name\":\"ARIa-HIDden\",\"value\":\"TRUE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-2-{\"combination\":2,\"name\":\"aria-HIdDEN\",\"value\":\"\\r\\ntRue\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-3-{\"combination\":3,\"name\":\"AriA-hiDDen\",\"value\":\"\\r\\nTRUE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-4-{\"combination\":0,\"name\":\"aRIA-HIddEN\",\"value\":\"trUe\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-5-{\"combination\":1,\"name\":\"AriA-hiDden\",\"value\":\"\\tTRUE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-6-{\"combination\":2,\"name\":\"ARia-hIDden\",\"value\":\"\\ttRUe \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-7-{\"combination\":3,\"name\":\"arIa-hIdDen\",\"value\":\"\\ttRuE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-8-{\"combination\":0,\"name\":\"arIa-HIdDeN\",\"value\":\"\\r\\nTruE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-9-{\"combination\":1,\"name\":\"ArIA-hIdDeN\",\"value\":\"tRUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-10-{\"combination\":2,\"name\":\"arIa-HidDEn\",\"value\":\"\\r\\ntrUe\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-11-{\"combination\":3,\"name\":\"ARiA-HIddEN\",\"value\":\"\\tTRUe\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-12-{\"combination\":0,\"name\":\"ariA-HIDdEn\",\"value\":\"\\tTrUe \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-13-{\"combination\":1,\"name\":\"ARIA-HiDDEn\",\"value\":\"TRuE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-14-{\"combination\":2,\"name\":\"ARIa-HIdDen\",\"value\":\" TRuE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-15-{\"combination\":3,\"name\":\"aRIA-hIddEn\",\"value\":\"TruE \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-16-{\"combination\":0,\"name\":\"aRiA-HiddEn\",\"value\":\"\\ttrUE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-17-{\"combination\":1,\"name\":\"aria-HiDDen\",\"value\":\"TruE \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-18-{\"combination\":2,\"name\":\"Aria-hIdDeN\",\"value\":\"\\r\\ntRUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-19-{\"combination\":3,\"name\":\"ArIa-HIDDen\",\"value\":\"TRUE \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-20-{\"combination\":0,\"name\":\"aRia-HiDdEN\",\"value\":\"\\r\\nTrUe \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-21-{\"combination\":1,\"name\":\"aRia-HiddEn\",\"value\":\"\\ttRue\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-22-{\"combination\":2,\"name\":\"AriA-HIDDEn\",\"value\":\"\\tTruE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-23-{\"combination\":3,\"name\":\"ARia-HiDDen\",\"value\":\"\\r\\nTrue\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-24-{\"combination\":0,\"name\":\"ArIa-HiddEn\",\"value\":\"\\tTRUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-25-{\"combination\":1,\"name\":\"Aria-HidDen\",\"value\":\"\\r\\ntrUe\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-26-{\"combination\":2,\"name\":\"ARia-hIDdeN\",\"value\":\"\\r\\ntrue\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-27-{\"combination\":3,\"name\":\"arIa-HidDEN\",\"value\":\"TRue \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-28-{\"combination\":0,\"name\":\"aRiA-hidDEN\",\"value\":\" trUe \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-29-{\"combination\":1,\"name\":\"aRIA-HIddEn\",\"value\":\"\\tTRUE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-30-{\"combination\":2,\"name\":\"ArIa-hIDDen\",\"value\":\" \\t\\n TruE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-31-{\"combination\":3,\"name\":\"ariA-hidDEN\",\"value\":\" TrUe\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-32-{\"combination\":0,\"name\":\"aria-HIDDEn\",\"value\":\"\\r\\ntRuE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-33-{\"combination\":1,\"name\":\"ARia-HIddeN\",\"value\":\" \\t\\n TRUe \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-34-{\"combination\":2,\"name\":\"ARiA-HIdDEn\",\"value\":\"TrUe\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-35-{\"combination\":3,\"name\":\"AriA-hIddEn\",\"value\":\"TrUE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-36-{\"combination\":0,\"name\":\"ARiA-HidDEn\",\"value\":\"true \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-37-{\"combination\":1,\"name\":\"AriA-hIDdEn\",\"value\":\"\\r\\ntRue\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-38-{\"combination\":2,\"name\":\"ARiA-HiDdEn\",\"value\":\" \\t\\n TrUE \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-39-{\"combination\":3,\"name\":\"ArIa-hIdDEN\",\"value\":\" TRUE \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-40-{\"combination\":0,\"name\":\"ArIa-hIDDen\",\"value\":\" \\t\\n TrUe\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-41-{\"combination\":1,\"name\":\"ARIA-HIDdeN\",\"value\":\"\\tTRUE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-42-{\"combination\":2,\"name\":\"ARia-HIDDeN\",\"value\":\" truE \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-43-{\"combination\":3,\"name\":\"aria-HIdDen\",\"value\":\"\\r\\nTrUE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-44-{\"combination\":0,\"name\":\"Aria-HidDEn\",\"value\":\"\\tTrUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-45-{\"combination\":1,\"name\":\"Aria-hiddeN\",\"value\":\" \\t\\n trUe\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-46-{\"combination\":2,\"name\":\"aRia-HidDEn\",\"value\":\"\\r\\ntRuE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-47-{\"combination\":3,\"name\":\"ArIA-hiDdEN\",\"value\":\"\\tTRue\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-48-{\"combination\":0,\"name\":\"ARIa-HIdDeN\",\"value\":\"trUE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-49-{\"combination\":1,\"name\":\"ariA-hiDDeN\",\"value\":\"\\r\\ntRUe\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-50-{\"combination\":2,\"name\":\"aRIa-hIdDEN\",\"value\":\"\\r\\nTRUe\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-51-{\"combination\":3,\"name\":\"ARiA-hIdDEN\",\"value\":\"TruE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-52-{\"combination\":0,\"name\":\"Aria-hidDen\",\"value\":\"\\r\\nTrue\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-53-{\"combination\":1,\"name\":\"ARIA-hIDDeN\",\"value\":\"trUe \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-54-{\"combination\":2,\"name\":\"ArIa-hIDdeN\",\"value\":\"\\r\\nTrUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-55-{\"combination\":3,\"name\":\"aRIA-HiddeN\",\"value\":\"\\r\\ntrue \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-56-{\"combination\":0,\"name\":\"arIA-HiDden\",\"value\":\"\\tTrUE\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-57-{\"combination\":1,\"name\":\"ARia-HiddeN\",\"value\":\" \\t\\n TrUE\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-58-{\"combination\":2,\"name\":\"aRia-HidDeN\",\"value\":\" TrUe \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-59-{\"combination\":3,\"name\":\"ARIA-HIDdEn\",\"value\":\" \\t\\n tRuE \\t\\n \"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-60-{\"combination\":0,\"name\":\"aRIA-hIdDEN\",\"value\":\"true\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-61-{\"combination\":1,\"name\":\"aria-HIDDEN\",\"value\":\"\\ttrUe\\r\\n\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-62-{\"combination\":2,\"name\":\"ARiA-hIDDen\",\"value\":\" tRuE\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "fuzz-63-{\"combination\":3,\"name\":\"arIa-HIdDEn\",\"value\":\"\\tTRue\\t\"}",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    }
+  ]
+}

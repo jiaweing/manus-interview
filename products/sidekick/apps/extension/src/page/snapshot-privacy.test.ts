@@ -6,6 +6,13 @@ import {
 	turnRequestSchema,
 } from "../../../../packages/protocol/src";
 import { createOpenRouterAdapter } from "../../../server/src/agent/openrouter";
+import { serializedPrivacyPayload } from "../../tests/privacy-provider";
+import { isExposed } from "./exposure";
+import {
+	exposedPositiveFixture,
+	exposureCases,
+	exposureFixture,
+} from "./fixtures/exposure-matrix";
 import { createSnapshotObserver } from "./snapshot";
 
 async function assertPrivateProviderPayload(
@@ -48,9 +55,11 @@ async function assertPrivateProviderPayload(
 function fixture(body: string) {
 	const window = new Window({ url: "https://httpbin.org/forms/post" });
 	window.document.write(
-		`<html><head><title>Privacy fixture</title></head><body>${body}</body></html>`
+		`<html><head><title>Privacy fixture</title><style>[hidden='until-found'] { content-visibility:hidden }</style></head><body>${body}</body></html>`
 	);
 	// Happy DOM has no layout. Browser verification uses Chromium's native layout.
+	// It also lacks Chromium's until-found UA style, modeled above; explicit
+	// content-visibility:visible overrides remain exposed in the positive fixture.
 	window.HTMLElement.prototype.getClientRects = () =>
 		[{ height: 20, width: 100 }] as ReturnType<
 			Window["HTMLElement"]["prototype"]["getClientRects"]
@@ -68,6 +77,85 @@ function assertBounded(
 }
 
 describe("bounded private snapshots", () => {
+	for (const entry of exposureCases) {
+		test(`one exposure boundary: ${entry.kind}`, async () => {
+			const sentinel = `exposure-${crypto.randomUUID()}`;
+			const { observer, document, window } = fixture(
+				exposureFixture(entry, sentinel)
+			);
+			try {
+				// Happy DOM has no render skipping. Simulate only the browser-owned
+				// checkVisibility result; every structural exclusion uses the real DOM.
+				if (entry.nativeSkipped) {
+					for (const element of document.querySelectorAll(
+						"#private-source, #mixed-hidden"
+					)) {
+						Object.defineProperty(element, "checkVisibility", {
+							value: () => false,
+						});
+					}
+				}
+				const snapshot = observer.observe(7);
+				const targeted = observer.observe(7, sentinel);
+				const found = observer.findText(7, sentinel);
+				const nearby = observer.observe(7, "Permitted");
+				const providerBody = await serializedPrivacyPayload(snapshot, [
+					targeted,
+					found,
+					nearby,
+				]);
+				expect(snapshot.text).toContain("Permitted heading");
+				expect(providerBody).toContain("UNTRUSTED_PAGE_SNAPSHOT_JSON");
+				for (const result of [snapshot, targeted, found, nearby]) {
+					assertBounded(result);
+					expect(JSON.stringify(result)).not.toContain(sentinel);
+				}
+				for (const result of [targeted, found]) {
+					expect(result.text).toBe("");
+					expect(result.elements).toEqual([]);
+				}
+				expect(providerBody).not.toContain(sentinel);
+			} finally {
+				window.close();
+			}
+		});
+	}
+
+	test("exposed summaries, open disclosures, rendered until-found and false aria-hidden remain readable", () => {
+		const { observer, document, window } = fixture(exposedPositiveFixture);
+		try {
+			const snapshot = observer.observe(7);
+			for (const text of [
+				"Visible closed summary",
+				"Visible summary control",
+				"Visible open body",
+				"Visible open control",
+				"Visible dialog body",
+				"Visible dialog control",
+				"Visible until-found override",
+				"Visible until-found control",
+				"Visible false aria-hidden",
+				"Visible description",
+			]) {
+				expect(snapshot.text).toContain(text);
+			}
+			expect(snapshot.text).not.toContain("Hidden body");
+			expect(
+				snapshot.elements.some((entry) => entry.name === "Visible description")
+			).toBe(true);
+			const details = document.querySelector("details");
+			const body = details?.lastChild ?? null;
+			expect(isExposed(body)).toBe(false);
+			details?.setAttribute("open", "");
+			expect(isExposed(body)).toBe(true);
+			expect(observer.findText(7, "Hidden body").text).toContain("Hidden body");
+			details?.removeAttribute("open");
+			expect(observer.findText(7, "Hidden body").text).toBe("");
+		} finally {
+			window.close();
+		}
+	});
+
 	for (const [role, expectedRole] of [
 		["textbox ", "textbox"],
 		["textbox searchbox", "textbox"],

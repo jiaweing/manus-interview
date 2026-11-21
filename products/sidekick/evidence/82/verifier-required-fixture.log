@@ -1,0 +1,37 @@
+bun test v1.4.5 (a7733435c)
+
+../../../../verify/82/systematic/required-fixture.test.ts:
+(pass) bounded private snapshots > ARIA token-list values stay private: "textbox " [42.64ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "textbox searchbox" [10.95ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "combobox listbox" [9.34ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "option " [9.17ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: " \tTeXtBoX\n SeArChBoX " [7.97ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "unknown textbox searchbox" [14.41ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "button textbox" [7.81ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "unknown button textbox" [6.65ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "searchbox textbox" [6.69ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "listbox option" [5.91ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "slider spinbutton" [6.14ms]
+(pass) bounded private snapshots > ARIA token-list values stay private: "spinbutton slider" [7.15ms]
+(pass) bounded private snapshots > first valid unsupported role wins while any editable token remains private [6.46ms]
+(pass) bounded private snapshots > content-visibility hidden text and label references are excluded without native visibility support [7.80ms]
+(pass) bounded private snapshots > browser-reported invisible content is excluded with the required checkVisibility options [5.97ms]
+(pass) bounded private snapshots > text boundary: 19999 rendered characters [3.34ms]
+(pass) bounded private snapshots > text boundary: 20000 rendered characters [2.81ms]
+(pass) bounded private snapshots > text boundary: 20001 rendered characters [2.68ms]
+(pass) bounded private snapshots > text boundary: 50000 rendered characters [2.43ms]
+(pass) bounded private snapshots > descriptor boundary: 299 enabled controls [91.71ms]
+(pass) bounded private snapshots > descriptor boundary: 300 enabled controls [79.21ms]
+(pass) bounded private snapshots > descriptor boundary: 301 enabled controls [90.12ms]
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [137.94ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [71.83ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [94.78ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [7.05ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [38.43ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [5.05ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [34.80ms]
+
+ 29 pass
+ 0 fail
+ 266 expect() calls
+Ran 29 tests across 1 file. [1042.00ms]

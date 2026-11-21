@@ -1,3 +1,4 @@
+import { isExposed } from "./exposure";
 import {
 	boundedText,
 	checkControlValue,
@@ -30,8 +31,6 @@ export interface Snapshot {
 
 const candidates =
 	"a[href],button,input,select,textarea,h1,h2,h3,h4,h5,h6,label,[role],[contenteditable='true']";
-const unsupported = "iframe,canvas,object,embed";
-const textExcluded = `${unsupported},script,style,noscript,template`;
 const supportedRoles = new Set([
 	"button",
 	"link",
@@ -56,48 +55,7 @@ function normalize(text: string): string {
 }
 
 /** No iframe/shadow-root traversal: all queries and TreeWalkers stay in this document. */
-export function isRendered(element: Element): boolean {
-	const view = element.ownerDocument.defaultView;
-	if (!view || element.closest(unsupported)) {
-		return false;
-	}
-	if (
-		typeof element.checkVisibility === "function" &&
-		!element.checkVisibility({
-			contentVisibilityAuto: true,
-			opacityProperty: false,
-			visibilityProperty: true,
-		})
-	) {
-		return false;
-	}
-	for (
-		let ancestor: Element | null = element;
-		ancestor;
-		ancestor = ancestor.parentElement
-	) {
-		if (
-			ancestor.hasAttribute("hidden") ||
-			ancestor.hasAttribute("inert") ||
-			ancestor.getAttribute("aria-hidden") === "true"
-		) {
-			return false;
-		}
-		const style = view.getComputedStyle(ancestor);
-		if (
-			style.contentVisibility === "hidden" ||
-			style.display === "none" ||
-			style.visibility === "hidden" ||
-			style.visibility === "collapse" ||
-			style.opacity === "0"
-		) {
-			return false;
-		}
-	}
-	return Array.from(element.getClientRects()).some(
-		(rect) => rect.width > 0 && rect.height > 0
-	);
-}
+export const isRendered = isExposed;
 
 export function isEnabled(element: Element): boolean {
 	for (const fieldset of element.ownerDocument.querySelectorAll(
@@ -177,12 +135,7 @@ function renderedText(root: Element): string {
 	const text: string[] = [];
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
 		const parent = node.parentElement;
-		if (
-			parent &&
-			!parent.closest(textExcluded) &&
-			!hasPrivateTextAncestor(parent) &&
-			isRendered(parent)
-		) {
+		if (parent && !hasPrivateTextAncestor(parent) && isExposed(node)) {
 			const value = normalize(node.textContent ?? "");
 			if (value) {
 				text.push(value);
@@ -192,18 +145,25 @@ function renderedText(root: Element): string {
 	return text.join("\n");
 }
 
+function referenceText(element: Element, attribute: string): string {
+	return normalize(
+		(element.getAttribute(attribute) ?? "")
+			.split(whitespace)
+			.map((id) => {
+				const reference = element.ownerDocument.getElementById(id);
+				return isExposed(reference) && reference ? renderedText(reference) : "";
+			})
+			.join(" ")
+	);
+}
+
 function nameFor(element: Element): string {
-	const document = element.ownerDocument;
-	const labelledBy = element.getAttribute("aria-labelledby");
+	if (!isExposed(element)) {
+		return "";
+	}
+	const labelledBy = referenceText(element, "aria-labelledby");
 	if (labelledBy) {
-		const names = labelledBy.split(whitespace).map((id) => {
-			const label = document.getElementById(id);
-			return label && isRendered(label) ? renderedText(label) : "";
-		});
-		const name = normalize(names.join(" "));
-		if (name) {
-			return name;
-		}
+		return labelledBy;
 	}
 	const ariaLabel = element.getAttribute("aria-label");
 	if (ariaLabel) {
@@ -223,7 +183,7 @@ function nameFor(element: Element): string {
 		const labels = element.labels as NodeListOf<HTMLLabelElement> | null;
 		const name = normalize(
 			Array.from(labels ?? [])
-				.filter(isRendered)
+				.filter(isExposed)
 				.map(renderedText)
 				.join(" ")
 		);
@@ -239,7 +199,7 @@ function nameFor(element: Element): string {
 		element.getAttribute("alt") ??
 			element.getAttribute("title") ??
 			element.getAttribute("placeholder") ??
-			""
+			referenceText(element, "aria-describedby")
 	);
 }
 
@@ -258,7 +218,7 @@ function observationScopes(document: Document, search?: string): Element[] {
 		document.querySelectorAll("p,li,h1,h2,h3,h4,h5,h6,label,button")
 	).filter(
 		(element) =>
-			isRendered(element) &&
+			isExposed(element) &&
 			normalize(renderedText(element))
 				.toLowerCase()
 				.includes(search.toLowerCase())
@@ -270,7 +230,7 @@ function permittedRole(element: Element): string | undefined {
 		hasPrivateTextAncestor(element.parentElement) ||
 		(element.localName === "input" &&
 			["password", "hidden"].includes((element as HTMLInputElement).type)) ||
-		!isRendered(element) ||
+		!isExposed(element) ||
 		!isEnabled(element)
 	) {
 		return undefined;
@@ -367,9 +327,13 @@ export function createSnapshotObserver(document: Document) {
 		) {
 			const element = this.resolveElement(snapshotId, documentToken, index);
 			return checkControlValue(
-				element && isRendered(element) && isEnabled(element) ? element : null,
+				element && isExposed(element) && isEnabled(element) ? element : null,
 				expected
 			);
+		},
+		/** Literal find-text uses exactly the same permitted text/index pipeline. */
+		findText(tabId: number, query: string): Snapshot {
+			return this.observe(tabId, query);
 		},
 		observe(tabId: number, query?: string): Snapshot {
 			const search = validateObservationQuery(query);
