@@ -1,0 +1,64 @@
+Final verification after last source/document edit
+
+$ bun install --frozen-lockfile
+exit=0; output=install.txt
+bun install v1.4.5 (a7733435c)
+
+Checked 1408 installs across 1555 packages (no changes) [1.87s]
+
+$ bun test packages/engine/betting.test.ts
+exit=0; output=betting.txt
+(pass) turn order, round completion and unsettled hand endings > a sole funded player must respond, then runout has no dry-side-pot wager [0.58ms]
+(pass) turn order, round completion and unsettled hand endings > all-in runout retains unmatched contributions for #32 refunds [0.49ms]
+(pass) turn order, round completion and unsettled hand endings > normalization resolves blind-only all-ins and preserves an initial live actor [0.38ms]
+(pass) turn order, round completion and unsettled hand endings > blinds do not count as voluntary actions; street resets restore rights [0.18ms]
+(pass) seeded property play > 2 seats: 1500 random legal hands, exhaustive offered wagers and adjacent rejections [1582.33ms]
+(pass) seeded property play > 3 seats: 1500 random legal hands, exhaustive offered wagers and adjacent rejections [2337.83ms]
+(pass) seeded property play > 4 seats: 1500 random legal hands, exhaustive offered wagers and adjacent rejections [3170.66ms]
+
+ 27 pass
+ 0 fail
+ 1139 expect() calls
+Ran 27 tests across 1 file. [7.16s]
+
+$ bun run lint
+exit=0; output=lint.txt
+$ biome check .
+Checked 40 files in 212ms. No fixes applied.
+
+$ bun run typecheck
+exit=0; output=typecheck.txt
+$ bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && bun run --cwd packages/engine check-types && tsc --noEmit -p tsconfig.json
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+
+$ bun run test
+exit=0; output=test.txt
+(pass) native ingress (temporary transport-only) > ordinary HTTP cannot substitute for a WebSocket [0.55ms]
+(pass) native ingress (temporary transport-only) > upgrade rejects missing or foreign Origin before reaching Bun [0.69ms]
+Flopside ingress {"bootMarker":"f78b73b7-0ee0-4358-a0c2-eb9c08e0e499","connections":1}
+Flopside ingress {"bootMarker":"f78b73b7-0ee0-4358-a0c2-eb9c08e0e499","connections":2}
+Flopside ingress {"bootMarker":"f78b73b7-0ee0-4358-a0c2-eb9c08e0e499","connections":1}
+Flopside ingress {"bootMarker":"f78b73b7-0ee0-4358-a0c2-eb9c08e0e499","connections":0}
+(pass) native ingress (temporary transport-only) > same process broadcasts 1 → 2 → 1 with only a public boot marker/count [5.37ms]
+
+ 116 pass
+ 0 fail
+ 20048 expect() calls
+Ran 116 tests across 5 files. [11.05s]
+
+$ bun run build
+exit=0; output=build.txt
+Route (app)
+┌ ○ /
+└ ○ /_not-found
+
+
+○  (Static)  prerendered as static content
+
+$ bun build ./src/index.ts --target bun --outdir dist
+Bundled 51 modules in 10ms
+
+  index.js  66.48 KB  (entry point)
+
