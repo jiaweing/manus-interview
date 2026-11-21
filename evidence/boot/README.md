@@ -12,3 +12,4 @@ Scaffold command (exact, from `products/caret/bts.jsonc` `reproducibleCommand`):
 - `apps/desktop` was hand-added (electron-vite: Electron main, preload, React renderer). Bun blocks postinstall scripts by default, so root `package.json` has `"trustedDependencies": ["electron"]` to download the Electron binary.
 - Desktop scripts: `bun run --cwd apps/desktop dev | build | typecheck`; none invoke web/server/native/extension/fumadocs.
 - `desktop-boot.png`: real Electron window titled "Caret" under Xvfb 1280x720 (Linux only; Windows boot screenshot is part of #9/#24).
+- The WXT addon initialises a nested git repo at apps/extension/.git even with --no-git; it was removed so the scaffold has no nested .git (git cannot add it otherwise).
