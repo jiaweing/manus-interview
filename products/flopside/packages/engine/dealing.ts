@@ -134,6 +134,7 @@ function beginHand(
 			handStatus: "playing",
 			lastFullRaiseIncrement: BLINDS.big,
 			seats,
+			settlement: null,
 			smallBlindIndex,
 			street: "preflop",
 		},
