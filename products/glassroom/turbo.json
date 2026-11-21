@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    }
+  },
+  "globalEnv": ["NODE_ENV", "PUBLIC_PORT", "NEXT_INTERNAL_PORT", "TLS_CERT_FILE", "TLS_KEY_FILE"]
+}
