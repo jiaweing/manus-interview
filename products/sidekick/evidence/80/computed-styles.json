@@ -1,0 +1,644 @@
+{
+  "width": 320,
+  "scrollWidth": 320,
+  "visibleElements": 45,
+  "invalid": [],
+  "text": [
+    {
+      "element": "h1",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "p",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 10.368377760269818
+    },
+    {
+      "element": "context-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "p",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "p",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 9.510257754476887
+    },
+    {
+      "element": "disclosure-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "provider-disclosure",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "p",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 9.510257754476887
+    },
+    {
+      "element": "disclosure-accepted",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(0, 0, 0)",
+      "fgRGB": [
+        255,
+        255,
+        255
+      ],
+      "bgRGB": [
+        0,
+        0,
+        0
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "label",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "token-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "p",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 10.368377760269818
+    },
+    {
+      "element": "label",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "demo-token",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "button",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(0, 0, 0)",
+      "fgRGB": [
+        255,
+        255,
+        255
+      ],
+      "bgRGB": [
+        0,
+        0,
+        0
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "button",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.922 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        229,
+        229,
+        229
+      ],
+      "contrast": 16.67075583052387
+    },
+    {
+      "element": "token-status",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 10.368377760269818
+    },
+    {
+      "element": "task-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "label",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "task",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "task-help",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 10.368377760269818
+    },
+    {
+      "element": "plan-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "plan-status",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "background": "oklch(0.97 0 none)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        245,
+        245,
+        245
+      ],
+      "contrast": 19.261973035868383
+    },
+    {
+      "element": "button",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "oklch(0.371 0 none)",
+      "background": "oklch(0.922 0 none)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        229,
+        229,
+        229
+      ],
+      "contrast": 8.230890190480576
+    },
+    {
+      "element": "timeline-heading",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        0,
+        0,
+        0
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 21
+    },
+    {
+      "element": "button",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "oklch(0.371 0 none)",
+      "background": "oklch(0.922 0 none)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        229,
+        229,
+        229
+      ],
+      "contrast": 8.230890190480576
+    },
+    {
+      "element": "timeline-status",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "400",
+      "color": "oklch(0.371 0 none)",
+      "background": "rgb(255, 255, 255)",
+      "fgRGB": [
+        64,
+        64,
+        64
+      ],
+      "bgRGB": [
+        255,
+        255,
+        255
+      ],
+      "contrast": 10.368377760269818
+    },
+    {
+      "element": "button",
+      "font": "Inter, sans-serif",
+      "size": "14px",
+      "weight": "600",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(0, 0, 0)",
+      "fgRGB": [
+        255,
+        255,
+        255
+      ],
+      "bgRGB": [
+        0,
+        0,
+        0
+      ],
+      "contrast": 21
+    }
+  ],
+  "radii": [
+    {
+      "element": "Ada Lovelace — selected-tab fixturehttp://127.0.0.1:18981/selected-page",
+      "radius": "10px"
+    },
+    {
+      "element": "Before you use page textYour task and necessary rendered page text and control labels will be sent through the proxy to OpenRouter and its model provider. Their retention policies apply; zero retention is not guaranteed. Use dummy or non-sensitive data.Tasks and transcripts stay in panel memory. Closing the panel starts fresh. Only the demo token is kept for this browser session.✓I understand the provider disclosure.",
+      "radius": "10px"
+    },
+    {
+      "element": "disclosure-accepted",
+      "radius": "10px"
+    },
+    {
+      "element": "demo-token",
+      "radius": "10px"
+    },
+    {
+      "element": "Save token",
+      "radius": "10px"
+    },
+    {
+      "element": "Clear token",
+      "radius": "10px"
+    },
+    {
+      "element": "task",
+      "radius": "10px"
+    },
+    {
+      "element": "PlanNo plan yet. Review the plan here before any browser action.Run",
+      "radius": "10px"
+    },
+    {
+      "element": "Run",
+      "radius": "10px"
+    },
+    {
+      "element": "Stop",
+      "radius": "10px"
+    },
+    {
+      "element": "Observe page",
+      "radius": "10px"
+    }
+  ],
+  "colors": [
+    {
+      "css": "rgb(0, 0, 0)",
+      "rgba": [
+        0,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "css": "rgb(255, 255, 255)",
+      "rgba": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "css": "rgba(0, 0, 0, 0)",
+      "rgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "css": "oklch(0.371 0 none)",
+      "rgba": [
+        64,
+        64,
+        64,
+        255
+      ]
+    },
+    {
+      "css": "oklch(0.97 0 none)",
+      "rgba": [
+        245,
+        245,
+        245,
+        255
+      ]
+    },
+    {
+      "css": "oklch(0.922 0 none)",
+      "rgba": [
+        229,
+        229,
+        229,
+        255
+      ]
+    }
+  ],
+  "fontLoaded": true,
+  "minimumContrast": 8.230890190480576
+}
