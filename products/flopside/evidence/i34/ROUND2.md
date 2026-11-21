@@ -15,3 +15,5 @@ Unverified/outside this pure-engine issue: independent round-2 verifier/reviewer
 Reviewer sources:
 - https://github.com/jiaweing/manus-interview/pull/253#issuecomment-7065237018
 - https://github.com/jiaweing/manus-interview/pull/252#issuecomment-7065236564
+
+The first complete round-2 gate attempt at source commit `d321601` passed fix/install/focused tests/composition/lint/full tests/build but failed typecheck because the new composition test helper typed `terminationReason` as general `string` rather than `MatchResult["terminationReason"]`. The fixture now uses the public result type; no runtime behavior or acceptance assertion changed. `round2-initial-verification.log` and `round2-initial-typecheck.log` retain this failed attempt. All final gates were rerun after the fixture type and this note were corrected; non-initial `round2-*.log` files contain the final attempt.

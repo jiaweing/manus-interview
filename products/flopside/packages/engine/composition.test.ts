@@ -13,6 +13,7 @@ import {
 	expireTurnAndAdvanceAt,
 	type IdGenerator,
 	MAX_HANDS,
+	type MatchResult,
 	rematchAt,
 	requestExpiryTermination,
 	startLifecycleMatchAt,
@@ -121,8 +122,8 @@ function settled(stacks: number[], handNumber = 1): MatchState {
 function expected(
 	stacks: number[],
 	winnerSeatIds: string[],
-	terminationReason: string
-) {
+	terminationReason: MatchResult["terminationReason"]
+): MatchResult {
 	return {
 		finalStacks: stacks.map((stack, index) => ({ seatId: `s${index}`, stack })),
 		terminationReason,
