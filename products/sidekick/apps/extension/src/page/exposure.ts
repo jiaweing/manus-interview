@@ -24,12 +24,41 @@ function isClosedDetailsBody(element: Element, node: Node): boolean {
 	return !summary?.contains(node);
 }
 
+function isExplicitlyExcluded(element: Element, node: Node): boolean {
+	return (
+		excludedTags.has(element.localName) ||
+		element.hasAttribute("hidden") ||
+		element.hasAttribute("inert") ||
+		element.getAttribute("aria-hidden")?.trim().toLowerCase() === "true" ||
+		(element.localName === "dialog" && !element.hasAttribute("open")) ||
+		isClosedDetailsBody(element, node)
+	);
+}
+
+function hasRenderedBoxText(
+	node: Node,
+	box: Element,
+	contentVisibility: string
+): boolean {
+	if (node.nodeType !== 3 || contentVisibility !== "auto") {
+		return true;
+	}
+	// checkVisibility tests skipped ANCESTORS, not the box's own contents.
+	// Chromium can report an auto container's box visible while skipping its
+	// direct text (also text through boxless wrappers). Native innerText on
+	// that box is empty while skipped. Use it only as a local boolean gate;
+	// never return it, mutate the DOM, or force text layout with Range/rects.
+	const renderedText = (box as HTMLElement).innerText;
+	return typeof renderedText === "string" && renderedText.length > 0;
+}
+
 /**
- * The sole exposure boundary for text, descriptors, and referenced labels.
- * Walk ancestor-or-self for every node, including Text: a closed details box
- * is rendered, but its direct body text is not. Only its first direct summary
- * (and that summary's descendants) is exposed through a closed details.
- * Never cache across observations: CSS/attributes/disclosure state can change.
+ * Shared observation/target-identity boundary for ordinary top-frame DOM.
+ * Apply explicit exclusions to EVERY ancestor-or-self, but ask the browser
+ * about the nearest box only: display:contents has no box of its own and must
+ * not hide exposed descendants. Do not infer exposure from size/opacity/position.
+ * No cross-observation cache: CSS, attributes and disclosure state are live.
+ * Missing/throwing native state fails closed; no page content is read on error.
  */
 export function isExposed(node: Node | null): boolean {
 	if (!node?.isConnected) {
@@ -40,48 +69,44 @@ export function isExposed(node: Node | null): boolean {
 	if (!(element && view)) {
 		return false;
 	}
-	for (
-		let current: Element | null = element;
-		current;
-		current = current.parentElement
-	) {
-		if (
-			excludedTags.has(current.localName) ||
-			(current.hasAttribute("hidden") &&
-				current.getAttribute("hidden")?.toLowerCase() !== "until-found") ||
-			current.hasAttribute("inert") ||
-			current.getAttribute("aria-hidden")?.trim().toLowerCase() === "true" ||
-			(current.localName === "dialog" && !current.hasAttribute("open"))
+	try {
+		let box: Element | undefined;
+		let boxContentVisibility = "";
+		for (
+			let current: Element | null = element;
+			current;
+			current = current.parentElement
 		) {
-			return false;
+			if (isExplicitlyExcluded(current, node)) {
+				return false;
+			}
+			// Read native render-skipping BEFORE computed styles can update a
+			// skipped subtree. A false result is ignored only for display:contents.
+			const rendered = box
+				? undefined
+				: current.checkVisibility?.({
+						contentVisibilityAuto: true,
+						visibilityProperty: true,
+					});
+			const style = view.getComputedStyle(current);
+			if (
+				style.display === "none" ||
+				style.visibility === "hidden" ||
+				style.visibility === "collapse" ||
+				style.contentVisibility === "hidden"
+			) {
+				return false;
+			}
+			if (!box && style.display !== "contents") {
+				if (rendered !== true) {
+					return false;
+				}
+				box = current;
+				boxContentVisibility = style.contentVisibility;
+			}
 		}
-		if (isClosedDetailsBody(current, node)) {
-			return false;
-		}
-		// Inspect native render-skipping before computed styles/layout reads can
-		// force a content-visibility:auto subtree to render as a side effect.
-		if (
-			typeof current.checkVisibility === "function" &&
-			!current.checkVisibility({
-				contentVisibilityAuto: true,
-				opacityProperty: false,
-				visibilityProperty: true,
-			})
-		) {
-			return false;
-		}
-		const style = view.getComputedStyle(current);
-		if (
-			style.display === "none" ||
-			style.visibility === "hidden" ||
-			style.visibility === "collapse" ||
-			style.contentVisibility === "hidden" ||
-			style.opacity === "0"
-		) {
-			return false;
-		}
+		return !!box && hasRenderedBoxText(node, box, boxContentVisibility);
+	} catch {
+		return false;
 	}
-	return Array.from(element.getClientRects()).some(
-		(rect) => rect.width > 0 && rect.height > 0
-	);
 }

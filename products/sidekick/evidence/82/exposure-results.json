@@ -1,8 +1,40 @@
 {
   "browser": "headed /usr/bin/chromium under xvfb-run",
-  "cases": 94,
+  "cases": 102,
   "fuzzCases": 64,
   "positiveControls": true,
+  "positiveResults": [
+    {
+      "kind": "normal visible text beyond 20k",
+      "liveTargetId": "late",
+      "result": "PASS"
+    },
+    {
+      "kind": "display:contents wrapper",
+      "liveTargetId": "late",
+      "result": "PASS"
+    },
+    {
+      "kind": "nested display:contents wrappers",
+      "liveTargetId": "late",
+      "result": "PASS"
+    },
+    {
+      "kind": "mixed box and nested display:contents wrappers",
+      "liveTargetId": "late",
+      "result": "PASS"
+    },
+    {
+      "kind": "visible content-visibility:auto direct text",
+      "liveTargetId": "late",
+      "result": "PASS"
+    },
+    {
+      "kind": "visible auto direct text through display:contents",
+      "liveTargetId": "late",
+      "result": "PASS"
+    }
+  ],
   "providerNetworkCalls": 0,
   "providerSerializationChecked": true,
   "result": "PASS",
@@ -45,7 +77,52 @@
     },
     {
       "findTextLeak": false,
-      "kind": "opacity:0",
+      "kind": "display:contents explicit visibility:hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "display:contents explicit visibility:collapse",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "display:contents explicit content-visibility:hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "display:contents hidden",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "display:contents inert",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "display:contents aria-hidden=' \tTrUe\n '",
       "nearbyLeak": false,
       "providerLeak": false,
       "result": "PASS",
@@ -261,6 +338,15 @@
     },
     {
       "findTextLeak": false,
+      "kind": "hidden until-found remains excluded despite a visible CSS override",
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
       "kind": "hidden until-found unrevealed content",
       "nearbyLeak": false,
       "providerLeak": false,
@@ -271,6 +357,54 @@
     {
       "findTextLeak": false,
       "kind": "native checkVisibility auto-skipped",
+      "nativeSkipped": [
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        },
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        }
+      ],
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "native auto-skipped direct text with a visible container box",
+      "nativeSkipped": [
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        },
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        }
+      ],
+      "nearbyLeak": false,
+      "providerLeak": false,
+      "result": "PASS",
+      "snapshotLeak": false,
+      "targetedLeak": false
+    },
+    {
+      "findTextLeak": false,
+      "kind": "native auto-skipped direct text through nested display:contents",
+      "nativeSkipped": [
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        },
+        {
+          "boxVisible": true,
+          "contentsEmpty": true
+        }
+      ],
       "nearbyLeak": false,
       "providerLeak": false,
       "result": "PASS",

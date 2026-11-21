@@ -9,6 +9,8 @@ import { createOpenRouterAdapter } from "../../../server/src/agent/openrouter";
 import { serializedPrivacyPayload } from "../../tests/privacy-provider";
 import { isExposed } from "./exposure";
 import {
+	exposedCases,
+	exposedFixture,
 	exposedPositiveFixture,
 	exposureCases,
 	exposureFixture,
@@ -88,11 +90,18 @@ describe("bounded private snapshots", () => {
 				// checkVisibility result; every structural exclusion uses the real DOM.
 				if (entry.nativeSkipped) {
 					for (const element of document.querySelectorAll(
-						"#private-source, #mixed-hidden"
+						"[data-auto-skipped] *"
 					)) {
 						Object.defineProperty(element, "checkVisibility", {
 							value: () => false,
 						});
+					}
+					for (const element of document.querySelectorAll(
+						"[data-auto-skipped]"
+					)) {
+						// Chromium reports the container box visible but its own text
+						// skipped: innerText is empty without forcing text layout.
+						Object.defineProperty(element, "innerText", { value: "" });
 					}
 				}
 				const snapshot = observer.observe(7);
@@ -121,7 +130,72 @@ describe("bounded private snapshots", () => {
 		});
 	}
 
-	test("exposed summaries, open disclosures, rendered until-found and false aria-hidden remain readable", () => {
+	for (const entry of exposedCases) {
+		test(`visible positive retrieval: ${entry.kind}`, async () => {
+			const marker = `visible-${crypto.randomUUID()}`;
+			const { observer, document, window } = fixture(
+				exposedFixture(entry, marker)
+			);
+			try {
+				// Model Chromium's false result for the boxless wrapper itself.
+				for (const element of document.querySelectorAll(
+					"[style*='display:contents']"
+				)) {
+					Object.defineProperty(element, "checkVisibility", {
+						value: () => false,
+					});
+				}
+				const initial = observer.observe(7);
+				expect(initial.text.length).toBe(20_000);
+				expect(initial.truncated).toBe(true);
+				expect(initial.text).not.toContain(marker);
+				const targeted = observer.observe(7, marker);
+				const found = observer.findText(7, marker);
+				for (const result of [targeted, found]) {
+					assertBounded(result);
+					expect(result.text).toContain(`${marker} direct evidence`);
+					expect(result.text).toContain(`${marker} nested evidence`);
+					expect(
+						result.elements.some(
+							(element) => element.name === `${marker} label`
+						)
+					).toBe(true);
+					expect(
+						result.elements.some(
+							(element) => element.name === `${marker} description`
+						)
+					).toBe(true);
+					expect(result.documentToken).toBe(initial.documentToken);
+					expect(result.snapshotId).not.toBe(initial.snapshotId);
+				}
+				const link = found.elements.find((element) => element.role === "link");
+				expect(link).toBeDefined();
+				expect(
+					observer.resolveElement(
+						found.snapshotId,
+						found.documentToken,
+						link?.index ?? 0
+					)
+				).toBe(document.getElementById("late"));
+				expect(
+					observer.resolveElement(
+						initial.snapshotId,
+						initial.documentToken,
+						link?.index ?? 0
+					)
+				).toBeNull();
+				const providerBody = await serializedPrivacyPayload(initial, [
+					targeted,
+					found,
+				]);
+				expect(providerBody).toContain(`${marker} direct evidence`);
+			} finally {
+				window.close();
+			}
+		});
+	}
+
+	test("exposed summaries, open disclosures, revealed content and false aria-hidden remain readable", () => {
 		const { observer, document, window } = fixture(exposedPositiveFixture);
 		try {
 			const snapshot = observer.observe(7);
@@ -132,8 +206,8 @@ describe("bounded private snapshots", () => {
 				"Visible open control",
 				"Visible dialog body",
 				"Visible dialog control",
-				"Visible until-found override",
-				"Visible until-found control",
+				"Visible revealed content",
+				"Visible revealed control",
 				"Visible false aria-hidden",
 				"Visible description",
 			]) {
@@ -199,10 +273,14 @@ describe("bounded private snapshots", () => {
 		window.close();
 	});
 
-	test("content-visibility hidden text and label references are excluded without native visibility support", async () => {
+	test("missing native visibility fails closed for text and label references", async () => {
 		const sentinel = `verifier-hidden-css-${crypto.randomUUID()}`;
 		const { observer, document, window } = fixture(
 			`<h1>Permitted content</h1><div id='hidden-prose' style='content-visibility:hidden;width:600px;height:60px'>${sentinel}<span>${sentinel}</span><button type='button'>${sentinel}</button></div><button type='button' aria-labelledby='hidden-prose'>Permitted button</button>`
+		);
+		const nativeVisibility = Object.getOwnPropertyDescriptor(
+			window.Element.prototype,
+			"checkVisibility"
 		);
 		Object.defineProperty(window.Element.prototype, "checkVisibility", {
 			configurable: true,
@@ -211,12 +289,43 @@ describe("bounded private snapshots", () => {
 		expect(
 			document.getElementById("hidden-prose")?.getClientRects().length
 		).toBe(1);
-		expect(observer.observe(7).elements.map((element) => element.name)).toEqual(
-			["Permitted content", "Permitted button"]
-		);
-		await assertPrivateProviderPayload(observer, sentinel);
-		window.close();
+		expect(observer.observe(7).elements).toEqual([]);
+		expect(observer.observe(7).text).toBe("");
+		try {
+			await assertPrivateProviderPayload(observer, sentinel);
+		} finally {
+			if (nativeVisibility) {
+				Object.defineProperty(
+					window.Element.prototype,
+					"checkVisibility",
+					nativeVisibility
+				);
+			}
+			window.close();
+		}
 	});
+
+	for (const failure of ["visibility", "style", "auto-innerText"]) {
+		test(`unknown native exposure fails closed: ${failure}`, async () => {
+			const sentinel = `private-${crypto.randomUUID()}`;
+			const { observer, document, window } = fixture(
+				`<div id='unknown' style='content-visibility:auto'>${sentinel}</div>`
+			);
+			const fail = () => {
+				throw new Error("Unknown browser state");
+			};
+			const element = document.getElementById("unknown");
+			if (failure === "visibility") {
+				Object.defineProperty(element, "checkVisibility", { value: fail });
+			} else if (failure === "style") {
+				Object.defineProperty(window, "getComputedStyle", { value: fail });
+			} else {
+				Object.defineProperty(element, "innerText", { get: fail });
+			}
+			await assertPrivateProviderPayload(observer, sentinel);
+			window.close();
+		});
+	}
 
 	test("browser-reported invisible content is excluded with the required checkVisibility options", async () => {
 		const sentinel = `verifier-browser-invisible-${crypto.randomUUID()}`;
@@ -232,7 +341,6 @@ describe("bounded private snapshots", () => {
 					visibilityChecks += 1;
 					expect(options).toEqual({
 						contentVisibilityAuto: true,
-						opacityProperty: false,
 						visibilityProperty: true,
 					});
 					return false;

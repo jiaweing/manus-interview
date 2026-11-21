@@ -17,7 +17,6 @@ const cssCases = [
 	"visibility:hidden",
 	"visibility:collapse",
 	"content-visibility:hidden",
-	"opacity:0",
 ];
 const hiddenCases = [
 	"hidden",
@@ -67,6 +66,18 @@ export const exposureCases: ExposureCase[] = [
 	...cssCases.map((style) =>
 		attributes(style, `style='${style};width:600px;height:60px'`)
 	),
+	...[
+		"visibility:hidden",
+		"visibility:collapse",
+		"content-visibility:hidden",
+	].map((style) => ({
+		kind: `display:contents explicit ${style}`,
+		wrap: (content: string) =>
+			`<section id='private-source' style='display:contents;${style}'><div style='visibility:visible;content-visibility:visible'>${content}</div></section>`,
+	})),
+	...["hidden", "inert", "aria-hidden=' \tTrUe\n '"].map((attr) =>
+		attributes(`display:contents ${attr}`, `${attr} style='display:contents'`)
+	),
 	...hiddenCases.map((attr) =>
 		attributes(attr, `${attr} style='display:block;content-visibility:visible'`)
 	),
@@ -106,6 +117,10 @@ export const exposureCases: ExposureCase[] = [
 		"hidden until-found native unrevealed content",
 		"hidden='until-found'"
 	),
+	attributes(
+		"hidden until-found remains excluded despite a visible CSS override",
+		"hidden='until-found' style='display:block;content-visibility:visible'"
+	),
 	{
 		kind: "hidden until-found unrevealed content",
 		wrap: (content) =>
@@ -115,7 +130,19 @@ export const exposureCases: ExposureCase[] = [
 		kind: "native checkVisibility auto-skipped",
 		nativeSkipped: true,
 		wrap: (content) =>
-			`<section style='content-visibility:auto;contain-intrinsic-size:600px 60px;margin-top:20000px'><div id='private-source'>${content}</div></section>`,
+			`<section data-auto-skipped style='content-visibility:auto;contain-intrinsic-size:600px 60px;margin-top:20000px'><div id='private-source'>${content}</div></section>`,
+	},
+	{
+		kind: "native auto-skipped direct text with a visible container box",
+		nativeSkipped: true,
+		wrap: (content) =>
+			`<section id='private-source' data-auto-skipped style='content-visibility:auto;contain-intrinsic-size:600px 60px;margin-top:20000px'>${content}</section>`,
+	},
+	{
+		kind: "native auto-skipped direct text through nested display:contents",
+		nativeSkipped: true,
+		wrap: (content) =>
+			`<section data-auto-skipped style='content-visibility:auto;contain-intrinsic-size:600px 60px;margin-top:20000px'><div id='private-source' style='display:contents'><div style='display:contents'>${content}</div></div></section>`,
 	},
 	...randomVariants(),
 ];
@@ -128,4 +155,33 @@ export function exposureFixture(entry: ExposureCase, sentinel: string): string {
 	return `<h1>Permitted heading</h1><button type='button' aria-labelledby='private-source private-label'>Permitted fallback</button><input id='outside'><button type='button' aria-describedby='private-source private-description'></button><span id='mixed-reference'>Permitted mixed name ${mixedHidden}</span><button type='button' aria-labelledby='mixed-reference'>Mixed fallback</button>${entry.wrap(privateContent)}<p>Permitted footer</p>`;
 }
 
-export const exposedPositiveFixture = `<h1>Permitted heading</h1><details><summary>Visible closed summary <button type='button'>Visible summary control</button></summary>Hidden body</details><details open><summary>Visible open summary</summary>Visible open body <button type='button'>Visible open control</button></details><dialog open style='display:block'>Visible dialog body <button type='button'>Visible dialog control</button></dialog><section hidden='until-found' style='content-visibility:visible'>Visible until-found override <button type='button'>Visible until-found control</button></section><p aria-hidden=' false '>Visible false aria-hidden</p><span id='visible-description'>Visible description</span><button type='button' aria-describedby='visible-description'></button>`;
+export const exposedPositiveFixture = `<h1>Permitted heading</h1><details><summary>Visible closed summary <button type='button'>Visible summary control</button></summary>Hidden body</details><details open><summary>Visible open summary</summary>Visible open body <button type='button'>Visible open control</button></details><dialog open style='display:block'>Visible dialog body <button type='button'>Visible dialog control</button></dialog><section style='content-visibility:visible'>Visible revealed content <button type='button'>Visible revealed control</button></section><p aria-hidden=' false '>Visible false aria-hidden</p><span id='visible-description'>Visible description</span><button type='button' aria-describedby='visible-description'></button>`;
+
+/** Positive counterparts: ordinary text is never sacrificed to privacy caps. */
+export const exposedCases: ExposureCase[] = [
+	attributes("normal visible text beyond 20k", ""),
+	attributes("display:contents wrapper", "style='display:contents'"),
+	{
+		kind: "nested display:contents wrappers",
+		wrap: (content) =>
+			`<div id='private-source' style='display:contents'><section style='display:contents'>${content}</section></div>`,
+	},
+	{
+		kind: "mixed box and nested display:contents wrappers",
+		wrap: (content) =>
+			`<div style='display:contents'><section id='private-source'><div style='display:contents'>${content}</div></section></div>`,
+	},
+	attributes(
+		"visible content-visibility:auto direct text",
+		"style='content-visibility:auto'"
+	),
+	{
+		kind: "visible auto direct text through display:contents",
+		wrap: (content) =>
+			`<div style='content-visibility:auto'><section id='private-source' style='display:contents'>${content}</section></div>`,
+	},
+];
+
+export function exposedFixture(entry: ExposureCase, marker: string): string {
+	return `<h1>Permitted heading</h1>${entry.wrap(`${"ordinary ".repeat(2800)} ${marker} direct evidence <span>${marker} nested evidence</span><p>Relevant ${marker} passage <a id='late' href='/reference'>${marker} reference</a></p><label id='visible-label' for='outside'>${marker} label</label><span id='visible-description'>${marker} description</span>`)}<input id='outside'><button type='button' aria-labelledby='private-source'></button><button type='button' aria-describedby='visible-description'></button>`;
+}
