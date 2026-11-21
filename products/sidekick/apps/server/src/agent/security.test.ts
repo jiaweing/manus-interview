@@ -1,9 +1,7 @@
-import { describe, expect, mock, spyOn, test } from "bun:test";
-import { createProxyApp, type TurnAdapter, type TurnRequest } from "./app";
+import { describe, expect, spyOn, test } from "bun:test";
+import { fakeAdapter, TEST_TOKEN, VALID_TURN } from "../../tests/turn-fixtures";
+import { createProxyApp, type TurnAdapter } from "./app";
 import { loadProxyConfig } from "./config";
-
-const TEST_TOKEN = "test-token-not-secret";
-const VALID_TURN = { goal: "Read the page", messages: [], snapshot: {} };
 
 function setup(
 	overrides: Record<string, string> = {},
@@ -13,9 +11,7 @@ function setup(
 		SIDEKICK_DEMO_TOKEN: TEST_TOKEN,
 		...overrides,
 	});
-	const turn = mock(async (_request: TurnRequest, _signal: AbortSignal) => ({
-		text: "Adapter test response",
-	}));
+	const { turn } = fakeAdapter();
 	return { app: createProxyApp(config, { turn }, now), turn };
 }
 
@@ -58,7 +54,7 @@ describe("bearer authentication independent of CORS", () => {
 		});
 	}
 
-	test("valid token reaches only minimally validated adapter calls, with or without Origin", async () => {
+	test("valid token reaches only schema-validated adapter calls, with or without Origin", async () => {
 		const { app, turn } = setup();
 		await Promise.all(
 			[
@@ -91,7 +87,7 @@ describe("bearer authentication independent of CORS", () => {
 	});
 });
 
-describe("minimal envelope validation before adapter dispatch", () => {
+describe("turn validation before adapter dispatch", () => {
 	for (const body of [
 		"",
 		" ",
@@ -328,11 +324,11 @@ test("captured logs never contain request/response bodies, tokens, provider keys
 	const body = JSON.stringify({
 		...VALID_TURN,
 		goal: sentinel,
-		snapshot: { providerKey, text: sentinel },
+		snapshot: { ...VALID_TURN.snapshot, text: sentinel },
 	});
 	const config = loadProxyConfig({
 		SIDEKICK_DEMO_TOKEN: TEST_TOKEN,
-		SIDEKICK_MAX_BODY_BYTES: "512",
+		SIDEKICK_MAX_BODY_BYTES: "1024",
 		SIDEKICK_RATE_LIMIT_MAX_REQUESTS: "3",
 	});
 	const adapter: TurnAdapter = {
@@ -358,7 +354,7 @@ test("captured logs never contain request/response bodies, tokens, provider keys
 		expect(await failure.text()).toBe('{"error":"Internal server error"}');
 		expect((await post(app, body)).status).toBe(429);
 		const successApp = createProxyApp(config, {
-			turn: async () => ({ providerKey, text: sentinel }),
+			turn: async () => ({ text: `${providerKey} ${sentinel}` }),
 		});
 		expect((await post(successApp, body)).status).toBe(200);
 		for (const sensitive of [body, TEST_TOKEN, providerKey, sentinel]) {
