@@ -1,7 +1,10 @@
 export const IPC_REQUEST_CHANNEL = "caret:request";
 export const IPC_STATUS_CHANNEL = "caret:status";
 export const MAX_AUDIO_BYTES = 10_000_000;
-export const WEBM_MIME_TYPES = ["audio/webm", "audio/webm;codecs=opus"] as const;
+export const WEBM_MIME_TYPES = [
+  "audio/webm",
+  "audio/webm;codecs=opus",
+] as const;
 
 export type SessionState =
   | "starting"
@@ -14,14 +17,14 @@ export type SessionState =
 
 // Status is deliberately metadata-only: no secrets, text, targets, or audio.
 export interface CaretStatus {
-  state: "idle" | SessionState;
   sessionId: string | null;
+  state: "idle" | SessionState;
 }
 
 export interface AudioSubmission {
-  sessionId: string;
-  mimeType: (typeof WEBM_MIME_TYPES)[number];
   audio: ArrayBuffer;
+  mimeType: (typeof WEBM_MIME_TYPES)[number];
+  sessionId: string;
 }
 
 export type BoundaryError =
@@ -40,10 +43,10 @@ export type BoundaryResult =
   | { ok: false; error: BoundaryError };
 
 export interface CaretApi {
-  setupKey(key: string): Promise<BoundaryResult>;
-  subscribeStatus(listener: (status: CaretStatus) => void): () => void;
-  cancel(sessionId: string): Promise<BoundaryResult>;
-  submitAudio(submission: AudioSubmission): Promise<BoundaryResult>;
+  cancel: (sessionId: string) => Promise<BoundaryResult>;
+  setupKey: (key: string) => Promise<BoundaryResult>;
+  submitAudio: (submission: AudioSubmission) => Promise<BoundaryResult>;
+  subscribeStatus: (listener: (status: CaretStatus) => void) => () => void;
 }
 
 export type BoundaryRequest =

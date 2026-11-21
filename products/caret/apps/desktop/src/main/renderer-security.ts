@@ -7,20 +7,26 @@ export const RENDERER_PRIVILEGES = Object.freeze({
 });
 
 interface PreventableEvent {
-  preventDefault(): void;
+  preventDefault: () => void;
 }
 
 interface GuardedContents {
-  on(
-    event: "will-navigate" | "will-frame-navigate" | "will-redirect" | "will-attach-webview",
-    listener: (event: PreventableEvent) => void,
-  ): unknown;
-  setWindowOpenHandler(handler: () => { action: "deny" }): void;
+  on: <
+    Event extends
+      | "will-navigate"
+      | "will-frame-navigate"
+      | "will-redirect"
+      | "will-attach-webview",
+  >(
+    event: Event,
+    listener: (event: PreventableEvent) => void
+  ) => unknown;
+  setWindowOpenHandler: (handler: () => { action: "deny" }) => void;
 }
 
 export function guardRenderer(
   contents: GuardedContents,
-  log: (message: string) => void = console.info,
+  log: (message: string) => void = console.info
 ): void {
   const blockNavigation = (event: PreventableEvent) => {
     event.preventDefault();

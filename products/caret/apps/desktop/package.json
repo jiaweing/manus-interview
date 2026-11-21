@@ -23,9 +23,9 @@
     "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.3.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "@fontsource/inter": "^5.3.0"
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -34,8 +34,8 @@
     "@vitejs/plugin-react": "^6.3.0",
     "electron": "^45.4.1",
     "electron-vite": "^6.0.0",
+    "playwright": "^1.65.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.8",
-    "playwright": "^1.65.1"
+    "vite": "^8.3.8"
   }
 }

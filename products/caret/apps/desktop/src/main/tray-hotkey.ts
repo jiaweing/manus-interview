@@ -12,71 +12,79 @@ export interface Readiness {
 }
 
 export interface TrayStatus {
-  ready: boolean;
   errors: ReadinessError[];
+  ready: boolean;
 }
 
 interface PreventableEvent {
-  preventDefault(): void;
+  preventDefault: () => void;
 }
 
 export interface SetupWindowPort {
-  on(event: "close" | "minimize", listener: (event: PreventableEvent) => void): unknown;
-  hide(): void;
-  show(): void;
-  isMinimized(): boolean;
-  restore(): void;
+  hide: () => void;
+  isMinimized: () => boolean;
+  on: <Event extends "close" | "minimize">(
+    event: Event,
+    listener: (event: PreventableEvent) => void
+  ) => unknown;
+  restore: () => void;
+  show: () => void;
 }
 
 export interface TrayMenuItem {
-  label: string;
-  enabled?: boolean;
   click?: () => void;
+  enabled?: boolean;
+  label: string;
 }
 
 export interface TrayPort {
-  setToolTip(text: string): void;
-  setContextMenu(menu: unknown): void;
-  destroy(): void;
+  destroy: () => void;
+  setContextMenu: (menu: unknown) => void;
+  setToolTip: (text: string) => void;
 }
 
 export interface TrayHotkeyDependencies {
   app: {
-    requestSingleInstanceLock(): boolean;
-    whenReady(): Promise<void>;
-    on(event: "before-quit" | "will-quit", listener: () => void): unknown;
-    quit(): void;
+    requestSingleInstanceLock: () => boolean;
+    whenReady: () => Promise<void>;
+    on: <Event extends "before-quit" | "will-quit">(
+      event: Event,
+      listener: () => void
+    ) => unknown;
+    quit: () => void;
   };
+  buildMenu: (items: TrayMenuItem[]) => unknown;
+  createSetupWindow: () => SetupWindowPort;
+  createTray: () => TrayPort;
+  getReadiness: () => Readiness;
+  getSessionPhase: () => SessionPhase;
   globalShortcut: {
-    register(accelerator: string, callback: () => void): boolean;
-    unregister(accelerator: string): void;
+    register: (accelerator: string, callback: () => void) => boolean;
+    unregister: (accelerator: string) => void;
   };
-  createSetupWindow(): SetupWindowPort;
-  createTray(): TrayPort;
-  buildMenu(items: TrayMenuItem[]): unknown;
-  getReadiness(): Readiness;
-  getSessionPhase(): SessionPhase;
-  onToggle(): void;
-  onCancel(): void;
-  onStatus?(status: TrayStatus): void;
+  onCancel: () => void;
+  onStatus?: (status: TrayStatus) => void;
+  onToggle: () => void;
 }
 
 export interface TrayHotkeyLifecycle {
+  dispose: () => void;
   /** Resolves false for the secondary instance; it creates no windows or tray. */
   ready: Promise<boolean>;
   /** Call when the main-owned key or microphone readiness changes. */
-  refreshReadiness(): TrayStatus;
-  dispose(): void;
+  refreshReadiness: () => TrayStatus;
 }
 
 const ERROR_LABELS: Record<ReadinessError, string> = {
-  shortcut_unavailable: "Ctrl+Alt+Space unavailable",
   key_not_ready: "Provider key not ready",
   microphone_not_ready: "Microphone not ready",
+  shortcut_unavailable: "Ctrl+Alt+Space unavailable",
 };
 
 /** Main-process lifecycle only: no capture, IPC, provider, or session implementation. */
-export function startTrayHotkey(deps: TrayHotkeyDependencies): TrayHotkeyLifecycle {
+export function startTrayHotkey(
+  deps: TrayHotkeyDependencies
+): TrayHotkeyLifecycle {
   let stopping = false;
   let registered = false;
   let tray: TrayPort | undefined;
@@ -95,55 +103,86 @@ export function startTrayHotkey(deps: TrayHotkeyDependencies): TrayHotkeyLifecyc
   function refreshReadiness(): TrayStatus {
     const readiness = deps.getReadiness();
     const errors: ReadinessError[] = [];
-    if (!registered) errors.push("shortcut_unavailable");
-    if (!readiness.key) errors.push("key_not_ready");
-    if (!readiness.microphone) errors.push("microphone_not_ready");
-    const status = { ready: !stopping && errors.length === 0, errors };
+    if (!registered) {
+      errors.push("shortcut_unavailable");
+    }
+    if (!readiness.key) {
+      errors.push("key_not_ready");
+    }
+    if (!readiness.microphone) {
+      errors.push("microphone_not_ready");
+    }
+    const status = { errors, ready: !stopping && errors.length === 0 };
     if (tray) {
-      const label = errors.length ? errors.map((error) => ERROR_LABELS[error]).join("; ") : "Ready — Ctrl+Alt+Space";
+      const label = errors.length
+        ? errors.map((error) => ERROR_LABELS[error]).join("; ")
+        : "Ready — Ctrl+Alt+Space";
       tray.setToolTip(`Caret — ${label}`);
-      tray.setContextMenu(deps.buildMenu([
-        { label, enabled: false },
-        {
-          label: "Setup",
-          click: () => {
-            if (stopping || !setup) return;
-            if (setup.isMinimized()) setup.restore();
-            setup.show();
+      tray.setContextMenu(
+        deps.buildMenu([
+          { enabled: false, label },
+          {
+            click: () => {
+              if (stopping || !setup) {
+                return;
+              }
+              if (setup.isMinimized()) {
+                setup.restore();
+              }
+              setup.show();
+            },
+            label: "Setup",
           },
-        },
-        { label: "Cancel", click: () => { if (!stopping) deps.onCancel(); } },
-        { label: "Quit", click: () => deps.app.quit() },
-      ]));
+          {
+            click: () => {
+              if (!stopping) {
+                deps.onCancel();
+              }
+            },
+            label: "Cancel",
+          },
+          { click: () => deps.app.quit(), label: "Quit" },
+        ])
+      );
     }
     deps.onStatus?.(status);
     return status;
   }
 
   function activate(): void {
-    if (stopping || !registered) return;
+    if (stopping || !registered) {
+      return;
+    }
     const phase = deps.getSessionPhase();
     // A busy transcription/cleanup/insertion must never spawn another session.
-    if (phase === "busy") return;
+    if (phase === "busy") {
+      return;
+    }
     // Stopping existing capture must remain possible even if readiness was lost.
-    if (phase === "recording" || refreshReadiness().ready) deps.onToggle();
+    if (phase === "recording" || refreshReadiness().ready) {
+      deps.onToggle();
+    }
   }
 
   // Acquire before whenReady, tray creation, window creation or shortcut registration.
   if (!deps.app.requestSingleInstanceLock()) {
     stopping = true;
     deps.app.quit();
-    return { ready: Promise.resolve(false), refreshReadiness, dispose };
+    return { dispose, ready: Promise.resolve(false), refreshReadiness };
   }
 
   deps.app.on("before-quit", dispose);
   deps.app.on("will-quit", dispose);
   const ready = deps.app.whenReady().then(() => {
-    if (stopping) return false;
+    if (stopping) {
+      return false;
+    }
     setup = deps.createSetupWindow();
     for (const event of ["close", "minimize"] as const) {
       setup.on(event, (closeEvent) => {
-        if (stopping) return;
+        if (stopping) {
+          return;
+        }
         closeEvent.preventDefault();
         setup?.hide();
       });
@@ -158,5 +197,5 @@ export function startTrayHotkey(deps: TrayHotkeyDependencies): TrayHotkeyLifecyc
     refreshReadiness();
     return true;
   });
-  return { ready, refreshReadiness, dispose };
+  return { dispose, ready, refreshReadiness };
 }

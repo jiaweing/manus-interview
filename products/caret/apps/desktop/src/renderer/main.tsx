@@ -4,4 +4,6 @@ const root = document.getElementById("root");
 if (!root) {
   throw new Error("missing #root");
 }
-createRoot(root).render(<h1 style={{ fontFamily: "system-ui", fontWeight: 600 }}>Caret</h1>);
+createRoot(root).render(
+  <h1 style={{ fontFamily: "system-ui", fontWeight: 600 }}>Caret</h1>
+);

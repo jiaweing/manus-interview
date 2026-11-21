@@ -6,13 +6,13 @@ import { Overlay } from "./overlay";
 import "./overlay.css";
 
 declare global {
-	interface Window {
-		caretOverlay: OverlayBridge;
-	}
+  interface Window {
+    caretOverlay: OverlayBridge;
+  }
 }
 
 const root = document.getElementById("root");
 if (!root) {
-	throw new Error("Missing overlay root");
+  throw new Error("Missing overlay root");
 }
 createRoot(root).render(<Overlay bridge={window.caretOverlay} />);

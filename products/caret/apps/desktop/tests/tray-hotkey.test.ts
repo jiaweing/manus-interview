@@ -1,68 +1,139 @@
 import { describe, expect, mock, test } from "bun:test";
+import type {
+  Readiness,
+  SessionPhase,
+  TrayHotkeyDependencies,
+  TrayMenuItem,
+  TrayStatus,
+} from "../src/main/tray-hotkey";
 import { startTrayHotkey, TOGGLE_SHORTCUT } from "../src/main/tray-hotkey";
-import type { Readiness, SessionPhase, TrayHotkeyDependencies, TrayMenuItem, TrayStatus } from "../src/main/tray-hotkey";
 import { createTrayTestAdapter } from "../src/main/tray-test-adapter";
 
-function fixture(options: { lock?: boolean; registration?: boolean; registrationThrows?: boolean; readiness?: Readiness; pendingReady?: boolean } = {}) {
+function fixture(
+  options: {
+    lock?: boolean;
+    registration?: boolean;
+    registrationThrows?: boolean;
+    readiness?: Readiness;
+    pendingReady?: boolean;
+  } = {}
+) {
   const appListeners = new Map<string, () => void>();
-  const windowListeners = new Map<string, (event: { preventDefault(): void }) => void>();
+  const windowListeners = new Map<
+    string,
+    (event: { preventDefault: () => void }) => void
+  >();
   let shortcut: (() => void) | undefined;
   let menu: TrayMenuItem[] = [];
-  let readiness: Readiness = options.readiness ?? { key: true, microphone: true };
+  let readiness: Readiness = options.readiness ?? {
+    key: true,
+    microphone: true,
+  };
   let phase: SessionPhase = "idle";
-  let releaseReady: () => void = () => {};
+  let releaseReady: () => void = () => {
+    /* Intentional no-op in this fixture. */
+  };
   const statuses: TrayStatus[] = [];
   const setup = {
-    on: mock((event: "close" | "minimize", listener: (event: { preventDefault(): void }) => void) => { windowListeners.set(event, listener); }),
-    hide: mock(() => {}),
-    show: mock(() => {}),
+    hide: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
     isMinimized: mock(() => false),
-    restore: mock(() => {}),
+    on: mock(
+      (
+        event: "close" | "minimize",
+        listener: (event: { preventDefault: () => void }) => void
+      ) => {
+        windowListeners.set(event, listener);
+      }
+    ),
+    restore: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
+    show: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
   const tray = {
-    setToolTip: mock((_text: string) => {}),
-    setContextMenu: mock((items: unknown) => { menu = items as TrayMenuItem[]; }),
-    destroy: mock(() => {}),
+    destroy: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
+    setContextMenu: mock((items: unknown) => {
+      menu = items as TrayMenuItem[];
+    }),
+    setToolTip: mock((_text: string) => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
-  const ready = options.pendingReady ? new Promise<void>((resolve) => { releaseReady = resolve; }) : Promise.resolve();
+  const ready = options.pendingReady
+    ? new Promise<void>((resolve) => {
+        releaseReady = resolve;
+      })
+    : Promise.resolve();
   const deps: TrayHotkeyDependencies = {
     app: {
+      on: mock((event: "before-quit" | "will-quit", listener: () => void) => {
+        appListeners.set(event, listener);
+      }),
+      quit: mock(() => {
+        /* Intentional no-op in this fixture. */
+      }),
       requestSingleInstanceLock: mock(() => options.lock ?? true),
       whenReady: mock(() => ready),
-      on: mock((event: "before-quit" | "will-quit", listener: () => void) => { appListeners.set(event, listener); }),
-      quit: mock(() => {}),
     },
+    buildMenu: (items) => items,
+    createSetupWindow: mock(() => setup),
+    createTray: mock(() => tray),
+    getReadiness: () => readiness,
+    getSessionPhase: () => phase,
     globalShortcut: {
       register: mock((_accelerator: string, callback: () => void) => {
         shortcut = callback;
-        if (options.registrationThrows) throw new Error("platform details must not be logged");
+        if (options.registrationThrows) {
+          throw new Error("platform details must not be logged");
+        }
         return options.registration ?? true;
       }),
-      unregister: mock((_accelerator: string) => {}),
+      unregister: mock((_accelerator: string) => {
+        /* Intentional no-op in this fixture. */
+      }),
     },
-    createSetupWindow: mock(() => setup),
-    createTray: mock(() => tray),
-    buildMenu: (items) => items,
-    getReadiness: () => readiness,
-    getSessionPhase: () => phase,
-    onToggle: mock(() => {}),
-    onCancel: mock(() => {}),
-    onStatus: (status) => { statuses.push(status); },
+    onCancel: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
+    onStatus: (status) => {
+      statuses.push(status);
+    },
+    onToggle: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
   const lifecycle = startTrayHotkey(deps);
   return {
-    deps, setup, tray, lifecycle, statuses, releaseReady,
     activate: () => shortcut?.(),
-    setReadiness: (value: Readiness) => { readiness = value; },
-    setPhase: (value: SessionPhase) => { phase = value; },
     appEvent: (event: string) => appListeners.get(event)?.(),
+    click: (label: string) =>
+      menu.find((item) => item.label === label)?.click?.(),
+    deps,
+    labels: () => menu.map((item) => item.label),
+    lifecycle,
+    releaseReady,
+    setPhase: (value: SessionPhase) => {
+      phase = value;
+    },
+    setReadiness: (value: Readiness) => {
+      readiness = value;
+    },
+    setup,
+    statuses,
+    tray,
     windowEvent: (event: string) => {
-      const preventDefault = mock(() => {});
+      const preventDefault = mock(() => {
+        /* Intentional no-op in this fixture. */
+      });
       windowListeners.get(event)?.({ preventDefault });
       return preventDefault;
     },
-    click: (label: string) => menu.find((item) => item.label === label)?.click?.(),
-    labels: () => menu.map((item) => item.label),
   };
 }
 
@@ -87,12 +158,15 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
     const f = fixture();
     expect(await f.lifecycle.ready).toBe(true);
     expect(f.deps.globalShortcut.register).toHaveBeenCalledTimes(1);
-    expect(f.deps.globalShortcut.register).toHaveBeenCalledWith(TOGGLE_SHORTCUT, expect.any(Function));
+    expect(f.deps.globalShortcut.register).toHaveBeenCalledWith(
+      TOGGLE_SHORTCUT,
+      expect.any(Function)
+    );
     f.activate();
     expect(f.deps.onToggle).toHaveBeenCalledTimes(1);
     expect(f.setup.show).not.toHaveBeenCalled();
     expect(f.setup.restore).not.toHaveBeenCalled();
-    expect(f.statuses.at(-1)).toEqual({ ready: true, errors: [] });
+    expect(f.statuses.at(-1)).toEqual({ errors: [], ready: true });
   });
 
   for (const throws of [false, true]) {
@@ -101,7 +175,10 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
       await f.lifecycle.ready;
       f.activate();
       expect(f.deps.onToggle).not.toHaveBeenCalled();
-      expect(f.statuses.at(-1)).toEqual({ ready: false, errors: ["shortcut_unavailable"] });
+      expect(f.statuses.at(-1)).toEqual({
+        errors: ["shortcut_unavailable"],
+        ready: false,
+      });
       expect(f.labels()[0]).toContain("Ctrl+Alt+Space unavailable");
       f.lifecycle.dispose();
       expect(f.deps.globalShortcut.unregister).not.toHaveBeenCalled();
@@ -111,15 +188,23 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
   for (const [name, readiness, errors] of [
     ["key", { key: false, microphone: true }, ["key_not_ready"]],
     ["microphone", { key: true, microphone: false }, ["microphone_not_ready"]],
-    ["key and microphone", { key: false, microphone: false }, ["key_not_ready", "microphone_not_ready"]],
+    [
+      "key and microphone",
+      { key: false, microphone: false },
+      ["key_not_ready", "microphone_not_ready"],
+    ],
   ] as const) {
     test(`${name} readiness blocker: no start callback and corresponding error`, async () => {
       const f = fixture({ readiness });
       await f.lifecycle.ready;
       f.activate();
       expect(f.deps.onToggle).not.toHaveBeenCalled();
-      expect(f.statuses.at(-1)).toEqual({ ready: false, errors: [...errors] });
-      expect(f.labels()[0]).toContain(name === "microphone" ? "Microphone not ready" : "Provider key not ready");
+      expect(f.statuses.at(-1)).toEqual({ errors: [...errors], ready: false });
+      expect(f.labels()[0]).toContain(
+        name === "microphone"
+          ? "Microphone not ready"
+          : "Provider key not ready"
+      );
     });
   }
 
@@ -130,7 +215,7 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
     f.activate();
     expect(f.deps.onToggle).not.toHaveBeenCalled();
     f.setReadiness({ key: true, microphone: true });
-    expect(f.lifecycle.refreshReadiness()).toEqual({ ready: true, errors: [] });
+    expect(f.lifecycle.refreshReadiness()).toEqual({ errors: [], ready: true });
     f.activate();
     expect(f.deps.onToggle).toHaveBeenCalledTimes(1);
   });
@@ -195,7 +280,9 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
     f.appEvent("will-quit");
     f.lifecycle.dispose();
     expect(f.deps.globalShortcut.unregister).toHaveBeenCalledTimes(1);
-    expect(f.deps.globalShortcut.unregister).toHaveBeenCalledWith(TOGGLE_SHORTCUT);
+    expect(f.deps.globalShortcut.unregister).toHaveBeenCalledWith(
+      TOGGLE_SHORTCUT
+    );
     expect(f.tray.destroy).toHaveBeenCalledTimes(1);
     f.activate();
     expect(f.deps.onToggle).not.toHaveBeenCalled();
@@ -216,23 +303,61 @@ describe("tray / fixed global hotkey — Linux injected fixtures, not Windows ev
 
 describe("Windows development adapter — injected fixtures only", () => {
   test("disabled, Linux, and packaged paths cannot enable fixture readiness", () => {
-    expect(createTrayTestAdapter({ platform: "win32", enabled: false, packaged: false })).toBeUndefined();
-    expect(createTrayTestAdapter({ platform: "linux", enabled: true, packaged: false })).toBeUndefined();
-    expect(createTrayTestAdapter({ platform: "win32", enabled: true, packaged: true })).toBeUndefined();
+    expect(
+      createTrayTestAdapter({
+        enabled: false,
+        packaged: false,
+        platform: "win32",
+      })
+    ).toBeUndefined();
+    expect(
+      createTrayTestAdapter({
+        enabled: true,
+        packaged: false,
+        platform: "linux",
+      })
+    ).toBeUndefined();
+    expect(
+      createTrayTestAdapter({
+        enabled: true,
+        packaged: true,
+        platform: "win32",
+      })
+    ).toBeUndefined();
   });
 
   test("opt-in adapter emits only bounded event metadata with injected handles; no capture", () => {
-    const emit = mock((_event: unknown) => {});
-    const hooks = createTrayTestAdapter({ platform: "win32", enabled: true, packaged: false, readForegroundHandle: () => "1234", emit });
+    const emit = mock((_event: unknown) => {
+      /* Intentional no-op in this fixture. */
+    });
+    const hooks = createTrayTestAdapter({
+      emit,
+      enabled: true,
+      packaged: false,
+      platform: "win32",
+      readForegroundHandle: () => "1234",
+    });
     expect(hooks?.getReadiness()).toEqual({ key: true, microphone: true });
     hooks?.onToggle();
     expect(hooks?.getSessionPhase()).toBe("recording");
-    expect(emit).toHaveBeenLastCalledWith({ fixture: true, event: "toggle", foregroundBefore: "1234", foregroundAfter: "1234", phase: "recording" });
+    expect(emit).toHaveBeenLastCalledWith({
+      event: "toggle",
+      fixture: true,
+      foregroundAfter: "1234",
+      foregroundBefore: "1234",
+      phase: "recording",
+    });
     hooks?.onToggle();
     expect(hooks?.getSessionPhase()).toBe("idle");
     hooks?.onToggle();
     hooks?.onCancel();
     expect(hooks?.getSessionPhase()).toBe("idle");
-    expect(emit).toHaveBeenLastCalledWith({ fixture: true, event: "cancel", foregroundBefore: "1234", foregroundAfter: "1234", phase: "idle" });
+    expect(emit).toHaveBeenLastCalledWith({
+      event: "cancel",
+      fixture: true,
+      foregroundAfter: "1234",
+      foregroundBefore: "1234",
+      phase: "idle",
+    });
   });
 });
