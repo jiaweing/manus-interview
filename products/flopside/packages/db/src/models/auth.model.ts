@@ -1,0 +1,73 @@
+import mongoose from "mongoose";
+
+const { Schema, model } = mongoose;
+const { ObjectId } = Schema.Types;
+
+const userSchema = new Schema(
+	{
+		_id: { auto: true, type: ObjectId },
+		createdAt: { default: Date.now, required: true, type: Date },
+		email: { required: true, type: String, unique: true },
+		emailVerified: { default: false, required: true, type: Boolean },
+		image: { type: String },
+		name: { required: true, type: String },
+		updatedAt: { default: Date.now, required: true, type: Date },
+	},
+	{ collection: "user" }
+);
+
+const sessionSchema = new Schema(
+	{
+		_id: { auto: true, type: ObjectId },
+		createdAt: { default: Date.now, required: true, type: Date },
+		expiresAt: { required: true, type: Date },
+		ipAddress: { type: String },
+		token: { required: true, type: String, unique: true },
+		updatedAt: { default: Date.now, required: true, type: Date },
+		userAgent: { type: String },
+		userId: { ref: "User", required: true, type: ObjectId },
+	},
+	{ collection: "session" }
+);
+sessionSchema.index({ userId: 1 });
+
+const accountSchema = new Schema(
+	{
+		_id: { auto: true, type: ObjectId },
+		accessToken: { type: String },
+		accessTokenExpiresAt: { type: Date },
+		accountId: { required: true, type: String },
+		createdAt: { default: Date.now, required: true, type: Date },
+		idToken: { type: String },
+		password: { type: String },
+		providerId: { required: true, type: String },
+		refreshToken: { type: String },
+		refreshTokenExpiresAt: { type: Date },
+		scope: { type: String },
+		updatedAt: { default: Date.now, required: true, type: Date },
+		userId: { ref: "User", required: true, type: ObjectId },
+	},
+	{ collection: "account" }
+);
+accountSchema.index({ accountId: 1, providerId: 1 }, { unique: true });
+accountSchema.index({ userId: 1 });
+
+const verificationSchema = new Schema(
+	{
+		_id: { auto: true, type: ObjectId },
+		createdAt: { default: Date.now, required: true, type: Date },
+		expiresAt: { required: true, type: Date },
+		identifier: { required: true, type: String },
+		updatedAt: { default: Date.now, required: true, type: Date },
+		value: { required: true, type: String },
+	},
+	{ collection: "verification" }
+);
+verificationSchema.index({ identifier: 1 });
+
+const User = model("User", userSchema);
+const Session = model("Session", sessionSchema);
+const Account = model("Account", accountSchema);
+const Verification = model("Verification", verificationSchema);
+
+export { Account, Session, User, Verification };

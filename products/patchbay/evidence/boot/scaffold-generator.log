@@ -1,0 +1,285 @@
+Resolving dependencies
+Resolved, downloaded and extracted [2]
+
+ ██████╗ ███████╗████████╗████████╗███████╗██████╗
+ ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
+ ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
+ ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
+ ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
+ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+
+ ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
+ ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+    ██║       ███████╗   ██║   ███████║██║     █████╔╝
+    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
+    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
+    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+ 
+┌  Configure your new project
+│
+●  Command-line options applied.
+│
+●  Stack ready
+│
+│  Project
+│    Name       patchbay
+│    Directory  patchbay
+│
+│  Application
+│    Frontend  Next.js, Expo + Uniwind
+│    Backend   Hono
+│    Runtime   Bun
+│    API       None
+│
+│  Data
+│    Database  MongoDB
+│    ORM       Mongoose
+│    Setup     None
+│
+│  Product
+│    Auth      Better Auth
+│    Payments  Polar
+│    Addons    Biome, evlog, Fumadocs, MCP servers, Agent skills, Turborepo, Ultracite, WXT
+│    Examples  AI chat
+│
+│  Delivery
+│    Web deploy       None
+│    Server deploy    None
+│    Package manager  Bun
+│    Git              No
+│    Install deps     Yes
+│
+●  Setting up Ultracite...
+│  SETUP · 1/4
+◆  Which linter do you want to use?
+│  ● Biome (Recommended)
+│  ○ Oxlint + Oxfmt
+└   ↑↓  move   enter  choose   ^c  cancel
+◇  Which linter do you want to use? › Biome (Recommended)
+│  SETUP · 2/4
+◆  Which editors do you want to configure (recommended)?
+│  ◻ VS Code
+│  ◻ Cursor
+│  ◻ Devin Desktop
+│  ◻ CodeBuddy
+│  ◻ Antigravity IDE
+│  ◻ IBM Bob
+│  ◻ Kiro
+│  ◻ Trae
+│  ◻ Void
+│  ◻ Zed
+│  ◻ Universal (.vscode/settings.json)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Which editors do you want to configure (recommended)? › none
+│  SETUP · 3/4
+◆  Which agent files do you want to add (optional)?
+│  ◻ Universal (AGENTS.md — covers all agents)
+│  ◻ Claude Code
+│  ◻ Replit Agent
+│  ◻ Aider
+│  ◻ Gemini CLI
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Which agent files do you want to add (optional)? › none
+│  SETUP · 4/4
+◆  Which agent hooks do you want to enable (optional)?
+│  ◻ Cursor
+│  ◻ Devin Desktop
+│  ◻ CodeBuddy
+│  ◻ Claude Code
+│  ◻ Codex
+│  ◻ Deep Agents
+│  ◻ GitHub Copilot
+│  ◻ Grok Build
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Which agent hooks do you want to enable (optional)? › none
+│
+◒  Running Ultracite init command
+◇  Ultracite setup successfully!
+│
+●  Setting up Fumadocs...
+│  SETUP · 1/4
+◆  Choose a template
+│  ● Next.js: Fumadocs MDX (recommended)
+│  ○ Next.js Static: Fumadocs MDX
+│  ○ Waku: Fumadocs MDX
+│  ○ React Router: Fumadocs MDX (not RSC)
+│  ○ React Router SPA: Fumadocs MDX (not RSC)
+│  ○ Tanstack Start: Fumadocs MDX (not RSC)
+│  ○ Tanstack Start SPA: Fumadocs MDX (not RSC)
+│  ○ Astro: Fumadocs MDX
+└   ↑↓  move   enter  choose   ^c  cancel
+◇  Choose a template › Next.js: Fumadocs MDX
+│  SETUP · 2/4
+◆  Choose a search solution?
+│  ● Default (local search powered by Orama, recommended)
+│  ○ Orama Cloud
+└   ↑↓  move   enter  choose   b  back   ^c  cancel
+◇  Choose a search solution? › Default
+│  SETUP · 3/4
+◆  Configure Open Graph Image generation?
+│  ● next/og (Next.js built-in solution)
+│  ○ Takumi
+└   ↑↓  move   enter  choose   b  back   ^c  cancel
+◇  Configure Open Graph Image generation? › next/og
+│  SETUP · 4/4
+◆  Configure AI Chat?
+│  ● No
+│  ○ AI SDK
+│  ○ LLM Gateway
+│  ○ Inkeep AI
+└   ↑↓  move   enter  choose   b  back   ^c  cancel
+◇  Configure AI Chat? › No
+│
+◒  Running Fumadocs create command
+◇  Fumadocs setup complete!
+│
+●  Setting up WXT...
+│  SETUP
+◆  Choose a template
+│  ○ Vanilla
+│  ○ Vue
+│  ● React (React template)
+│  ○ Solid
+│  ○ Svelte
+└   ↑↓  move   enter  choose   ^c  cancel
+◇  Choose a template › React
+│
+◒  Running WXT init command
+◇  WXT setup complete!
+│  SETUP · 1/3
+◆  Where should skills be installed?
+│  ● Project (Writes to project config files (recommended for teams))
+│  ○ Global
+└   ↑↓  move   enter  choose   ^c  cancel
+◇  Where should skills be installed? › Project
+│  SETUP · 2/3
+◆  Select skills to install
+│  ◼ web-design-guidelines (Vercel Agent Skills)
+│  ◼ vercel-composition-patterns (Vercel Agent Skills)
+│  ◼ vercel-react-best-practices (Vercel Agent Skills)
+│  ◼ vercel-react-native-skills (Vercel Agent Skills)
+│  ◼ shadcn (shadcn/ui)
+│  ◼ next-dev-loop (Next.js)
+│  ◼ next-cache-components-adoption (Next.js)
+│  ◼ next-cache-components-optimizer (Next.js)
+│  ◼ next-partial-prefetching-adoption (Next.js)
+│  ◼ heroui-native (HeroUI Native)
+│  ◼ expo-overview (Expo)
+│  ◼ expo-router (Expo)
+│  ◼ expo-dev-client (Expo)
+│  ◼ expo-native-ui (Expo)
+│  ...
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Select skills to install › web-design-guidelines, 
+vercel-composition-patterns, vercel-react-best-practices, 
+vercel-react-native-skills, shadcn, next-dev-loop, 
+next-cache-components-adoption, next-cache-components-optimizer, 
+next-partial-prefetching-adoption, heroui-native, expo-overview, expo-router, 
+expo-dev-client, expo-native-ui, expo-data-fetching, eas-app-stores, 
+eas-workflows, better-auth-best-practices, better-auth-security-best-practices, 
+email-and-password-best-practices, ai-sdk, turborepo, hono, ultracite, 
+review-logging-patterns, build-audit-logs, analyze-logs
+│  SETUP · 3/3
+◆  Select agents to install skills to
+│  ◼ Universal (.agents/skills) (17 agents including Amp, Antigravity, Cline, 
+│  Codex, Cursor, Gemini CLI, Copilot, OpenCode, Warp, and Zed)
+│  ◼ Claude Code
+│  ◻ AdaL
+│  ◻ AiderDesk
+│  ◻ AstrBot
+│  ◻ Augment
+│  ◻ Autohand Code CLI
+│  ◻ IBM Bob
+│  ◻ CodeArts Agent
+│  ...
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Select agents to install skills to › Universal (.agents/skills), Claude Code
+│
+◒  Installing skills
+◇  Skills installed
+│
+●  Setting up MCP servers...
+│  SETUP · 1/3
+◆  Where should MCP servers be installed?
+│  ● Project (Writes to project config files (recommended for teams))
+│  ○ Global
+└   ↑↓  move   enter  choose   ^c  cancel
+◇  Where should MCP servers be installed? › Project
+│  SETUP · 2/3
+◆  Select MCP servers to install
+│  ◼ Better T Stack (bunx create-better-t-stack@latest mcp)
+│  ◼ Context7 (@upstash/context7-mcp)
+│  ◼ shadcn/ui (npx -y shadcn@latest mcp)
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Select MCP servers to install › Better T Stack, Context7, shadcn/ui, Next 
+Devtools, Better Auth, Expo, Polar
+│  SETUP · 3/3
+◆  Select agents to install MCP servers to
+│  ◼ Cursor
+│  ◼ Claude Code
+│  ◻ Codex
+│  ◻ OpenCode
+│  ◻ Gemini CLI
+│  ◻ GitHub Copilot CLI
+│  ◻ Grok Build
+│  ◻ MCPorter
+│  ◼ VS Code (GitHub Copilot)
+│  ◻ Zed
+│  ◻ Kilo Code
+│  ◻ Kimi Code
+│  ◻ Kiro CLI
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Select agents to install MCP servers to › Cursor, Claude Code, VS Code 
+(GitHub Copilot)
+│
+◒  Installing MCP servers
+◇  MCP servers installed
+│
+◆  Project scaffolded
+│
+◒  Running bun install
+Resolving dependencies
+Resolved, downloaded and extracted [4674]
+Saved lockfile
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+◇  Dependencies installed
+│
+│ ╭─Next steps─────────────────────────────────────────────────────────────────╮
+│ │  1. cd patchbay                                                            │
+│ │  2. bun run dev                                                            │
+│ │                                                                            │
+│ │  Local development                                                         │
+│ │  Frontend  http://localhost:3001                                           │
+│ │  API       http://localhost:3000                                           │
+│ │  Fumadocs  http://localhost:4000                                           │
+│ │                                                                            │
+│ │  NOTE: For Expo connectivity issues, update                                │
+│ │     apps/native/.env with your local IP address:                           │
+│ │     EXPO_PUBLIC_SERVER_URL=http://<YOUR_LOCAL_IP>:3000                     │
+│ │                                                                            │
+│ │  Linting and formatting:                                                   │
+│ │  • Run checks: bun run check                                               │
+│ │                                                                            │
+│ │  Polar Payments Setup:                                                     │
+│ │  • Get access token & product ID from https://sandbox.polar.sh/            │
+│ │  • Set POLAR_ACCESS_TOKEN in apps/server/.env                              │
+│ │                                                                            │
+│ │  WARNING: 'bun' might cause issues with web + native apps in a monorepo.   │
+│ │     Use 'pnpm' if problems arise.                                          │
+│ ╰────────────────────────────────────────────────────────────────────────────╯
+│
+│  Like Better T Stack? Star the project on GitHub
+│  https://github.com/AmanVarshney01/create-better-t-stack
+│
+│  Setup saved to history
+│  bunx create-better-t-stack@latest history
+│
+└  Project ready in 247.2s
+
+
+SCAFFOLD_EXIT=0

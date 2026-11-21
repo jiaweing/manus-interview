@@ -5,15 +5,18 @@
   "type": "module",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite build && electron-vite dev",
     "build": "electron-vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
     "build:helper": "bun native/scripts/build.ts",
-    "test:helper-protocol": "bun native/scripts/test.ts",
-    "typecheck:helper": "tsc --noEmit -p native/tsconfig.json",
-    "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
     "helper:snapshot": "bun native/scripts/test.ts --snapshot",
-    "verify:helper-secrets": "bun native/scripts/check-secrets.ts"
+    "test:helper-protocol": "bun native/scripts/test.ts",
+    "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
+    "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
+    "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:helper": "tsc --noEmit -p native/tsconfig.json",
+    "verify:helper-secrets": "bun native/scripts/check-secrets.ts",
+    "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

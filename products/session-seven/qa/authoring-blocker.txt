@@ -1,0 +1,52 @@
+BLOCKED authoring model: anthropic/claude-opus-5.5
+catalog.listed=true
+catalog.checkedAt=2026-11-21T14:07:42.769Z
+catalog.evidenceUrl=https://openrouter.ai/api/v1/models
+chatRequests=0
+error=no OPENROUTER_API_KEY
+
+{
+  "status": "blocked",
+  "modelId": "anthropic/claude-opus-5.5",
+  "requestRef": null,
+  "generationId": null,
+  "catalog": {
+    "listed": true,
+    "checkedAt": "2026-11-21T14:07:42.769Z",
+    "evidenceUrl": "https://openrouter.ai/api/v1/models",
+    "evidence": {
+      "id": "anthropic/claude-opus-5.5",
+      "context_length": 1000000,
+      "supported_parameters": [
+        "include_reasoning",
+        "max_completion_tokens",
+        "max_tokens",
+        "reasoning",
+        "reasoning_effort",
+        "response_format",
+        "stop",
+        "structured_outputs",
+        "tool_choice",
+        "tools",
+        "verbosity"
+      ],
+      "pricing": {
+        "prompt": "0.000004",
+        "completion": "0.00002",
+        "web_search": "0.01",
+        "input_cache_read": "0.0000002",
+        "input_cache_write": "0.000005",
+        "input_cache_write_1h": "0.000008"
+      }
+    }
+  },
+  "usage": null,
+  "timestamps": {
+    "startedAt": "2026-11-21T14:07:42.769Z",
+    "requestStartedAt": null,
+    "responseReceivedAt": null,
+    "completedAt": "2026-11-21T14:07:46.178Z"
+  },
+  "chatRequests": 0,
+  "error": "no OPENROUTER_API_KEY"
+}

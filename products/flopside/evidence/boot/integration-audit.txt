@@ -1,0 +1,28 @@
+
+MODE=dev — established TCP connections for scoped runtime pids
+None observed for scoped Next/supervisor processes at this instant.
+
+MODE=start — established TCP connections for scoped runtime pids
+None observed for scoped Next/supervisor processes at this instant.
+
+--- Runtime import graph (excluding tests) ---
+apps/server/src/app.ts:import { Hono } from "hono";
+apps/server/src/app.ts:app.get("/", (c) => c.text("OK"));
+apps/server/src/index.ts:import { websocket } from "hono/bun";
+apps/server/src/index.ts:import { app } from "./app";
+apps/server/src/index.ts:const server = Bun.serve({
+apps/web/src/app/layout.tsx:import type { Metadata } from "next";
+apps/web/src/app/layout.tsx:import "../index.css";
+apps/web/next.config.ts:import type { NextConfig } from "next";
+scripts/run-apps.ts:import { createRequire } from "node:module";
+scripts/run-apps.ts:import { dirname, resolve } from "node:path";
+
+--- No nested Git metadata ---
+find completed; no output means no nested .git.
+
+--- Builder listener cleanup ---
+State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+
+--- Builder runner cleanup ---
+
+Static runtime imports are Hono/hono-bun, Next type-only, CSS and Bun/Node builtins. No Mongo, auth, Polar, AI or evlog initializer is reachable from web/server startup.
