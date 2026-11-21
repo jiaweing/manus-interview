@@ -17,15 +17,20 @@
     "@patchbay/auth": "workspace:*",
     "@patchbay/db": "workspace:*",
     "ai": "catalog:",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "better-auth": "catalog:",
     "evlog": "catalog:",
     "hono": "^4.13.18",
+    "semver": "^7.8.6",
+    "smol-toml": "^1.9.1",
     "varlock": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@patchbay/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@types/semver": "^7.8.0",
     "tsdown": "^0.23.7",
     "typescript": "^6.0.3"
   }
