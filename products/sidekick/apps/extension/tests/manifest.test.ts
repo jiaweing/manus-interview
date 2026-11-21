@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "bun";
+import { validateProxyUrl } from "../../../packages/config/src/proxy-url";
+import { proxyUrl } from "../src/proxy";
 import { contentScriptInjection } from "../utils/content-script";
 import {
 	optionalDemoOrigins,
@@ -69,7 +71,7 @@ describe("production Sidekick manifest", () => {
 
 	test("requires only the configured proxy origin and leaves demo origins optional", () => {
 		expect(manifest.host_permissions).toEqual([
-			proxyHostPermission(process.env.SIDEKICK_PROXY_URL),
+			proxyHostPermission(proxyUrl, process.env.NODE_ENV === "production"),
 		]);
 		expect(manifest.optional_host_permissions).toEqual(optionalDemoOrigins);
 		for (const origin of [
@@ -124,9 +126,9 @@ describe("production Sidekick manifest", () => {
 });
 
 describe("proxy origin configuration", () => {
-	test("defaults to local development and reduces an HTTPS URL to its origin", () => {
+	test("defaults to local development and normalizes an HTTPS origin", () => {
 		expect(proxyHostPermission()).toBe("http://localhost:8787/*");
-		expect(proxyHostPermission("https://proxy.example.com/v1/agent/turn")).toBe(
+		expect(proxyHostPermission("https://proxy.example.com/")).toBe(
 			"https://proxy.example.com/*"
 		);
 	});
@@ -146,11 +148,35 @@ describe("proxy origin configuration", () => {
 		for (const url of [
 			"https://*.example.com",
 			"https://test-user:test-token-not-secret@proxy.example.com",
+			"https://proxy.example.com/v1/agent/turn",
+			"https://proxy.example.com/?token=test-token-not-secret",
+			"https://proxy.example.com/#token",
 			"file:///tmp/proxy",
 			"javascript:alert(1)",
 			"not-a-url",
 		]) {
 			expect(() => proxyHostPermission(url)).toThrow();
+			expect(() => validateProxyUrl(url, false)).toThrow();
 		}
+	});
+
+	test("uses the same public URL for the extension client and manifest", () => {
+		expect(proxyUrl).toBe(
+			validateProxyUrl(process.env.WXT_SIDEKICK_PROXY_URL, false)
+		);
+		expect(proxyHostPermission(proxyUrl)).toBe(`${proxyUrl}/*`);
+	});
+
+	test("production requires an explicit HTTPS origin, even for loopback", () => {
+		for (const url of [
+			undefined,
+			"http://localhost:8787",
+			"http://proxy.example.com",
+		]) {
+			expect(() => proxyHostPermission(url, true)).toThrow();
+		}
+		expect(proxyHostPermission("https://proxy.example.com", true)).toBe(
+			"https://proxy.example.com/*"
+		);
 	});
 });

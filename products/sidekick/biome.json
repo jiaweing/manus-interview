@@ -28,7 +28,9 @@
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
       "!**/.source",
-      "!**/convex/_generated"
+      "!**/convex/_generated",
+      "!**/.wxt",
+      "!**/.output"
     ]
   },
   "formatter": {
@@ -64,6 +66,7 @@
     }
   },
   "javascript": {
+    "globals": ["browser", "defineBackground", "defineContentScript"],
     "formatter": {
       "quoteStyle": "double"
     }

@@ -1,0 +1,5 @@
+COMMAND=bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+Checked 1407 installs across 1554 packages (no changes) [1.79s]
+EXIT_CODE=0

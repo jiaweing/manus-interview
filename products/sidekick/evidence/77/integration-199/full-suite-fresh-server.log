@@ -1,0 +1,71 @@
+bun test v1.4.5 (a7733435c)
+
+apps/extension/tests/manifest.test.ts:
+(pass) production Sidekick manifest > registers a resolvable MV3 side panel without a toolbar popup [0.10ms]
+(pass) production Sidekick manifest > grants exactly the five browser capabilities, never debugger or native messaging [0.07ms]
+(pass) production Sidekick manifest > requires only the configured proxy origin and leaves demo origins optional [0.11ms]
+(pass) production Sidekick manifest > packages the content script but does not auto-inject it or grant matches [0.97ms]
+(pass) production Sidekick manifest > keeps the MV3 worker limited to toolbar/panel setup [0.93ms]
+(pass) proxy origin configuration > defaults to local development and normalizes an HTTPS origin [0.05ms]
+(pass) proxy origin configuration > permits only loopback HTTP development URLs [0.14ms]
+(pass) proxy origin configuration > rejects wildcard, credential-bearing, non-HTTP(S), and malformed URLs [0.21ms]
+(pass) proxy origin configuration > uses the same public URL for the extension client and manifest [0.03ms]
+(pass) proxy origin configuration > production requires an explicit HTTPS origin, even for loopback [0.08ms]
+
+apps/server/tests/https.smoke.test.ts:
+(pass) HTTPS hosting gate: reachable turn shell authenticates without a model call [22.32ms]
+
+apps/server/src/agent/security.test.ts:
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 0) [5.94ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 1) [0.67ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 2) [0.48ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 3) [0.43ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 4) [0.65ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 5) [0.62ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 6) [0.38ms]
+(pass) bearer authentication independent of CORS > valid token reaches only minimally validated adapter calls, with or without Origin [1.83ms]
+(pass) bearer authentication independent of CORS > preflight never calls the adapter or authorizes a subsequent POST [0.79ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: empty [0.44ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400:   [0.35ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: { [0.60ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: null [0.31ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: [] [0.44ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {} [0.39ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":" "} [0.28ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":123,"messages":[],"snapshot":{}} [0.41ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":{},"snapshot":{}} [0.44ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":[],"snapshot":null} [0.33ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":[],"snapshot":[]} [0.39ms]
+(pass) minimal envelope validation before adapter dispatch > non-JSON content type is rejected [0.47ms]
+(pass) minimal envelope validation before adapter dispatch > valid shell without adapter remains explicitly unimplemented [0.50ms]
+(pass) actual request byte limit > body beyond configured cap is 413 and never dispatches [0.61ms]
+(pass) actual request byte limit > oversized declared Content-Length is 413 [0.48ms]
+(pass) actual request byte limit > a lying small Content-Length cannot bypass actual-byte accounting [0.46ms]
+(pass) actual request byte limit > multi-chunk bodies are bounded without Content-Length [0.49ms]
+(pass) actual request byte limit > UTF-8 bytes, not JavaScript character count, determine cap [0.56ms]
+(pass) actual request byte limit > exact byte cap is accepted [0.49ms]
+(pass) bounded fixed-window token rate budget > 429 blocks adapter, ignores spoofed IP/Origin, and resets after configured window [1.15ms]
+(pass) bounded fixed-window token rate budget > unauthenticated requests do not exhaust the authenticated budget [0.53ms]
+(pass) bounded fixed-window token rate budget > invalid authorized requests consume budget and cannot flood the parser [0.39ms]
+(pass) environment and production HTTPS configuration > missing token fails closed without serializing environment [0.07ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: absent [0.06ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: http://proxy.example [0.02ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: http://localhost:8787
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: ftp://proxy.example
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: not-a-url [0.02ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://user:dummy-key@proxy.example
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/?token=dummy
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/path
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/#token
+(pass) environment and production HTTPS configuration > production accepts a credential-free HTTPS public origin [0.05ms]
+(pass) environment and production HTTPS configuration > development HTTP is restricted to loopback [0.11ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_MAX_BODY_BYTES rejects zero, negative, fractional, unsafe and empty values [0.10ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_RATE_LIMIT_MAX_REQUESTS rejects zero, negative, fractional, unsafe and empty values [0.06ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_RATE_LIMIT_WINDOW_MS rejects zero, negative, fractional, unsafe and empty values [0.10ms]
+(pass) environment and production HTTPS configuration > PORT rejects zero, negative, fractional, unsafe and empty values [0.06ms]
+(pass) captured logs never contain request/response bodies, tokens, provider keys, or sensitive sentinels [1.56ms]
+
+ 59 pass
+ 0 fail
+ 211 expect() calls
+Ran 59 tests across 3 files. [79.00ms]

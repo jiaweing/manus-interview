@@ -2,16 +2,16 @@ $ ultracite check
 /home/ubuntu/manus-interview/products/sidekick/biome.json:46:9 deserialize ━━━━━━━━━━
 
   × Found an unknown key `useTailwindSortedClasses`.
-  
+
     44 │       },
     45 │       "nursery": {
   > 46 │         "useTailwindSortedClasses": {
        │         ^^^^^^^^^^^^^^^^^^^^^^^^^^
     47 │           "level": "warn",
     48 │           "fix": "safe"
-  
+
   i Known keys:
-  
+
   - recommended
   - preset
   - noAstroConflictingSetDirectives
@@ -144,11 +144,11 @@ $ ultracite check
   - useVueConsistentDefinePropsDeclaration
   - useVueNextTickPromise
   - useVueValidVFor
-  
+
 
 configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   × Biome exited because the configuration resulted in errors. Please fix them.
-  
+
 
 error: script "check" exited with code 1

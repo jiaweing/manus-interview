@@ -1,0 +1,103 @@
+# Issue #153 builder checks (independent verifier still required)
+$ bun run validate:timeline
+$ bun apps/video/scripts/validate-timeline.js
+PASS timeline: 6 products, 8 scenes, 1800 frames
+exitCode=0
+
+$ bun test apps/video/tests/timeline.test.js
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/timeline.test.js:
+(pass) locked timeline > accepts the namespace and scenes-only JSON contract [3.19ms]
+(pass) locked timeline > owns fixed beat values, readiness labels and recursively frozen illustration data [0.51ms]
+(pass) locked timeline > scene lookup respects every end-exclusive cut and rejects outside/noninteger frames [0.38ms]
+(pass) locked timeline > rejects missing product with MISSING_PRODUCT [0.90ms]
+(pass) locked timeline > rejects one-frame gap with GAP [0.70ms]
+(pass) locked timeline > rejects caption outside interval with CAPTION_OUT_OF_SCENE [0.40ms]
+(pass) locked timeline > rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE [0.42ms]
+(pass) locked timeline > rejects duplicate product with DUPLICATE_PRODUCT [0.43ms]
+(pass) locked timeline > rejects overlap with OVERLAP [0.37ms]
+(pass) locked timeline > rejects wrong duration with WRONG_DURATION [0.22ms]
+(pass) locked timeline > rejects over-long line with CAPTION_LINE_LENGTH [0.25ms]
+(pass) locked timeline > rejects three lines with CAPTION_LINES [0.19ms]
+(pass) locked timeline > rejects bad status with INVALID_STATUS [0.16ms]
+(pass) locked timeline > rejects each changed beat constant and total frame count [0.68ms]
+(pass) locked timeline > rejects short key-text holds, missing PRDs, changed captions and framing status [0.73ms]
+(pass) locked timeline > requires purpose-specific truthful claims and concept qualification [0.33ms]
+(pass) locked timeline > audits unsupported wording in both claims and captions [2.33ms]
+(pass) locked timeline > allows prototype only with a nonblank auditable reference, never out-of-scope promises [0.42ms]
+(pass) locked timeline > malformed records return named violations without throwing [0.31ms]
+$ bun run validate:timeline
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js
+exitCode=0
+(pass) real CLI verification with temporary fixtures > default command prints the exact PASS line and exits zero [19.38ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/missing-product.json
+FAIL timeline: WRONG_SCENE_COUNT Expected 8 scenes, received 7.
+FAIL timeline: MISSING_PRODUCT Missing Caret.
+FAIL timeline: MISSING_SCENE Missing caret.
+FAIL timeline: WRONG_SCENE_ORDER flopside is not in the prescribed position 1.
+FAIL timeline: GAP flopside starts at 420; previous end is 180.
+FAIL timeline: WRONG_SCENE_ORDER patchbay is not in the prescribed position 2.
+FAIL timeline: WRONG_SCENE_ORDER sidekick is not in the prescribed position 3.
+FAIL timeline: WRONG_SCENE_ORDER tetherterm is not in the prescribed position 4.
+FAIL timeline: WRONG_SCENE_ORDER glassroom is not in the prescribed position 5.
+FAIL timeline: WRONG_SCENE_ORDER outro is not in the prescribed position 6.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1560, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/missing-product.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects missing product with MISSING_PRODUCT and exit 1 [19.25ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/one-frame-gap.json
+FAIL timeline: WRONG_SCENE_INTERVAL caret must start at bar 4 and span 4 bars.
+FAIL timeline: WRONG_BEAT_VALUES caret requires positive whole bars and a one-based startBar.
+FAIL timeline: WRONG_DURATION caret must span 240 frames.
+FAIL timeline: GAP flopside starts at 420; previous end is 419.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1799, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/one-frame-gap.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects one-frame gap with GAP and exit 1 [19.28ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/caption-outside-interval.json
+FAIL timeline: CAPTION_OUT_OF_SCENE caret caption must stay inside [180,420) with integer end-exclusive frames.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/caption-outside-interval.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects caption outside interval with CAPTION_OUT_OF_SCENE and exit 1 [19.77ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/prototype-without-evidence.json
+FAIL timeline: PROTOTYPE_WITHOUT_EVIDENCE caret prototype requires a nonempty evidenceRef.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/prototype-without-evidence.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE and exit 1 [18.60ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/valid.json
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/valid.json
+exitCode=0
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/valid.js
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/valid.js
+exitCode=0
+(pass) real CLI verification with temporary fixtures > accepts a JavaScript fixture module and valid scenes-only JSON [41.20ms]
+$ bun run validate:timeline --unknown
+FAIL timeline: INVALID_ARGUMENTS Expected --file <path.json|.js>.
+$ bun apps/video/scripts/validate-timeline.js --unknown
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/invalid.json
+FAIL timeline: INVALID_FILE JSON Parse error: Unexpected identifier "not"
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/invalid.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-kRInyJ/missing.json
+FAIL timeline: INVALID_FILE ENOENT: no such file or directory, open '/tmp/session-seven-timeline-kRInyJ/missing.json'
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-kRInyJ/missing.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > invalid input and arguments fail without a passing line [52.18ms]
+
+ 26 pass
+ 0 fail
+ 175 expect() calls
+Ran 26 tests across 1 file. [215.00ms]
+testExitCode=0

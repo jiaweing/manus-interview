@@ -1,0 +1,18 @@
+bun install --frozen-lockfile	1
+WXT_SIDEKICK_PROXY_URL=<public HTTPS origin> bun install --frozen-lockfile	0
+bun run fix	0
+bun run check	0
+bun run typecheck	0
+bun test	1
+bun run build:extension	0
+bun test apps/extension/tests/manifest.test.ts	0
+bun test apps/server/src/agent/security.test.ts	0
+bun --env-file=/home/ubuntu/wt/78/products/sidekick/.env test apps/server/tests/https.smoke.test.ts	1
+bun --env-file=<private fresh fixture> test apps/server/tests/https.smoke.test.ts	0
+bun --env-file=<private fresh fixture> test	0
+bun --env-file=<private fresh fixture> run verify:secrets	0
+xvfb-run -a node /home/ubuntu/verify/integrate-199/browser-check.mjs	0
+git diff --check origin/main (staged integration)	0
+bun run fix (final)	0
+bun run check (final)	0
+bun --env-file=<private fresh fixture> run verify:secrets (final)	0

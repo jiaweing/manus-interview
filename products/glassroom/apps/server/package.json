@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "bun build src/index.ts --target bun --outdir dist",
+    "check-types": "tsc --noEmit",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run dist/index.js"
+  },
+  "dependencies": {
+    "hono": "^4.13.18",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@glassroom/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "^6.0.3"
+  }
+}

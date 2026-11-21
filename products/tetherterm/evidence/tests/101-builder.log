@@ -1,0 +1,1859 @@
+$ bun install --frozen-lockfile (baseline scaffold)
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1327 packages installed [3.09s]
+exit code: 0
+
+$ bun --version
+1.4.5
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+TTY=true WRITE=true ANSI=true RESIZED=43x132 EXIT_CODE=7 (bash)
+(pass) Bun.Terminal: bash has TTY stdin/stdout, exchanges input, resizes, and exits [33.76ms]
+30 | 		output: () => output,
+31 | 		async waitFor(text: string) {
+32 | 			const deadline = Date.now() + probeTimeoutMs;
+33 | 			while (!output.includes(text)) {
+34 | 				if (Date.now() >= deadline) {
+35 | 					throw new Error(
+                    ^
+error: Native PTY did not emit "READY"; output="TTY=true STDIN_TTY=true STDOUT_TTY=true\r\nTraceback (most recent call last):\r\n  File \"<string>\", line 13, in <module>\r\nOSError: [Errno 25] Inappropriate ioctl for device\r\n"
+      at waitFor (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:35:16)
+      at async <anonymous> (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:132:15)
+(fail) Bun.Terminal: Python owns a session/process group and receives SIGWINCH [2003.17ms]
+
+ 1 pass
+ 1 fail
+ 8 expect() calls
+Ran 2 tests across 1 file. [2.07s]
+exit code: 1
+
+=== Resumed builder: setsid -c fix ===
+$ bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+ 9 | 
+10 | async function poll(description: string, predicate: () => boolean | Promise<boolean>) {
+11 | 	const deadline = Date.now() + timeoutMs;
+12 | 	while (!(await predicate())) {
+13 | 		if (Date.now() >= deadline) {
+14 | 			throw new Error(`Timed out: ${description}`);
+                  ^
+error: Timed out: PTY output "SIGWINCH_SIZE=43 132"; TTY=true STDIN_TTY=true STDOUT_TTY=true
+IDENTITY=   5513    5513    5513    5513
+PARENT=   5508    5506
+INITIAL_SIZE=24 80
+[31mANSI_PRESERVED[0m
+READY
+native-pty-input
+RESPONSE:<native-pty-input>
+
+      at poll (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:14:14)
+      at async <anonymous> (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:152:15)
+(fail) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [5037.00ms]
+python3 PID=PGID=SID=TPGID=5529 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.31ms]
+bash GROUP=5531 GRANDCHILD=5534 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.57ms]
+bash GROUP=5535 GRANDCHILD=5538 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.40ms]
+python3 GROUP=5539 GRANDCHILD=5541 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.16ms]
+python3 GROUP=5542 GRANDCHILD=5544 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [41.96ms]
+
+ 5 pass
+ 1 fail
+ 88 expect() calls
+Ran 6 tests across 1 file. [5.26s]
+exit code: 1
+
+$ bun test apps/server/test/pty-spike.test.ts (Bash deferred-trap handshake)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+ 9 | 
+10 | async function poll(description: string, predicate: () => boolean | Promise<boolean>) {
+11 | 	const deadline = Date.now() + timeoutMs;
+12 | 	while (!(await predicate())) {
+13 | 		if (Date.now() >= deadline) {
+14 | 			throw new Error(`Timed out: ${description}`);
+                  ^
+error: Timed out: PTY output "INTERRUPTED=130"; TTY=true STDIN_TTY=true STDOUT_TTY=true
+IDENTITY=   5583    5583    5583    5583
+PARENT=   5578    5576
+INITIAL_SIZE=24 80
+[31mANSI_PRESERVED[0m
+READY
+native-pty-input
+RESPONSE:<native-pty-input>
+report-size
+SIGWINCH_SIZE=43 132
+RESIZED_SIZE=43 132
+SLEEP_READY
+
+      at poll (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:14:14)
+      at async <anonymous> (/home/ubuntu/wt/101/products/tetherterm/apps/server/test/pty-spike.test.ts:172:15)
+(fail) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [5050.11ms]
+python3 PID=PGID=SID=TPGID=5602 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.34ms]
+bash GROUP=5604 GRANDCHILD=5607 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.31ms]
+bash GROUP=5608 GRANDCHILD=5611 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.67ms]
+python3 GROUP=5612 GRANDCHILD=5615 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.85ms]
+python3 GROUP=5616 GRANDCHILD=5618 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.49ms]
+
+ 5 pass
+ 1 fail
+ 88 expect() calls
+Ran 6 tests across 1 file. [5.25s]
+exit code: 1
+
+$ bun test apps/server/test/pty-spike.test.ts (retain Bash harness after CTRL_C)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=5639 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.04ms]
+python3 PID=PGID=SID=TPGID=5646 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.13ms]
+bash GROUP=5648 GRANDCHILD=5651 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.36ms]
+bash GROUP=5652 GRANDCHILD=5655 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.48ms]
+python3 GROUP=5656 GRANDCHILD=5659 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.25ms]
+python3 GROUP=5660 GRANDCHILD=5662 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.58ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [247.00ms]
+exit code: 0
+
+$ bun add --exact @modelcontextprotocol/sdk (apps/server; after successful native PTY spike)
+bun add v1.4.5 (a7733435c)
+Resolving dependencies
+Resolved, downloaded and extracted [219]
+Saved lockfile
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+🚨 No config items defined in /home/ubuntu/wt/101/products/tetherterm/packages/db
+
+Add items to your .env.schema file to get started.
+
+error: script "env:generate" exited with code 1
+error: postinstall script from "tetherterm" exited with 1
+exit code: 1
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+🚨 No config items defined in /home/ubuntu/wt/101/products/tetherterm/packages/db
+
+Add items to your .env.schema file to get started.
+
+error: script "env:generate" exited with code 1
+error: postinstall script from "tetherterm" exited with 1
+exit code: 1
+
+$ bun install (retain schema imported by dormant db codegen; active server no Varlock imports)
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.34s]
+exit code: 0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.67ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.16ms]
+(pass) spawn failure closes its terminal and propagates the error [0.85ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [40.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6073 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.90ms]
+python3 PID=PGID=SID=TPGID=6080 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.85ms]
+bash GROUP=6082 GRANDCHILD=6085 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.04ms]
+bash GROUP=6086 GRANDCHILD=6089 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.39ms]
+python3 GROUP=6090 GRANDCHILD=6093 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [41.98ms]
+python3 GROUP=6094 GRANDCHILD=6096 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.15ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.36ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [243.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=34071 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [26.95ms]
+(pass) server startup fails clearly when setsid is absent on PATH [16.90ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [53.00ms]
+exit code: 0
+
+$ bun run check
+$ ultracite check
+apps/server/package.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - → "name":·"server",
+     3    │ - → "type":·"module",
+     4    │ - → "main":·"src/index.ts",
+     5    │ - → "scripts":·{
+     6    │ - → → "build":·"tsdown",
+     7    │ - → → "check-types":·"tsc·--noEmit",
+     8    │ - → → "compile":·"bun·build·--compile·--no-compile-autoload-dotenv·--minify·--sourcemap·--bytecode·./src/index.ts·--outfile·server",
+     9    │ - → → "dev":·"bun·run·--hot·src/index.ts",
+    10    │ - → → "start":·"bun·run·src/index.ts"
+    11    │ - → },
+    12    │ - → "dependencies":·{
+    13    │ - → → "@modelcontextprotocol/sdk":·"1.32.2",
+    14    │ - → → "hono":·"^4.13.18"
+    15    │ - → },
+    16    │ - → "devDependencies":·{
+    17    │ - → → "@tetherterm/config":·"workspace:*",
+    18    │ - → → "@types/bun":·"catalog:",
+    19    │ - → → "tsdown":·"^0.23.7",
+    20    │ - → → "typescript":·"^6.0.3"
+    21    │ - → }
+        2 │ + ··"name":·"server",
+        3 │ + ··"type":·"module",
+        4 │ + ··"main":·"src/index.ts",
+        5 │ + ··"scripts":·{
+        6 │ + ····"build":·"tsdown",
+        7 │ + ····"check-types":·"tsc·--noEmit",
+        8 │ + ····"compile":·"bun·build·--compile·--no-compile-autoload-dotenv·--minify·--sourcemap·--bytecode·./src/index.ts·--outfile·server",
+        9 │ + ····"dev":·"bun·run·--hot·src/index.ts",
+       10 │ + ····"start":·"bun·run·src/index.ts"
+       11 │ + ··},
+       12 │ + ··"dependencies":·{
+       13 │ + ····"@modelcontextprotocol/sdk":·"1.32.2",
+       14 │ + ····"hono":·"^4.13.18"
+       15 │ + ··},
+       16 │ + ··"devDependencies":·{
+       17 │ + ····"@tetherterm/config":·"workspace:*",
+       18 │ + ····"@types/bun":·"catalog:",
+       19 │ + ····"tsdown":·"^0.23.7",
+       20 │ + ····"typescript":·"^6.0.3"
+       21 │ + ··}
+    22 22 │   }
+    23 23 │   
+  
+
+apps/server/src/index.ts:12:3 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+  
+    10 │ 	requireSetsid();
+    11 │ 	const server = Bun.serve({
+  > 12 │ 		hostname: "127.0.0.1",
+       │ 		^^^^^^^^^^^^^^^^^^^^^^
+  > 13 │ 		port: Number(Bun.env.PORT ?? "3000"),
+  > 14 │ 		fetch: app.fetch,
+       │ 		^^^^^^^^^^^^^^^^^
+    15 │ 	});
+    16 │ 	console.error(`TetherTerm listening on http://127.0.0.1:${server.port}`);
+  
+  i Safe fix: Sort the object properties by key.
+  
+    10 10 │     requireSetsid();
+    11 11 │     const server = Bun.serve({
+    12    │ - → → hostname:·"127.0.0.1",
+    13    │ - → → port:·Number(Bun.env.PORT·??·"3000"),
+    14    │ - → → fetch:·app.fetch,
+       12 │ + → → fetch:·app.fetch,
+       13 │ + → → hostname:·"127.0.0.1",
+       14 │ + → → port:·Number(Bun.env.PORT·??·"3000"),
+    15 15 │     });
+    16 16 │     console.error(`TetherTerm listening on http://127.0.0.1:${server.port}`);
+  
+
+apps/server/src/index.ts:11:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+     9 │ if (import.meta.main) {
+    10 │ 	requireSetsid();
+  > 11 │ 	const server = Bun.serve({
+       │ 	               ^^^
+    12 │ 		hostname: "127.0.0.1",
+    13 │ 		port: Number(Bun.env.PORT ?? "3000"),
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/index.ts:13:16 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    11 │ 	const server = Bun.serve({
+    12 │ 		hostname: "127.0.0.1",
+  > 13 │ 		port: Number(Bun.env.PORT ?? "3000"),
+       │ 		             ^^^
+    14 │ 		fetch: app.fetch,
+    15 │ 	});
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:1:8 assist/source/useSortedInterfaceMembers  FIXABLE  ━━━━━━━━━━
+
+  × The interface members are not sorted by key.
+  
+   > 1 │ export interface SpawnPtyOptions {
+       │        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   > 2 │ 	executable: string;
+   > 3 │ 	args?: string[];
+   > 4 │ 	cwd: string;
+        ...
+   > 8 │ 	onData: (bytes: Uint8Array) => void;
+   > 9 │ }
+       │ ^
+    10 │ 
+    11 │ /** Linux's util-linux setsid supplies the session and controlling terminal. */
+  
+  i Safe fix: Sort the interface members by key.
+  
+     1  1 │   export interface SpawnPtyOptions {
+     2    │ - → executable:·string;
+     3    │ - → args?:·string[];
+        2 │ + → args?:·string[];
+        3 │ + → cols:·number;
+     4  4 │     cwd: string;
+     5  5 │     env: Record<string, string>;
+     6    │ - → cols:·number;
+     7    │ - → rows:·number;
+     8    │ - → onData:·(bytes:·Uint8Array)·=>·void;
+        6 │ + → executable:·string;
+        7 │ + → onData:·(bytes:·Uint8Array)·=>·void;
+        8 │ + → rows:·number;
+     9  9 │   }
+    10 10 │   
+  
+
+apps/server/src/pty/spawn.ts:16:39 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+  
+    14 │ 		throw new Error("TetherTerm native PTYs require Linux and util-linux setsid");
+    15 │ 	}
+  > 16 │ 	const setsid = Bun.which("setsid", { PATH: path, cwd });
+       │ 	                                     ^^^^^^^^^^^^^^^
+    17 │ 	if (!setsid) {
+    18 │ 		throw new Error(
+  
+  i Safe fix: Sort the object properties by key.
+  
+    14 14 │       throw new Error("TetherTerm native PTYs require Linux and util-linux setsid");
+    15 15 │     }
+    16    │ - → const·setsid·=·Bun.which("setsid",·{·PATH:·path,·cwd·});
+       16 │ + → const·setsid·=·Bun.which("setsid",·{·cwd,·PATH:·path·});
+    17 17 │     if (!setsid) {
+    18 18 │       throw new Error(
+  
+
+apps/server/src/pty/spawn.ts:28:3 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+  
+    26 │ 	const setsid = requireSetsid(options.env.PATH, options.cwd);
+    27 │ 	const terminal = new Bun.Terminal({
+  > 28 │ 		cols: options.cols,
+       │ 		^^^^^^^^^^^^^^^^^^^
+  > 29 │ 		rows: options.rows,
+  > 30 │ 		data(_terminal, bytes) {
+  > 31 │ 			options.onData(bytes);
+  > 32 │ 		},
+       │ 		^^
+    33 │ 	});
+    34 │ 	try {
+  
+  i Safe fix: Sort the object properties by key.
+  
+    27 27 │     const terminal = new Bun.Terminal({
+    28 28 │       cols: options.cols,
+    29    │ - → → rows:·options.rows,
+    30    │ - → → data(_terminal,·bytes)·{
+       29 │ + → → data(_terminal,·bytes)·{
+    31 30 │         options.onData(bytes);
+    32    │ - → → },
+       31 │ + → → },
+       32 │ + → → rows:·options.rows,
+    33 33 │     });
+    34 34 │     try {
+  
+
+apps/server/src/pty/spawn.ts:38:4 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+  
+    36 │ 		// this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
+    37 │ 		const child = Bun.spawn([setsid, "-c", options.executable, ...(options.args ?? [])], {
+  > 38 │ 			terminal,
+       │ 			^^^^^^^^^
+  > 39 │ 			cwd: options.cwd,
+  > 40 │ 			env: options.env,
+       │ 			^^^^^^^^^^^^^^^^^
+    41 │ 		});
+    42 │ 		return { child, terminal };
+  
+  i Safe fix: Sort the object properties by key.
+  
+    36 36 │       // this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
+    37 37 │       const child = Bun.spawn([setsid, "-c", options.executable, ...(options.args ?? [])], {
+    38    │ - → → → terminal,
+    39    │ - → → → cwd:·options.cwd,
+    40    │ - → → → env:·options.env,
+       38 │ + → → → cwd:·options.cwd,
+       39 │ + → → → env:·options.env,
+       40 │ + → → → terminal,
+    41 41 │       });
+    42 42 │       return { child, terminal };
+  
+
+apps/server/src/pty/spawn.ts:12:38 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    11 │ /** Linux's util-linux setsid supplies the session and controlling terminal. */
+  > 12 │ export function requireSetsid(path = Bun.env.PATH ?? "", cwd = process.cwd()) {
+       │                                      ^^^
+    13 │ 	if (process.platform !== "linux") {
+    14 │ 		throw new Error("TetherTerm native PTYs require Linux and util-linux setsid");
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:16:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    14 │ 		throw new Error("TetherTerm native PTYs require Linux and util-linux setsid");
+    15 │ 	}
+  > 16 │ 	const setsid = Bun.which("setsid", { PATH: path, cwd });
+       │ 	               ^^^
+    17 │ 	if (!setsid) {
+    18 │ 		throw new Error(
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:27:23 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    25 │ export function spawnPty(options: SpawnPtyOptions) {
+    26 │ 	const setsid = requireSetsid(options.env.PATH, options.cwd);
+  > 27 │ 	const terminal = new Bun.Terminal({
+       │ 	                     ^^^
+    28 │ 		cols: options.cols,
+    29 │ 		rows: options.rows,
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:37:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    35 │ 		// Do NOT use detached or setsid -f: the inherited parent pgid differs from
+    36 │ 		// this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
+  > 37 │ 		const child = Bun.spawn([setsid, "-c", options.executable, ...(options.args ?? [])], {
+       │ 		              ^^^
+    38 │ 			terminal,
+    39 │ 			cwd: options.cwd,
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+    12 12 │   export function requireSetsid(path = Bun.env.PATH ?? "", cwd = process.cwd()) {
+    13 13 │     if (process.platform !== "linux") {
+    14    │ - → → throw·new·Error("TetherTerm·native·PTYs·require·Linux·and·util-linux·setsid");
+       14 │ + → → throw·new·Error(
+       15 │ + → → → "TetherTerm·native·PTYs·require·Linux·and·util-linux·setsid"
+       16 │ + → → );
+    15 17 │     }
+    16 18 │     const setsid = Bun.which("setsid", { PATH: path, cwd });
+    ····· │ 
+    35 37 │       // Do NOT use detached or setsid -f: the inherited parent pgid differs from
+    36 38 │       // this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
+    37    │ - → → const·child·=·Bun.spawn([setsid,·"-c",·options.executable,·...(options.args·??·[])],·{
+    38    │ - → → → terminal,
+    39    │ - → → → cwd:·options.cwd,
+    40    │ - → → → env:·options.env,
+    41    │ - → → });
+       39 │ + → → const·child·=·Bun.spawn(
+       40 │ + → → → [setsid,·"-c",·options.executable,·...(options.args·??·[])],
+       41 │ + → → → {
+       42 │ + → → → → terminal,
+       43 │ + → → → → cwd:·options.cwd,
+       44 │ + → → → → env:·options.env,
+       45 │ + → → → }
+       46 │ + → → );
+    42 47 │       return { child, terminal };
+    43 48 │     } catch (error) {
+  
+
+apps/server/tsconfig.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - → "extends":·"@tetherterm/config/tsconfig.base.json",
+     3    │ - → "compilerOptions":·{
+     4    │ - → → "noEmit":·true,
+     5    │ - → → "paths":·{
+     6    │ - → → → "@/*":·["./src/*"]
+     7    │ - → → }
+     8    │ - → },
+     9    │ - → "include":·["src/**/*.ts",·"test/**/*.ts",·"tsdown.config.ts"]
+        2 │ + ··"extends":·"@tetherterm/config/tsconfig.base.json",
+        3 │ + ··"compilerOptions":·{
+        4 │ + ····"noEmit":·true,
+        5 │ + ····"paths":·{
+        6 │ + ······"@/*":·["./src/*"]
+        7 │ + ····}
+        8 │ + ··},
+        9 │ + ··"include":·["src/**/*.ts",·"test/**/*.ts",·"tsdown.config.ts"]
+    10 10 │   }
+    11 11 │   
+  
+
+apps/server/tsdown.config.ts:4:3 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+  
+     3 │ export default defineConfig({
+   > 4 │   entry: "./src/index.ts",
+       │   ^^^^^^^^^^^^^^^^^^^^^^^^
+   > 5 │   format: "esm",
+        ...
+   > 9 │     alwaysBundle: [/@tetherterm\/.*/],
+  > 10 │   },
+       │   ^^
+    11 │ });
+    12 │ 
+  
+  i Safe fix: Sort the object properties by key.
+  
+     2  2 │   
+     3  3 │   export default defineConfig({
+     4    │ - ··entry:·"./src/index.ts",
+        4 │ + ··clean:·true,
+        5 │ + ··deps:·{
+        6 │ + ····alwaysBundle:·[/@tetherterm\/.*/],
+        7 │ + ··},
+        8 │ + ··entry:·"./src/index.ts",
+     5  9 │     format: "esm",
+     6    │ - ··outDir:·"./dist",
+     7    │ - ··clean:·true,
+     8    │ - ··deps:·{
+     9    │ - ····alwaysBundle:·[/@tetherterm\/.*/],
+    10    │ - ··},
+       10 │ + ··outDir:·"./dist",
+    11 11 │   });
+    12 12 │   
+  
+
+apps/server/tsdown.config.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     2  2 │   
+     3  3 │   export default defineConfig({
+     4    │ - ··entry:·"./src/index.ts",
+     5    │ - ··format:·"esm",
+     6    │ - ··outDir:·"./dist",
+     7    │ - ··clean:·true,
+     8    │ - ··deps:·{
+     9    │ - ····alwaysBundle:·[/@tetherterm\/.*/],
+    10    │ - ··},
+        4 │ + → entry:·"./src/index.ts",
+        5 │ + → format:·"esm",
+        6 │ + → outDir:·"./dist",
+        7 │ + → clean:·true,
+        8 │ + → deps:·{
+        9 │ + → → alwaysBundle:·[/@tetherterm\/.*/],
+       10 │ + → },
+    11 11 │   });
+    12 12 │   
+  
+
+biome.json:12:4 lint/suspicious/noBiomeFirstException  FIXABLE  ━━━━━━━━━━━━━━━━
+
+  × Biome detected that at least one of your extended packages starts with **.
+  
+    10 │ 		"ignoreUnknown": false,
+    11 │ 		"includes": [
+  > 12 │ 			"**",
+       │ 			^^^^
+    13 │ 			"!!**/node_modules",
+    14 │ 			"!!**/dist",
+  
+  i When an extended package uses a catch-all, adding an additional catch-all could lead to possible issues.
+  
+  i Safe fix: Remove ** from your list.
+  
+    10 10 │       "ignoreUnknown": false,
+    11 11 │       "includes": [
+    12    │ - → → → "**",
+    13    │ - → → → "!!**/node_modules",
+       12 │ + → → → "!!**/node_modules",
+    14 13 │         "!!**/dist",
+    15 14 │         "!!**/.turbo",
+  
+
+biome.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - → "$schema":·"./node_modules/@biomejs/biome/configuration_schema.json",
+     3    │ - → "extends":·["ultracite/biome/core"],
+     4    │ - → "vcs":·{
+     5    │ - → → "enabled":·false,
+     6    │ - → → "clientKind":·"git",
+     7    │ - → → "useIgnoreFile":·false
+     8    │ - → },
+     9    │ - → "files":·{
+    10    │ - → → "ignoreUnknown":·false,
+    11    │ - → → "includes":·[
+    12    │ - → → → "**",
+    13    │ - → → → "!!**/node_modules",
+    14    │ - → → → "!!**/dist",
+    15    │ - → → → "!!**/.turbo",
+    16    │ - → → → "!!apps/web",
+    17    │ - → → → "!!apps/native",
+    18    │ - → → → "!!apps/extension",
+    19    │ - → → → "!!apps/fumadocs",
+    20    │ - → → → "!!apps/docs",
+    21    │ - → → → "!!packages/auth",
+    22    │ - → → → "!!packages/db",
+    23    │ - → → → "!!packages/ui",
+    24    │ - → → → "!!evidence",
+    25    │ - → → → "!!.agents",
+    26    │ - → → → "!!.claude",
+    27    │ - → → → "!!.cursor",
+    28    │ - → → → "!.mcp.json",
+    29    │ - → → → "!bts.jsonc",
+    30    │ - → → → "!skills-lock.json"
+    31    │ - → → ]
+    32    │ - → },
+    33    │ - → "formatter":·{
+    34    │ - → → "enabled":·true,
+    35    │ - → → "indentStyle":·"tab"
+    36    │ - → },
+    37    │ - → "assist":·{·"actions":·{·"source":·{·"organizeImports":·"on"·}·}·},
+    38    │ - → "linter":·{
+    39    │ - → → "enabled":·true,
+    40    │ - → → "rules":·{
+    41    │ - → → → "preset":·"recommended"
+    42    │ - → → }
+    43    │ - → },
+    44    │ - → "javascript":·{
+    45    │ - → → "formatter":·{
+    46    │ - → → → "quoteStyle":·"double"
+    47    │ - → → }
+    48    │ - → }
+        2 │ + ··"$schema":·"./node_modules/@biomejs/biome/configuration_schema.json",
+        3 │ + ··"extends":·["ultracite/biome/core"],
+        4 │ + ··"vcs":·{
+        5 │ + ····"enabled":·false,
+        6 │ + ····"clientKind":·"git",
+        7 │ + ····"useIgnoreFile":·false
+        8 │ + ··},
+        9 │ + ··"files":·{
+       10 │ + ····"ignoreUnknown":·false,
+       11 │ + ····"includes":·[
+       12 │ + ······"**",
+       13 │ + ······"!!**/node_modules",
+       14 │ + ······"!!**/dist",
+       15 │ + ······"!!**/.turbo",
+       16 │ + ······"!!apps/web",
+       17 │ + ······"!!apps/native",
+       18 │ + ······"!!apps/extension",
+       19 │ + ······"!!apps/fumadocs",
+       20 │ + ······"!!apps/docs",
+       21 │ + ······"!!packages/auth",
+       22 │ + ······"!!packages/db",
+       23 │ + ······"!!packages/ui",
+       24 │ + ······"!!evidence",
+       25 │ + ······"!!.agents",
+       26 │ + ······"!!.claude",
+       27 │ + ······"!!.cursor",
+       28 │ + ······"!.mcp.json",
+       29 │ + ······"!bts.jsonc",
+       30 │ + ······"!skills-lock.json"
+       31 │ + ····]
+       32 │ + ··},
+       33 │ + ··"formatter":·{
+       34 │ + ····"enabled":·true,
+       35 │ + ····"indentStyle":·"tab"
+       36 │ + ··},
+       37 │ + ··"assist":·{·"actions":·{·"source":·{·"organizeImports":·"on"·}·}·},
+       38 │ + ··"linter":·{
+       39 │ + ····"enabled":·true,
+       40 │ + ····"rules":·{
+       41 │ + ······"preset":·"recommended"
+       42 │ + ····}
+       43 │ + ··},
+       44 │ + ··"javascript":·{
+       45 │ + ····"formatter":·{
+       46 │ + ······"quoteStyle":·"double"
+       47 │ + ····}
+       48 │ + ··}
+    49 49 │   }
+    50 50 │   
+  
+
+package.json:1:1 assist/source/useSortedPackageJson  FIXABLE  ━━━━━━━━━━━━━━━━━━
+
+  × package.json fields can be organized.
+  
+   > 1 │ {
+       │ ^
+   > 2 │ 	"name": "tetherterm",
+   > 3 │ 	"private": true,
+   > 4 │ 	"workspaces": {
+        ...
+  > 61 │ 		"bun": "1.4.5"
+  > 62 │ 	}
+  > 63 │ }
+       │ ^
+    64 │ 
+  
+  i Safe fix: Organize package.json fields.
+  
+     2  2 │     "name": "tetherterm",
+     3  3 │     "private": true,
+     4    │ - → "workspaces":·{
+        4 │ + → "type":·"module",
+        5 │ + → "workspaces":·{
+     5  6 │       "packages": ["apps/*", "packages/*"],
+     6  7 │       "catalog": {
+    ····· │ 
+    25 26 │       }
+    26 27 │     },
+    27    │ - → "type":·"module",
+    28    │ - → "scripts":·{
+    29    │ - → → "dev":·"bun·run·--cwd·apps/server·dev",
+    30    │ - → → "build":·"bun·run·--cwd·apps/server·build",
+       28 │ + → "scripts":·{
+       29 │ + → → "build":·"bun·run·--cwd·apps/server·build",
+       30 │ + → → "check":·"ultracite·check",
+    31 31 │       "check-types": "bun run --cwd apps/server check-types",
+    32    │ - → → "dev:server":·"bun·run·--cwd·apps/server·dev",
+    33    │ - → → "start":·"bun·run·--cwd·apps/server·start",
+       32 │ + → → "dev":·"bun·run·--cwd·apps/server·dev",
+       33 │ + → → "dev:server":·"bun·run·--cwd·apps/server·dev",
+    34 34 │       "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    35    │ - → → "postinstall":·"bun·run·env:generate",
+    36    │ - → → "check":·"ultracite·check",
+    37    │ - → → "fix":·"ultracite·fix",
+    38    │ - → → "test:unit":·"bun·test·./apps/server/test/unit",
+       35 │ + → → "fix":·"ultracite·fix",
+       36 │ + → → "postinstall":·"bun·run·env:generate",
+       37 │ + → → "start":·"bun·run·--cwd·apps/server·start",
+       38 │ + → → "test":·"bun·run·test:unit·&&·bun·run·test:integration·&&·bun·run·test:e2e",
+       39 │ + → → "test:e2e":·"bun·test·./apps/server/test/e2e",
+    39 40 │       "test:integration": "bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration",
+    40    │ - → → "test:e2e":·"bun·test·./apps/server/test/e2e",
+    41    │ - → → "test":·"bun·run·test:unit·&&·bun·run·test:integration·&&·bun·run·test:e2e",
+       41 │ + → → "test:unit":·"bun·test·./apps/server/test/unit",
+    42 42 │       "verify:coverage": "bun test --coverage ./apps/server/test"
+    43 43 │     },
+    44    │ - → "dependencies":·{
+       44 │ + → "overrides":·{
+       45 │ + → → "@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+       46 │ + → },
+       47 │ + → "dependencies":·{
+    45 48 │       "zod": "catalog:"
+    46 49 │     },
+    ····· │ 
+    52 55 │       "typescript": "^6.0.3",
+    53 56 │       "ultracite": "8.0.0",
+    54    │ - → → "varlock":·"catalog:"
+    55    │ - → },
+    56    │ - → "overrides":·{
+    57    │ - → → "@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+       57 │ + → → "varlock":·"catalog:"
+    58 58 │     },
+    59 59 │     "packageManager": "bun@1.4.5",
+  
+
+package.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - → "name":·"tetherterm",
+     3    │ - → "private":·true,
+     4    │ - → "workspaces":·{
+     5    │ - → → "packages":·["apps/*",·"packages/*"],
+     6    │ - → → "catalog":·{
+     7    │ - → → → "zod":·"^4.6.7",
+     8    │ - → → → "@types/bun":·"1.4.5",
+     9    │ - → → → "varlock":·"1.25.0",
+    10    │ - → → → "better-auth":·"1.7.22",
+    11    │ - → → → "evlog":·"^2.35.1",
+    12    │ - → → → "ai":·"^7.0.170",
+    13    │ - → → → "lucide-react":·"^1.72.0",
+    14    │ - → → → "next-themes":·"^0.4.6",
+    15    │ - → → → "sonner":·"^2.0.8",
+    16    │ - → → → "@tanstack/react-form":·"^1.33.5",
+    17    │ - → → → "@polar-sh/better-auth":·"^2.1.4",
+    18    │ - → → → "@polar-sh/sdk":·"^1.1.0",
+    19    │ - → → → "@ai-sdk/react":·"^4.0.174",
+    20    │ - → → → "@tailwindcss/postcss":·"^4.3.5",
+    21    │ - → → → "@types/node":·"^26.6.6",
+    22    │ - → → → "@types/react-dom":·"^19.3.0",
+    23    │ - → → → "tailwindcss":·"^4.3.5",
+    24    │ - → → → "@better-auth/expo":·"1.7.22"
+    25    │ - → → }
+    26    │ - → },
+    27    │ - → "type":·"module",
+    28    │ - → "scripts":·{
+    29    │ - → → "dev":·"bun·run·--cwd·apps/server·dev",
+    30    │ - → → "build":·"bun·run·--cwd·apps/server·build",
+    31    │ - → → "check-types":·"bun·run·--cwd·apps/server·check-types",
+    32    │ - → → "dev:server":·"bun·run·--cwd·apps/server·dev",
+    33    │ - → → "start":·"bun·run·--cwd·apps/server·start",
+    34    │ - → → "env:generate":·"varlock·codegen·--path·./apps/web/·&&·varlock·codegen·--path·./apps/native/·&&·varlock·codegen·--path·./packages/db/",
+    35    │ - → → "postinstall":·"bun·run·env:generate",
+    36    │ - → → "check":·"ultracite·check",
+    37    │ - → → "fix":·"ultracite·fix",
+    38    │ - → → "test:unit":·"bun·test·./apps/server/test/unit",
+    39    │ - → → "test:integration":·"bun·test·./apps/server/test/pty-spike.test.ts·./apps/server/test/integration",
+    40    │ - → → "test:e2e":·"bun·test·./apps/server/test/e2e",
+    41    │ - → → "test":·"bun·run·test:unit·&&·bun·run·test:integration·&&·bun·run·test:e2e",
+    42    │ - → → "verify:coverage":·"bun·test·--coverage·./apps/server/test"
+    43    │ - → },
+    44    │ - → "dependencies":·{
+    45    │ - → → "zod":·"catalog:"
+    46    │ - → },
+    47    │ - → "devDependencies":·{
+    48    │ - → → "@biomejs/biome":·"2.5.15",
+    49    │ - → → "@tetherterm/config":·"workspace:*",
+    50    │ - → → "@types/bun":·"catalog:",
+    51    │ - → → "turbo":·"^2.11.11",
+    52    │ - → → "typescript":·"^6.0.3",
+    53    │ - → → "ultracite":·"8.0.0",
+    54    │ - → → "varlock":·"catalog:"
+    55    │ - → },
+    56    │ - → "overrides":·{
+    57    │ - → → "@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+    58    │ - → },
+    59    │ - → "packageManager":·"bun@1.4.5",
+    60    │ - → "engines":·{
+    61    │ - → → "bun":·"1.4.5"
+    62    │ - → }
+        2 │ + ··"name":·"tetherterm",
+        3 │ + ··"private":·true,
+        4 │ + ··"workspaces":·{
+        5 │ + ····"packages":·[
+        6 │ + ······"apps/*",
+        7 │ + ······"packages/*"
+        8 │ + ····],
+        9 │ + ····"catalog":·{
+       10 │ + ······"zod":·"^4.6.7",
+       11 │ + ······"@types/bun":·"1.4.5",
+       12 │ + ······"varlock":·"1.25.0",
+       13 │ + ······"better-auth":·"1.7.22",
+       14 │ + ······"evlog":·"^2.35.1",
+       15 │ + ······"ai":·"^7.0.170",
+       16 │ + ······"lucide-react":·"^1.72.0",
+       17 │ + ······"next-themes":·"^0.4.6",
+       18 │ + ······"sonner":·"^2.0.8",
+       19 │ + ······"@tanstack/react-form":·"^1.33.5",
+       20 │ + ······"@polar-sh/better-auth":·"^2.1.4",
+       21 │ + ······"@polar-sh/sdk":·"^1.1.0",
+       22 │ + ······"@ai-sdk/react":·"^4.0.174",
+       23 │ + ······"@tailwindcss/postcss":·"^4.3.5",
+       24 │ + ······"@types/node":·"^26.6.6",
+       25 │ + ······"@types/react-dom":·"^19.3.0",
+       26 │ + ······"tailwindcss":·"^4.3.5",
+       27 │ + ······"@better-auth/expo":·"1.7.22"
+       28 │ + ····}
+       29 │ + ··},
+       30 │ + ··"type":·"module",
+       31 │ + ··"scripts":·{
+       32 │ + ····"dev":·"bun·run·--cwd·apps/server·dev",
+       33 │ + ····"build":·"bun·run·--cwd·apps/server·build",
+       34 │ + ····"check-types":·"bun·run·--cwd·apps/server·check-types",
+       35 │ + ····"dev:server":·"bun·run·--cwd·apps/server·dev",
+       36 │ + ····"start":·"bun·run·--cwd·apps/server·start",
+       37 │ + ····"env:generate":·"varlock·codegen·--path·./apps/web/·&&·varlock·codegen·--path·./apps/native/·&&·varlock·codegen·--path·./packages/db/",
+       38 │ + ····"postinstall":·"bun·run·env:generate",
+       39 │ + ····"check":·"ultracite·check",
+       40 │ + ····"fix":·"ultracite·fix",
+       41 │ + ····"test:unit":·"bun·test·./apps/server/test/unit",
+       42 │ + ····"test:integration":·"bun·test·./apps/server/test/pty-spike.test.ts·./apps/server/test/integration",
+       43 │ + ····"test:e2e":·"bun·test·./apps/server/test/e2e",
+       44 │ + ····"test":·"bun·run·test:unit·&&·bun·run·test:integration·&&·bun·run·test:e2e",
+       45 │ + ····"verify:coverage":·"bun·test·--coverage·./apps/server/test"
+       46 │ + ··},
+       47 │ + ··"dependencies":·{
+       48 │ + ····"zod":·"catalog:"
+       49 │ + ··},
+       50 │ + ··"devDependencies":·{
+       51 │ + ····"@biomejs/biome":·"2.5.15",
+       52 │ + ····"@tetherterm/config":·"workspace:*",
+       53 │ + ····"@types/bun":·"catalog:",
+       54 │ + ····"turbo":·"^2.11.11",
+       55 │ + ····"typescript":·"^6.0.3",
+       56 │ + ····"ultracite":·"8.0.0",
+       57 │ + ····"varlock":·"catalog:"
+       58 │ + ··},
+       59 │ + ··"overrides":·{
+       60 │ + ····"@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+       61 │ + ··},
+       62 │ + ··"packageManager":·"bun@1.4.5",
+       63 │ + ··"engines":·{
+       64 │ + ····"bun":·"1.4.5"
+       65 │ + ··}
+    63 66 │   }
+    64 67 │   
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 29.
+Checked 15 files in 93ms. No fixes applied.
+Found 49 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "check" exited with code 1
+exit code: 1
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+test/pty-spike.test.ts(238,38): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: number): void', gave the following error.
+    Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+  Overload 2 of 2, '(expected: number): void', gave the following error.
+    Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+test/pty-spike.test.ts(239,38): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: number): void', gave the following error.
+    Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+  Overload 2 of 2, '(expected: number): void', gave the following error.
+    Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+test/pty-spike.test.ts(241,19): error TS18048: 'pid' is possibly 'undefined'.
+exit code: 2
+
+$ bun run fix
+$ ultracite fix
+apps/server/src/index.ts:11:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+     9 │ if (import.meta.main) {
+    10 │ 	requireSetsid();
+  > 11 │ 	const server = Bun.serve({
+       │ 	               ^^^
+    12 │ 		fetch: app.fetch,
+    13 │ 		hostname: "127.0.0.1",
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/index.ts:14:16 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    12 │ 		fetch: app.fetch,
+    13 │ 		hostname: "127.0.0.1",
+  > 14 │ 		port: Number(Bun.env.PORT ?? "3000"),
+       │ 		             ^^^
+    15 │ 	});
+    16 │ 	console.error(`TetherTerm listening on http://127.0.0.1:${server.port}`);
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:12:38 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    11 │ /** Linux's util-linux setsid supplies the session and controlling terminal. */
+  > 12 │ export function requireSetsid(path = Bun.env.PATH ?? "", cwd = process.cwd()) {
+       │                                      ^^^
+    13 │ 	if (process.platform !== "linux") {
+    14 │ 		throw new Error(
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:18:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    16 │ 		);
+    17 │ 	}
+  > 18 │ 	const setsid = Bun.which("setsid", { cwd, PATH: path });
+       │ 	               ^^^
+    19 │ 	if (!setsid) {
+    20 │ 		throw new Error(
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:29:23 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    27 │ export function spawnPty(options: SpawnPtyOptions) {
+    28 │ 	const setsid = requireSetsid(options.env.PATH, options.cwd);
+  > 29 │ 	const terminal = new Bun.Terminal({
+       │ 	                     ^^^
+    30 │ 		cols: options.cols,
+    31 │ 		data(_terminal, bytes) {
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/src/pty/spawn.ts:39:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    37 │ 		// Do NOT use detached or setsid -f: the inherited parent pgid differs from
+    38 │ 		// this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
+  > 39 │ 		const child = Bun.spawn(
+       │ 		              ^^^
+    40 │ 			[setsid, "-c", options.executable, ...(options.args ?? [])],
+    41 │ 			{
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/e2e/boot.test.ts:40:20 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    38 │ 			(async () => {
+    39 │ 				while (!addressPattern.test(output)) {
+  > 40 │ 					const chunk = await reader.read();
+       │ 					              ^^^^^^^^^^^^^^^^^^^
+    41 │ 					if (chunk.done) {
+    42 │ 						throw new Error(`server exited before boot: ${output}`);
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/test/e2e/boot.test.ts:28:17 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    27 │ test("server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port", async () => {
+  > 28 │ 	const server = Bun.spawn([process.execPath, serverEntrypoint], {
+       │ 	               ^^^
+    29 │ 		cwd: new URL("../..", import.meta.url).pathname,
+    30 │ 		env: { PATH: "/usr/bin:/bin", PORT: "0" },
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/e2e/boot.test.ts:50:16 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    48 │ 		const port = Number(output.match(addressPattern)?.[1]);
+    49 │ 		expect(port).toBeGreaterThan(0);
+  > 50 │ 		const curl = Bun.spawn(
+       │ 		             ^^^
+    51 │ 			[
+    52 │ 				"curl",
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/e2e/boot.test.ts:87:18 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    85 │ 	const cwd = await mkdtemp(join(tmpdir(), "tetherterm-101-boot-"));
+    86 │ 	try {
+  > 87 │ 		const server = Bun.spawn([process.execPath, serverEntrypoint], {
+       │ 		               ^^^
+    88 │ 			cwd,
+    89 │ 			env: { PATH: cwd, PORT: "0" },
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/integration/spawn.test.ts:47:4 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    45 │ 				throw new Error(`missing PTY output: ${output}`);
+    46 │ 			}
+  > 47 │ 			await Bun.sleep(10);
+       │ 			^^^^^^^^^^^^^^^^^^^
+    48 │ 		}
+    49 │ 		expect(output).toContain(`CWD=${cwd}\r\n`);
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/test/integration/spawn.test.ts:47:10 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    45 │ 				throw new Error(`missing PTY output: ${output}`);
+    46 │ 			}
+  > 47 │ 			await Bun.sleep(10);
+       │ 			      ^^^
+    48 │ 		}
+    49 │ 		expect(output).toContain(`CWD=${cwd}\r\n`);
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/pty-spike.test.ts:15:11 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    13 │ ) {
+    14 │ 	const deadline = Date.now() + timeoutMs;
+  > 15 │ 	while (!(await predicate())) {
+       │ 	         ^^^^^^^^^^^^^^^^^
+    16 │ 		if (Date.now() >= deadline) {
+    17 │ 			throw new Error(`Timed out: ${description}`);
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/test/pty-spike.test.ts:130:24 lint/complexity/noUselessStringRaw ━━━━━━━━━━
+
+  × String.raw is useless when the raw string doesn't contain any escape sequence.
+  
+    128 │ `;
+    129 │ 
+  > 130 │ const pythonIdentity = String.raw`
+        │                        ^^^^^^^^^^^
+  > 131 │ import os, signal, sys
+         ...
+  > 137 │ print("PARENT=%s %s" % (os.getpgid(os.getppid()), os.getsid(os.getppid())))
+  > 138 │ `;
+        │ ^
+    139 │ 
+    140 │ const bashArgs = (script: string) => ["--noprofile", "--norc", "-c", script];
+  
+  i Remove the String.raw call because it's useless here, String.raw can deal with string which contains escape sequence like \n, \t, \r, \\, \", \'.
+  
+
+apps/server/test/pty-spike.test.ts:183:51 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    181 │ 				"utf8"
+    182 │ 			);
+  > 183 │ 			for (const descendant of children.trim().split(/\s+/).filter(Boolean)) {
+        │ 			                                               ^^^^^
+    184 │ 				const fields = await procFields(Number(descendant));
+    185 │ 				if (fields && fields[0] !== "Z" && Number(fields[2]) === pid) {
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+apps/server/test/pty-spike.test.ts:184:20 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    182 │ 			);
+    183 │ 			for (const descendant of children.trim().split(/\s+/).filter(Boolean)) {
+  > 184 │ 				const fields = await procFields(Number(descendant));
+        │ 				               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    185 │ 				if (fields && fields[0] !== "Z" && Number(fields[2]) === pid) {
+    186 │ 					const command = await readFile(`/proc/${descendant}/cmdline`, "utf8");
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/test/pty-spike.test.ts:19:9 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    17 │ 			throw new Error(`Timed out: ${description}`);
+    18 │ 		}
+  > 19 │ 		await Bun.sleep(10);
+       │ 		      ^^^
+    20 │ 	}
+    21 │ }
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+apps/server/test/unit/bootstrap.test.ts:13:11 lint/performance/noAwaitInLoops ━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    11 │ 	expect(await health.text()).toBe("ok");
+    12 │ 	for (const dormant of ["/", "/ai", "/api/auth/session", "/polar/success"]) {
+  > 13 │ 		expect((await app.request(dormant)).status).toBe(404);
+       │ 		        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    14 │ 	}
+    15 │ });
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/test/unit/bootstrap.test.ts:29:14 lint/suspicious/noEmptyBlockStatements ━━━━━━━━━━
+
+  × Unexpected empty block.
+  
+    27 │ 				env: { PATH: cwd },
+    28 │ 				executable: "/bin/bash",
+  > 29 │ 				onData() {},
+       │ 				         ^^
+    30 │ 				rows: 24,
+    31 │ 			})
+  
+  i Empty blocks are usually the result of an incomplete refactoring. Remove the empty block or add a comment inside it if it is intentional.
+  
+
+apps/server/test/unit/bootstrap.test.ts:45:13 lint/suspicious/noEmptyBlockStatements ━━━━━━━━━━
+
+  × Unexpected empty block.
+  
+    43 │ 			env: { PATH: "/usr/bin:/bin" },
+    44 │ 			executable: "bash",
+  > 45 │ 			onData() {},
+       │ 			         ^^
+    46 │ 			rows: 24,
+    47 │ 		})
+  
+  i Empty blocks are usually the result of an incomplete refactoring. Remove the empty block or add a comment inside it if it is intentional.
+  
+
+Checked 15 files in 99ms. Fixed 11 files.
+Found 20 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+error: script "fix" exited with code 1
+exit code: 1
+
+$ bun /home/ubuntu/swarm/probes/t3.ts (Lead comparative probe; bounded child-specific kills)
+plain => exit 1 "Traceback (most recent call last):\r\n  File \"<string>\", line 2, in <module>\r\nOSError: [Errno 25] Inappropriate ioctl for device\r\n"
+detached => exit 1 "Traceback (most recent call last):\r\n  File \"<string>\", line 2, in <module>\r\nOSError: [Errno 25] Inappropriate ioctl for device\r\n"
+error: Terminal is closed
+error: Terminal is closed
+setsid -c => exit 0 "sid 6250 6250 pgrp 6250 tc 6250\r\n^CKI\r\n"
+setsid -c bash sleep => exit 130 "^C"
+setsid -c resize => exit 0 "ready os.terminal_size(columns=80, lines=24)\r\n"
+
+Bun v1.4.5 (Linux x64)
+exit code: 1
+
+$ bun run fix
+$ ultracite fix
+apps/server/test/pty-spike.test.ts:21:3 suppressions/unused ━━━━━━━━━━━━━━━━━━━━
+
+  ! Suppression comment has no effect. Remove the suppression or make sure you are suppressing the correct rule.
+  
+    19 │ 			throw new Error(`Timed out: ${description}`);
+    20 │ 		}
+  > 21 │ 		// biome-ignore lint/performance/noAwaitInLoops: Yield between deadline-bounded polling attempts, not a fixed readiness sleep.
+       │ 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    22 │ 		await Bun.sleep(10);
+    23 │ 	}
+  
+
+Checked 15 files in 129ms. Fixed 2 files.
+Found 1 warning.
+exit code: 0
+
+$ bun evidence/probes/101-controlling-terminal.ts
+plain (Bun subprocess pid=6342, exit=0):
+TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
+PID=6342 PGID=6341 SID=5576 PARENT_PGID=6341 PARENT_SID=5576
+CONTROLLING=false TCGETPGRP_ERRNO=25
+detached (Bun subprocess pid=6346, exit=0):
+TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
+PID=6346 PGID=6346 SID=6346 PARENT_PGID=6341 PARENT_SID=5576
+CONTROLLING=false TCGETPGRP_ERRNO=25
+setsid -c (Bun subprocess pid=6347, exit=0):
+TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
+PID=6347 PGID=6347 SID=6347 PARENT_PGID=6341 PARENT_SID=5576
+CONTROLLING=true FOREGROUND_PGID=6347
+exit code: 0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.32ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.62ms]
+(pass) spawn failure closes its terminal and propagates the error [1.01ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [32.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6368 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.46ms]
+python3 PID=PGID=SID=TPGID=6375 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.67ms]
+bash GROUP=6377 GRANDCHILD=6380 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.53ms]
+bash GROUP=6381 GRANDCHILD=6384 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.75ms]
+python3 GROUP=6386 GRANDCHILD=6388 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.72ms]
+python3 GROUP=6389 GRANDCHILD=6391 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.39ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.76ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [275.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=46017 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [30.93ms]
+(pass) server startup fails clearly when setsid is absent on PATH [19.03ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [65.00ms]
+exit code: 0
+
+$ bun run check
+$ ultracite check
+apps/server/test/pty-spike.test.ts:21:3 suppressions/unused ━━━━━━━━━━━━━━━━━━━━
+
+  ! Suppression comment has no effect. Remove the suppression or make sure you are suppressing the correct rule.
+  
+    19 │ 			throw new Error(`Timed out: ${description}`);
+    20 │ 		}
+  > 21 │ 		// biome-ignore lint/performance/noAwaitInLoops: Yield between deadline-bounded polling attempts, not a fixed readiness sleep.
+       │ 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    22 │ 		await Bun.sleep(10);
+    23 │ 	}
+  
+
+Checked 15 files in 110ms. No fixes applied.
+Found 1 warning.
+exit code: 0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+exit code: 0
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+Resolving dependencies
+Resolved, downloaded and extracted [2]
+Saved lockfile
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+4 packages installed [2.62s]
+exit code: 0
+
+$ bun run fix
+$ ultracite fix
+Checked 15 files in 68ms. Fixed 1 file.
+exit code: 0
+
+$ bun --version
+1.4.5
+exit code: 0
+
+$ setsid --version
+setsid from util-linux 2.39.3
+exit code: 0
+
+$ git rev-parse --show-toplevel
+/home/ubuntu/wt/101
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (stability run 1/5)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6629 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.48ms]
+python3 PID=PGID=SID=TPGID=6636 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.78ms]
+bash GROUP=6638 GRANDCHILD=6641 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.19ms]
+bash GROUP=6642 GRANDCHILD=6645 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.50ms]
+python3 GROUP=6646 GRANDCHILD=6649 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.62ms]
+python3 GROUP=6650 GRANDCHILD=6652 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.69ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [223.00ms]
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (stability run 2/5)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6659 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.47ms]
+python3 PID=PGID=SID=TPGID=6666 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.82ms]
+bash GROUP=6668 GRANDCHILD=6671 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [21.97ms]
+bash GROUP=6672 GRANDCHILD=6675 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.17ms]
+python3 GROUP=6676 GRANDCHILD=6679 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.74ms]
+python3 GROUP=6680 GRANDCHILD=6682 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.68ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [221.00ms]
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (stability run 3/5)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6689 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.52ms]
+python3 PID=PGID=SID=TPGID=6696 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.80ms]
+bash GROUP=6698 GRANDCHILD=6701 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.19ms]
+bash GROUP=6702 GRANDCHILD=6705 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.19ms]
+python3 GROUP=6707 GRANDCHILD=6709 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.74ms]
+python3 GROUP=6710 GRANDCHILD=6712 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.78ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [222.00ms]
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (stability run 4/5)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6719 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.24ms]
+python3 PID=PGID=SID=TPGID=6726 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.82ms]
+bash GROUP=6728 GRANDCHILD=6731 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.06ms]
+bash GROUP=6732 GRANDCHILD=6735 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.18ms]
+python3 GROUP=6737 GRANDCHILD=6739 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.57ms]
+python3 GROUP=6740 GRANDCHILD=6742 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.61ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [221.00ms]
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (stability run 5/5)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6749 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.39ms]
+python3 PID=PGID=SID=TPGID=6756 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.91ms]
+bash GROUP=6758 GRANDCHILD=6761 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.33ms]
+bash GROUP=6762 GRANDCHILD=6765 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.26ms]
+python3 GROUP=6767 GRANDCHILD=6769 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.79ms]
+python3 GROUP=6770 GRANDCHILD=6772 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.75ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [222.00ms]
+exit code: 0
+
+$ bun install --frozen-lockfile (final worktree verification)
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [1.97s]
+exit code: 0
+
+$ bun test apps/server/test/pty-spike.test.ts (final worktree verification)
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6931 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.13ms]
+python3 PID=PGID=SID=TPGID=6939 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.73ms]
+bash GROUP=6941 GRANDCHILD=6945 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.51ms]
+bash GROUP=6946 GRANDCHILD=6949 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.42ms]
+python3 GROUP=6950 GRANDCHILD=6957 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.61ms]
+python3 GROUP=6958 GRANDCHILD=6960 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.76ms]
+
+ 6 pass
+ 0 fail
+ 90 expect() calls
+Ran 6 tests across 1 file. [223.00ms]
+exit code: 0
+
+$ git rev-parse --show-toplevel (final worktree verification)
+/home/ubuntu/wt/101
+exit code: 0
+
+$ bun run test (final worktree verification)
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [6.38ms]
+(pass) missing setsid fails clearly before allocating a PTY [2.37ms]
+(pass) spawn failure closes its terminal and propagates the error [0.85ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [32.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=6983 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.45ms]
+python3 PID=PGID=SID=TPGID=6990 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.74ms]
+bash GROUP=6992 GRANDCHILD=6995 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.09ms]
+bash GROUP=6996 GRANDCHILD=6999 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.47ms]
+python3 GROUP=7001 GRANDCHILD=7003 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.01ms]
+python3 GROUP=7004 GRANDCHILD=7006 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.82ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.11ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [241.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=33369 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [31.23ms]
+(pass) server startup fails clearly when setsid is absent on PATH [18.83ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [60.00ms]
+exit code: 0
+
+$ bun run check (final worktree verification)
+$ ultracite check
+Checked 15 files in 85ms. No fixes applied.
+exit code: 0
+
+$ bun run check-types (final worktree verification)
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+exit code: 0
+
+$ bun run build (final worktree verification)
+$ bun run --cwd apps/server build
+$ tsdown
+ℹ tsdown v0.23.7 powered by rolldown v1.3.3
+ℹ config file: /home/ubuntu/wt/101/products/tetherterm/apps/server/tsdown.config.ts 
+ℹ entry: ./src/index.ts
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+ℹ dist/index.mjs  0.88 kB │ gzip: 0.51 kB
+ℹ 1 files, total: 0.88 kB
+✔ Build complete in 35ms
+exit code: 0
+
+$ git diff --check (final worktree verification)
+exit code: 0
+
+$ bun run fix (pre-commit)
+$ ultracite fix
+Checked 15 files in 73ms. No fixes applied.
+exit code: 0
+
+$ bun run test (pre-commit)
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.01ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.12ms]
+(pass) spawn failure closes its terminal and propagates the error [0.69ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [22.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=7189 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.97ms]
+python3 PID=PGID=SID=TPGID=7196 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.93ms]
+bash GROUP=7198 GRANDCHILD=7201 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.30ms]
+bash GROUP=7202 GRANDCHILD=7205 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.16ms]
+python3 GROUP=7207 GRANDCHILD=7209 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.67ms]
+python3 GROUP=7210 GRANDCHILD=7212 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.90ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.55ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [230.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=36093 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [25.51ms]
+(pass) server startup fails clearly when setsid is absent on PATH [14.37ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [49.00ms]
+exit code: 0
+
+$ bun run check (pre-commit)
+$ ultracite check
+Checked 15 files in 74ms. No fixes applied.
+exit code: 0
+
+$ bun run check-types (pre-commit)
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+test/e2e/boot.test.ts(95,49): error TS2345: Argument of type 'number | ReadableStream<Uint8Array<ArrayBuffer>> | undefined' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'number' is not assignable to type 'BodyInit | null | undefined'.
+exit code: 2
+
+$ git diff --check (pre-commit)
+exit code: 0
+
+$ staged-added-lines credential-pattern scan
+Credential-pattern matches in staged added lines: 0; no secret values printed
+exit code: 0
+
+$ bun run test (final pre-commit)
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.72ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.22ms]
+(pass) spawn failure closes its terminal and propagates the error [0.80ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [27.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=7330 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.04ms]
+python3 PID=PGID=SID=TPGID=7337 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.28ms]
+bash GROUP=7339 GRANDCHILD=7342 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.42ms]
+bash GROUP=7343 GRANDCHILD=7346 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.55ms]
+python3 GROUP=7348 GRANDCHILD=7350 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.30ms]
+python3 GROUP=7351 GRANDCHILD=7353 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.57ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.54ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [274.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=33955 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [28.54ms]
+(pass) server startup fails clearly when setsid is absent on PATH [18.61ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [57.00ms]
+exit code: 0
+
+$ bun run check (final pre-commit)
+$ ultracite check
+Checked 15 files in 98ms. No fixes applied.
+exit code: 0
+
+$ bun run check-types (final pre-commit)
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+exit code: 0
+
+$ git diff --check (final pre-commit)
+exit code: 0
+
+$ git diff --cached --check (raw evidence whitespace preserved via .gitattributes)
+exit code: 0

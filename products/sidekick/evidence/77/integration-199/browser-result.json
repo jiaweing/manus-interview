@@ -1,0 +1,12 @@
+{
+  "headed": true,
+  "executable": "/usr/bin/chromium",
+  "extensionId": "acclkjanmphkeimpnmcmfhggceppdbfc",
+  "state": "ENABLED",
+  "serviceWorker": "chrome-extension://acclkjanmphkeimpnmcmfhggceppdbfc/background.js",
+  "sidepanelPage": "chrome-extension://acclkjanmphkeimpnmcmfhggceppdbfc/sidepanel.html",
+  "sidepanelHeading": "Sidekick",
+  "runtimeErrors": [],
+  "manifestErrors": [],
+  "pageErrors": []
+}
