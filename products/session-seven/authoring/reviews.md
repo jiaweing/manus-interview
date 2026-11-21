@@ -91,7 +91,7 @@ The code in this run was authored by Manus swarm agents, not `anthropic/claude-o
 
 ## #161
 - **Issue:** #161 — Illustrate TetherTerm input and output in one persistent terminal session.
-- **PR:** pending opening on branch `session-seven/161-tetherterm`; body will contain `Closes #161`.
+- **PR:** https://github.com/jiaweing/manus-interview/pull/236, branch `session-seven/161-tetherterm`; body contains `Closes #161`.
 - **Files changed:** `apps/video/src/scenes/TetherTermScene.jsx`, `apps/video/tests/tetherterm.test.js`, `qa/tetherterm-{review.md,tests.txt,verification.txt,full-suite.txt}`, five reviewed PNGs `qa/stills/tetherterm/frame-{1140,1170,1260,1350,1379}.png`, and this ledger entry. No shared primitive/timeline/registry changes.
 - **Author kind:** authored by Manus swarm agent b161/builder, not by anthropic/claude-opus-5.5 (access blocked: no OPENROUTER_API_KEY).
 - **Request reference:** none; no model request, provider generation id or accepted Opus-authored patch exists. The Lead's dependency waiver does not satisfy blocked #152.
