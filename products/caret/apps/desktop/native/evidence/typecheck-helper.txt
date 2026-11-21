@@ -1,0 +1,5 @@
+COMMAND: bun run --cwd apps/desktop typecheck:helper
+HOST: linux x64
+EXIT_CODE: 0
+
+$ tsc --noEmit -p native/tsconfig.json
