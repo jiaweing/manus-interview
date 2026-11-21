@@ -1,3 +1,14 @@
+import { isExposed } from "./exposure";
+import {
+	boundedText,
+	checkControlValue,
+	explicitRole,
+	hasPrivateTextAncestor,
+	MAX_DESCRIPTOR_NAME,
+	MAX_SNAPSHOT_ELEMENTS,
+	validateObservationQuery,
+} from "./snapshot-privacy";
+
 export interface SnapshotElement {
 	enabled: boolean;
 	href?: string;
@@ -20,8 +31,6 @@ export interface Snapshot {
 
 const candidates =
 	"a[href],button,input,select,textarea,h1,h2,h3,h4,h5,h6,label,[role],[contenteditable='true']";
-const unsupported = "iframe,canvas,object,embed";
-const textExcluded = `${unsupported},script,style,noscript,template,input,textarea,select`;
 const supportedRoles = new Set([
 	"button",
 	"link",
@@ -46,37 +55,7 @@ function normalize(text: string): string {
 }
 
 /** No iframe/shadow-root traversal: all queries and TreeWalkers stay in this document. */
-export function isRendered(element: Element): boolean {
-	const view = element.ownerDocument.defaultView;
-	if (!view || element.closest(unsupported)) {
-		return false;
-	}
-	for (
-		let ancestor: Element | null = element;
-		ancestor;
-		ancestor = ancestor.parentElement
-	) {
-		if (
-			ancestor.hasAttribute("hidden") ||
-			ancestor.hasAttribute("inert") ||
-			ancestor.getAttribute("aria-hidden") === "true"
-		) {
-			return false;
-		}
-		const style = view.getComputedStyle(ancestor);
-		if (
-			style.display === "none" ||
-			style.visibility === "hidden" ||
-			style.visibility === "collapse" ||
-			style.opacity === "0"
-		) {
-			return false;
-		}
-	}
-	return Array.from(element.getClientRects()).some(
-		(rect) => rect.width > 0 && rect.height > 0
-	);
-}
+export const isRendered = isExposed;
 
 export function isEnabled(element: Element): boolean {
 	for (const fieldset of element.ownerDocument.querySelectorAll(
@@ -100,9 +79,9 @@ export function isEnabled(element: Element): boolean {
 }
 
 function roleFor(element: Element): string | undefined {
-	const explicit = element.getAttribute("role")?.split(whitespace)[0];
-	if (explicit && supportedRoles.has(explicit)) {
-		return explicit;
+	const explicit = explicitRole(element);
+	if (explicit) {
+		return supportedRoles.has(explicit) ? explicit : undefined;
 	}
 	const tag = element.localName;
 	if (headingTag.test(tag)) {
@@ -156,7 +135,7 @@ function renderedText(root: Element): string {
 	const text: string[] = [];
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
 		const parent = node.parentElement;
-		if (parent && !parent.closest(textExcluded) && isRendered(parent)) {
+		if (parent && !hasPrivateTextAncestor(parent) && isExposed(node)) {
 			const value = normalize(node.textContent ?? "");
 			if (value) {
 				text.push(value);
@@ -166,18 +145,25 @@ function renderedText(root: Element): string {
 	return text.join("\n");
 }
 
+function referenceText(element: Element, attribute: string): string {
+	return normalize(
+		(element.getAttribute(attribute) ?? "")
+			.split(whitespace)
+			.map((id) => {
+				const reference = element.ownerDocument.getElementById(id);
+				return isExposed(reference) && reference ? renderedText(reference) : "";
+			})
+			.join(" ")
+	);
+}
+
 function nameFor(element: Element): string {
-	const document = element.ownerDocument;
-	const labelledBy = element.getAttribute("aria-labelledby");
+	if (!isExposed(element)) {
+		return "";
+	}
+	const labelledBy = referenceText(element, "aria-labelledby");
 	if (labelledBy) {
-		const names = labelledBy.split(whitespace).map((id) => {
-			const label = document.getElementById(id);
-			return label && isRendered(label) ? renderedText(label) : "";
-		});
-		const name = normalize(names.join(" "));
-		if (name) {
-			return name;
-		}
+		return labelledBy;
 	}
 	const ariaLabel = element.getAttribute("aria-label");
 	if (ariaLabel) {
@@ -197,7 +183,7 @@ function nameFor(element: Element): string {
 		const labels = element.labels as NodeListOf<HTMLLabelElement> | null;
 		const name = normalize(
 			Array.from(labels ?? [])
-				.filter(isRendered)
+				.filter(isExposed)
 				.map(renderedText)
 				.join(" ")
 		);
@@ -213,7 +199,7 @@ function nameFor(element: Element): string {
 		element.getAttribute("alt") ??
 			element.getAttribute("title") ??
 			element.getAttribute("placeholder") ??
-			""
+			referenceText(element, "aria-describedby")
 	);
 }
 
@@ -222,6 +208,96 @@ interface DocumentState {
 	root: Element;
 	snapshotId: string;
 	targets: Map<number, Element>;
+}
+
+function observationScopes(document: Document, search?: string): Element[] {
+	if (!search) {
+		return [];
+	}
+	return Array.from(
+		document.querySelectorAll("p,li,h1,h2,h3,h4,h5,h6,label,button")
+	).filter(
+		(element) =>
+			isExposed(element) &&
+			normalize(renderedText(element))
+				.toLowerCase()
+				.includes(search.toLowerCase())
+	);
+}
+
+function permittedRole(element: Element): string | undefined {
+	if (
+		hasPrivateTextAncestor(element.parentElement) ||
+		(element.localName === "input" &&
+			["password", "hidden"].includes((element as HTMLInputElement).type)) ||
+		!isExposed(element) ||
+		!isEnabled(element)
+	) {
+		return undefined;
+	}
+	return roleFor(element);
+}
+
+function descriptorFor(
+	element: Element,
+	index: number,
+	role: string,
+	name: string
+) {
+	const descriptor: SnapshotElement = {
+		enabled: true,
+		index,
+		name: name.slice(0, MAX_DESCRIPTOR_NAME),
+		role,
+	};
+	let truncated = name.length > MAX_DESCRIPTOR_NAME;
+	if (element.localName === "input") {
+		descriptor.inputType = (element as HTMLInputElement).type;
+	}
+	if (element.localName === "a") {
+		const { href } = element as HTMLAnchorElement;
+		if (href.length <= 8192) {
+			descriptor.href = href;
+		} else {
+			truncated = true;
+		}
+	}
+	return { descriptor, truncated };
+}
+
+function indexedDescriptors(
+	document: Document,
+	current: DocumentState,
+	search?: string
+) {
+	const elements: SnapshotElement[] = [];
+	const scopes = observationScopes(document, search);
+	let truncated = false;
+	for (const element of document.querySelectorAll(candidates)) {
+		const role = permittedRole(element);
+		if (!role) {
+			continue;
+		}
+		const name = nameFor(element);
+		if (
+			search &&
+			!name.toLowerCase().includes(search.toLowerCase()) &&
+			!scopes.some((scope) => scope.contains(element))
+		) {
+			truncated = true;
+			continue;
+		}
+		if (elements.length >= MAX_SNAPSHOT_ELEMENTS) {
+			truncated = true;
+			break;
+		}
+		const index = elements.length + 1;
+		const result = descriptorFor(element, index, role, name);
+		truncated ||= result.truncated;
+		elements.push(result.descriptor);
+		current.targets.set(index, element);
+	}
+	return { elements, truncated };
 }
 
 /** Keep this observer in the isolated content-script world, never send the target map. */
@@ -243,7 +319,24 @@ export function createSnapshotObserver(document: Document) {
 		return state;
 	}
 	return {
-		observe(tabId: number): Snapshot {
+		checkValue(
+			snapshotId: string,
+			documentToken: string,
+			index: number,
+			expected: string
+		) {
+			const element = this.resolveElement(snapshotId, documentToken, index);
+			return checkControlValue(
+				element && isExposed(element) && isEnabled(element) ? element : null,
+				expected
+			);
+		},
+		/** Literal find-text uses exactly the same permitted text/index pipeline. */
+		findText(tabId: number, query: string): Snapshot {
+			return this.observe(tabId, query);
+		},
+		observe(tabId: number, query?: string): Snapshot {
+			const search = validateObservationQuery(query);
 			if (document.defaultView?.top !== document.defaultView) {
 				throw new Error("Sidekick supports top-frame documents only");
 			}
@@ -253,38 +346,22 @@ export function createSnapshotObserver(document: Document) {
 			const current = currentState();
 			current.snapshotId = crypto.randomUUID();
 			current.targets = new Map();
-			const elements: SnapshotElement[] = [];
-			for (const element of document.querySelectorAll(candidates)) {
-				const role = roleFor(element);
-				if (!(role && isRendered(element) && isEnabled(element))) {
-					continue;
-				}
-				const index = elements.length + 1;
-				const descriptor: SnapshotElement = {
-					enabled: true,
-					index,
-					name: nameFor(element),
-					role,
-				};
-				if (element.localName === "input") {
-					descriptor.inputType = (
-						element.getAttribute("type") ?? "text"
-					).toLowerCase();
-				}
-				if (element.localName === "a") {
-					descriptor.href = (element as HTMLAnchorElement).href;
-				}
-				elements.push(descriptor);
-				current.targets.set(index, element);
-			}
+			const observation = boundedText(
+				renderedText(document.body ?? current.root),
+				search
+			);
+			const descriptors = indexedDescriptors(document, current, search);
 			return {
 				documentToken: current.documentToken,
-				elements,
+				elements: descriptors.elements,
 				snapshotId: current.snapshotId,
 				tabId,
-				text: renderedText(document.body ?? current.root),
-				title: document.title,
-				truncated: false,
+				text: observation.text,
+				title: document.title.slice(0, MAX_DESCRIPTOR_NAME),
+				truncated:
+					observation.truncated ||
+					descriptors.truncated ||
+					document.title.length > MAX_DESCRIPTOR_NAME,
 				url: document.URL,
 			};
 		},

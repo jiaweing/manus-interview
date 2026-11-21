@@ -1,0 +1,24 @@
+{
+  "browser": "headed /usr/bin/chromium via xvfb-run, fresh disposable profile",
+  "bounds": {
+    "textLength": 20000,
+    "elements": 300,
+    "truncated": true
+  },
+  "targeted": {
+    "freshIndex": "late",
+    "oldInvalid": true,
+    "reloadChangesDocumentToken": true
+  },
+  "layout": {
+    "contentVisibility": "hidden",
+    "rect": {
+      "width": 600,
+      "height": 60
+    },
+    "innerText": ""
+  },
+  "failures": [],
+  "result": "PASS",
+  "networkProviderCalls": 0
+}

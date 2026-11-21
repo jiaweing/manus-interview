@@ -23,6 +23,8 @@ const expected = [
 	["submit", "button", "Send example"],
 	["custom", "button", "Expand details"],
 	["editable", "textbox", "Editable note"],
+	// Opacity-only hiding is outside the ordinary-DOM exposure contract.
+	["transparent", "button", "Transparent control"],
 ];
 
 function fixture() {
@@ -121,7 +123,6 @@ describe("indexed top-frame DOM snapshots", () => {
 			"hidden",
 			"hidden-ancestor",
 			"css-hidden",
-			"transparent",
 			"invisible",
 			"aria-hidden",
 			"disabled",

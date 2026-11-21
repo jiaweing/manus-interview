@@ -1,0 +1,104 @@
+
+COMMAND: bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+Checked 537 installs across 608 packages (no changes) [1.92s]
+EXIT_CODE=0
+
+COMMAND: env WXT_SIDEKICK_PROXY_URL=https://example.com bun run build:extension
+  ├─ .output/chrome-mv3/assets/inter-latin-ext-600-normal-D2bJ5OIk.woff2     36.26 kB
+  ├─ .output/chrome-mv3/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff     6.50 kB
+  ├─ .output/chrome-mv3/assets/inter-vietnamese-400-normal-DMkecbls.woff2    4.97 kB
+  ├─ .output/chrome-mv3/assets/inter-vietnamese-600-normal-BuLX-rYi.woff     6.64 kB
+  ├─ .output/chrome-mv3/assets/inter-vietnamese-600-normal-Cc8MFFhd.woff2    5.10 kB
+  ├─ .output/chrome-mv3/icon/128.png                                         3.07 kB
+  ├─ .output/chrome-mv3/icon/16.png                                          559 B
+  ├─ .output/chrome-mv3/icon/32.png                                          916 B
+  ├─ .output/chrome-mv3/icon/48.png                                          1.33 kB
+  └─ .output/chrome-mv3/icon/96.png                                          2.37 kB
+Σ Total size: 723.57 kB
+✔ Finished in 1.066 s
+EXIT_CODE=0
+
+COMMAND: env SIDEKICK_PRIVACY_EVIDENCE=1 bun test apps/extension/src/page/snapshot-privacy.test.ts
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [121.28ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [67.33ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [77.36ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [3.35ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [27.47ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [2.94ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [21.99ms]
+
+ 141 pass
+ 0 fail
+ 2797 expect() calls
+Ran 141 tests across 1 file. [2.12s]
+EXIT_CODE=0
+
+COMMAND: bun test apps/extension/src/page/snapshot-privacy.test.ts
+(pass) bounded private snapshots > descriptor boundary: 600 enabled controls [183.30ms]
+(pass) bounded private snapshots > both caps mark truncation and long descriptor names remain protocol-valid [115.69ms]
+(pass) bounded private snapshots > query retrieves text and an actionable control beyond both initial caps with fresh indexes [115.27ms]
+(pass) bounded private snapshots > targeted search finds a match beyond 20k inside one large rendered text node [6.12ms]
+(pass) bounded private snapshots > targeted text search crosses inline nodes and handles many matches within the text cap [45.40ms]
+(pass) bounded private snapshots > no match returns no fabricated indexes; queries validate before replacing the current map [3.96ms]
+(pass) bounded private snapshots > serialized turn and actual provider body exclude randomized secrets without browser storage/cookie reads [21.54ms]
+
+ 141 pass
+ 0 fail
+ 2797 expect() calls
+Ran 141 tests across 1 file. [2.46s]
+EXIT_CODE=0
+
+COMMAND: bun test
+(pass) OpenRouter adapter with a fake HTTP transport > malformed provider JSON is rejected without raw-body leakage [1.26ms]
+(pass) model deadline and request cancellation > default model deadline is exactly 20 seconds and aborts even an uncooperative fake adapter [20003.98ms]
+(pass) model deadline and request cancellation > an aborted request cancels the adapter and cannot return its late tool call [2.61ms]
+(pass) model deadline and request cancellation > already-aborted request never dispatches and deadline cleanup does not later abort a successful turn [11.16ms]
+(pass) model deadline and request cancellation > deadline cancellation reaches the fake provider HTTP request [11.32ms]
+(pass) generated extension bundle excludes the seeded server-key sentinel and server adapter [5.93ms]
+(pass) shared protocol imports do not include server or provider configuration [0.66ms]
+
+ 307 pass
+ 0 fail
+ 3551 expect() calls
+Ran 307 tests across 7 files. [22.66s]
+EXIT_CODE=0
+
+COMMAND: bun run typecheck
+$ bun run --cwd apps/server typecheck && bun run --cwd apps/extension typecheck
+$ tsc --noEmit
+$ tsc --noEmit
+EXIT_CODE=0
+
+COMMAND: bun run check
+$ ultracite check
+Checked 51 files in 471ms. No fixes applied.
+EXIT_CODE=0
+
+COMMAND: bun run verify:secrets
+$ bun scripts/check-secrets.ts
+Secret scan passed: 208 tracked product files, 39 extension artifacts, 24 evidence logs; no values printed.
+EXIT_CODE=0
+
+COMMAND: xvfb-run -a bun apps/extension/tests/snapshot-privacy.browser.ts
+PASS packaged Chromium observer: 20,000 characters / 300 controls, targeted late evidence + live index, 21 randomized secret exclusions, ARIA role tokens, CSS/native visibility, provider serialization, snapshot/document rotation
+EXIT_CODE=0
+
+COMMAND: xvfb-run -a bun apps/extension/tests/exposure.browser.ts
+PASS exposure 92/102: fuzz-53-{"combination":1,"name":"ARIA-hIDDeN","value":"trUe "}
+PASS exposure 93/102: fuzz-54-{"combination":2,"name":"ArIa-hIDdeN","value":"\r\nTrUe\r\n"}
+PASS exposure 94/102: fuzz-55-{"combination":3,"name":"aRIA-HiddeN","value":"\r\ntrue "}
+PASS exposure 95/102: fuzz-56-{"combination":0,"name":"arIA-HiDden","value":"\tTrUE\t"}
+PASS exposure 96/102: fuzz-57-{"combination":1,"name":"ARia-HiddeN","value":" \t\n TrUE\r\n"}
+PASS exposure 97/102: fuzz-58-{"combination":2,"name":"aRia-HidDeN","value":" TrUe \t\n "}
+PASS exposure 98/102: fuzz-59-{"combination":3,"name":"ARIA-HIDdEn","value":" \t\n tRuE \t\n "}
+PASS exposure 99/102: fuzz-60-{"combination":0,"name":"aRIA-hIdDEN","value":"true\t"}
+PASS exposure 100/102: fuzz-61-{"combination":1,"name":"aria-HIDDEN","value":"\ttrUe\r\n"}
+PASS exposure 101/102: fuzz-62-{"combination":2,"name":"ARiA-hIDDen","value":" tRuE"}
+PASS exposure 102/102: fuzz-63-{"combination":3,"name":"arIa-HIdDEn","value":"\tTRue\t"}
+PASS 102 packaged Chromium exclusion cases including 64 seeded fuzz variants, 6 long-page positive cases, initial/targeted/findText/nearby observations and adapter-serialized provider bodies
+EXIT_CODE=0
+
+Real OpenRouter API: not run: no key.
+HTTPS hosting gate: not run; issue #78 owns this separately gated check.

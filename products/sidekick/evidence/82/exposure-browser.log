@@ -1,0 +1,111 @@
+PASS visible 1/6: normal visible text beyond 20k
+PASS visible 2/6: display:contents wrapper
+PASS visible 3/6: nested display:contents wrappers
+PASS visible 4/6: mixed box and nested display:contents wrappers
+PASS visible 5/6: visible content-visibility:auto direct text
+PASS visible 6/6: visible auto direct text through display:contents
+PASS exposure 1/102: display:none
+PASS exposure 2/102: visibility:hidden
+PASS exposure 3/102: visibility:collapse
+PASS exposure 4/102: content-visibility:hidden
+PASS exposure 5/102: display:contents explicit visibility:hidden
+PASS exposure 6/102: display:contents explicit visibility:collapse
+PASS exposure 7/102: display:contents explicit content-visibility:hidden
+PASS exposure 8/102: display:contents hidden
+PASS exposure 9/102: display:contents inert
+PASS exposure 10/102: display:contents aria-hidden=' 	TrUe
+ '
+PASS exposure 11/102: hidden
+PASS exposure 12/102: hidden='hidden'
+PASS exposure 13/102: hidden='false'
+PASS exposure 14/102: hidden=' until-found '
+PASS exposure 15/102: hidden='	until-found
+'
+PASS exposure 16/102: inert
+PASS exposure 17/102: inert='false'
+PASS exposure 18/102: aria-hidden "true"
+PASS exposure 19/102: aria-hidden "TRUE"
+PASS exposure 20/102: aria-hidden "True"
+PASS exposure 21/102: aria-hidden " true "
+PASS exposure 22/102: aria-hidden "\tTrUe\r\n"
+PASS exposure 23/102: template
+PASS exposure 24/102: noscript
+PASS exposure 25/102: script
+PASS exposure 26/102: style
+PASS exposure 27/102: datalist
+PASS exposure 28/102: closed dialog
+PASS exposure 29/102: closed details direct text and descendants
+PASS exposure 30/102: closed details without summary
+PASS exposure 31/102: closed details second summary
+PASS exposure 32/102: closed details nested open summary
+PASS exposure 33/102: hidden until-found native unrevealed content
+PASS exposure 34/102: hidden until-found remains excluded despite a visible CSS override
+PASS exposure 35/102: hidden until-found unrevealed content
+PASS exposure 36/102: native checkVisibility auto-skipped
+PASS exposure 37/102: native auto-skipped direct text with a visible container box
+PASS exposure 38/102: native auto-skipped direct text through nested display:contents
+PASS exposure 39/102: fuzz-0-{"combination":0,"name":"aRiA-HIDden","value":"tRue "}
+PASS exposure 40/102: fuzz-1-{"combination":1,"name":"ARIa-HIDden","value":"TRUE\r\n"}
+PASS exposure 41/102: fuzz-2-{"combination":2,"name":"aria-HIdDEN","value":"\r\ntRue\r\n"}
+PASS exposure 42/102: fuzz-3-{"combination":3,"name":"AriA-hiDDen","value":"\r\nTRUE\t"}
+PASS exposure 43/102: fuzz-4-{"combination":0,"name":"aRIA-HIddEN","value":"trUe"}
+PASS exposure 44/102: fuzz-5-{"combination":1,"name":"AriA-hiDden","value":"\tTRUE\t"}
+PASS exposure 45/102: fuzz-6-{"combination":2,"name":"ARia-hIDden","value":"\ttRUe \t\n "}
+PASS exposure 46/102: fuzz-7-{"combination":3,"name":"arIa-hIdDen","value":"\ttRuE"}
+PASS exposure 47/102: fuzz-8-{"combination":0,"name":"arIa-HIdDeN","value":"\r\nTruE"}
+PASS exposure 48/102: fuzz-9-{"combination":1,"name":"ArIA-hIdDeN","value":"tRUe\r\n"}
+PASS exposure 49/102: fuzz-10-{"combination":2,"name":"arIa-HidDEn","value":"\r\ntrUe\t"}
+PASS exposure 50/102: fuzz-11-{"combination":3,"name":"ARiA-HIddEN","value":"\tTRUe\t"}
+PASS exposure 51/102: fuzz-12-{"combination":0,"name":"ariA-HIDdEn","value":"\tTrUe "}
+PASS exposure 52/102: fuzz-13-{"combination":1,"name":"ARIA-HiDDEn","value":"TRuE\r\n"}
+PASS exposure 53/102: fuzz-14-{"combination":2,"name":"ARIa-HIdDen","value":" TRuE\t"}
+PASS exposure 54/102: fuzz-15-{"combination":3,"name":"aRIA-hIddEn","value":"TruE \t\n "}
+PASS exposure 55/102: fuzz-16-{"combination":0,"name":"aRiA-HiddEn","value":"\ttrUE"}
+PASS exposure 56/102: fuzz-17-{"combination":1,"name":"aria-HiDDen","value":"TruE \t\n "}
+PASS exposure 57/102: fuzz-18-{"combination":2,"name":"Aria-hIdDeN","value":"\r\ntRUe\r\n"}
+PASS exposure 58/102: fuzz-19-{"combination":3,"name":"ArIa-HIDDen","value":"TRUE "}
+PASS exposure 59/102: fuzz-20-{"combination":0,"name":"aRia-HiDdEN","value":"\r\nTrUe "}
+PASS exposure 60/102: fuzz-21-{"combination":1,"name":"aRia-HiddEn","value":"\ttRue"}
+PASS exposure 61/102: fuzz-22-{"combination":2,"name":"AriA-HIDDEn","value":"\tTruE\r\n"}
+PASS exposure 62/102: fuzz-23-{"combination":3,"name":"ARia-HiDDen","value":"\r\nTrue\t"}
+PASS exposure 63/102: fuzz-24-{"combination":0,"name":"ArIa-HiddEn","value":"\tTRUe\r\n"}
+PASS exposure 64/102: fuzz-25-{"combination":1,"name":"Aria-HidDen","value":"\r\ntrUe\t"}
+PASS exposure 65/102: fuzz-26-{"combination":2,"name":"ARia-hIDdeN","value":"\r\ntrue"}
+PASS exposure 66/102: fuzz-27-{"combination":3,"name":"arIa-HidDEN","value":"TRue "}
+PASS exposure 67/102: fuzz-28-{"combination":0,"name":"aRiA-hidDEN","value":" trUe \t\n "}
+PASS exposure 68/102: fuzz-29-{"combination":1,"name":"aRIA-HIddEn","value":"\tTRUE\t"}
+PASS exposure 69/102: fuzz-30-{"combination":2,"name":"ArIa-hIDDen","value":" \t\n TruE\r\n"}
+PASS exposure 70/102: fuzz-31-{"combination":3,"name":"ariA-hidDEN","value":" TrUe"}
+PASS exposure 71/102: fuzz-32-{"combination":0,"name":"aria-HIDDEn","value":"\r\ntRuE\r\n"}
+PASS exposure 72/102: fuzz-33-{"combination":1,"name":"ARia-HIddeN","value":" \t\n TRUe "}
+PASS exposure 73/102: fuzz-34-{"combination":2,"name":"ARiA-HIdDEn","value":"TrUe"}
+PASS exposure 74/102: fuzz-35-{"combination":3,"name":"AriA-hIddEn","value":"TrUE\r\n"}
+PASS exposure 75/102: fuzz-36-{"combination":0,"name":"ARiA-HidDEn","value":"true "}
+PASS exposure 76/102: fuzz-37-{"combination":1,"name":"AriA-hIDdEn","value":"\r\ntRue"}
+PASS exposure 77/102: fuzz-38-{"combination":2,"name":"ARiA-HiDdEn","value":" \t\n TrUE \t\n "}
+PASS exposure 78/102: fuzz-39-{"combination":3,"name":"ArIa-hIdDEN","value":" TRUE "}
+PASS exposure 79/102: fuzz-40-{"combination":0,"name":"ArIa-hIDDen","value":" \t\n TrUe\t"}
+PASS exposure 80/102: fuzz-41-{"combination":1,"name":"ARIA-HIDdeN","value":"\tTRUE"}
+PASS exposure 81/102: fuzz-42-{"combination":2,"name":"ARia-HIDDeN","value":" truE "}
+PASS exposure 82/102: fuzz-43-{"combination":3,"name":"aria-HIdDen","value":"\r\nTrUE\t"}
+PASS exposure 83/102: fuzz-44-{"combination":0,"name":"Aria-HidDEn","value":"\tTrUe\r\n"}
+PASS exposure 84/102: fuzz-45-{"combination":1,"name":"Aria-hiddeN","value":" \t\n trUe"}
+PASS exposure 85/102: fuzz-46-{"combination":2,"name":"aRia-HidDEn","value":"\r\ntRuE"}
+PASS exposure 86/102: fuzz-47-{"combination":3,"name":"ArIA-hiDdEN","value":"\tTRue"}
+PASS exposure 87/102: fuzz-48-{"combination":0,"name":"ARIa-HIdDeN","value":"trUE"}
+PASS exposure 88/102: fuzz-49-{"combination":1,"name":"ariA-hiDDeN","value":"\r\ntRUe"}
+PASS exposure 89/102: fuzz-50-{"combination":2,"name":"aRIa-hIdDEN","value":"\r\nTRUe\t"}
+PASS exposure 90/102: fuzz-51-{"combination":3,"name":"ARiA-hIdDEN","value":"TruE"}
+PASS exposure 91/102: fuzz-52-{"combination":0,"name":"Aria-hidDen","value":"\r\nTrue\t"}
+PASS exposure 92/102: fuzz-53-{"combination":1,"name":"ARIA-hIDDeN","value":"trUe "}
+PASS exposure 93/102: fuzz-54-{"combination":2,"name":"ArIa-hIDdeN","value":"\r\nTrUe\r\n"}
+PASS exposure 94/102: fuzz-55-{"combination":3,"name":"aRIA-HiddeN","value":"\r\ntrue "}
+PASS exposure 95/102: fuzz-56-{"combination":0,"name":"arIA-HiDden","value":"\tTrUE\t"}
+PASS exposure 96/102: fuzz-57-{"combination":1,"name":"ARia-HiddeN","value":" \t\n TrUE\r\n"}
+PASS exposure 97/102: fuzz-58-{"combination":2,"name":"aRia-HidDeN","value":" TrUe \t\n "}
+PASS exposure 98/102: fuzz-59-{"combination":3,"name":"ARIA-HIDdEn","value":" \t\n tRuE \t\n "}
+PASS exposure 99/102: fuzz-60-{"combination":0,"name":"aRIA-hIdDEN","value":"true\t"}
+PASS exposure 100/102: fuzz-61-{"combination":1,"name":"aria-HIDDEN","value":"\ttrUe\r\n"}
+PASS exposure 101/102: fuzz-62-{"combination":2,"name":"ARiA-hIDDen","value":" tRuE"}
+PASS exposure 102/102: fuzz-63-{"combination":3,"name":"arIa-HIdDEn","value":"\tTRue\t"}
+PASS 102 packaged Chromium exclusion cases including 64 seeded fuzz variants, 6 long-page positive cases, initial/targeted/findText/nearby observations and adapter-serialized provider bodies

@@ -1,0 +1,16 @@
+bun test v1.4.5 (a7733435c)
+
+../../../../verify/82/systematic/independent-privacy.test.ts:
+{"role":"textbox ","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="textbox " [38.05ms]
+{"role":"textbox searchbox","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="textbox searchbox" [9.17ms]
+{"role":"combobox listbox","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="combobox listbox" [8.90ms]
+{"role":"option ","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) existing ARIA control value stays private with role="option " [7.69ms]
+
+ 4 pass
+ 0 fail
+ 12 expect() calls
+Ran 4 tests across 1 file. [281.00ms]

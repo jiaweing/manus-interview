@@ -1,0 +1,16 @@
+bun test v1.4.5 (a7733435c)
+
+../../../../verify/82/systematic/new-aria-hidden.test.ts:
+{"value":"true","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden "true" never reaches provider [42.55ms]
+{"value":"TRUE","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden "TRUE" never reaches provider [10.67ms]
+{"value":"True","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden "True" never reaches provider [10.11ms]
+{"value":" true ","snapshotLeaks":false,"targetedLeaks":false,"providerLeaks":false}
+(pass) aria-hidden " true " never reaches provider [10.00ms]
+
+ 4 pass
+ 0 fail
+ 12 expect() calls
+Ran 4 tests across 1 file. [292.00ms]

@@ -101,10 +101,10 @@ try {
 	assert.equal(first.title, "Snapshot fixture");
 	assert.equal(first.url, local.url());
 	assert.equal(first.tabId, tabId);
-	assert.equal(first.elements.length, 15, JSON.stringify(first.elements));
+	assert.equal(first.elements.length, 16, JSON.stringify(first.elements));
 	assert.equal(
 		new Set(first.elements.map((element) => element.index)).size,
-		15
+		16
 	);
 	assert(first.text.includes("Rendered evidence for observation."));
 	assert(!first.text.includes("existing-textarea-value-not-for-snapshot"));
@@ -160,6 +160,7 @@ try {
 		"submit",
 		"custom",
 		"editable",
+		"transparent",
 	]);
 	await local.reload();
 	const replaced = await observe(panel, tabId);
@@ -168,12 +169,13 @@ try {
 	results.localFixture = {
 		documentRotationOnReload: true,
 		indexedElements: first.elements.length,
-		liveMap: "all 15 original DOM targets",
+		liveMap:
+			"all 16 original DOM targets (opacity-only hiding is out of scope)",
 		result: "PASS",
 		snapshotRotation: true,
 	};
 	console.log(
-		"PASS local fixture: 15 indexed original targets, excluded boundaries, repeat injection, snapshot/document rotation"
+		"PASS local fixture: 16 indexed original targets, excluded boundaries, repeat injection, snapshot/document rotation"
 	);
 
 	const accessBefore = await panel.evaluate(async () => {

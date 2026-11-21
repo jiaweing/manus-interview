@@ -21,15 +21,25 @@ export function installSnapshotObserver() {
 		) {
 			return;
 		}
-		const request = message as { type?: unknown; tabId?: unknown };
+		const request = message as {
+			type?: unknown;
+			tabId?: unknown;
+			query?: unknown;
+		};
 		if (
 			request.type !== "sidekick:observe" ||
 			typeof request.tabId !== "number" ||
 			!Number.isInteger(request.tabId) ||
-			request.tabId < 0
+			request.tabId < 0 ||
+			(request.query !== undefined &&
+				(typeof request.query !== "string" ||
+					!request.query.trim() ||
+					request.query.length > 2000))
 		) {
 			return;
 		}
-		return Promise.resolve(observer.observe(request.tabId));
+		return Promise.resolve(
+			observer.observe(request.tabId, request.query as string | undefined)
+		);
 	});
 }

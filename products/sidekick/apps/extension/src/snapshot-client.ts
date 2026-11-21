@@ -37,7 +37,8 @@ export type ObservationResult =
 
 export async function observeTab(
 	tabId: number,
-	api: SnapshotBrowser
+	api: SnapshotBrowser,
+	query?: string
 ): Promise<ObservationResult> {
 	try {
 		const tab = await api.tabs.get(tabId);
@@ -69,7 +70,11 @@ export async function observeTab(
 		await api.scripting.executeScript(contentScriptInjection(tabId));
 		const response = await api.tabs.sendMessage(
 			tabId,
-			{ tabId, type: "sidekick:observe" },
+			{
+				tabId,
+				type: "sidekick:observe",
+				...(query === undefined ? {} : { query }),
+			},
 			{ frameId: 0 }
 		);
 		const snapshot = response as Snapshot | undefined;
