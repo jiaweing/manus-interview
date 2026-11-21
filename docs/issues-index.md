@@ -1,16 +1,16 @@
 # Issues index
 
-Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each product has one epic; every child is a linked sub-issue with acceptance criteria and a verification outcome. Blocked-by relations are set between issues. Labels: `priority:*`, `type:*`, `product:*`, `area:*`. Each product has a milestone.
+Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py` and `scripts/sync_issues.py`. Each product has one epic; every child is a linked sub-issue with acceptance criteria and a verification outcome. The last issue of each product (`VX`) is the full-coverage computer-use gate (tests, video, screenshots). Labels: `priority:*`, `type:*`, `product:*`, `area:*`. Each product has a milestone.
 
 | Product | Epic | Issues | P0 | P1 |
 |---|---|---|---|---|
-| caret | [#1](https://github.com/jiaweing/manus-interview/issues/1) | 24 | 23 | 1 |
-| flopside | [#26](https://github.com/jiaweing/manus-interview/issues/26) | 24 | 24 | 0 |
-| patchbay | [#51](https://github.com/jiaweing/manus-interview/issues/51) | 23 | 23 | 0 |
-| sidekick | [#75](https://github.com/jiaweing/manus-interview/issues/75) | 24 | 23 | 1 |
-| tetherterm | [#100](https://github.com/jiaweing/manus-interview/issues/100) | 24 | 23 | 1 |
-| glassroom | [#125](https://github.com/jiaweing/manus-interview/issues/125) | 24 | 23 | 1 |
-| session-seven | [#150](https://github.com/jiaweing/manus-interview/issues/150) | 24 | 23 | 1 |
+| caret | [#1](https://github.com/jiaweing/manus-interview/issues/1) | 25 | 24 | 1 |
+| flopside | [#26](https://github.com/jiaweing/manus-interview/issues/26) | 25 | 25 | 0 |
+| patchbay | [#51](https://github.com/jiaweing/manus-interview/issues/51) | 24 | 24 | 0 |
+| sidekick | [#75](https://github.com/jiaweing/manus-interview/issues/75) | 25 | 24 | 1 |
+| tetherterm | [#100](https://github.com/jiaweing/manus-interview/issues/100) | 25 | 24 | 1 |
+| glassroom | [#125](https://github.com/jiaweing/manus-interview/issues/125) | 25 | 24 | 1 |
+| session-seven | [#150](https://github.com/jiaweing/manus-interview/issues/150) | 25 | 24 | 1 |
 
 ## Caret: desktop voice input (epic [#1](https://github.com/jiaweing/manus-interview/issues/1))
 
@@ -24,7 +24,7 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#9](https://github.com/jiaweing/manus-interview/issues/9) `P0` `verification` Pass the packaged Windows Notepad native-loop gate before cloud work
 - [#10](https://github.com/jiaweing/manus-interview/issues/10) `P0` `feature` Implement the bounded session state machine and stale-response invalidation
 - [#11](https://github.com/jiaweing/manus-interview/issues/11) `P0` `feature` Capture bounded WebM audio and release the microphone on every exit
-- [#12](https://github.com/jiaweing/manus-interview/issues/12) `P0` `feature` Send one abortable OpenAI file-STT request with phrase hints
+- [#12](https://github.com/jiaweing/manus-interview/issues/12) `P0` `feature` Send one abortable OpenRouter audio-input transcription request with phrase hints
 - [#13](https://github.com/jiaweing/manus-interview/issues/13) `P0` `feature` Apply one neutral cleanup request and reject invalid or renumbered output
 - [#14](https://github.com/jiaweing/manus-interview/issues/14) `P0` `feature` Connect capture, transcription, cleanup, and one guarded paste attempt
 - [#15](https://github.com/jiaweing/manus-interview/issues/15) `P0` `feature` Persist the protected provider key and disclose cloud processing in setup
@@ -38,11 +38,12 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#23](https://github.com/jiaweing/manus-interview/issues/23) `P0` `docs` Document the selected alternatives and Linux-to-Windows verification runbook
 - [#24](https://github.com/jiaweing/manus-interview/issues/24) `P0` `verification` Package the portable Windows release and pass both application smoke checks
 - [#25](https://github.com/jiaweing/manus-interview/issues/25) `P1` `verification` Rehearse the 4:30 PRD demo and capture requirement-linked pass evidence
+- [#175](https://github.com/jiaweing/manus-interview/issues/175) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## Flopside: multiplayer 2.5D browser poker (epic [#26](https://github.com/jiaweing/manus-interview/issues/26))
 
 - [#27](https://github.com/jiaweing/manus-interview/issues/27) `P0` `setup` Scaffold and boot the independent Bun web and server apps
-- [#28](https://github.com/jiaweing/manus-interview/issues/28) `P0` `verification` Prove published WebSocket ingress reaches one Bun instance
+- [#28](https://github.com/jiaweing/manus-interview/issues/28) `P0` `verification` Prove WebSocket ingress reaches one Bun instance in a production build
 - [#29](https://github.com/jiaweing/manus-interview/issues/29) `P0` `feature` Evaluate the best five-card Hold’em hand and compare ties
 - [#30](https://github.com/jiaweing/manus-interview/issues/30) `P0` `feature` Deal server-owned hands and advance Hold’em streets and actors
 - [#31](https://github.com/jiaweing/manus-interview/issues/31) `P0` `feature` Enforce total-to wagers and full-raise reopening rules
@@ -63,8 +64,9 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#46](https://github.com/jiaweing/manus-interview/issues/46) `P0` `test` Assert private-card redaction across real HTTP and socket paths
 - [#47](https://github.com/jiaweing/manus-interview/issues/47) `P0` `test` Test room capacity and queued recovery and completion boundaries
 - [#48](https://github.com/jiaweing/manus-interview/issues/48) `P0` `test` Automate the two-context lifecycle with refresh and timeout
-- [#49](https://github.com/jiaweing/manus-interview/issues/49) `P0` `verification` Verify the release on published WSS and save its checkpoint
+- [#49](https://github.com/jiaweing/manus-interview/issues/49) `P0` `verification` Verify the release build over real WebSockets and record the tested commit
 - [#50](https://github.com/jiaweing/manus-interview/issues/50) `P0` `verification` Rehearse and capture the PRD’s timed two-browser demo
+- [#176](https://github.com/jiaweing/manus-interview/issues/176) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## Patchbay: local plugin-based AI agent harness (epic [#51](https://github.com/jiaweing/manus-interview/issues/51))
 
@@ -91,13 +93,14 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#72](https://github.com/jiaweing/manus-interview/issues/72) `P0` `docs` Document the manifest, extension protocol, and unsandboxed boundary
 - [#73](https://github.com/jiaweing/manus-interview/issues/73) `P0` `test` Test package rejection and atomic state preservation through CLI commands
 - [#74](https://github.com/jiaweing/manus-interview/issues/74) `P0` `verification` Rehearse the full release-gate demo within four minutes thirty seconds
+- [#177](https://github.com/jiaweing/manus-interview/issues/177) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## Sidekick: supervised Chrome side-panel agent (epic [#75](https://github.com/jiaweing/manus-interview/issues/75))
 
 - [#76](https://github.com/jiaweing/manus-interview/issues/76) `P0` `setup` Scaffold the independent Bun workspace and boot only extension and proxy
 - [#77](https://github.com/jiaweing/manus-interview/issues/77) `P0` `setup` Register the MV3 Side Panel and scoped browser permissions
 - [#78](https://github.com/jiaweing/manus-interview/issues/78) `P0` `setup` Secure and publish the Hono proxy over authenticated HTTPS
-- [#79](https://github.com/jiaweing/manus-interview/issues/79) `P0` `feature` Implement the Gemini single-tool turn endpoint and validated protocol
+- [#79](https://github.com/jiaweing/manus-interview/issues/79) `P0` `feature` Implement the OpenRouter model single-tool turn endpoint and validated protocol
 - [#80](https://github.com/jiaweing/manus-interview/issues/80) `P0` `feature` Build the borderless panel shell with context, token, and disclosure
 - [#81](https://github.com/jiaweing/manus-interview/issues/81) `P0` `feature` Capture indexed top-frame DOM snapshots with document identity
 - [#82](https://github.com/jiaweing/manus-interview/issues/82) `P0` `feature` Redact and bound snapshots while supporting targeted text observation
@@ -106,7 +109,7 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#85](https://github.com/jiaweing/manus-interview/issues/85) `P0` `feature` Execute ordinary click and fill tools with local value checks
 - [#86](https://github.com/jiaweing/manus-interview/issues/86) `P0` `feature` Manage requested tabs and pause or stop on browser-target changes
 - [#87](https://github.com/jiaweing/manus-interview/issues/87) `P0` `feature` Enforce extension-side action safety and untrusted-page boundaries
-- [#88](https://github.com/jiaweing/manus-interview/issues/88) `P0` `feature` Connect plan-before-Run to a one-action Gemini execution loop
+- [#88](https://github.com/jiaweing/manus-interview/issues/88) `P0` `feature` Connect plan-before-Run to a one-action OpenRouter execution loop
 - [#89](https://github.com/jiaweing/manus-interview/issues/89) `P0` `feature` Bound run duration and prevent uncertain mutation retries
 - [#90](https://github.com/jiaweing/manus-interview/issues/90) `P0` `feature` Render explicit intent, execution, and outcome states in the timeline
 - [#91](https://github.com/jiaweing/manus-interview/issues/91) `P0` `feature` Cancel pending requests and queued actions on Stop or panel closure
@@ -118,6 +121,7 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#97](https://github.com/jiaweing/manus-interview/issues/97) `P0` `verification` Verify dummy-form preparation, rejection, approved evidence, and Stop
 - [#98](https://github.com/jiaweing/manus-interview/issues/98) `P1` `docs` Document unpacked installation and the required demo preflight
 - [#99](https://github.com/jiaweing/manus-interview/issues/99) `P0` `verification` Rehearse the exact release demo twice within five minutes
+- [#178](https://github.com/jiaweing/manus-interview/issues/178) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## TetherTerm: MCP-controlled live terminal sessions (epic [#100](https://github.com/jiaweing/manus-interview/issues/100))
 
@@ -145,6 +149,7 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#122](https://github.com/jiaweing/manus-interview/issues/122) `P1` `docs` Document Bun startup commands and the server-host operating boundary
 - [#123](https://github.com/jiaweing/manus-interview/issues/123) `P0` `docs` Document Manus connection steps and record the actual connection result
 - [#124](https://github.com/jiaweing/manus-interview/issues/124) `P0` `verification` Rehearse the timed PRD demo and enforce the release pass criteria
+- [#179](https://github.com/jiaweing/manus-interview/issues/179) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## Glassroom: memory-only P2P encrypted chat (epic [#125](https://github.com/jiaweing/manus-interview/issues/125))
 
@@ -172,11 +177,12 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#147](https://github.com/jiaweing/manus-interview/issues/147) `P0` `test` Automate storage, teardown, and production privacy release checks
 - [#148](https://github.com/jiaweing/manus-interview/issues/148) `P0` `test` Prove that acknowledged chat adds no actual server ingress frame
 - [#149](https://github.com/jiaweing/manus-interview/issues/149) `P1` `verification` Rehearse the 4-minute-30-second judge walkthrough with release evidence
+- [#180](https://github.com/jiaweing/manus-interview/issues/180) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots
 
 ## Session Seven: code-authored cartoon showcase (epic [#150](https://github.com/jiaweing/manus-interview/issues/150))
 
 - [#151](https://github.com/jiaweing/manus-interview/issues/151) `P0` `setup` Scaffold the independent Bun project and boot a pinned Remotion workspace
-- [#152](https://github.com/jiaweing/manus-interview/issues/152) `P0` `setup` Verify Claude Opus 5.5 access and record reviewed authoring patches
+- [#152](https://github.com/jiaweing/manus-interview/issues/152) `P0` `setup` Verify Claude Opus 5.5 access through OpenRouter and record reviewed authoring patches
 - [#153](https://github.com/jiaweing/manus-interview/issues/153) `P0` `feature` Lock beat-grid scene records, sanitized fixtures and truthful caption validation
 - [#154](https://github.com/jiaweing/manus-interview/issues/154) `P0` `verification` Benchmark a representative Remotion scene before building the full film
 - [#155](https://github.com/jiaweing/manus-interview/issues/155) `P0` `feature` Implement Pip, 2.5D layers and borderless monochrome caption primitives
@@ -199,3 +205,4 @@ Generated from `docs/issue-specs/*.json` by `scripts/create_issues.py`. Each pro
 - [#172](https://github.com/jiaweing/manus-interview/issues/172) `P0` `verification` Verify the final MP4 encoding, audio levels and complete watch-through
 - [#173](https://github.com/jiaweing/manus-interview/issues/173) `P0` `docs` Document the rendering decision and hand off source, frozen audio and compact QA
 - [#174](https://github.com/jiaweing/manus-interview/issues/174) `P1` `verification` Rehearse the under-five-minute judge demo against explicit pass evidence
+- [#181](https://github.com/jiaweing/manus-interview/issues/181) `P0` `verification` Final gate: full-coverage computer-use verification with video and screenshots

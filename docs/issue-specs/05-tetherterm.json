@@ -1,563 +1,848 @@
 {
-  "product": "tetherterm",
-  "epic_title": "TetherTerm: MCP-controlled live terminal sessions",
-  "epic_summary": "Ship a headless, single-user Linux MCP server that creates genuine Bun PTY sessions and exposes eight tools for incremental reads, interactive input, waits, resize, lifecycle control, and session discovery. The MVP is complete when F01–F08 pass automated requirement tests, both stdio and bearer-authenticated Streamable HTTP are exercised by a real MCP client, and an authenticated HTTPS tunnel demonstration and Manus connection instructions/results are recorded. Each product uses its own unchanged Better-T-Stack scaffold outside the source repository, with Bun as package manager and runtime; unused scaffold modules remain dormant. Sessions survive client reconnection but not server restart, and the command/cwd policy is a guardrail rather than isolation. Screen snapshots, vim, regex matching, dashboards, accounts/OAuth, extra platforms, detached jobs, durable output/history, and production SSH integration are out of scope.",
-  "epic_done_when": [
-    "[ ] The independent Linux Bun project passes its genuine-PTY spike and all F01–F08 tests; no pipe, Node, or Python PTY replacement is used.",
-    "[ ] Exactly eight MCP tools expose the specified schemas, readable structured results, typed errors, and session behavior over both stdio and authenticated Streamable HTTP.",
-    "[ ] Automated checks prove bounded Unicode-safe incremental output, interactive input/keys/resize, all wait modes, lifecycle limits, child cleanup, and the command/cwd/environment and HTTP security rules.",
-    "[ ] A real MCP client creates, reads, and kills a session through the approved authenticated HTTPS tunnel; Manus connection steps and either successful results or the precise unavailable capability are documented.",
-    "[ ] Python and synthetic confirmation/password fixtures pass three consecutive repetitions, the PRD's timed demo finishes within five minutes, and no supported child processes remain running.",
-    "[ ] Startup and connection instructions identify the server-host boundary, required configuration, non-persistence, and explicit snapshots/vim and detached-job exclusions without claiming a security sandbox."
-  ],
-  "areas": ["infra", "sessions", "terminal", "security", "tests", "docs"],
-  "issues": [
-    {
-      "key": "S1",
-      "title": "Scaffold the independent Bun server and prove genuine PTY support",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "The native PTY spike is the first release blocker. Appendix B overrides the stack note suggesting a Node fallback: incompatibility must be reported, not hidden behind pipes or another runtime.",
-      "tasks": [
-        "[ ] From an interactive TTY in /home/ubuntu/workspaces, run /home/ubuntu/manus-interview/scaffold/05-tetherterm.sh tetherterm without modifying its Better-T-Stack command; do not create or edit the product inside manus-interview.",
-        "[ ] Keep apps/server as the only active product runtime; leave generated web, native, extension, auth, payment, database, and example features dormant. Add Bun-only server/test scripts as needed.",
-        "[ ] Add apps/server/test/pty-spike.test.ts to spawn a real Bun.Terminal child, exchange input/output, resize it, and observe its exit; assert the child's stdin/stdout are TTYs.",
-        "[ ] Record the tested Bun version and the rejection rationale for node-pty/Node, Python ptyprocess, and exec pipes. Stop and report a blocker if native spawn/write/resize/exit fails; lock the compatible runtime/dependency setup only after successful spikes."
-      ],
-      "acceptance_criteria": [
-        "[ ] An independent /home/ubuntu/workspaces/tetherterm directory contains its own scaffold and Git repository, created by the unchanged matching script.",
-        "[ ] The PTY spike reports TTY=true, returns output after a write, reports the requested resized dimensions, and records the child's exit code.",
-        "[ ] Installation and spike execution use bun install and bun test, with no substitute PTY runtime and no activation of unused scaffold features."
-      ],
-      "verification": "In an interactive TTY: mkdir -p /home/ubuntu/workspaces; cd /home/ubuntu/workspaces; /home/ubuntu/manus-interview/scaffold/05-tetherterm.sh tetherterm. Then from /home/ubuntu/workspaces/tetherterm run bun install; bun test apps/server/test/pty-spike.test.ts; git rev-parse --show-toplevel. Expected: install and tests exit 0; all spawn/TTY/write/resize/exit assertions pass; Git root is /home/ubuntu/workspaces/tetherterm. Capture the Bun version and assertion summary, not credentials. A failed native PTY assertion is a reported blocker, not a passed issue.",
-      "prd_refs": ["F02", "R8", "R12", "R14"],
-      "depends_on": []
-    },
-    {
-      "key": "S2",
-      "title": "Boot official MCP SDK entrypoints on stdio and Streamable HTTP",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Both transports must be proven in the scaffold before terminal behavior is integrated. The scaffold's mcp addon configures coding-agent connections; it does not supply this server.",
-      "tasks": [
-        "[ ] Add official MCP TypeScript SDK and Zod to apps/server and implement a stdio entrypoint plus a Hono /mcp Streamable HTTP entrypoint using one SDK-supported configuration.",
-        "[ ] Add root scripts bun run terminal:stdio and bun run terminal:http that launch only the headless server; bind HTTP to loopback.",
-        "[ ] Keep protocol messages alone on stdio stdout and route diagnostics to stderr; keep transport lifecycle separate from future terminal session storage.",
-        "[ ] Add apps/server/test/transport-boot.test.ts using the official SDK client to initialize and request tool discovery on both entrypoints, then lock the successfully tested dependency versions. Tool behavior and registration are completed in S12."
-      ],
-      "acceptance_criteria": [
-        "[ ] An official SDK client completes initialize and tools/list against each entrypoint without protocol errors.",
-        "[ ] The stdio stdout stream contains only protocol messages, while a startup diagnostic is observable on stderr.",
-        "[ ] HTTP listens on loopback and exposes /mcp through the selected Streamable HTTP configuration; no dashboard or extra API behavior is added.",
-        "[ ] Tested SDK dependencies are recorded in the Bun lockfile after the PTY and transport spikes pass."
-      ],
-      "verification": "From the independent project root run bun install; bun test apps/server/test/transport-boot.test.ts. Expected: exit 0; initialize and tools/list succeed over both transports, loopback binding is asserted, and stdout/stderr separation assertions pass. At this setup stage discovery may be empty; S12 supplies the exact eight tools. Record Bun/SDK versions and the transport assertion summary.",
-      "prd_refs": ["F01", "F07", "R1", "R7", "R15"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S3",
-      "title": "Enforce spawn configuration, cwd policy, and sanitized child environment",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "Policy rejection must happen before any PTY spawn. The server runs unprivileged in a disposable host workspace; command approval is not an isolation guarantee.",
-      "tasks": [
-        "[ ] Load configuration for approved root/executables, loopback port, exact tunnel hostname, and bearer-token environment variable; make invalid mode-required configuration a readable startup failure, without requiring HTTP credentials for owner-trusted stdio.",
-        "[ ] Realpath-check the requested cwd against the approved root, including traversal and symlink escapes, and validate executable approval without shell interpolation.",
-        "[ ] Build child environments without server credentials or tokens; ensure application/addon diagnostics never log credential values or terminal content.",
-        "[ ] Implement plain-text-readable POLICY_DENIED errors and a policy boundary that completes before the spawn callback is invoked."
-      ],
-      "acceptance_criteria": [
-        "[ ] Approved executable/cwd requests reach spawn, while forbidden executable, traversal, and symlink-escape requests return POLICY_DENIED before spawn is called.",
-        "[ ] A configured bearer-token and credential sentinel are absent from the child environment and application diagnostic logs.",
-        "[ ] Configuration supplies the exact PRD security inputs, and invalid required configuration prevents server startup with a readable error."
-      ],
-      "verification": "Run bun test apps/server/test/spawn-policy.test.ts. Expected: exit 0; allow, deny, traversal, realpath/symlink, missing-config, and environment/log-redaction cases pass. The spawn spy has zero calls for every denied request, and neither token nor credential sentinels appear in child environment or captured diagnostics.",
-      "prd_refs": ["F02", "F07", "R17"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S4",
-      "title": "Create UUID sessions and expose nonblocking status and list",
-      "type": "feature",
-      "priority": "P0",
-      "area": "sessions",
-      "context": "PTY identity belongs to the server process, not the MCP connection. Multiple concurrent sessions must remain distinguishable and observable without waiting for process completion.",
-      "tasks": [
-        "[ ] Add the in-memory session manager and create genuine PTYs from executable, argv, approved cwd, optional dimensions, and a finite runtime deadline.",
-        "[ ] Return UUID session IDs and initial cursor/state, and enforce at most four active sessions without racing concurrent creates.",
-        "[ ] Implement status/list summaries with ID, executable, cwd, dimensions, running/terminating/exited state, and nullable exitCode/signal.",
-        "[ ] Keep the registry independent of transport connections; return NOT_FOUND for unknown IDs and retain no durable session or terminal-content storage."
-      ],
-      "acceptance_criteria": [
-        "[ ] Two created sessions have different UUIDs and appear as separate entries with the specified summary fields.",
-        "[ ] A fifth active create returns LIMIT without spawning another PTY, including concurrent-create attempts.",
-        "[ ] Status and list return while a quiet child remains running, with null exitCode/signal before exit.",
-        "[ ] A new server process does not recognize IDs from the previous process and returns NOT_FOUND."
-      ],
-      "verification": "Run bun test apps/server/test/session-registry.test.ts. Expected: exit 0; UUID uniqueness, summary fields, concurrent four-session cap, unknown-ID, restart invalidation, and quiet-process nonblocking status/list cases pass. The cap fixture records exactly four active spawned PTYs and no fifth spawn.",
-      "prd_refs": ["F02", "F06", "R2", "R5", "R9", "R13"],
-      "depends_on": ["S1", "S3"]
-    },
-    {
-      "key": "S5",
-      "title": "Record process exit and expire retained session records",
-      "type": "feature",
-      "priority": "P0",
-      "area": "sessions",
-      "context": "A quiet terminal is not an exited terminal. Exited status and final output remain readable during the bounded in-memory retention window.",
-      "tasks": [
-        "[ ] Transition state only from actual lifecycle events and record exitCode/signal without inferring completion from silence.",
-        "[ ] Preserve each exited session and its final buffered output for five minutes, subject to the sixteen-record cap, then remove the record and associated resources.",
-        "[ ] Free active-session capacity on exit while keeping retained records visible to status/list.",
-        "[ ] Add lifecycle unit checks with a controllable clock so retention expiry does not require five-minute test sleeps."
-      ],
-      "acceptance_criteria": [
-        "[ ] A child exiting with code 7 has state exited and exitCode 7; silence alone leaves state running.",
-        "[ ] Status and buffered final output remain available before five-minute expiry unless evicted by the sixteen-record cap; expired/evicted IDs return NOT_FOUND.",
-        "[ ] Retained records do not exceed the sixteen-record cap, and exited sessions no longer consume active-session slots."
-      ],
-      "verification": "Run bun test apps/server/test/session-exit-retention.test.ts. Expected: exit 0; quiet-running, exit-code/signal, final-output retention, active-slot release, five-minute expiry, and sixteen-record-cap cases pass. The clock-driven expiry case changes a formerly addressable ID to NOT_FOUND without leaving timers/listeners for that record.",
-      "prd_refs": ["F03", "F06", "R3", "R5", "R9", "R13"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S6",
-      "title": "Terminate sessions on kill or runtime expiry and clean ordinary children",
-      "type": "feature",
-      "priority": "P0",
-      "area": "sessions",
-      "context": "Termination must release ordinary child processes and have a finite escalation path. Detached processes remain unsupported and must not be used to claim broader cleanup guarantees.",
-      "tasks": [
-        "[ ] Implement idempotent kill with state/terminationRequested, sending SIGTERM first and SIGKILL after one second only if the supported process group remains alive.",
-        "[ ] Apply the fifteen-minute default runtime and each accepted finite timeoutMs deadline through the same termination path.",
-        "[ ] Clean ordinary descendants together with their parent and cancel the escalation timer after confirmed exit.",
-        "[ ] Add fixtures for cooperative termination, ignored SIGTERM, ordinary child spawning, natural exit before kill, and a short runtime deadline."
-      ],
-      "acceptance_criteria": [
-        "[ ] A cooperative child receives SIGTERM without unnecessary SIGKILL; a child ignoring SIGTERM receives SIGKILL after the one-second grace period.",
-        "[ ] Repeated kill requests, including requests after retained exit, return the specified fields without resurrecting a process or scheduling duplicate escalation.",
-        "[ ] Default runtime is fifteen minutes and a short explicit runtime expiry transitions the session through termination to exited.",
-        "[ ] Supported parent and ordinary child PIDs are no longer live after termination, with exitCode/signal available in status."
-      ],
-      "verification": "Run bun test apps/server/test/session-termination.test.ts. Expected: exit 0; SIGTERM-first, one-second escalation, repeated-kill, default-deadline, explicit-expiry, and ordinary-child cases pass. Fixture checks against both recorded PIDs show neither process running after cleanup; use a controllable clock for the default deadline assertion, not a fifteen-minute sleep.",
-      "prd_refs": ["F06", "R5", "R6", "R13"],
-      "depends_on": ["S5"]
-    },
-    {
-      "key": "S7",
-      "title": "Implement a Unicode-safe one-MiB output ring with byte cursors",
-      "type": "feature",
-      "priority": "P0",
-      "area": "terminal",
-      "context": "Incremental reads must avoid duplicates while acknowledging eviction. Raw ANSI output is retained as data; no terminal screen model or snapshot is required.",
-      "tasks": [
-        "[ ] Attach output buffering to each session with a maximum retained payload of one MiB and decimal UTF-8 byte cursors.",
-        "[ ] Return output, nextCursor, oldestCursor, headCursor, gap, and state without waiting for exit; bound each read to maxBytes and never more than 64 KiB.",
-        "[ ] Preserve multibyte characters across PTY chunks, never split returned characters, and never advance nextCursor beyond bytes actually returned.",
-        "[ ] Return an explicit gap and oldest surviving cursor for evicted offsets; reject malformed, future, and invalid character-boundary offsets with BAD_CURSOR. Preserve ANSI bytes without interpreting them."
-      ],
-      "acceptance_criteria": [
-        "[ ] Continuing from nextCursor returns no duplicate output; nextCursor equals the effective read start plus the UTF-8 byte length returned, using oldestCursor as the start when the supplied cursor was evicted.",
-        "[ ] Retained payload never exceeds one MiB and a stale cursor returns gap=true with the oldest surviving cursor.",
-        "[ ] Returned output contains complete Unicode characters, preserves ANSI escape sequences, and never exceeds the requested read limit or 64 KiB.",
-        "[ ] Future/malformed/non-boundary cursors return BAD_CURSOR; reading a quiet running session returns without waiting for exit."
-      ],
-      "verification": "Run bun test apps/server/test/output-ring.test.ts. Expected: exit 0; incremental/no-duplicate, exact-byte-cursor, eviction/gap, fragmented-Unicode, small-byte-budget, ANSI-preservation, invalid-cursor, and quiet-read cases pass. Assert retainedBytes <= 1048576 and each returned UTF-8 payload <= min(requested maxBytes, 65536), with nextCursor matching returned bytes only.",
-      "prd_refs": ["F03", "R3", "R10", "R14"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S8",
-      "title": "Serialize terminal text writes and encode the supported keys",
-      "type": "feature",
-      "priority": "P0",
-      "area": "terminal",
-      "context": "Concurrent input must not interleave, and uncertain writes must not be automatically repeated. Only the key vocabulary in the PRD is supported.",
-      "tasks": [
-        "[ ] Accept exactly one of text or keys, report acceptedBytes/state, and cap submitted input at 16 KiB of encoded UTF-8 bytes.",
-        "[ ] Encode ENTER, TAB, ESC, BACKSPACE, arrows, CTRL_C, and CTRL_D for the PTY, rejecting unsupported keys and ambiguous/missing input.",
-        "[ ] Serialize writes per session, without automatic retries, and return NOT_RUNNING for writes to terminating/exited sessions.",
-        "[ ] Add apps/server/test/terminal-write.test.ts covering text, every key, input boundaries, concurrent order, and exited sessions."
-      ],
-      "acceptance_criteria": [
-        "[ ] Each supported key produces its defined PTY byte sequence and acceptedBytes equals the bytes accepted, including multibyte text.",
-        "[ ] Both/neither text and keys, unsupported keys, and input exceeding 16 KiB are rejected without writing any bytes.",
-        "[ ] Concurrent submitted writes reach the PTY in serialized order with no interleaving or automatic duplicate retry.",
-        "[ ] Writes to terminating/exited sessions return NOT_RUNNING."
-      ],
-      "verification": "Run bun test apps/server/test/terminal-write.test.ts. Expected: exit 0; all vocabulary, exactly-one-input, 16384-byte boundary, Unicode-byte-count, queue ordering, no-retry, and NOT_RUNNING cases pass. The fake PTY byte log equals the expected ordered sequences exactly; rejected inputs add zero bytes.",
-      "prd_refs": ["F04", "R4", "R12"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S9",
-      "title": "Resize live PTYs within the required dimension limits",
-      "type": "feature",
-      "priority": "P0",
-      "area": "terminal",
-      "context": "Resize changes the actual PTY dimensions, not just metadata. Both creation and resize must obey the 240-column by 80-row limits.",
-      "tasks": [
-        "[ ] Validate positive integer dimensions for creation and resize, with maximum cols=240 and rows=80.",
-        "[ ] Call the native Bun.Terminal resize operation and return the resulting cols/rows; update status/list dimensions after success.",
-        "[ ] Reject unknown or non-running session resize attempts without invoking native resize.",
-        "[ ] Add a live Linux fixture that reports its PTY dimensions before and after resize."
-      ],
-      "acceptance_criteria": [
-        "[ ] Resizing a live fixture to 120×40 changes the child-observed PTY size and the returned/status/list dimensions to 120×40.",
-        "[ ] 240×80 is accepted; nonpositive, noninteger, or over-limit dimensions are rejected without changing the PTY.",
-        "[ ] Unknown IDs return NOT_FOUND and non-running sessions return NOT_RUNNING without a native resize call."
-      ],
-      "verification": "Run bun test apps/server/test/terminal-resize.test.ts. Expected: exit 0; real-child 120×40 observation, status/list agreement, 240×80 boundary, invalid create/resize dimensions, and unknown/non-running rejection cases pass. The rejected-resize spy records zero calls.",
-      "prd_refs": ["F02", "F04", "R12"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S10",
-      "title": "Implement output, idle, and single-literal-pattern wait modes",
-      "type": "feature",
-      "priority": "P0",
-      "area": "terminal",
-      "context": "Wait observes output and process state; idle must never imply completion. A single literal pattern replaces regex matching.",
-      "tasks": [
-        "[ ] Implement output waits from the supplied cursor and idle waits defaulting to 300 ms without output, resetting the idle interval on new output.",
-        "[ ] Implement pattern waits over retained output from the supplied cursor with a maximum 256-character literal and no regex interpretation, including patterns crossing output chunks.",
-        "[ ] Return reason output/idle/match/exit/timeout with headCursor/state, resolving exit from the lifecycle event rather than silence.",
-        "[ ] Reuse cursor validation and add deterministic mode tests for existing/new output, quiet-running state, literal metacharacters, chunk-spanning matches, and clean exit."
-      ],
-      "acceptance_criteria": [
-        "[ ] Output waits resolve when output after the supplied cursor exists or arrives; pattern waits match only retained text at/after that cursor.",
-        "[ ] An idle wait resolves after the configured quiet interval, default 300 ms, while a quiet live child remains state running.",
-        "[ ] Literal metacharacters are not evaluated as regex; over-256-character patterns and invalid cursors are rejected.",
-        "[ ] Each completed wait returns exactly a supported reason plus headCursor/state, and exit is based on a process lifecycle event."
-      ],
-      "verification": "Run bun test apps/server/test/terminal-wait-modes.test.ts. Expected: exit 0; output-existing/output-new, default/configured/reset-idle, before-cursor nonmatch, literal-metacharacter, chunk-spanning-match, 256-character-boundary, BAD_CURSOR, and process-exit cases pass. Quiet-running assertions explicitly show reason=idle and state=running, never exited.",
-      "prd_refs": ["F05", "R11", "R13"],
-      "depends_on": ["S5", "S7"]
-    },
-    {
-      "key": "S11",
-      "title": "Bound waits and remove canceled or completed wait listeners",
-      "type": "feature",
-      "priority": "P0",
-      "area": "terminal",
-      "context": "A timed-out or canceled wait must not terminate its session. Per-session waiter limits and listener cleanup keep observation bounded.",
-      "tasks": [
-        "[ ] Apply the two-second default wait timeout and ten-second maximum, validating timeout/idle parameters as finite values.",
-        "[ ] Enforce four concurrent waiters per session and reject a fifth with LIMIT without attaching listeners.",
-        "[ ] Accept a request-cancellation signal in the wait service and tear down only its waiter; clear timers and output/exit listeners on cancellation, timeout, match, idle, output, or exit. S12 connects the SDK cancellation signal to this service.",
-        "[ ] Add apps/server/test/terminal-wait-bounds.test.ts with a controllable clock and listener-count assertions."
-      ],
-      "acceptance_criteria": [
-        "[ ] Omitted timeout resolves with reason=timeout after two seconds without qualifying events; no accepted wait exceeds ten seconds.",
-        "[ ] A fifth concurrent wait returns LIMIT and leaves the waiter count at four.",
-        "[ ] Timeout/cancellation leaves the process running and writable, and releases all resources owned by that wait.",
-        "[ ] Every completion path returns waiter/listener/timer counts to their pre-wait baseline."
-      ],
-      "verification": "Run bun test apps/server/test/terminal-wait-bounds.test.ts. Expected: exit 0; 2000 ms default, 10000 ms upper bound, invalid timeout, four-waiter cap, cancellation, and every-resolution-path cleanup cases pass. After timeout/cancellation the fixture accepts a fresh write, state remains running, and instrumentation shows no leftover wait-owned listeners/timers.",
-      "prd_refs": ["F05", "R11", "R13"],
-      "depends_on": ["S8", "S10"]
-    },
-    {
-      "key": "S12",
-      "title": "Wire exactly eight schema-defined MCP tools to terminal services",
-      "type": "feature",
-      "priority": "P0",
-      "area": "infra",
-      "context": "The same terminal service contract must be exposed on both transports. Results and errors must be readable as plain text as well as structured data.",
-      "tasks": [
-        "[ ] Register terminal_create, terminal_read, terminal_write, terminal_wait, terminal_resize, terminal_status, terminal_list, and terminal_kill with Zod input schemas matching section 9.",
-        "[ ] Wire each tool to its service implementation and return the exact specified result fields, including SessionSummary fields and nullable exitCode/signal.",
-        "[ ] Expose readable structured success results and isError:true with code/message for NOT_FOUND, POLICY_DENIED, BAD_CURSOR, LIMIT, NOT_RUNNING, and schema/argument failures.",
-        "[ ] Route cancellation into wait cleanup, keep terminal IDs transport-independent, treat output as untrusted data, and never automatically retry uncertain create/write calls.",
-        "[ ] Add apps/server/test/mcp-tool-contract.test.ts to enumerate tools, validate schemas/results, and exercise every adapter through an official SDK client."
-      ],
-      "acceptance_criteria": [
-        "[ ] tools/list contains exactly the eight PRD names with the specified input fields and no additional tool.",
-        "[ ] Calls to all eight tools return the section 9 result shapes, with plain-text-readable content and structured data agreeing.",
-        "[ ] The five named service error codes and invalid arguments yield isError:true and nonempty readable code/message without corrupting the transport.",
-        "[ ] Adapter cancellation releases its wait, and disconnected/uncertain create/write requests are not automatically replayed."
-      ],
-      "verification": "Run bun test apps/server/test/mcp-tool-contract.test.ts. Expected: exit 0; exact-eight discovery, each input/result schema, text/structured agreement, all named errors, malformed arguments, canceled-wait, and no-create/write-replay cases pass. The client can make another valid tool call after every error.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "R1", "R7"],
-      "depends_on": ["S2", "S6", "S7", "S8", "S9", "S11"]
-    },
-    {
-      "key": "S13",
-      "title": "Guard every HTTP request with bearer, Host, and Origin checks",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "Streamable HTTP runs on loopback behind an operator-provided HTTPS tunnel. Authentication cannot be relaxed for a demo or unavailable Manus connection setting.",
-      "tasks": [
-        "[ ] Require the configured random 32-byte bearer token on every MCP HTTP request, including initialization, discovery, streaming, and transport/session cleanup requests supported by the selected SDK configuration.",
-        "[ ] Reject unexpected Host values using configured local endpoint and exact tunnel hostname; reject a present unapproved Origin while allowing an absent Origin from a non-browser client.",
-        "[ ] Enforce checks before MCP handling or PTY spawn, keep HTTP loopback-bound, and reject token-in-URL authentication.",
-        "[ ] Leave stdio owner-trusted without HTTP authentication and ensure denied-request diagnostics do not include token or terminal content."
-      ],
-      "acceptance_criteria": [
-        "[ ] Every supported HTTP request path/method rejects a missing or incorrect bearer before reaching an MCP handler; a configured random 32-byte token permits an approved request.",
-        "[ ] Unexpected Host and present unapproved Origin are rejected before handler/spawn, including requests carrying a valid bearer.",
-        "[ ] A non-browser client with approved Host and no Origin succeeds; a URL token without a bearer header does not authenticate.",
-        "[ ] HTTP remains loopback-bound, stdio requires no bearer, and credential sentinels are absent from denial logs."
-      ],
-      "verification": "Run bun test apps/server/test/http-guard.test.ts. Expected: exit 0; header/token, every-supported-method, Host, Origin-present/absent, URL-token refusal, loopback-bind, stdio-owner-trust, and log-redaction cases pass. Handler/spawn counters remain zero for all denied cases. No test disables authentication to obtain success.",
-      "prd_refs": ["F07", "R15", "R16", "R17"],
-      "depends_on": ["S2", "S3"]
-    },
-    {
-      "key": "S14",
-      "title": "Prove session limits, exit retention, and ordinary-child cleanup",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Lifecycle unit behavior needs a Linux requirement suite against real PTYs. It must prove bounded resources and clean termination without claiming detached-process support.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/lifecycle.test.ts with quiet-running, natural exit, exit code/signal, four-active-session, runtime expiry, idempotent kill, and ordinary-child fixtures.",
-        "[ ] Check final-output/record retention and the sixteen-record cap with a controllable clock, plus NOT_FOUND after retention expiry/server restart.",
-        "[ ] Assert SIGTERM-first and one-second SIGKILL escalation for a resistant fixture and detect leftover supported PIDs in test teardown.",
-        "[ ] Associate test cases with R2/R5/R6/R9/R13 in their names or source comments."
-      ],
-      "acceptance_criteria": [
-        "[ ] The requirement suite distinguishes quiet-running from exit and reports the fixture's exact exit code/signal.",
-        "[ ] Concurrent creation never exceeds four active PTYs; runtime expiry and repeated kill release capacity.",
-        "[ ] Retention expiry/record cap/restart behavior matches the bounded in-memory model.",
-        "[ ] All recorded supported parent/child PIDs are absent after suite teardown, including the ignored-SIGTERM case."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/lifecycle.test.ts. Expected: exit 0 with all R2/R5/R6/R9/R13 cases passing and zero failures. The suite's final PID check reports no live supported fixture processes; retention tests do not sleep for five minutes or persist terminal content.",
-      "prd_refs": ["F02", "F06", "F08", "R2", "R5", "R6", "R9", "R13"],
-      "depends_on": ["S6", "S7"]
-    },
-    {
-      "key": "S15",
-      "title": "Prove overflow gaps, Unicode boundaries, and bounded incremental reads",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Output requirements need adversarial producer fixtures, not only ring implementation unit tests. Eviction and small read budgets must not duplicate, split, or silently skip Unicode output.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/output.test.ts using real PTY producers for over-one-MiB output, fragmented multibyte text, and ANSI escapes.",
-        "[ ] Read repeatedly from returned cursors and compare concatenated non-evicted fixture output against the expected UTF-8 bytes.",
-        "[ ] Assert explicit stale-cursor gaps, exact oldest/head/next offsets, the 64-KiB read cap, and future/malformed/non-boundary cursor rejection.",
-        "[ ] Check immediate empty reads on quiet live sessions and final reads after exit; use assertion summaries rather than application output persistence."
-      ],
-      "acceptance_criteria": [
-        "[ ] An overflowing producer yields retained payload <= one MiB and a stale read with gap=true and the oldest surviving cursor.",
-        "[ ] Non-evicted repeated reads reconstruct expected output exactly once with complete Unicode and unchanged ANSI escapes.",
-        "[ ] Every read obeys its byte budget and the 64-KiB cap; invalid/future offsets yield BAD_CURSOR.",
-        "[ ] Quiet live reads return without awaiting exit, and retained final output remains readable after exit."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/output.test.ts. Expected: exit 0; all R3/R10/R14 producer cases pass. Byte equality/hash assertions match the generated expected fixture bytes, gap and cursor assertions pass, and no returned payload exceeds 65536 bytes. Capture only the assertion/hash summary, not a terminal-content log.",
-      "prd_refs": ["F03", "F08", "R3", "R10", "R14"],
-      "depends_on": ["S5", "S7"]
-    },
-    {
-      "key": "S16",
-      "title": "Prove policy denials and credential exclusion before PTY spawn",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The security release gate includes executable/cwd rejection and child environment hygiene. Guardrails must not be represented as a host-permission sandbox.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/policy.test.ts for allowed/forbidden commands, cwd traversal, symlink escape, and denied create requests.",
-        "[ ] Observe the spawn boundary and active-session registry to prove a denied request creates no PTY and consumes no active slot.",
-        "[ ] Spawn an approved environment-inspection fixture and assert configured credential/token sentinels are absent; capture application/addon logs to check redaction.",
-        "[ ] Add a source comment explaining that interpreters retain host permissions and detached jobs are outside the cleanup guarantee."
-      ],
-      "acceptance_criteria": [
-        "[ ] Every forbidden command/cwd request returns POLICY_DENIED with zero spawn calls and no new session record.",
-        "[ ] Realpath validation denies a symlink escape and accepts a cwd resolving inside the approved root.",
-        "[ ] Credential/token sentinels are absent from child environment and captured logs.",
-        "[ ] The suite makes no isolation or detached-process cleanup assertion."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/policy.test.ts. Expected: exit 0; all R17 allow/deny/traversal/symlink/environment/log cases pass. For denied creates, spawn count and new-session count are both zero; sentinel searches in child environment and logs return no matches.",
-      "prd_refs": ["F02", "F07", "F08", "R17"],
-      "depends_on": ["S3", "S4"]
-    },
-    {
-      "key": "S17",
-      "title": "Prove HTTP authentication and request-origin rejection end to end",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Security must hold on the actual Hono/SDK route, not only in isolated middleware. Rejected requests must never reach terminal creation.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/http-security.test.ts against the booted HTTP server using the selected SDK's actual request methods and lifecycle.",
-        "[ ] Exercise missing/wrong bearer, token supplied only in URL, unexpected Host, and present unapproved Origin on initialization and subsequent supported requests.",
-        "[ ] Exercise valid bearer with approved Host and both approved/absent Origin, then create and clean a fixture session.",
-        "[ ] Assert denial occurs before the tool/spawn boundary and token sentinels do not appear in response diagnostics or captured logs."
-      ],
-      "acceptance_criteria": [
-        "[ ] Every negative authentication/Host/Origin case receives a non-success HTTP response and creates no terminal session.",
-        "[ ] Authentication is checked on subsequent supported HTTP requests, not only initialization.",
-        "[ ] Valid approved requests initialize, discover exactly eight tools, and create/kill a real fixture PTY.",
-        "[ ] Responses and captured diagnostics contain no bearer-token sentinel."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/http-security.test.ts. Expected: exit 0; all R15/R17 positive and negative cases pass through the booted /mcp endpoint. Each denied case has a non-2xx response and zero added PTYs; the approved real-client flow completes and leaves its session exited. Token-sentinel searches return no matches.",
-      "prd_refs": ["F07", "F08", "R15", "R17"],
-      "depends_on": ["S12", "S13"]
-    },
-    {
-      "key": "S18",
-      "title": "Automate a persistent Python REPL through a real MCP client",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The REPL story proves a genuine interactive session persists across separately submitted inputs. The test must use MCP tool calls, not direct manager access.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/python-repl.test.ts using the official SDK client over stdio and an approved Python executable/cwd.",
-        "[ ] Create Python, wait literally for >>>, submit x = 40 and x + 2 in separate writes with ENTER, and read the answer 42 from the same session ID.",
-        "[ ] Continue reading from returned cursors and assert no repeated answer bytes; observe an idle wait and a timed-out unsatisfied wait while state remains running.",
-        "[ ] Send CTRL_D, assert exited with exitCode 0 and retained final output, and guarantee fixture cleanup on assertion failure."
-      ],
-      "acceptance_criteria": [
-        "[ ] The official SDK client discovers and invokes the terminal tools against a genuine Python PTY.",
-        "[ ] Two separately submitted expressions preserve x and produce 42 in one session without duplicate incremental reads.",
-        "[ ] Idle and timeout leave the REPL running and able to accept another input.",
-        "[ ] CTRL_D ends the session with exitCode 0 and no live fixture process remains."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/python-repl.test.ts. Expected: exit 0; discovery, >>> literal match, separate-input state preservation, answer 42, no-duplicate cursors, idle/timeout-running, and EOF exit-code assertions all pass. The final cleanup assertion reports no live Python fixture PID.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "F08", "R1", "R2", "R3", "R4", "R5", "R8", "R11", "R13", "R18"],
-      "depends_on": ["S12"]
-    },
-    {
-      "key": "S19",
-      "title": "Automate confirmation and password prompts with resize and control keys",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The SSH-like interaction is a synthetic fixture, not production SSH integration. It proves prompt response, terminal dimensions, and interruption without a screen emulator.",
-      "tasks": [
-        "[ ] Add a synthetic interactive fixture and apps/server/test/requirements/prompt-fixture.test.ts using official SDK MCP calls.",
-        "[ ] Wait for literal confirmation and password prompts, send fixture text plus ENTER, and assert the fixture advances through both stages using a non-sensitive test password.",
-        "[ ] Resize to 120×40 and assert child-reported dimensions and tool/status dimensions match; send CTRL_C and assert the fixture records interruption.",
-        "[ ] Show idle/timeout while the fixture is still running and guarantee cleanup; explicitly omit vim, snapshots, and real SSH."
-      ],
-      "acceptance_criteria": [
-        "[ ] The confirmation/password fixture accepts separately submitted text and ENTER and emits its exact expected stage-completion markers.",
-        "[ ] The live child reports 120×40 after resize and status agrees.",
-        "[ ] CTRL_C causes the fixture's defined interruption marker/lifecycle event, rather than merely echoing characters.",
-        "[ ] Idle/timeout do not imply exit, and no fixture process remains after teardown."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/prompt-fixture.test.ts. Expected: exit 0; literal-prompt, confirmation/password-stage, ENTER, real-PTY resize, CTRL_C interruption, idle/timeout-running, and cleanup cases pass. Capture the assertion summary and dimensions only; no real password or production SSH connection is used.",
-      "prd_refs": ["F04", "F05", "F08", "R4", "R11", "R12", "R13", "R18"],
-      "depends_on": ["S12"]
-    },
-    {
-      "key": "S20",
-      "title": "Prove both transports and reconnect to existing terminal IDs",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Client connection lifetime must not control terminal lifetime. Real-client validation covers stdio and authenticated HTTP while HTTP reconnection proves server-resident identity/cursors.",
-      "tasks": [
-        "[ ] Add apps/server/test/requirements/transports.test.ts using official SDK clients to discover and exercise all eight tools on stdio and authenticated loopback HTTP.",
-        "[ ] Create two HTTP sessions, retain an ID/cursor, close the client connection without stopping the server, then reconnect and continue reading/writing/status/list/kill against the same sessions.",
-        "[ ] Assert returned cursors prevent replay and a transport cleanup request or wait cancellation does not terminate the PTY.",
-        "[ ] Check stdio protocol-only stdout and owner trust, then clean both transports' fixtures and verify server restart invalidates old IDs."
-      ],
-      "acceptance_criteria": [
-        "[ ] Official clients discover exactly eight tools and receive successful representative calls to every tool on both transports.",
-        "[ ] After HTTP client reconnection, the original two session IDs remain listed and a saved cursor resumes output without duplication.",
-        "[ ] HTTP client/transport closure while the server stays alive and canceled waits do not kill the server-resident PTYs; explicit kill does.",
-        "[ ] Stdio stdout remains protocol-only and old IDs return NOT_FOUND after server restart."
-      ],
-      "verification": "Run bun test apps/server/test/requirements/transports.test.ts. Expected: exit 0; both-transport exact-eight/tool-call, HTTP reconnect, two-ID list, cursor resume, connection/cancellation independence, stdio framing, restart invalidation, and teardown cases pass. All supported fixture PIDs are absent after teardown.",
-      "prd_refs": ["F01", "F06", "F07", "F08", "R1", "R2", "R3", "R7", "R9", "R15"],
-      "depends_on": ["S12", "S13"]
-    },
-    {
-      "key": "S21",
-      "title": "Verify an authenticated HTTPS tunnel with an independent MCP client",
-      "type": "verification",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Remote access means reaching the server host through an operator-provided HTTPS tunnel. This evidence is required even when Manus MCP URL/bearer configuration is unavailable.",
-      "tasks": [
-        "[ ] Start the HTTP entrypoint on configured loopback, prepare a random 32-byte bearer token out of band, and forward /mcp through the operator-provided HTTPS tunnel with its exact hostname approved.",
-        "[ ] Add apps/server/test/verification/https-client.test.ts as an explicitly invoked real-client check that reads endpoint/token from configuration without printing secrets or putting them in URLs.",
-        "[ ] Through the HTTPS URL, initialize, discover eight tools, create/read/write/status/list/kill a fixture, and prove a request without bearer is rejected.",
-        "[ ] Record non-secret client/version, HTTPS hostname, timestamps, assertion results, and cleanup evidence. Report tunnel/host/configuration blockers rather than disabling authentication."
-      ],
-      "acceptance_criteria": [
-        "[ ] An independent official SDK client completes real MCP calls through https://<approved-host>/mcp with the bearer header; no direct-loopback substitution is used as HTTPS evidence.",
-        "[ ] Discovery yields eight tools, a created fixture produces expected output, and explicit kill leaves it exited with no live supported child.",
-        "[ ] The same endpoint rejects a request with no bearer, and HTTP remains loopback-bound behind the tunnel.",
-        "[ ] Recorded evidence excludes token values, URL tokens, and real secrets; absent tunnel capability is explicitly marked a blocker, not a pass."
-      ],
-      "verification": "With approved endpoint/token supplied using the server's documented configuration, run bun run terminal:http, establish the operator's HTTPS tunnel, then in another terminal run bun test apps/server/test/verification/https-client.test.ts. Expected: exit 0 with initialize/exact-eight/create/read/write/status/list/kill and missing-bearer rejection assertions passing against the HTTPS URL. Capture a sanitized test transcript showing hostname, client version, pass summary, and no-live-fixture assertion; capture ss -ltnp output showing the server listening only on loopback. Tunnel setup is operator-specific and must be recorded verbatim without credentials.",
-      "prd_refs": ["F07", "R1", "R7", "R15", "R16", "R17"],
-      "depends_on": ["S17", "S20"]
-    },
-    {
-      "key": "S22",
-      "title": "Document Bun startup commands and the server-host operating boundary",
-      "type": "docs",
-      "priority": "P1",
-      "area": "docs",
-      "context": "The PRD requires startup commands and handoff instructions for this headless server. Documentation must describe the tested configuration without introducing deployment products or additional features.",
-      "tasks": [
-        "[ ] Add docs/tetherterm-operations.md in the independent product with Linux/Bun prerequisites, bun install, bun run terminal:stdio, bun run terminal:http, and exact required configuration names.",
-        "[ ] Explain approved cwd/executable policy, 32-byte token provisioning outside URLs, loopback/exact-tunnel-Host/Origin rules, stderr diagnostics, and the authenticated HTTPS test invocation.",
-        "[ ] State that local terminals execute on the server host, client reconnect preserves sessions, restart invalidates IDs, no terminal content is persisted by the service, and echoed secrets can remain in memory.",
-        "[ ] Record default limits, disposable/unprivileged-host guidance, lack of sandbox isolation, supported ordinary-child cleanup, and snapshots/vim/detached-job exclusions. Do not build a UI or activate dormant scaffold modules."
-      ],
-      "acceptance_criteria": [
-        "[ ] A reader can install and start both entrypoints using only the documented Bun commands and supplied example configuration, without changing code.",
-        "[ ] The document names all required configuration inputs and contains no usable credential or token-in-URL example.",
-        "[ ] The server-host, reconnect/restart, memory/non-persistence, guardrail/non-isolation, and deferred-feature boundaries are stated explicitly."
-      ],
-      "verification": "From the independent project root follow docs/tetherterm-operations.md exactly: bun install; bun run terminal:stdio; then stop it and run bun run terminal:http with the documented disposable fixture configuration. In separate terminals run bun test apps/server/test/transport-boot.test.ts and bun test apps/server/test/requirements/transports.test.ts. Expected: both documented starts initialize without code edits and tests exit 0. Capture a sanitized checklist confirming each documented command/configuration and every required boundary statement; stop all test server processes afterward.",
-      "prd_refs": ["F07", "R7", "R15", "R16", "R17"],
-      "depends_on": ["S12", "S13"]
-    },
-    {
-      "key": "S23",
-      "title": "Document Manus connection steps and record the actual connection result",
-      "type": "docs",
-      "priority": "P0",
-      "area": "docs",
-      "context": "Manus instructions/results are a brief requirement, but successful Manus access is not assumed. An unavailable URL/bearer setting is an allowed documented limitation only when independent authenticated HTTPS validation remains intact.",
-      "tasks": [
-        "[ ] Add docs/manus-connection.md with the tested HTTP startup, approved tunnel setup, resulting HTTPS /mcp URL, and bearer configuration steps in Manus's supported MCP connection settings.",
-        "[ ] Attempt connection using available Manus settings, discover tools, and create/read/kill a disposable session; document the actual outcome, date, and non-secret evidence.",
-        "[ ] If the required URL/bearer configuration is unavailable, identify the exact missing capability and record the independent authenticated HTTPS client's successful S21 result instead; do not weaken authentication or claim Manus succeeded.",
-        "[ ] Keep tokens out of screenshots, URLs, and the document, and link the startup/security boundaries and sanitized connection evidence."
-      ],
-      "acceptance_criteria": [
-        "[ ] The document contains concrete HTTPS /mcp and bearer-setting steps corresponding to the available Manus interface, or explicitly identifies the unavailable required setting.",
-        "[ ] It records either successful Manus tool discovery/create/read/kill results or a precise Manus limitation plus a successful independent authenticated HTTPS result.",
-        "[ ] Screenshots/transcripts and examples contain no token or secret, and no claim of successful Manus connection is made without evidence."
-      ],
-      "verification": "Following docs/manus-connection.md, open Manus MCP connection settings, configure the approved HTTPS /mcp URL and bearer using supported controls, connect, discover tools, then call terminal_create, terminal_read, and terminal_kill. Expected successful-path evidence: a redacted screenshot or transcript showing eight discovered tools, one session ID, expected fixture output, and exited/termination result. If URL/bearer controls are unavailable, capture the unavailable setting/error without secrets and attach the S21 sanitized passing HTTPS transcript; label Manus unavailable, not successful. Verify every recorded outcome matches the evidence and that all demo sessions are cleaned.",
-      "prd_refs": ["F07", "R7", "R15", "R16", "R17"],
-      "depends_on": ["S21", "S22"]
-    },
-    {
-      "key": "S24",
-      "title": "Rehearse the timed PRD demo and enforce the release pass criteria",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "This final issue verifies the PRD release gate, not presentation polish. Dependencies, tunnel, and secrets are prepared before timing; no supported child may be left running.",
-      "tasks": [
-        "[ ] Add docs/demo-rehearsal.md with the section 11 sequence and sanitized evidence checklist mapped to R1–R18; record raw ANSI as supported and snapshots/vim as deferred.",
-        "[ ] Run the complete P0 automated suite, then repeat the Python REPL and synthetic prompt fixtures three consecutive times with cleanup after every run.",
-        "[ ] Rehearse the five timed segments: authenticated HTTPS/stdio and Python creation; >>>/two inputs/42/cursor resume/two IDs; prompts/resize/CTRL_C/idle/timeout; exit/runtime/parent-child kill; overflow/gap and token/Origin/cwd/command denials plus cleanup.",
-        "[ ] Record elapsed time, test pass summaries, sanitized connection evidence and supported-PID cleanup checks; retain any Manus limitation explicitly. Fail the rehearsal for a missing gate or remaining supported process."
-      ],
-      "acceptance_criteria": [
-        "[ ] bun test apps/server/test exits 0 with every P0 test passing; the explicitly configured HTTPS check has passing evidence rather than a silently skipped release result.",
-        "[ ] Both interactive fixtures pass three consecutive repetitions with no leftover supported process after any repetition.",
-        "[ ] The demo covers all five PRD segments within five minutes, including authenticated real HTTPS access, clean exit/runtime/child cleanup, and the named security/output rejection evidence.",
-        "[ ] Final list/status and recorded PID checks show no running/terminating demo sessions or supported children; deferred snapshots/vim and any Manus limitation are stated explicitly."
-      ],
-      "verification": "From the independent project root run bun test apps/server/test, then run: for run in 1 2 3; do bun test apps/server/test/requirements/python-repl.test.ts apps/server/test/requirements/prompt-fixture.test.ts || exit 1; done. With endpoint/token already configured, run bun test apps/server/test/verification/https-client.test.ts. Expected: every command exits 0, all three interactive repetitions pass, and no supported fixture PID survives. Rehearse and timestamp the PRD sequence: 0:00–0:40 HTTPS connect/stdio result/Python create; 0:40–1:30 >>>/two expressions/42/cursor continuation/two IDs; 1:30–2:25 confirmation/password/120×40/CTRL_C/idle/timeout; 2:25–3:15 exit code/runtime/parent-child cleanup; 3:15–4:20 passing overflow/gap and token/Origin/cwd/command-denial checks plus cleanup. Capture a sanitized recording or timestamped transcript, test pass summaries, final terminal_list/status results with no running/terminating sessions, and checks that recorded supported PIDs are no longer live. Expected total elapsed time < five minutes; an absent authenticated HTTPS result, failed test, or live supported child fails the release rehearsal.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18"],
-      "depends_on": ["S14", "S15", "S16", "S17", "S18", "S19", "S20", "S23"]
-    }
-  ]
+ "product": "tetherterm",
+ "epic_title": "TetherTerm: MCP-controlled live terminal sessions",
+ "epic_summary": "Ship a headless, single-user Linux MCP server that creates genuine Bun PTY sessions and exposes eight tools for incremental reads, interactive input, waits, resize, lifecycle control, and session discovery. The MVP is complete when F01–F08 pass automated requirement tests, both stdio and bearer-authenticated Streamable HTTP are exercised by a real MCP client, and an authenticated HTTPS tunnel demonstration and Manus connection instructions/results are recorded. Each product uses its own unchanged Better-T-Stack scaffold outside the source repository, with Bun as package manager and runtime; unused scaffold modules remain dormant. Sessions survive client reconnection but not server restart, and the command/cwd policy is a guardrail rather than isolation. Screen snapshots, vim, regex matching, dashboards, accounts/OAuth, extra platforms, detached jobs, durable output/history, and production SSH integration are out of scope.",
+ "epic_done_when": [
+  "[ ] The independent Linux Bun project passes its genuine-PTY spike and all F01–F08 tests; no pipe, Node, or Python PTY replacement is used.",
+  "[ ] Exactly eight MCP tools expose the specified schemas, readable structured results, typed errors, and session behavior over both stdio and authenticated Streamable HTTP.",
+  "[ ] Automated checks prove bounded Unicode-safe incremental output, interactive input/keys/resize, all wait modes, lifecycle limits, child cleanup, and the command/cwd/environment and HTTP security rules.",
+  "[ ] A real MCP client creates, reads, and kills a session through the approved authenticated HTTPS tunnel; Manus connection steps and either successful results or the precise unavailable capability are documented.",
+  "[ ] Python and synthetic confirmation/password fixtures pass three consecutive repetitions, the PRD's timed demo finishes within five minutes, and no supported child processes remain running.",
+  "[ ] Startup and connection instructions identify the server-host boundary, required configuration, non-persistence, and explicit snapshots/vim and detached-job exclusions without claiming a security sandbox.",
+  "Final gate passed: tests, a continuous computer-use video covering every element, per-element screenshots and an independent verifier's rerun are attached."
+ ],
+ "areas": [
+  "infra",
+  "sessions",
+  "terminal",
+  "security",
+  "tests",
+  "docs"
+ ],
+ "issues": [
+  {
+   "key": "S1",
+   "title": "Scaffold the independent Bun server and prove genuine PTY support",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "The native PTY spike is the first release blocker. Appendix B overrides the stack note suggesting a Node fallback: incompatibility must be reported, not hidden behind pipes or another runtime.",
+   "tasks": [
+    "[ ] From an interactive TTY in /home/ubuntu/workspaces, run /home/ubuntu/manus-interview/scaffold/05-tetherterm.sh tetherterm without modifying its Better-T-Stack command; do not create or edit the product inside manus-interview.",
+    "[ ] Keep apps/server as the only active product runtime; leave generated web, native, extension, auth, payment, database, and example features dormant. Add Bun-only server/test scripts as needed.",
+    "[ ] Add apps/server/test/pty-spike.test.ts to spawn a real Bun.Terminal child, exchange input/output, resize it, and observe its exit; assert the child's stdin/stdout are TTYs.",
+    "[ ] Record the tested Bun version and the rejection rationale for node-pty/Node, Python ptyprocess, and exec pipes. Stop and report a blocker if native spawn/write/resize/exit fails; lock the compatible runtime/dependency setup only after successful spikes."
+   ],
+   "acceptance_criteria": [
+    "[ ] An independent /home/ubuntu/workspaces/tetherterm directory contains its own scaffold and Git repository, created by the unchanged matching script.",
+    "[ ] The PTY spike reports TTY=true, returns output after a write, reports the requested resized dimensions, and records the child's exit code.",
+    "[ ] Installation and spike execution use bun install and bun test, with no substitute PTY runtime and no activation of unused scaffold features."
+   ],
+   "verification": "In an interactive TTY: mkdir -p /home/ubuntu/workspaces; cd /home/ubuntu/workspaces; /home/ubuntu/manus-interview/scaffold/05-tetherterm.sh tetherterm. Then from /home/ubuntu/workspaces/tetherterm run bun install; bun test apps/server/test/pty-spike.test.ts; git rev-parse --show-toplevel. Expected: install and tests exit 0; all spawn/TTY/write/resize/exit assertions pass; Git root is /home/ubuntu/workspaces/tetherterm. Capture the Bun version and assertion summary, not credentials. A failed native PTY assertion is a reported blocker, not a passed issue.",
+   "prd_refs": [
+    "F02",
+    "R8",
+    "R12",
+    "R14"
+   ],
+   "depends_on": []
+  },
+  {
+   "key": "S2",
+   "title": "Boot official MCP SDK entrypoints on stdio and Streamable HTTP",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Both transports must be proven in the scaffold before terminal behavior is integrated. The scaffold's mcp addon configures coding-agent connections; it does not supply this server.",
+   "tasks": [
+    "[ ] Add official MCP TypeScript SDK and Zod to apps/server and implement a stdio entrypoint plus a Hono /mcp Streamable HTTP entrypoint using one SDK-supported configuration.",
+    "[ ] Add root scripts bun run terminal:stdio and bun run terminal:http that launch only the headless server; bind HTTP to loopback.",
+    "[ ] Keep protocol messages alone on stdio stdout and route diagnostics to stderr; keep transport lifecycle separate from future terminal session storage.",
+    "[ ] Add apps/server/test/transport-boot.test.ts using the official SDK client to initialize and request tool discovery on both entrypoints, then lock the successfully tested dependency versions. Tool behavior and registration are completed in S12."
+   ],
+   "acceptance_criteria": [
+    "[ ] An official SDK client completes initialize and tools/list against each entrypoint without protocol errors.",
+    "[ ] The stdio stdout stream contains only protocol messages, while a startup diagnostic is observable on stderr.",
+    "[ ] HTTP listens on loopback and exposes /mcp through the selected Streamable HTTP configuration; no dashboard or extra API behavior is added.",
+    "[ ] Tested SDK dependencies are recorded in the Bun lockfile after the PTY and transport spikes pass."
+   ],
+   "verification": "From the independent project root run bun install; bun test apps/server/test/transport-boot.test.ts. Expected: exit 0; initialize and tools/list succeed over both transports, loopback binding is asserted, and stdout/stderr separation assertions pass. At this setup stage discovery may be empty; S12 supplies the exact eight tools. Record Bun/SDK versions and the transport assertion summary.",
+   "prd_refs": [
+    "F01",
+    "F07",
+    "R1",
+    "R7",
+    "R15"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S3",
+   "title": "Enforce spawn configuration, cwd policy, and sanitized child environment",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "Policy rejection must happen before any PTY spawn. The server runs unprivileged in a disposable host workspace; command approval is not an isolation guarantee.",
+   "tasks": [
+    "[ ] Load configuration for approved root/executables, loopback port, exact tunnel hostname, and bearer-token environment variable; make invalid mode-required configuration a readable startup failure, without requiring HTTP credentials for owner-trusted stdio.",
+    "[ ] Realpath-check the requested cwd against the approved root, including traversal and symlink escapes, and validate executable approval without shell interpolation.",
+    "[ ] Build child environments without server credentials or tokens; ensure application/addon diagnostics never log credential values or terminal content.",
+    "[ ] Implement plain-text-readable POLICY_DENIED errors and a policy boundary that completes before the spawn callback is invoked."
+   ],
+   "acceptance_criteria": [
+    "[ ] Approved executable/cwd requests reach spawn, while forbidden executable, traversal, and symlink-escape requests return POLICY_DENIED before spawn is called.",
+    "[ ] A configured bearer-token and credential sentinel are absent from the child environment and application diagnostic logs.",
+    "[ ] Configuration supplies the exact PRD security inputs, and invalid required configuration prevents server startup with a readable error."
+   ],
+   "verification": "Run bun test apps/server/test/spawn-policy.test.ts. Expected: exit 0; allow, deny, traversal, realpath/symlink, missing-config, and environment/log-redaction cases pass. The spawn spy has zero calls for every denied request, and neither token nor credential sentinels appear in child environment or captured diagnostics.",
+   "prd_refs": [
+    "F02",
+    "F07",
+    "R17"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S4",
+   "title": "Create UUID sessions and expose nonblocking status and list",
+   "type": "feature",
+   "priority": "P0",
+   "area": "sessions",
+   "context": "PTY identity belongs to the server process, not the MCP connection. Multiple concurrent sessions must remain distinguishable and observable without waiting for process completion.",
+   "tasks": [
+    "[ ] Add the in-memory session manager and create genuine PTYs from executable, argv, approved cwd, optional dimensions, and a finite runtime deadline.",
+    "[ ] Return UUID session IDs and initial cursor/state, and enforce at most four active sessions without racing concurrent creates.",
+    "[ ] Implement status/list summaries with ID, executable, cwd, dimensions, running/terminating/exited state, and nullable exitCode/signal.",
+    "[ ] Keep the registry independent of transport connections; return NOT_FOUND for unknown IDs and retain no durable session or terminal-content storage."
+   ],
+   "acceptance_criteria": [
+    "[ ] Two created sessions have different UUIDs and appear as separate entries with the specified summary fields.",
+    "[ ] A fifth active create returns LIMIT without spawning another PTY, including concurrent-create attempts.",
+    "[ ] Status and list return while a quiet child remains running, with null exitCode/signal before exit.",
+    "[ ] A new server process does not recognize IDs from the previous process and returns NOT_FOUND."
+   ],
+   "verification": "Run bun test apps/server/test/session-registry.test.ts. Expected: exit 0; UUID uniqueness, summary fields, concurrent four-session cap, unknown-ID, restart invalidation, and quiet-process nonblocking status/list cases pass. The cap fixture records exactly four active spawned PTYs and no fifth spawn.",
+   "prd_refs": [
+    "F02",
+    "F06",
+    "R2",
+    "R5",
+    "R9",
+    "R13"
+   ],
+   "depends_on": [
+    "S1",
+    "S3"
+   ]
+  },
+  {
+   "key": "S5",
+   "title": "Record process exit and expire retained session records",
+   "type": "feature",
+   "priority": "P0",
+   "area": "sessions",
+   "context": "A quiet terminal is not an exited terminal. Exited status and final output remain readable during the bounded in-memory retention window.",
+   "tasks": [
+    "[ ] Transition state only from actual lifecycle events and record exitCode/signal without inferring completion from silence.",
+    "[ ] Preserve each exited session and its final buffered output for five minutes, subject to the sixteen-record cap, then remove the record and associated resources.",
+    "[ ] Free active-session capacity on exit while keeping retained records visible to status/list.",
+    "[ ] Add lifecycle unit checks with a controllable clock so retention expiry does not require five-minute test sleeps."
+   ],
+   "acceptance_criteria": [
+    "[ ] A child exiting with code 7 has state exited and exitCode 7; silence alone leaves state running.",
+    "[ ] Status and buffered final output remain available before five-minute expiry unless evicted by the sixteen-record cap; expired/evicted IDs return NOT_FOUND.",
+    "[ ] Retained records do not exceed the sixteen-record cap, and exited sessions no longer consume active-session slots."
+   ],
+   "verification": "Run bun test apps/server/test/session-exit-retention.test.ts. Expected: exit 0; quiet-running, exit-code/signal, final-output retention, active-slot release, five-minute expiry, and sixteen-record-cap cases pass. The clock-driven expiry case changes a formerly addressable ID to NOT_FOUND without leaving timers/listeners for that record.",
+   "prd_refs": [
+    "F03",
+    "F06",
+    "R3",
+    "R5",
+    "R9",
+    "R13"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S6",
+   "title": "Terminate sessions on kill or runtime expiry and clean ordinary children",
+   "type": "feature",
+   "priority": "P0",
+   "area": "sessions",
+   "context": "Termination must release ordinary child processes and have a finite escalation path. Detached processes remain unsupported and must not be used to claim broader cleanup guarantees.",
+   "tasks": [
+    "[ ] Implement idempotent kill with state/terminationRequested, sending SIGTERM first and SIGKILL after one second only if the supported process group remains alive.",
+    "[ ] Apply the fifteen-minute default runtime and each accepted finite timeoutMs deadline through the same termination path.",
+    "[ ] Clean ordinary descendants together with their parent and cancel the escalation timer after confirmed exit.",
+    "[ ] Add fixtures for cooperative termination, ignored SIGTERM, ordinary child spawning, natural exit before kill, and a short runtime deadline."
+   ],
+   "acceptance_criteria": [
+    "[ ] A cooperative child receives SIGTERM without unnecessary SIGKILL; a child ignoring SIGTERM receives SIGKILL after the one-second grace period.",
+    "[ ] Repeated kill requests, including requests after retained exit, return the specified fields without resurrecting a process or scheduling duplicate escalation.",
+    "[ ] Default runtime is fifteen minutes and a short explicit runtime expiry transitions the session through termination to exited.",
+    "[ ] Supported parent and ordinary child PIDs are no longer live after termination, with exitCode/signal available in status."
+   ],
+   "verification": "Run bun test apps/server/test/session-termination.test.ts. Expected: exit 0; SIGTERM-first, one-second escalation, repeated-kill, default-deadline, explicit-expiry, and ordinary-child cases pass. Fixture checks against both recorded PIDs show neither process running after cleanup; use a controllable clock for the default deadline assertion, not a fifteen-minute sleep.",
+   "prd_refs": [
+    "F06",
+    "R5",
+    "R6",
+    "R13"
+   ],
+   "depends_on": [
+    "S5"
+   ]
+  },
+  {
+   "key": "S7",
+   "title": "Implement a Unicode-safe one-MiB output ring with byte cursors",
+   "type": "feature",
+   "priority": "P0",
+   "area": "terminal",
+   "context": "Incremental reads must avoid duplicates while acknowledging eviction. Raw ANSI output is retained as data; no terminal screen model or snapshot is required.",
+   "tasks": [
+    "[ ] Attach output buffering to each session with a maximum retained payload of one MiB and decimal UTF-8 byte cursors.",
+    "[ ] Return output, nextCursor, oldestCursor, headCursor, gap, and state without waiting for exit; bound each read to maxBytes and never more than 64 KiB.",
+    "[ ] Preserve multibyte characters across PTY chunks, never split returned characters, and never advance nextCursor beyond bytes actually returned.",
+    "[ ] Return an explicit gap and oldest surviving cursor for evicted offsets; reject malformed, future, and invalid character-boundary offsets with BAD_CURSOR. Preserve ANSI bytes without interpreting them."
+   ],
+   "acceptance_criteria": [
+    "[ ] Continuing from nextCursor returns no duplicate output; nextCursor equals the effective read start plus the UTF-8 byte length returned, using oldestCursor as the start when the supplied cursor was evicted.",
+    "[ ] Retained payload never exceeds one MiB and a stale cursor returns gap=true with the oldest surviving cursor.",
+    "[ ] Returned output contains complete Unicode characters, preserves ANSI escape sequences, and never exceeds the requested read limit or 64 KiB.",
+    "[ ] Future/malformed/non-boundary cursors return BAD_CURSOR; reading a quiet running session returns without waiting for exit."
+   ],
+   "verification": "Run bun test apps/server/test/output-ring.test.ts. Expected: exit 0; incremental/no-duplicate, exact-byte-cursor, eviction/gap, fragmented-Unicode, small-byte-budget, ANSI-preservation, invalid-cursor, and quiet-read cases pass. Assert retainedBytes <= 1048576 and each returned UTF-8 payload <= min(requested maxBytes, 65536), with nextCursor matching returned bytes only.",
+   "prd_refs": [
+    "F03",
+    "R3",
+    "R10",
+    "R14"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S8",
+   "title": "Serialize terminal text writes and encode the supported keys",
+   "type": "feature",
+   "priority": "P0",
+   "area": "terminal",
+   "context": "Concurrent input must not interleave, and uncertain writes must not be automatically repeated. Only the key vocabulary in the PRD is supported.",
+   "tasks": [
+    "[ ] Accept exactly one of text or keys, report acceptedBytes/state, and cap submitted input at 16 KiB of encoded UTF-8 bytes.",
+    "[ ] Encode ENTER, TAB, ESC, BACKSPACE, arrows, CTRL_C, and CTRL_D for the PTY, rejecting unsupported keys and ambiguous/missing input.",
+    "[ ] Serialize writes per session, without automatic retries, and return NOT_RUNNING for writes to terminating/exited sessions.",
+    "[ ] Add apps/server/test/terminal-write.test.ts covering text, every key, input boundaries, concurrent order, and exited sessions."
+   ],
+   "acceptance_criteria": [
+    "[ ] Each supported key produces its defined PTY byte sequence and acceptedBytes equals the bytes accepted, including multibyte text.",
+    "[ ] Both/neither text and keys, unsupported keys, and input exceeding 16 KiB are rejected without writing any bytes.",
+    "[ ] Concurrent submitted writes reach the PTY in serialized order with no interleaving or automatic duplicate retry.",
+    "[ ] Writes to terminating/exited sessions return NOT_RUNNING."
+   ],
+   "verification": "Run bun test apps/server/test/terminal-write.test.ts. Expected: exit 0; all vocabulary, exactly-one-input, 16384-byte boundary, Unicode-byte-count, queue ordering, no-retry, and NOT_RUNNING cases pass. The fake PTY byte log equals the expected ordered sequences exactly; rejected inputs add zero bytes.",
+   "prd_refs": [
+    "F04",
+    "R4",
+    "R12"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S9",
+   "title": "Resize live PTYs within the required dimension limits",
+   "type": "feature",
+   "priority": "P0",
+   "area": "terminal",
+   "context": "Resize changes the actual PTY dimensions, not just metadata. Both creation and resize must obey the 240-column by 80-row limits.",
+   "tasks": [
+    "[ ] Validate positive integer dimensions for creation and resize, with maximum cols=240 and rows=80.",
+    "[ ] Call the native Bun.Terminal resize operation and return the resulting cols/rows; update status/list dimensions after success.",
+    "[ ] Reject unknown or non-running session resize attempts without invoking native resize.",
+    "[ ] Add a live Linux fixture that reports its PTY dimensions before and after resize."
+   ],
+   "acceptance_criteria": [
+    "[ ] Resizing a live fixture to 120×40 changes the child-observed PTY size and the returned/status/list dimensions to 120×40.",
+    "[ ] 240×80 is accepted; nonpositive, noninteger, or over-limit dimensions are rejected without changing the PTY.",
+    "[ ] Unknown IDs return NOT_FOUND and non-running sessions return NOT_RUNNING without a native resize call."
+   ],
+   "verification": "Run bun test apps/server/test/terminal-resize.test.ts. Expected: exit 0; real-child 120×40 observation, status/list agreement, 240×80 boundary, invalid create/resize dimensions, and unknown/non-running rejection cases pass. The rejected-resize spy records zero calls.",
+   "prd_refs": [
+    "F02",
+    "F04",
+    "R12"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S10",
+   "title": "Implement output, idle, and single-literal-pattern wait modes",
+   "type": "feature",
+   "priority": "P0",
+   "area": "terminal",
+   "context": "Wait observes output and process state; idle must never imply completion. A single literal pattern replaces regex matching.",
+   "tasks": [
+    "[ ] Implement output waits from the supplied cursor and idle waits defaulting to 300 ms without output, resetting the idle interval on new output.",
+    "[ ] Implement pattern waits over retained output from the supplied cursor with a maximum 256-character literal and no regex interpretation, including patterns crossing output chunks.",
+    "[ ] Return reason output/idle/match/exit/timeout with headCursor/state, resolving exit from the lifecycle event rather than silence.",
+    "[ ] Reuse cursor validation and add deterministic mode tests for existing/new output, quiet-running state, literal metacharacters, chunk-spanning matches, and clean exit."
+   ],
+   "acceptance_criteria": [
+    "[ ] Output waits resolve when output after the supplied cursor exists or arrives; pattern waits match only retained text at/after that cursor.",
+    "[ ] An idle wait resolves after the configured quiet interval, default 300 ms, while a quiet live child remains state running.",
+    "[ ] Literal metacharacters are not evaluated as regex; over-256-character patterns and invalid cursors are rejected.",
+    "[ ] Each completed wait returns exactly a supported reason plus headCursor/state, and exit is based on a process lifecycle event."
+   ],
+   "verification": "Run bun test apps/server/test/terminal-wait-modes.test.ts. Expected: exit 0; output-existing/output-new, default/configured/reset-idle, before-cursor nonmatch, literal-metacharacter, chunk-spanning-match, 256-character-boundary, BAD_CURSOR, and process-exit cases pass. Quiet-running assertions explicitly show reason=idle and state=running, never exited.",
+   "prd_refs": [
+    "F05",
+    "R11",
+    "R13"
+   ],
+   "depends_on": [
+    "S5",
+    "S7"
+   ]
+  },
+  {
+   "key": "S11",
+   "title": "Bound waits and remove canceled or completed wait listeners",
+   "type": "feature",
+   "priority": "P0",
+   "area": "terminal",
+   "context": "A timed-out or canceled wait must not terminate its session. Per-session waiter limits and listener cleanup keep observation bounded.",
+   "tasks": [
+    "[ ] Apply the two-second default wait timeout and ten-second maximum, validating timeout/idle parameters as finite values.",
+    "[ ] Enforce four concurrent waiters per session and reject a fifth with LIMIT without attaching listeners.",
+    "[ ] Accept a request-cancellation signal in the wait service and tear down only its waiter; clear timers and output/exit listeners on cancellation, timeout, match, idle, output, or exit. S12 connects the SDK cancellation signal to this service.",
+    "[ ] Add apps/server/test/terminal-wait-bounds.test.ts with a controllable clock and listener-count assertions."
+   ],
+   "acceptance_criteria": [
+    "[ ] Omitted timeout resolves with reason=timeout after two seconds without qualifying events; no accepted wait exceeds ten seconds.",
+    "[ ] A fifth concurrent wait returns LIMIT and leaves the waiter count at four.",
+    "[ ] Timeout/cancellation leaves the process running and writable, and releases all resources owned by that wait.",
+    "[ ] Every completion path returns waiter/listener/timer counts to their pre-wait baseline."
+   ],
+   "verification": "Run bun test apps/server/test/terminal-wait-bounds.test.ts. Expected: exit 0; 2000 ms default, 10000 ms upper bound, invalid timeout, four-waiter cap, cancellation, and every-resolution-path cleanup cases pass. After timeout/cancellation the fixture accepts a fresh write, state remains running, and instrumentation shows no leftover wait-owned listeners/timers.",
+   "prd_refs": [
+    "F05",
+    "R11",
+    "R13"
+   ],
+   "depends_on": [
+    "S8",
+    "S10"
+   ]
+  },
+  {
+   "key": "S12",
+   "title": "Wire exactly eight schema-defined MCP tools to terminal services",
+   "type": "feature",
+   "priority": "P0",
+   "area": "infra",
+   "context": "The same terminal service contract must be exposed on both transports. Results and errors must be readable as plain text as well as structured data.",
+   "tasks": [
+    "[ ] Register terminal_create, terminal_read, terminal_write, terminal_wait, terminal_resize, terminal_status, terminal_list, and terminal_kill with Zod input schemas matching section 9.",
+    "[ ] Wire each tool to its service implementation and return the exact specified result fields, including SessionSummary fields and nullable exitCode/signal.",
+    "[ ] Expose readable structured success results and isError:true with code/message for NOT_FOUND, POLICY_DENIED, BAD_CURSOR, LIMIT, NOT_RUNNING, and schema/argument failures.",
+    "[ ] Route cancellation into wait cleanup, keep terminal IDs transport-independent, treat output as untrusted data, and never automatically retry uncertain create/write calls.",
+    "[ ] Add apps/server/test/mcp-tool-contract.test.ts to enumerate tools, validate schemas/results, and exercise every adapter through an official SDK client."
+   ],
+   "acceptance_criteria": [
+    "[ ] tools/list contains exactly the eight PRD names with the specified input fields and no additional tool.",
+    "[ ] Calls to all eight tools return the section 9 result shapes, with plain-text-readable content and structured data agreeing.",
+    "[ ] The five named service error codes and invalid arguments yield isError:true and nonempty readable code/message without corrupting the transport.",
+    "[ ] Adapter cancellation releases its wait, and disconnected/uncertain create/write requests are not automatically replayed."
+   ],
+   "verification": "Run bun test apps/server/test/mcp-tool-contract.test.ts. Expected: exit 0; exact-eight discovery, each input/result schema, text/structured agreement, all named errors, malformed arguments, canceled-wait, and no-create/write-replay cases pass. The client can make another valid tool call after every error.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "R1",
+    "R7"
+   ],
+   "depends_on": [
+    "S2",
+    "S6",
+    "S7",
+    "S8",
+    "S9",
+    "S11"
+   ]
+  },
+  {
+   "key": "S13",
+   "title": "Guard every HTTP request with bearer, Host, and Origin checks",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "Streamable HTTP runs on loopback behind an operator-provided HTTPS tunnel. Authentication cannot be relaxed for a demo or unavailable Manus connection setting.",
+   "tasks": [
+    "[ ] Require the configured random 32-byte bearer token on every MCP HTTP request, including initialization, discovery, streaming, and transport/session cleanup requests supported by the selected SDK configuration.",
+    "[ ] Reject unexpected Host values using configured local endpoint and exact tunnel hostname; reject a present unapproved Origin while allowing an absent Origin from a non-browser client.",
+    "[ ] Enforce checks before MCP handling or PTY spawn, keep HTTP loopback-bound, and reject token-in-URL authentication.",
+    "[ ] Leave stdio owner-trusted without HTTP authentication and ensure denied-request diagnostics do not include token or terminal content."
+   ],
+   "acceptance_criteria": [
+    "[ ] Every supported HTTP request path/method rejects a missing or incorrect bearer before reaching an MCP handler; a configured random 32-byte token permits an approved request.",
+    "[ ] Unexpected Host and present unapproved Origin are rejected before handler/spawn, including requests carrying a valid bearer.",
+    "[ ] A non-browser client with approved Host and no Origin succeeds; a URL token without a bearer header does not authenticate.",
+    "[ ] HTTP remains loopback-bound, stdio requires no bearer, and credential sentinels are absent from denial logs."
+   ],
+   "verification": "Run bun test apps/server/test/http-guard.test.ts. Expected: exit 0; header/token, every-supported-method, Host, Origin-present/absent, URL-token refusal, loopback-bind, stdio-owner-trust, and log-redaction cases pass. Handler/spawn counters remain zero for all denied cases. No test disables authentication to obtain success.",
+   "prd_refs": [
+    "F07",
+    "R15",
+    "R16",
+    "R17"
+   ],
+   "depends_on": [
+    "S2",
+    "S3"
+   ]
+  },
+  {
+   "key": "S14",
+   "title": "Prove session limits, exit retention, and ordinary-child cleanup",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Lifecycle unit behavior needs a Linux requirement suite against real PTYs. It must prove bounded resources and clean termination without claiming detached-process support.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/lifecycle.test.ts with quiet-running, natural exit, exit code/signal, four-active-session, runtime expiry, idempotent kill, and ordinary-child fixtures.",
+    "[ ] Check final-output/record retention and the sixteen-record cap with a controllable clock, plus NOT_FOUND after retention expiry/server restart.",
+    "[ ] Assert SIGTERM-first and one-second SIGKILL escalation for a resistant fixture and detect leftover supported PIDs in test teardown.",
+    "[ ] Associate test cases with R2/R5/R6/R9/R13 in their names or source comments."
+   ],
+   "acceptance_criteria": [
+    "[ ] The requirement suite distinguishes quiet-running from exit and reports the fixture's exact exit code/signal.",
+    "[ ] Concurrent creation never exceeds four active PTYs; runtime expiry and repeated kill release capacity.",
+    "[ ] Retention expiry/record cap/restart behavior matches the bounded in-memory model.",
+    "[ ] All recorded supported parent/child PIDs are absent after suite teardown, including the ignored-SIGTERM case."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/lifecycle.test.ts. Expected: exit 0 with all R2/R5/R6/R9/R13 cases passing and zero failures. The suite's final PID check reports no live supported fixture processes; retention tests do not sleep for five minutes or persist terminal content.",
+   "prd_refs": [
+    "F02",
+    "F06",
+    "F08",
+    "R2",
+    "R5",
+    "R6",
+    "R9",
+    "R13"
+   ],
+   "depends_on": [
+    "S6",
+    "S7"
+   ]
+  },
+  {
+   "key": "S15",
+   "title": "Prove overflow gaps, Unicode boundaries, and bounded incremental reads",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Output requirements need adversarial producer fixtures, not only ring implementation unit tests. Eviction and small read budgets must not duplicate, split, or silently skip Unicode output.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/output.test.ts using real PTY producers for over-one-MiB output, fragmented multibyte text, and ANSI escapes.",
+    "[ ] Read repeatedly from returned cursors and compare concatenated non-evicted fixture output against the expected UTF-8 bytes.",
+    "[ ] Assert explicit stale-cursor gaps, exact oldest/head/next offsets, the 64-KiB read cap, and future/malformed/non-boundary cursor rejection.",
+    "[ ] Check immediate empty reads on quiet live sessions and final reads after exit; use assertion summaries rather than application output persistence."
+   ],
+   "acceptance_criteria": [
+    "[ ] An overflowing producer yields retained payload <= one MiB and a stale read with gap=true and the oldest surviving cursor.",
+    "[ ] Non-evicted repeated reads reconstruct expected output exactly once with complete Unicode and unchanged ANSI escapes.",
+    "[ ] Every read obeys its byte budget and the 64-KiB cap; invalid/future offsets yield BAD_CURSOR.",
+    "[ ] Quiet live reads return without awaiting exit, and retained final output remains readable after exit."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/output.test.ts. Expected: exit 0; all R3/R10/R14 producer cases pass. Byte equality/hash assertions match the generated expected fixture bytes, gap and cursor assertions pass, and no returned payload exceeds 65536 bytes. Capture only the assertion/hash summary, not a terminal-content log.",
+   "prd_refs": [
+    "F03",
+    "F08",
+    "R3",
+    "R10",
+    "R14"
+   ],
+   "depends_on": [
+    "S5",
+    "S7"
+   ]
+  },
+  {
+   "key": "S16",
+   "title": "Prove policy denials and credential exclusion before PTY spawn",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The security release gate includes executable/cwd rejection and child environment hygiene. Guardrails must not be represented as a host-permission sandbox.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/policy.test.ts for allowed/forbidden commands, cwd traversal, symlink escape, and denied create requests.",
+    "[ ] Observe the spawn boundary and active-session registry to prove a denied request creates no PTY and consumes no active slot.",
+    "[ ] Spawn an approved environment-inspection fixture and assert configured credential/token sentinels are absent; capture application/addon logs to check redaction.",
+    "[ ] Add a source comment explaining that interpreters retain host permissions and detached jobs are outside the cleanup guarantee."
+   ],
+   "acceptance_criteria": [
+    "[ ] Every forbidden command/cwd request returns POLICY_DENIED with zero spawn calls and no new session record.",
+    "[ ] Realpath validation denies a symlink escape and accepts a cwd resolving inside the approved root.",
+    "[ ] Credential/token sentinels are absent from child environment and captured logs.",
+    "[ ] The suite makes no isolation or detached-process cleanup assertion."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/policy.test.ts. Expected: exit 0; all R17 allow/deny/traversal/symlink/environment/log cases pass. For denied creates, spawn count and new-session count are both zero; sentinel searches in child environment and logs return no matches.",
+   "prd_refs": [
+    "F02",
+    "F07",
+    "F08",
+    "R17"
+   ],
+   "depends_on": [
+    "S3",
+    "S4"
+   ]
+  },
+  {
+   "key": "S17",
+   "title": "Prove HTTP authentication and request-origin rejection end to end",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Security must hold on the actual Hono/SDK route, not only in isolated middleware. Rejected requests must never reach terminal creation.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/http-security.test.ts against the booted HTTP server using the selected SDK's actual request methods and lifecycle.",
+    "[ ] Exercise missing/wrong bearer, token supplied only in URL, unexpected Host, and present unapproved Origin on initialization and subsequent supported requests.",
+    "[ ] Exercise valid bearer with approved Host and both approved/absent Origin, then create and clean a fixture session.",
+    "[ ] Assert denial occurs before the tool/spawn boundary and token sentinels do not appear in response diagnostics or captured logs."
+   ],
+   "acceptance_criteria": [
+    "[ ] Every negative authentication/Host/Origin case receives a non-success HTTP response and creates no terminal session.",
+    "[ ] Authentication is checked on subsequent supported HTTP requests, not only initialization.",
+    "[ ] Valid approved requests initialize, discover exactly eight tools, and create/kill a real fixture PTY.",
+    "[ ] Responses and captured diagnostics contain no bearer-token sentinel."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/http-security.test.ts. Expected: exit 0; all R15/R17 positive and negative cases pass through the booted /mcp endpoint. Each denied case has a non-2xx response and zero added PTYs; the approved real-client flow completes and leaves its session exited. Token-sentinel searches return no matches.",
+   "prd_refs": [
+    "F07",
+    "F08",
+    "R15",
+    "R17"
+   ],
+   "depends_on": [
+    "S12",
+    "S13"
+   ]
+  },
+  {
+   "key": "S18",
+   "title": "Automate a persistent Python REPL through a real MCP client",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The REPL story proves a genuine interactive session persists across separately submitted inputs. The test must use MCP tool calls, not direct manager access.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/python-repl.test.ts using the official SDK client over stdio and an approved Python executable/cwd.",
+    "[ ] Create Python, wait literally for >>>, submit x = 40 and x + 2 in separate writes with ENTER, and read the answer 42 from the same session ID.",
+    "[ ] Continue reading from returned cursors and assert no repeated answer bytes; observe an idle wait and a timed-out unsatisfied wait while state remains running.",
+    "[ ] Send CTRL_D, assert exited with exitCode 0 and retained final output, and guarantee fixture cleanup on assertion failure."
+   ],
+   "acceptance_criteria": [
+    "[ ] The official SDK client discovers and invokes the terminal tools against a genuine Python PTY.",
+    "[ ] Two separately submitted expressions preserve x and produce 42 in one session without duplicate incremental reads.",
+    "[ ] Idle and timeout leave the REPL running and able to accept another input.",
+    "[ ] CTRL_D ends the session with exitCode 0 and no live fixture process remains."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/python-repl.test.ts. Expected: exit 0; discovery, >>> literal match, separate-input state preservation, answer 42, no-duplicate cursors, idle/timeout-running, and EOF exit-code assertions all pass. The final cleanup assertion reports no live Python fixture PID.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F08",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R8",
+    "R11",
+    "R13",
+    "R18"
+   ],
+   "depends_on": [
+    "S12"
+   ]
+  },
+  {
+   "key": "S19",
+   "title": "Automate confirmation and password prompts with resize and control keys",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The SSH-like interaction is a synthetic fixture, not production SSH integration. It proves prompt response, terminal dimensions, and interruption without a screen emulator.",
+   "tasks": [
+    "[ ] Add a synthetic interactive fixture and apps/server/test/requirements/prompt-fixture.test.ts using official SDK MCP calls.",
+    "[ ] Wait for literal confirmation and password prompts, send fixture text plus ENTER, and assert the fixture advances through both stages using a non-sensitive test password.",
+    "[ ] Resize to 120×40 and assert child-reported dimensions and tool/status dimensions match; send CTRL_C and assert the fixture records interruption.",
+    "[ ] Show idle/timeout while the fixture is still running and guarantee cleanup; explicitly omit vim, snapshots, and real SSH."
+   ],
+   "acceptance_criteria": [
+    "[ ] The confirmation/password fixture accepts separately submitted text and ENTER and emits its exact expected stage-completion markers.",
+    "[ ] The live child reports 120×40 after resize and status agrees.",
+    "[ ] CTRL_C causes the fixture's defined interruption marker/lifecycle event, rather than merely echoing characters.",
+    "[ ] Idle/timeout do not imply exit, and no fixture process remains after teardown."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/prompt-fixture.test.ts. Expected: exit 0; literal-prompt, confirmation/password-stage, ENTER, real-PTY resize, CTRL_C interruption, idle/timeout-running, and cleanup cases pass. Capture the assertion summary and dimensions only; no real password or production SSH connection is used.",
+   "prd_refs": [
+    "F04",
+    "F05",
+    "F08",
+    "R4",
+    "R11",
+    "R12",
+    "R13",
+    "R18"
+   ],
+   "depends_on": [
+    "S12"
+   ]
+  },
+  {
+   "key": "S20",
+   "title": "Prove both transports and reconnect to existing terminal IDs",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Client connection lifetime must not control terminal lifetime. Real-client validation covers stdio and authenticated HTTP while HTTP reconnection proves server-resident identity/cursors.",
+   "tasks": [
+    "[ ] Add apps/server/test/requirements/transports.test.ts using official SDK clients to discover and exercise all eight tools on stdio and authenticated loopback HTTP.",
+    "[ ] Create two HTTP sessions, retain an ID/cursor, close the client connection without stopping the server, then reconnect and continue reading/writing/status/list/kill against the same sessions.",
+    "[ ] Assert returned cursors prevent replay and a transport cleanup request or wait cancellation does not terminate the PTY.",
+    "[ ] Check stdio protocol-only stdout and owner trust, then clean both transports' fixtures and verify server restart invalidates old IDs."
+   ],
+   "acceptance_criteria": [
+    "[ ] Official clients discover exactly eight tools and receive successful representative calls to every tool on both transports.",
+    "[ ] After HTTP client reconnection, the original two session IDs remain listed and a saved cursor resumes output without duplication.",
+    "[ ] HTTP client/transport closure while the server stays alive and canceled waits do not kill the server-resident PTYs; explicit kill does.",
+    "[ ] Stdio stdout remains protocol-only and old IDs return NOT_FOUND after server restart."
+   ],
+   "verification": "Run bun test apps/server/test/requirements/transports.test.ts. Expected: exit 0; both-transport exact-eight/tool-call, HTTP reconnect, two-ID list, cursor resume, connection/cancellation independence, stdio framing, restart invalidation, and teardown cases pass. All supported fixture PIDs are absent after teardown.",
+   "prd_refs": [
+    "F01",
+    "F06",
+    "F07",
+    "F08",
+    "R1",
+    "R2",
+    "R3",
+    "R7",
+    "R9",
+    "R15"
+   ],
+   "depends_on": [
+    "S12",
+    "S13"
+   ]
+  },
+  {
+   "key": "S21",
+   "title": "Verify an authenticated HTTPS tunnel with an independent MCP client",
+   "type": "verification",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Remote access means reaching the server host through an operator-provided HTTPS tunnel. This evidence is required even when Manus MCP URL/bearer configuration is unavailable.",
+   "tasks": [
+    "[ ] Start the HTTP entrypoint on configured loopback, prepare a random 32-byte bearer token out of band, and forward /mcp through the operator-provided HTTPS tunnel with its exact hostname approved.",
+    "[ ] Add apps/server/test/verification/https-client.test.ts as an explicitly invoked real-client check that reads endpoint/token from configuration without printing secrets or putting them in URLs.",
+    "[ ] Through the HTTPS URL, initialize, discover eight tools, create/read/write/status/list/kill a fixture, and prove a request without bearer is rejected.",
+    "[ ] Record non-secret client/version, HTTPS hostname, timestamps, assertion results, and cleanup evidence. Report tunnel/host/configuration blockers rather than disabling authentication."
+   ],
+   "acceptance_criteria": [
+    "[ ] An independent official SDK client completes real MCP calls through https://<approved-host>/mcp with the bearer header; no direct-loopback substitution is used as HTTPS evidence.",
+    "[ ] Discovery yields eight tools, a created fixture produces expected output, and explicit kill leaves it exited with no live supported child.",
+    "[ ] The same endpoint rejects a request with no bearer, and HTTP remains loopback-bound behind the tunnel.",
+    "[ ] Recorded evidence excludes token values, URL tokens, and real secrets; absent tunnel capability is explicitly marked a blocker, not a pass."
+   ],
+   "verification": "With approved endpoint/token supplied using the server's documented configuration, run bun run terminal:http, establish the operator's HTTPS tunnel, then in another terminal run bun test apps/server/test/verification/https-client.test.ts. Expected: exit 0 with initialize/exact-eight/create/read/write/status/list/kill and missing-bearer rejection assertions passing against the HTTPS URL. Capture a sanitized test transcript showing hostname, client version, pass summary, and no-live-fixture assertion; capture ss -ltnp output showing the server listening only on loopback. Tunnel setup is operator-specific and must be recorded verbatim without credentials.",
+   "prd_refs": [
+    "F07",
+    "R1",
+    "R7",
+    "R15",
+    "R16",
+    "R17"
+   ],
+   "depends_on": [
+    "S17",
+    "S20"
+   ]
+  },
+  {
+   "key": "S22",
+   "title": "Document Bun startup commands and the server-host operating boundary",
+   "type": "docs",
+   "priority": "P1",
+   "area": "docs",
+   "context": "The PRD requires startup commands and handoff instructions for this headless server. Documentation must describe the tested configuration without introducing deployment products or additional features.",
+   "tasks": [
+    "[ ] Add docs/tetherterm-operations.md in the independent product with Linux/Bun prerequisites, bun install, bun run terminal:stdio, bun run terminal:http, and exact required configuration names.",
+    "[ ] Explain approved cwd/executable policy, 32-byte token provisioning outside URLs, loopback/exact-tunnel-Host/Origin rules, stderr diagnostics, and the authenticated HTTPS test invocation.",
+    "[ ] State that local terminals execute on the server host, client reconnect preserves sessions, restart invalidates IDs, no terminal content is persisted by the service, and echoed secrets can remain in memory.",
+    "[ ] Record default limits, disposable/unprivileged-host guidance, lack of sandbox isolation, supported ordinary-child cleanup, and snapshots/vim/detached-job exclusions. Do not build a UI or activate dormant scaffold modules."
+   ],
+   "acceptance_criteria": [
+    "[ ] A reader can install and start both entrypoints using only the documented Bun commands and supplied example configuration, without changing code.",
+    "[ ] The document names all required configuration inputs and contains no usable credential or token-in-URL example.",
+    "[ ] The server-host, reconnect/restart, memory/non-persistence, guardrail/non-isolation, and deferred-feature boundaries are stated explicitly."
+   ],
+   "verification": "From the independent project root follow docs/tetherterm-operations.md exactly: bun install; bun run terminal:stdio; then stop it and run bun run terminal:http with the documented disposable fixture configuration. In separate terminals run bun test apps/server/test/transport-boot.test.ts and bun test apps/server/test/requirements/transports.test.ts. Expected: both documented starts initialize without code edits and tests exit 0. Capture a sanitized checklist confirming each documented command/configuration and every required boundary statement; stop all test server processes afterward.",
+   "prd_refs": [
+    "F07",
+    "R7",
+    "R15",
+    "R16",
+    "R17"
+   ],
+   "depends_on": [
+    "S12",
+    "S13"
+   ]
+  },
+  {
+   "key": "S23",
+   "title": "Document Manus connection steps and record the actual connection result",
+   "type": "docs",
+   "priority": "P0",
+   "area": "docs",
+   "context": "Manus instructions/results are a brief requirement, but successful Manus access is not assumed. An unavailable URL/bearer setting is an allowed documented limitation only when independent authenticated HTTPS validation remains intact.",
+   "tasks": [
+    "[ ] Add docs/manus-connection.md with the tested HTTP startup, approved tunnel setup, resulting HTTPS /mcp URL, and bearer configuration steps in Manus's supported MCP connection settings.",
+    "[ ] Attempt connection using available Manus settings, discover tools, and create/read/kill a disposable session; document the actual outcome, date, and non-secret evidence.",
+    "[ ] If the required URL/bearer configuration is unavailable, identify the exact missing capability and record the independent authenticated HTTPS client's successful S21 result instead; do not weaken authentication or claim Manus succeeded.",
+    "[ ] Keep tokens out of screenshots, URLs, and the document, and link the startup/security boundaries and sanitized connection evidence."
+   ],
+   "acceptance_criteria": [
+    "[ ] The document contains concrete HTTPS /mcp and bearer-setting steps corresponding to the available Manus interface, or explicitly identifies the unavailable required setting.",
+    "[ ] It records either successful Manus tool discovery/create/read/kill results or a precise Manus limitation plus a successful independent authenticated HTTPS result.",
+    "[ ] Screenshots/transcripts and examples contain no token or secret, and no claim of successful Manus connection is made without evidence."
+   ],
+   "verification": "Following docs/manus-connection.md, open Manus MCP connection settings, configure the approved HTTPS /mcp URL and bearer using supported controls, connect, discover tools, then call terminal_create, terminal_read, and terminal_kill. Expected successful-path evidence: a redacted screenshot or transcript showing eight discovered tools, one session ID, expected fixture output, and exited/termination result. If URL/bearer controls are unavailable, capture the unavailable setting/error without secrets and attach the S21 sanitized passing HTTPS transcript; label Manus unavailable, not successful. Verify every recorded outcome matches the evidence and that all demo sessions are cleaned.",
+   "prd_refs": [
+    "F07",
+    "R7",
+    "R15",
+    "R16",
+    "R17"
+   ],
+   "depends_on": [
+    "S21",
+    "S22"
+   ]
+  },
+  {
+   "key": "S24",
+   "title": "Rehearse the timed PRD demo and enforce the release pass criteria",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "This final issue verifies the PRD release gate, not presentation polish. Dependencies, tunnel, and secrets are prepared before timing; no supported child may be left running.",
+   "tasks": [
+    "[ ] Add docs/demo-rehearsal.md with the section 11 sequence and sanitized evidence checklist mapped to R1–R18; record raw ANSI as supported and snapshots/vim as deferred.",
+    "[ ] Run the complete P0 automated suite, then repeat the Python REPL and synthetic prompt fixtures three consecutive times with cleanup after every run.",
+    "[ ] Rehearse the five timed segments: authenticated HTTPS/stdio and Python creation; >>>/two inputs/42/cursor resume/two IDs; prompts/resize/CTRL_C/idle/timeout; exit/runtime/parent-child kill; overflow/gap and token/Origin/cwd/command denials plus cleanup.",
+    "[ ] Record elapsed time, test pass summaries, sanitized connection evidence and supported-PID cleanup checks; retain any Manus limitation explicitly. Fail the rehearsal for a missing gate or remaining supported process."
+   ],
+   "acceptance_criteria": [
+    "[ ] bun test apps/server/test exits 0 with every P0 test passing; the explicitly configured HTTPS check has passing evidence rather than a silently skipped release result.",
+    "[ ] Both interactive fixtures pass three consecutive repetitions with no leftover supported process after any repetition.",
+    "[ ] The demo covers all five PRD segments within five minutes, including authenticated real HTTPS access, clean exit/runtime/child cleanup, and the named security/output rejection evidence.",
+    "[ ] Final list/status and recorded PID checks show no running/terminating demo sessions or supported children; deferred snapshots/vim and any Manus limitation are stated explicitly."
+   ],
+   "verification": "From the independent project root run bun test apps/server/test, then run: for run in 1 2 3; do bun test apps/server/test/requirements/python-repl.test.ts apps/server/test/requirements/prompt-fixture.test.ts || exit 1; done. With endpoint/token already configured, run bun test apps/server/test/verification/https-client.test.ts. Expected: every command exits 0, all three interactive repetitions pass, and no supported fixture PID survives. Rehearse and timestamp the PRD sequence: 0:00–0:40 HTTPS connect/stdio result/Python create; 0:40–1:30 >>>/two expressions/42/cursor continuation/two IDs; 1:30–2:25 confirmation/password/120×40/CTRL_C/idle/timeout; 2:25–3:15 exit code/runtime/parent-child cleanup; 3:15–4:20 passing overflow/gap and token/Origin/cwd/command-denial checks plus cleanup. Capture a sanitized recording or timestamped transcript, test pass summaries, final terminal_list/status results with no running/terminating sessions, and checks that recorded supported PIDs are no longer live. Expected total elapsed time < five minutes; an absent authenticated HTTPS result, failed test, or live supported child fails the release rehearsal.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18"
+   ],
+   "depends_on": [
+    "S14",
+    "S15",
+    "S16",
+    "S17",
+    "S18",
+    "S19",
+    "S20",
+    "S23"
+   ]
+  },
+  {
+   "key": "VX",
+   "title": "Final gate: full-coverage computer-use verification with video and screenshots",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Tests alone do not prove the product works. This gate proves every element of the finished product by driving it the way a user does. Environment: the Linux sandbox with a real MCP client; headless product so the UI under test is the client plus terminal. Surface to cover: every MCP tool (create, write/send keys, read/snapshot, resize, list, kill, etc. exactly as listed in the PRD), stdio and authenticated Streamable HTTP, bearer-token success and failure, real PTY behaviour (interactive shell, signals, resize, process cleanup), and the Manus MCP connection attempt or its documented limitation. Method: computer use driving a real MCP client UI (for example MCP Inspector in a browser) side by side with a terminal window, recorded as one continuous screen video, plus screenshots of every element and state.",
+   "tasks": [
+    "Build the element inventory `evidence/inventory.md`: one row per user-reachable element, state, command or tool, derived from the built product (routes, components, CLI help, MCP tool list) and from the PRD; no row may be omitted because it is hard to reach.",
+    "Run the full automated suites from a clean clone (`bun install --frozen-lockfile`, lint, typecheck, unit, integration, e2e) and save the sanitized logs under evidence/tests/.",
+    "Perform a computer-use walkthrough that touches every inventory row while screen recording continuously (ffmpeg x11grab/gdigrab or the platform recorder); say or overlay the row id when each element is exercised.",
+    "Take at least one screenshot per inventory row (success state, and error state where one exists) named `evidence/screens/<row-id>.png`, and fill the coverage matrix in `evidence/coverage.md`: row id, video timestamp, screenshot file, covering test name, result.",
+    "Run `bun run verify:coverage` (create it here): it fails if any inventory row lacks a screenshot file, a timestamp inside the video duration, or a result, and prints ffprobe duration/resolution of the video. Upload the video as a release asset and record its URL and sha256 in evidence/manifest.json.",
+    "Have an agent that did not build the product re-run the suites and replay the walkthrough from a clean clone, and attach its own screenshots and verdict."
+   ],
+   "acceptance_criteria": [
+    "All automated suites pass from a clean clone with exit code 0; sanitized logs are committed.",
+    "evidence/inventory.md covers every user-reachable element, state, command or tool in the shipped product, with no unexplained omissions.",
+    "A continuous screen recording shows every inventory row being exercised through real interaction, with a timestamp per row in evidence/coverage.md.",
+    "Every inventory row has a screenshot file, and `bun run verify:coverage` exits 0.",
+    "An independent verifier's rerun matches the builder's results; any divergence is listed and resolved, not hidden."
+   ],
+   "verification": "From a clean clone run `bun install --frozen-lockfile && bun run lint && bun run typecheck && bun test` plus the e2e command listed in the README; expect exit 0 for each. Run `bun run verify:coverage`; expect exit 0 and output `rows=<N> screenshots=<N> timestamps=<N> missing=0` and ffprobe duration > 0. Open the video and spot-check at least five random rows by seeking to their timestamps and confirming the element on screen matches the row. Open the independent verifier's report and confirm every row shows PASS. Any missing row, screenshot, timestamp, failed test or unexplained divergence fails the gate.",
+   "prd_refs": [
+    "All release requirements"
+   ],
+   "depends_on": [
+    "S24"
+   ]
+  }
+ ]
 }

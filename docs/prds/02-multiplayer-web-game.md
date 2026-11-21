@@ -21,7 +21,7 @@ Deliver a networked match with a complete lifecycle. R1–R6 map to the original
 - [ ] **R9:** Minimal seat-token reconnection.
 - [ ] **R10:** Handle latency without divergent gameplay.
 - [ ] **R11:** Same-room rematches.
-- [ ] **R12:** Deploy through Manus webdev.
+- [ ] **R12:** Ship as a self-hosted production build (one Bun process, Dockerfile); no Manus webdev.
 - [ ] **R13:** From-scratch, AI-assisted single-builder delivery within the MVP cut line.
 
 ## 3. Goals and non-goals
@@ -57,7 +57,7 @@ All retained requirements are P0; no P1/P2 backlog.
 - **F03 — Privacy:** Redact every snapshot/event; no foreign private cards or undealt deck. R3, R7.
 - **F04 — Recovery:** Tokens, reconnect, revisions, duplicate protection, deadlines/connection status. R8–R10.
 - **F05 — Completion:** Shared results and rematch. R4, R6, R11.
-- **F06 — Delivery:** Published WebSocket check, rules/privacy tests, two-browser e2e/checkpoint. R12, R13.
+- **F06 — Delivery:** Production-build WebSocket ingress check, rules/privacy tests, two-browser e2e/checkpoint. R12, R13.
 
 ## 7. Non-functional requirements (latency, reliability, privacy/security, performance, accessibility as relevant)
 

@@ -39,7 +39,7 @@ This thread ended at scoping and discovery. No product code has been written. Ev
 
 | Topic | Assumption made | Needs |
 | --- | --- | --- |
-| "Opus 5.5" | Treated as the model that authors the video code; the exact model ID and API were not verified | Confirm model ID and where it runs |
+| "Opus 5.5" | RESOLVED: OpenRouter catalog lists `anthropic/claude-opus-5.5` | none |
 | OpenRouter music | No key was available in the sandbox. The PRD designs a provider-abstracted script with a pure-JS synthesized fallback. What OpenRouter actually offers for music was researched from public pages only; account-level availability is unverified | `OPENROUTER_API_KEY` and a test generation |
 | Build natively in Manus or from scratch | See below | Decision |
 | Dependency install and boot of a scaffold | Not verified here | Run the scripts on the build machine |
@@ -64,7 +64,14 @@ Manus can build web apps, games and slides itself, and it has a video-generation
 
 ## GitHub issues (created)
 
-- 7 epics and 167 atomic sub-issues (174 total), see [issues-index.md](issues-index.md). Each epic has a milestone, and each child has `priority:`, `type:`, `product:` and `area:` labels, acceptance criteria, an explicit verification section and blocked-by links.
-- Priorities: 169 P0 and 5 P1. The PRDs were trimmed to main requirements only, so almost everything is P0. Re-rank before sprint planning if you want a real P1 tier.
+- 7 epics and 174 atomic sub-issues (181 total, including one final full-coverage verification gate `VX` per product), see [issues-index.md](issues-index.md). Each epic has a milestone, and each child has `priority:`, `type:`, `product:` and `area:` labels, acceptance criteria, an explicit verification section and blocked-by links.
+- Priorities: 176 P0 and 5 P1. The PRDs were trimmed to main requirements only, so almost everything is P0. Re-rank before sprint planning if you want a real P1 tier.
 - Verification commands in the issues are planned checks. None has been run, because no product code exists yet.
 - **GitHub Project (Projects v2) was NOT created.** The sandbox tokens are GitHub App user tokens and GitHub returns FORBIDDEN for `createProjectV2`. Run `GH_TOKEN=<PAT with project scope> python3 scripts/setup_project.py` (untested) to create the board and add all issues with Priority, Product and Type fields. Alternatively create the project in the UI and use "Add items" filtered by `repo:jiaweing/manus-interview`.
+
+## Update 2026-11-21 (decisions)
+
+- Opus 5.5 is `anthropic/claude-opus-5.5` on OpenRouter. App AI (Sidekick, Caret STT, Patchbay model plugin default, video authoring and music) uses OpenRouter with `OPENROUTER_API_KEY` in `.env`. No key is in the sandbox yet.
+- Build everything from scratch (no Manus webdev/Studio). Flopside ships as a self-hosted Bun build.
+- Each product now has a final issue `VX`: full-coverage computer-use verification with video and screenshots.
+- Per-product swarm build prompts are in `docs/swarm-prompts/`.

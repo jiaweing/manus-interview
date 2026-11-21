@@ -1,580 +1,886 @@
 {
-  "product": "flopside",
-  "epic_title": "Flopside: multiplayer 2.5D browser poker",
-  "epic_summary": "Ship play-money Texas Hold’em for two to four human players in an independent Better-T-Stack scaffold, using Next.js for the browser and one authoritative Hono/Bun WebSocket server with in-memory rooms. Players can create/share/join, start, play legal hands with private cards and 12-second turns, recover their seat within 60 seconds, finish with identical results, and rematch in the same room. The MVP is done when poker, privacy, recovery and lifecycle tests pass, the published two-browser WebSocket lifecycle succeeds, and the timed demo and checkpoint are captured. Use Bun everywhere and the black-and-white, borderless shadcn design; leave generated auth, Mongo, payments, native, extension and AI integrations unwired. Bots, chat, spectators, accounts, persistence, purchases/cash-out/prizes, analytics, poker twists, polling, WebGL, verifiable shuffle and optional effects are outside this delivery.",
-  "epic_done_when": [
-    "The independent Bun scaffold boots and its Manus-published HTTPS/WSS deployment demonstrably routes two browsers to the same single in-memory server instance.",
-    "Two to four humans can create/share/join/start; a fifth seat receives ROOM_FULL, joins during play receive MATCH_STARTED, and heads-up and four-seat games use the required turn order.",
-    "Automated poker tests pass for hand ranking, wheel/kickers/ties, total-to wagers, short raises, side pots/refunds, chip conservation and server-clock auto-fold after 12 seconds.",
-    "Every HTTP response, WebSocket snapshot and animation event exposes only the viewer’s private cards before eligible showdown; privacy, stale-command, duplicate-command and recovery tests pass.",
-    "Reconnect within 60 seconds preserves seat/cards/deadline; expiry, bust or ten hands produce identical results; same-room rematch resets the required state and rejects starts with fewer than two connected seats.",
-    "The responsive, keyboard-accessible borderless monochrome UI shows rules/free chips and shared state; the Playwright two-context lifecycle, published checks, saved checkpoint and under-five-minute PRD demo all pass."
-  ],
-  "areas": ["infra", "engine", "server", "client", "security", "tests"],
-  "issues": [
-    {
-      "key": "S1",
-      "title": "Scaffold and boot the independent Bun web and server apps",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Appendix B overrides the proposed minimal stack: use the exact shared Better-T-Stack wrapper in a separate flopside directory. Install and full boot have not previously been verified; generated integrations are not MVP behaviors.",
-      "tasks": [
-        "- [ ] In an interactive TTY outside /home/ubuntu/manus-interview, run /home/ubuntu/manus-interview/scaffold/02-flopside.sh ./flopside without --yes or altered stack flags; complete the addon prompts.",
-        "- [ ] Run bun install and configure Bun dev scripts to boot apps/web and apps/server; use Next.js, Hono and hono/bun upgradeWebSocket without substituting frameworks.",
-        "- [ ] Leave auth, Mongo/Mongoose, Polar, native, WXT and the generated AI example unwired from Flopside routes and startup; do not require their credentials or services.",
-        "- [ ] Retain the independent scaffold/repository and record install/start commands and sanitized boot output as verification evidence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The exact wrapper creates a standalone flopside/ repository with apps/web and apps/server, not a project inside manus-interview or another product.",
-        "- [ ] bun install exits 0 and bun run dev starts both the Next.js browser app and the Hono/Bun server.",
-        "- [ ] The browser root and configured server root return HTTP 200 without Mongo, auth, payment, AI, mobile or extension credentials."
-      ],
-      "verification": "From a workspace outside the source repo, use a TTY to run /home/ubuntu/manus-interview/scaffold/02-flopside.sh ./flopside; then cd flopside && bun install && bun run dev. Expected: scaffold/install succeed and both apps report listening addresses. Request the two logged root URLs with curl -s -o /dev/null -w '%{http_code}' <URL>; each prints 200. Capture the sanitized terminal output and the standalone directory path; confirm startup makes no connection to Mongo or external generated integrations. All subsequent test paths and commands in this plan are to be created and run from this independent flopside root.",
-      "prd_refs": ["F06", "R12", "R13"],
-      "depends_on": []
-    },
-    {
-      "key": "S2",
-      "title": "Prove published WebSocket ingress reaches one Bun instance",
-      "type": "verification",
-      "priority": "P0",
-      "area": "infra",
-      "context": "The first milestone requires published WSS verification before poker implementation. Unsupported ingress blocks the release rather than permitting polling, a local substitute game or a replacement scaffold.",
-      "tasks": [
-        "- [ ] Mount /api/ws with Hono/Bun upgradeWebSocket and publish the scaffold through Manus webdev with HTTPS/WSS and one backend instance.",
-        "- [ ] Use a temporary transport-only smoke probe to demonstrate two browser sockets reach the same in-memory process; record only a non-secret boot marker and connection counts.",
-        "- [ ] Capture the deployment URL, single-instance setting, handshake statuses and the two connections’ shared boot marker; remove any smoke bypass when authenticated gameplay is connected.",
-        "- [ ] If published upgrades fail or the deployment cannot stay single-instance, record the failed handshake/configuration and mark the gate blocked without implementing a fallback."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Two independent browser profiles opened on the published HTTPS URL each establish wss://<published-host>/api/ws with HTTP 101.",
-        "- [ ] Both connections are observed on the same boot marker while the deployment configuration specifies exactly one server instance.",
-        "- [ ] No polling or local game fallback is introduced; a failed published WSS/single-instance check blocks further release verification."
-      ],
-      "verification": "Publish through Manus webdev. In two browser profiles on the published HTTPS origin, open DevTools Network and connect to wss://<published-host>/api/ws using the transport smoke probe. Expected: two 101 upgrades and server evidence with one boot marker and two connections; capture both handshake screenshots and the sanitized marker/configuration evidence. If either socket fails or requests land on different instances, this issue fails and the blocker must be reported. Repeat with production authentication in S23; temporary probing must not survive release.",
-      "prd_refs": ["F06", "R1", "R3", "R8", "R12", "R13"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S3",
-      "title": "Evaluate the best five-card Hold’em hand and compare ties",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "The authoritative engine must determine winners without browser input. A pure evaluator is an independently testable prerequisite for settlement.",
-      "tasks": [
-        "- [ ] Add a pure seven-card best-five evaluator with a comparable rank and ordered tiebreak vector.",
-        "- [ ] Cover all nine categories from high card through straight flush, ace-low straights, kickers and equal best-five hands; suits do not break ties.",
-        "- [ ] Add focused Bun unit cases in packages/engine/evaluator.test.ts using explicit cards and expected rankings."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Each of the nine hand categories produces the expected ordered category and best-five tiebreak values.",
-        "- [ ] A-2-3-4-5 is a five-high straight, loses to a six-high straight, and does not treat ace as both high and low in another sequence.",
-        "- [ ] Equal best-five hands compare equal regardless of suits or unused hole-card kickers; unequal kickers select the expected winner."
-      ],
-      "verification": "Run bun test packages/engine/evaluator.test.ts. Expected: every case passes, including all nine categories, five-high versus six-high straight, paired-hand kicker comparison, board-only tie and suit-independent equality; failures include the explicit input cards and expected rank without any live-game data.",
-      "prd_refs": ["F02", "R5", "R7"],
-      "depends_on": ["S2"]
-    },
-    {
-      "key": "S4",
-      "title": "Deal server-owned hands and advance Hold’em streets and actors",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "The reducer owns the deck, blinds, board and action order for two to four players. Heads-up order differs from the multi-seat order and must be implemented before betting is connected.",
-      "tasks": [
-        "- [ ] Define the private hand state and pure transitions; supply server-only cryptographic randomness to an unbiased Fisher–Yates shuffle.",
-        "- [ ] Start a match with 200 chips per seat, fixed blinds 5/10, two hole cards per seat and an initially empty board; advance preflop/flop/turn/river with street contributions reset.",
-        "- [ ] Rotate dealer between hands and implement heads-up dealer/small-blind and multi-seat blind/action ordering, skipping folded/all-in seats.",
-        "- [ ] Add packages/engine/dealing.test.ts with injected card fixtures for unit tests only; do not expose test cards or the deck to clients."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A new two-, three- or four-seat match starts at 200 chips per seat before posting blinds, deals unique hole cards and uses a 52-card permutation.",
-        "- [ ] Heads-up dealer posts 5, acts first preflop and last postflop; with three/four seats, first action is left of the big blind preflop and left of the dealer postflop.",
-        "- [ ] Board counts are 0/3/4/5 across the four streets; street contributions reset and folded/all-in players never receive an action turn.",
-        "- [ ] The next hand rotates the dealer and production shuffle uses cryptographic, unbiased index selection rather than Math.random."
-      ],
-      "verification": "Run bun test packages/engine/dealing.test.ts. Expected: all two/three/four-seat blind and order cases pass, dealer rotation passes, board-count assertions are 0/3/4/5, and every dealt fixture contains unique cards. Inspect the production shuffle call site: crypto randomness plus rejection sampling for bounded indices feeds Fisher–Yates; the test fixture is not selected by normal deployment configuration. Capture test output and the shuffle source location, not a live deck.",
-      "prd_refs": ["F02", "R2", "R5", "R7"],
-      "depends_on": ["S2"]
-    },
-    {
-      "key": "S5",
-      "title": "Enforce total-to wagers and full-raise reopening rules",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "No-limit betting must be decided by the server, including short all-ins that do not reopen an already-acted player’s raise right. The same reducer must produce the legal-action information used by the HUD.",
-      "tasks": [
-        "- [ ] Implement fold, check, call, bet, raise and all-in transitions with totalTo interpreted as total contribution on the current street.",
-        "- [ ] Enforce turn ownership, stack limits, integer chip amounts, minimum opening bet of 10, full-raise increments and short-all-in reopening rights.",
-        "- [ ] Compute each actor’s legal actions and wager bounds from authoritative state; invalid transitions leave all state unchanged.",
-        "- [ ] Add packages/engine/betting.test.ts for legal transitions and rejected actions, including already-acted versus not-yet-acted responses to a short all-in."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A seat already contributing 10 that raises to totalTo 30 pays exactly 20 more; calls pay only the outstanding amount or remaining stack.",
-        "- [ ] Checking facing a wager, betting below 10 without a short all-in, over-stack wagers and out-of-turn actions are rejected without chip changes.",
-        "- [ ] After a bet to 10 and a full raise to 30, the next minimum full raise is to 50; a later short all-in to 40 does not reopen a previously acted seat’s raise right.",
-        "- [ ] Legal actions omit forbidden actions, preserve raise rights for eligible not-yet-acted seats and never offer a turn to folded/all-in seats.",
-        "- [ ] For a prior actor last acting at 30 with a full-raise increment of 20, cumulative short all-ins to 40 then 50 reopen that actor’s raise right when action returns; the single increase to 40 does not."
-      ],
-      "verification": "Run bun test packages/engine/betting.test.ts. Expected: all cases pass, including contribution 10→30 charging 20, minimum raise 30→50, short all-in to 40 leaving prior actors unable to reraise, cumulative short all-ins to 40 then 50 reopening a prior actor last acting at 30 with full-raise increment 20, eligible unacted players retaining raise rights, short calls and byte-equal state after rejected moves. Test fixtures assert stacks, contributions and legal-action lists explicitly.",
-      "prd_refs": ["F02", "R3", "R5", "R6", "R7"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S6",
-      "title": "Settle eligible side pots and return unmatched wagers",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "Unequal stacks and folds require settlement beyond a single pot. The reducer must award only eligible contenders, preserve chips and finish a hand when no further betting is possible.",
-      "tasks": [
-        "- [ ] Construct main/side pots from contribution tiers, excluding folded seats from winning while retaining their contributed chips.",
-        "- [ ] Return unmatched excess; award uncontested pots without requiring private-card exposure and contested pots using the evaluator.",
-        "- [ ] Split tied pots with a deterministic chip-conserving odd-chip rule and encode the shared payouts and showdown-eligible seat set.",
-        "- [ ] Run out the remaining board once betting cannot continue and add packages/engine/settlement.test.ts for refunds, folds, side pots and ties."
-      ],
-      "acceptance_criteria": [
-        "- [ ] For contributions 50/100/150 with three non-folded seats, settlement refunds 50 to the third seat and awards pots of 150 and 100 only to their eligible seats.",
-        "- [ ] Folded seats cannot win a pot; a sole remaining contender receives the settled pot without revealing any hole cards.",
-        "- [ ] When no further betting can occur, the board reaches five cards and contested settlement identifies every non-folded contender for showdown.",
-        "- [ ] Every fixture preserves initial chips as remaining stacks plus unresolved contributions/pots, and tied payouts sum exactly to the pot including odd chips."
-      ],
-      "verification": "Run bun test packages/engine/settlement.test.ts. Expected: all cases pass, including 50/100/150 contributions yielding 50 refund plus 150/100 pots, folded-player ineligibility, multi-pot ties, odd-chip conservation, sole-contender win and all-in runout to a five-card board. Each fixture asserts eligible winners, exact payouts and total chips.",
-      "prd_refs": ["F02", "R4", "R5", "R7"],
-      "depends_on": ["S3", "S5"]
-    },
-    {
-      "key": "S7",
-      "title": "Expire turns against an authoritative 12-second deadline",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "Deadlines must not depend on client timers or connection status. This change supplies clock-driven reducer transitions; the room queue will schedule them when the server adapter is connected.",
-      "tasks": [
-        "- [ ] Assign an absolute server deadline of now + 12000ms on each new action turn and expose it with the public actor state.",
-        "- [ ] Auto-fold the current actor at or after that deadline, even when checking would have been legal or the seat is disconnected.",
-        "- [ ] Guard scheduled expiration with actor/hand/deadline identity so an obsolete timer cannot fold a later actor or hand.",
-        "- [ ] Add packages/engine/deadline.test.ts using an injected fake clock, not sleeps."
-      ],
-      "acceptance_criteria": [
-        "- [ ] At deadline minus 1ms no auto-fold occurs; at exactly deadline the actor folds once and the next eligible turn or settlement begins.",
-        "- [ ] Changing connection status or resuming a seat does not change the current turn’s absolute deadline.",
-        "- [ ] A timer captured before an accepted action cannot mutate the subsequent turn or apply a second fold.",
-        "- [ ] Timeout applies fold, not check, and preserves the chip-conservation invariant."
-      ],
-      "verification": "Run bun test packages/engine/deadline.test.ts. Expected: all fake-clock cases pass for 11999ms/12000ms, disconnected actor, check-available actor, reconnect preserving the timestamp, stale callback after a player action and timeout-triggered settlement. Each expected fold occurs exactly once; no test waits 12 real seconds.",
-      "prd_refs": ["F02", "F04", "R5", "R7", "R9", "R10"],
-      "depends_on": ["S6"]
-    },
-    {
-      "key": "S8",
-      "title": "Finish matches and reset eligible same-room rematches",
-      "type": "feature",
-      "priority": "P0",
-      "area": "engine",
-      "context": "A settled hand must lead to another hand or a shared match result, never an endless partial game. Connection expiry will signal this lifecycle reducer after its current hand settles.",
-      "tasks": [
-        "- [ ] End after a settled hand with a busted seat or the tenth completed hand; otherwise start the next hand with the rotated dealer.",
-        "- [ ] Support pending seat-expiry termination after current-hand settlement: highest-stack connected seat(s) win, or abandoned when none remain.",
-        "- [ ] Store one public result containing final stacks, winning seat IDs and termination reason; use highest stacks and shared victory for tied normal finishes.",
-        "- [ ] Allow only the host to rematch with at least two connected seats, preserve room code, and reset stacks to 200, deck/hole cards/board, dealer, match/hand identifiers and counters.",
-        "- [ ] Add packages/engine/lifecycle.test.ts with bust, ten-hand, expiry, tie, abandonment and reset fixtures."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Bust and tenth-hand fixtures finish only after settlement and produce the expected final stacks, highest-stack winner(s) and termination reason.",
-        "- [ ] Pending expiry never interrupts settlement; connected tied leaders share victory and zero connected seats yield abandoned.",
-        "- [ ] A non-host or host with fewer than two connected seats cannot rematch; rejection preserves final results.",
-        "- [ ] Accepted rematch keeps the code and connected seats but resets each stack to 200 before blinds, clears prior cards/results, resets dealer/counters and gives the new match distinct identifiers."
-      ],
-      "verification": "Run bun test packages/engine/lifecycle.test.ts. Expected: every fixture passes for post-settlement bust, exactly ten completed hands, normal tied leaders, expiry with connected leaders, none-connected abandonment, rejected rematches and successful reset. Assert the exact final result object and reset fields; repeated rematch rejection must not mutate them.",
-      "prd_refs": ["F05", "F04", "R4", "R6", "R9", "R11"],
-      "depends_on": ["S6"]
-    },
-    {
-      "key": "S9",
-      "title": "Prove the poker reducer’s edge cases with deterministic regressions",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The rules milestone requires explicit evidence for heads-up order, short raises, side pots, chip conservation and fake-clock auto-fold before UI effects. Add cross-transition regressions to the focused unit cases, not new game mechanics.",
-      "tasks": [
-        "- [ ] Add packages/engine/rules-regression.test.ts composing existing deterministic card fixtures and fake clocks across complete legal hand traces.",
-        "- [ ] Cover two- and four-seat order across streets, short all-in non-reopening, unequal-stack side-pot eligibility/refunds and a tie with chip conservation after every accepted action.",
-        "- [ ] Include a timeout-completed hand and a final-hand/bust trace leading to a lifecycle result; keep fixture injection unit-test-only.",
-        "- [ ] Run the entire packages/engine suite and preserve the passing named-case output for the release/demo evidence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A heads-up trace asserts dealer-first preflop and dealer-last postflop; a four-seat trace asserts the required blind-relative and dealer-relative order.",
-        "- [ ] The short-raise trace rejects the closed raise right without a state change and the unequal-stack trace awards exact eligible pots with unmatched excess returned.",
-        "- [ ] Every trace asserts chip conservation after every action and settlement, including a tie and a timeout-completed hand.",
-        "- [ ] All evaluator, dealing, betting, settlement, deadline, lifecycle and regression suites exit 0 under bun test."
-      ],
-      "verification": "Run bun test packages/engine. Expected: zero failures across evaluator.test.ts, dealing.test.ts, betting.test.ts, settlement.test.ts, deadline.test.ts, lifecycle.test.ts and rules-regression.test.ts. The regression output includes named heads-up/four-seat ordering, closed short-raise right, side-pot refund, tied conservation, timeout and match-finish traces; capture the complete summary. No client-controlled or production deterministic deck is needed.",
-      "prd_refs": ["F02", "F06", "R2", "R5", "R7", "R13"],
-      "depends_on": ["S3", "S4", "S5", "S6", "S7", "S8"]
-    },
-    {
-      "key": "S10",
-      "title": "Create in-memory rooms and enforce lobby seating and start rules",
-      "type": "feature",
-      "priority": "P0",
-      "area": "server",
-      "context": "Nickname-only rooms need a six-character invitation code, a bounded roster and host-controlled start. This change implements the room store and HTTP create/join surface; socket commands will invoke its start operation.",
-      "tasks": [
-        "- [ ] Define room/seats/host/revision/phase state and POST /api/rooms {nickname} plus POST /api/rooms/:code/join {nickname} with 1–16-character validation.",
-        "- [ ] Generate collision-checked six-character room codes and unpredictable per-seat tokens; return the caller’s seat and viewer-specific lobby state, never another seat’s token.",
-        "- [ ] Reject a fifth seat with ROOM_FULL and any new seat during play with MATCH_STARTED; allow host start only with 2–4 connected seats and lock the roster.",
-        "- [ ] Transfer a disconnected lobby host to the lowest connected seat and expire idle rooms after 30 minutes using the server clock.",
-        "- [ ] Add apps/server/src/rooms.test.ts for nickname bounds, capacity, start ownership/count, host selection and idle expiry."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Create/join accepts nicknames of length 1 and 16, rejects length 0 and 17, returns a six-character code and exposes only the joining seat’s token.",
-        "- [ ] Four seats can join; a fifth gets ROOM_FULL; after host start a new join gets MATCH_STARTED and the roster is unchanged.",
-        "- [ ] Only the host can start with 2–4 connected seats; one connected seat cannot start; a disconnected lobby host transfers to the lowest connected seat.",
-        "- [ ] An idle room exists at 29 minutes 59.999 seconds and requests at 30 minutes receive ROOM_EXPIRED with no recreated game."
-      ],
-      "verification": "Run bun test apps/server/src/rooms.test.ts. Expected: all named nickname-boundary, six-character-code, four/fifth-seat, playing-roster-lock, host-only-start, connected-count, lowest-connected-host and fake-clock idle-expiry cases pass. HTTP assertions verify the exact ROOM_FULL, MATCH_STARTED and ROOM_EXPIRED error codes and absence of foreign tokens. These tests operate against the in-memory store without a database.",
-      "prd_refs": ["F01", "F04", "R2", "R4", "R8", "R9"],
-      "depends_on": ["S4"]
-    },
-    {
-      "key": "S11",
-      "title": "Project viewer-specific snapshots and redact every card event",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "The private reducer state must never be serialized directly. A single viewer projection must serve HTTP responses, socket snapshots and any card-event payloads before transport is wired.",
-      "tasks": [
-        "- [ ] Build an allowlisted per-seat public view containing public board/pot/stacks/turn/connectivity/results, own hole cards and only that viewer’s legal actions.",
-        "- [ ] Keep opponent cards as backs before showdown; reveal only non-folded contenders at contested showdown, with opponents’ folded cards hidden even after settlement.",
-        "- [ ] Exclude private deck, unused cards and every token from all views; apply the identical visibility predicate to event projection if events are emitted.",
-        "- [ ] Route create/join responses through this projection and add apps/server/src/views.test.ts with preflop, contested/uncontested and folded-showdown fixtures."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Before showdown a serialized view contains the viewer’s two hole cards and no foreign hole-card identity, undealt deck or seat token.",
-        "- [ ] At contested showdown each view reveals non-folded contenders’ cards and continues to hide opponents’ folded cards; an uncontested win reveals no opponent cards.",
-        "- [ ] HTTP view and event projection use the same card-visibility rules; events cannot include identities absent from the recipient’s snapshot.",
-        "- [ ] Legal actions are derived for the viewer from authoritative state and do not leak a different seat’s private cards."
-      ],
-      "verification": "Run bun test apps/server/src/views.test.ts. Expected: all serialized-payload assertions pass for two and four viewers, pre-showdown own cards only, contested non-folded reveal, opponents’ folded-card non-reveal and uncontested no reveal. Assert recursively that no token/deck field or hidden fixture-card identity appears; a folded viewer may still see their own cards. If no animation events are implemented, assert no card-animation events are emitted; optional effects are not required.",
-      "prd_refs": ["F03", "R3", "R7"],
-      "depends_on": ["S10", "S5", "S6", "S8"]
-    },
-    {
-      "key": "S12",
-      "title": "Serialize authenticated socket commands with revisions and deduplication",
-      "type": "feature",
-      "priority": "P0",
-      "area": "server",
-      "context": "Actual networking must drive one authoritative state, including races between player actions and timer callbacks. Commands must be acknowledged without repeating a wager or accepting stale intent.",
-      "tasks": [
-        "- [ ] Authenticate /api/ws with {code,token}, map each socket to one seat, and remove the temporary transport smoke bypass.",
-        "- [ ] Accept {seq,expectedRev,handId,action,totalTo?} for start, betting and rematch; serialize HTTP room mutations, socket commands and timeouts through each room’s queue.",
-        "- [ ] Send acknowledgements {seq,accepted,rev,error?}; deduplicate per-seat sequences, validate expected revision and hand identity, and return STALE_STATE, NOT_YOUR_TURN or ILLEGAL_ACTION without mutation.",
-        "- [ ] Broadcast per-connection snapshots {rev,serverNow,view} from the redaction projection after accepted mutations and server timeouts; retain original deadlines.",
-        "- [ ] Add apps/server/src/commands.test.ts for authorization, duplicate wagers, stale/wrong-hand actions and action-timeout races."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A valid seat socket receives its redacted snapshot; a missing/invalid token receives AUTH_REQUIRED and cannot submit commands.",
-        "- [ ] Replaying one sequence applies its wager once, changes revision once and receives a consistent acknowledgement; a duplicate never creates another debit.",
-        "- [ ] Stale revision or hand identity yields STALE_STATE, wrong actor yields NOT_YOUR_TURN and illegal amounts yield ILLEGAL_ACTION, with no state mutation.",
-        "- [ ] Queued player/timeout races produce exactly one legal transition, and all connected viewers receive the same public revision, board, pot, stacks and actor."
-      ],
-      "verification": "Run bun test apps/server/src/commands.test.ts. Expected: all socket integration cases pass for AUTH_REQUIRED, duplicate seq, stale revision/wrong hand, NOT_YOUR_TURN, ILLEGAL_ACTION, host start/rematch dispatch and queued action-versus-deadline race. Assert one debit/one accepted revision for duplicate wagers and identical public fields across two viewer snapshots. Capture only test-case names and public revision/state comparisons, not live private payloads.",
-      "prd_refs": ["F02", "F04", "F03", "R1", "R3", "R7", "R8", "R10"],
-      "depends_on": ["S2", "S7", "S11"]
-    },
-    {
-      "key": "S13",
-      "title": "Resume reserved seats and settle matches after connection expiry",
-      "type": "feature",
-      "priority": "P0",
-      "area": "server",
-      "context": "A refresh must restore the same private seat without resetting a turn, while disconnected seats reserve their position for only 60 seconds. Recovery and expiry must share the authoritative queue.",
-      "tasks": [
-        "- [ ] Add POST /api/rooms/:code/resume {token}, returning the same seat and fresh viewer state; successful resume fences the old socket and its commands.",
-        "- [ ] Add heartbeat-based loss detection, public connectivity updates and a 60-second reservation starting at detected disconnect; reconnect does not reset actor/deadline or chips.",
-        "- [ ] Queue expiry and host-transfer mutations; during play, mark termination pending until current-hand settlement and select only connected highest-stack winners or abandoned.",
-        "- [ ] Handle expired/lost rooms with ROOM_EXPIRED rather than silently recreating state; stale expiry callbacks cannot expire a resumed seat.",
-        "- [ ] Add apps/server/src/recovery.test.ts with fake-clock heartbeat, resume/fencing and reservation-boundary cases."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Resume at 59.999 seconds restores the same seat, own cards and exact deadline/revision-derived public state; an old socket cannot mutate the room.",
-        "- [ ] At 60 seconds without resume the seat expires; a resume at/after expiry cannot restore its game seat and a stale expiry callback after earlier resume does nothing.",
-        "- [ ] Disconnection never pauses the 12-second turn; expiry during a hand ends the match only after settlement with connected winners or abandoned.",
-        "- [ ] Heartbeat-detected loss and resume broadcast connected/disconnected status, and disconnecting a lobby host selects the lowest connected successor."
-      ],
-      "verification": "Run bun test apps/server/src/recovery.test.ts. Expected: all fake-clock 59.999s/60s boundary cases pass, resume preserves the deadline timestamp, the fenced socket has no accepted mutations, a dropped heartbeat marks loss, stale expiry is ignored and pending expiry settles before connected-only/tied/abandoned results. Unknown or restart-lost rooms return ROOM_EXPIRED, not a fresh game. Capture passing named-case output without tokens or cards.",
-      "prd_refs": ["F04", "F05", "R4", "R8", "R9", "R10"],
-      "depends_on": ["S12", "S8"]
-    },
-    {
-      "key": "S14",
-      "title": "Bound transport input and prevent secret logging",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "The PRD requires allowed-Origin checks, validated bounded inputs and non-secret logs. Generated logging and examples must not bypass the game’s privacy boundary.",
-      "tasks": [
-        "- [ ] Apply an explicit allowed-Origin policy to browser HTTP mutations and WebSocket upgrades; production browser transport uses HTTPS/WSS.",
-        "- [ ] Validate all HTTP/socket schemas and numeric wager fields before queued mutations; enforce documented finite per-connection/request rate and payload-size limits.",
-        "- [ ] Disable body/URL/full-payload logging in evlog and other handlers; log only allowlisted non-secret operation/error metadata and never seat tokens, private cards or decks.",
-        "- [ ] Add apps/server/src/security.test.ts for disallowed Origin, malformed input, over-limit payload/rate and captured-log sentinel checks; add no auth/accounts or persistence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] An allowed published Origin can upgrade; a disallowed Origin cannot obtain a 101 or mutate a room.",
-        "- [ ] Missing fields, malformed commands, non-finite/fractional wager amounts and payloads above the configured limit are rejected without state changes.",
-        "- [ ] A burst exceeding the finite configured rate limit is rejected while valid under-limit commands remain usable.",
-        "- [ ] Captured HTTP, socket, validation and exception logs contain none of the test token/card/deck/full-payload sentinel values, including rejected requests."
-      ],
-      "verification": "Run bun test apps/server/src/security.test.ts. Expected: all allowed/disallowed Origin, schema, finite-integer amount, configured-boundary payload/rate and log-redaction cases pass; tests read the configured limits and exercise limit and limit+1 rather than assuming PRD-unspecified numbers. The disallowed-Origin test sees no 101 and no room mutation. Scan captured test logs for injected secret sentinels: zero occurrences. Confirm published browser traffic uses https:// and wss:// in S23.",
-      "prd_refs": ["F03", "F04", "F06", "R7", "R8", "R10", "R12"],
-      "depends_on": ["S12", "S13"]
-    },
-    {
-      "key": "S15",
-      "title": "Build the nickname lobby and shareable room invitation",
-      "type": "feature",
-      "priority": "P0",
-      "area": "client",
-      "context": "Friends must create and join without accounts, then see who can start. The lobby establishes the required black-and-white borderless shadcn primitives used by later game screens.",
-      "tasks": [
-        "- [ ] Install @playwright/test with bun add -D @playwright/test, configure the root runner for apps/web/tests and a chromium project, and run bunx playwright install chromium so the specified browser-test commands are executable.",
-        "- [ ] Add create/join forms with 1–16-character nickname validation, six-character code entry and room-link parsing containing only the room code.",
-        "- [ ] Display code and share/copy link, seat nicknames/connectivity, host identity and a host-only start control enabled with 2–4 connected seats.",
-        "- [ ] Store only the caller’s seat token in tab-scoped sessionStorage; never put it in URLs or cross-tab localStorage.",
-        "- [ ] Restyle shadcn primitives with border/outline width 0, monochrome fills, 10px radius, Geist/Inter at 14px with weights 400/600 and an offset shadow focus indicator.",
-        "- [ ] Display ROOM_FULL, MATCH_STARTED and invalid-nickname responses as explicit errors rather than entering a local game; add apps/web/tests/lobby.spec.ts."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A nickname-only creator sees a six-character code and link; another browser opens that link, enters a nickname and joins the same lobby.",
-        "- [ ] Start is absent or disabled for non-hosts and for fewer than two connected seats; eligible host start sends the server command and uses the acknowledged state.",
-        "- [ ] Invalid nickname, full-room and playing-room errors are visible; the URL contains no token and the token exists only in that tab’s sessionStorage.",
-        "- [ ] Lobby controls have no border/outline lines, use only the specified black/white/grey palette and show a visible 2px offset shadow focus indicator."
-      ],
-      "verification": "Run bunx playwright test apps/web/tests/lobby.spec.ts against the running apps. Expected: all create/link-join, nickname bounds, host-start gating, ROOM_FULL/MATCH_STARTED, storage/URL and computed-style assertions pass. Manually tab through the lobby and capture a focused-control screenshot; expected no border/outline and a visible offset shadow. Capture two lobby screenshots sharing the same code, with no token visible; the test fixture authenticates sockets when testing start.",
-      "prd_refs": ["F01", "F04", "R2", "R4", "R6", "R8"],
-      "depends_on": ["S12", "S14"]
-    },
-    {
-      "key": "S16",
-      "title": "Reconcile client snapshots and recover without replaying betting intent",
-      "type": "feature",
-      "priority": "P0",
-      "area": "client",
-      "context": "The browser renders server state rather than predicting chips or cards. Pending commands, stale acknowledgements and refreshed sessions must not cause duplicate or changed-intent bets.",
-      "tasks": [
-        "- [ ] Authenticate the browser socket from tab sessionStorage, apply monotonic revisions and attach seq/expectedRev/handId to start, betting and rematch commands.",
-        "- [ ] Disable repeat submissions until acknowledgement; reconcile stale-state responses with a fresh authoritative snapshot and require the human to resubmit any changed betting intent.",
-        "- [ ] On refresh/loss, call resume and authenticate a new socket; replace the view with the fresh per-seat snapshot and fence obsolete local connection callbacks.",
-        "- [ ] Display heartbeat/connection failure and server-time-derived countdown without changing authoritative chips, cards or deadlines, including in background tabs.",
-        "- [ ] Add apps/web/tests/connection.spec.ts for delayed ack, stale revision, out-of-order snapshot and refresh recovery."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Repeated clicks while an acknowledgement is delayed send one command; chips/cards do not change until an authoritative snapshot arrives.",
-        "- [ ] Older revisions never overwrite newer views; STALE_STATE causes reconciliation and no automatic retransmission of betting intent.",
-        "- [ ] Refresh within the reservation restores the same seat and private cards with the original deadline; old-socket callbacks cannot overwrite resumed state.",
-        "- [ ] Socket/heartbeat failure is visible, actions are disabled while disconnected and no polling or local game replaces the server."
-      ],
-      "verification": "Run bunx playwright test apps/web/tests/connection.spec.ts. Expected: delayed-ack double-click emits one seq, stacks stay unchanged before snapshot, old revisions are ignored, stale intent is not resent, refresh retains seat/cards/deadline and simulated loss disables actions with a visible connection error. The test compares the server deadline before/after reload and checks no polling requests or local reducer mutation occur. Capture test output, not authentication frames.",
-      "prd_refs": ["F04", "R1", "R3", "R7", "R9", "R10"],
-      "depends_on": ["S13", "S15"]
-    },
-    {
-      "key": "S17",
-      "title": "Render legal poker controls and the free-chip rules summary",
-      "type": "feature",
-      "priority": "P0",
-      "area": "client",
-      "context": "Approachable human competition requires a short rules explanation and controls that follow the server’s legal-action view. The HUD stays upright even when the table is perspective-transformed.",
-      "tasks": [
-        "- [ ] Render actor/deadline, pot, stacks and fold/check/call/bet/raise/all-in controls from the authoritative legal-action list and wager bounds.",
-        "- [ ] Label wager entry as total street contribution; show the call amount and legal minimum/maximum, and disable actions outside the viewer’s turn or pending acknowledgement.",
-        "- [ ] Add a short visible or keyboard-openable rules summary covering turns, 200 free chips, 5/10 blinds, Hold’em board/hand goal, 12-second auto-fold and play-money-only with no purchases/cash-out/prizes.",
-        "- [ ] Support keyboard use, 44px targets and the existing borderless monochrome components; expose server rejection messages without silently retrying.",
-        "- [ ] Add apps/web/tests/actions.spec.ts for legal controls, total-to submission, pending state and rules access."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Non-actors cannot submit betting actions; the current actor sees exactly the server-offered action set and wager bounds.",
-        "- [ ] Entering a raise total of 30 sends totalTo: 30, not an incremental 30; unavailable check/raise actions cannot be submitted through the UI.",
-        "- [ ] All betting controls are keyboard-operable, at least 44px in each target dimension and disabled until pending commands are acknowledged.",
-        "- [ ] A user can read the stated Hold’em/turn/free-chip rules and the absence of purchases, cash-out and prizes without leaving the game."
-      ],
-      "verification": "Run bunx playwright test apps/web/tests/actions.spec.ts. Expected: legal-action fixtures render the exact offered controls, a keyboard-submitted raise emits totalTo 30, non-actor/pending commands emit nothing, every control’s bounding box is at least 44×44px, and the rules summary contains 200 chips, 5/10 blinds, 12-second auto-fold and play-money/no-purchases/cash-out/prizes statements. Capture a keyboard-focused HUD/rules screenshot; use a fake transport that records command fields without tokens.",
-      "prd_refs": ["F02", "F05", "R5", "R6", "R7", "R10"],
-      "depends_on": ["S16", "S5"]
-    },
-    {
-      "key": "S18",
-      "title": "Render the responsive 2.5D table with accessible card labels",
-      "type": "feature",
-      "priority": "P0",
-      "area": "client",
-      "context": "CSS perspective and layered cards/chips provide the required 2.5D presentation without WebGL. Card visibility must follow the redacted view, and the monochrome no-borders directive applies in light and inverted dark appearances.",
-      "tasks": [
-        "- [ ] Build a responsive CSS/SVG perspective table showing 2–4 seats, board, chip/pot layers, own cards, opponent backs, actor and connectivity; keep the HUD upright.",
-        "- [ ] Render visible cards with text rank/suit labels and generic opponent-back accessibility labels; never place hidden card identities in DOM attributes or announcements.",
-        "- [ ] Apply the specified monochrome palette, 10px radius and borderless surfaces in light and inverted dark appearances; preserve 7:1 body-text contrast and visible shadow focus states.",
-        "- [ ] Use instant state updates for the MVP; if existing deal/flip/chip movement is retained, limit transitions to 150ms ease-out opacity/translate and disable them under prefers-reduced-motion. Do not add an animation feature.",
-        "- [ ] Add apps/web/tests/table.spec.ts for seat layouts, card visibility, computed styles, contrast, focus and reduced motion."
-      ],
-      "acceptance_criteria": [
-        "- [ ] At 375px and 1280px viewport widths, two- and four-seat tables show board/pot/actor and the upright actionable HUD without horizontal page overflow.",
-        "- [ ] Own/revealed cards have readable rank/suit labels; opponent backs and accessibility announcements contain no unrevealed rank/suit identity.",
-        "- [ ] Cards, controls and panels have zero border/outline width and only the PRD monochrome palette; light/dark body text contrast is at least 7:1 and keyboard focus is visible.",
-        "- [ ] CSS perspective and layering provide the 2.5D table without WebGL; reduced motion has instant updates and no card/chip animation."
-      ],
-      "verification": "Run bunx playwright test apps/web/tests/table.spec.ts. Expected: all 375px/1280px two/four-seat layout, generic-card-back DOM/accessibility, zero-border/outline, palette, 7:1 contrast, focus-shadow and reduced-motion cases pass. Capture light and dark screenshots at both widths, including a focused HUD control; inspect that perspective applies to the table, not the HUD. With reduced motion emulated, capture computed animation/transition evidence showing instant updates.",
-      "prd_refs": ["F03", "F05", "R2", "R5", "R6", "R7"],
-      "depends_on": ["S17", "S11"]
-    },
-    {
-      "key": "S19",
-      "title": "Display shared results and host-controlled same-room replay",
-      "type": "feature",
-      "priority": "P0",
-      "area": "client",
-      "context": "Both browsers must see the same termination result and return to play without changing rooms. Lost-room errors must explain server restart loss rather than presenting an invented local match.",
-      "tasks": [
-        "- [ ] Render final winner(s), final stacks and termination reason directly from the server result, including ties and abandoned matches.",
-        "- [ ] Provide host-only rematch with at least two connected seats; await acknowledgement and render the reset match without navigating to another code.",
-        "- [ ] Show required room/action/auth errors and lost/expired-room recovery; on restart loss show the text Room lost — create again and an explicit create-again route.",
-        "- [ ] Add apps/web/tests/results.spec.ts for shared finish, rematch gating/reset and restart/expiry error rendering."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Two views of one finished match display identical winning seat IDs/names, final stacks and termination reason, including tied and abandoned fixtures.",
-        "- [ ] Only an eligible host can rematch; after acknowledgement both views retain the room code and discard old result/cards/counters for the reset state.",
-        "- [ ] A host with one connected seat cannot rematch and the result remains visible.",
-        "- [ ] Restart-lost/expired-room state displays Room lost — create again, sends no local-game substitute and permits explicit creation of a different room."
-      ],
-      "verification": "Run bunx playwright test apps/web/tests/results.spec.ts. Expected: all shared-winner/tie/abandoned, host/count gating, same-code reset, explicit error and lost-room cases pass. Compare normalized result fields in both page fixtures before rematch; after server reset expect old cards/results absent and new match state present. Capture matching result screenshots and the lost-room message screenshot without session tokens.",
-      "prd_refs": ["F05", "F04", "R4", "R6", "R9", "R11"],
-      "depends_on": ["S16", "S8", "S13"]
-    },
-    {
-      "key": "S20",
-      "title": "Assert private-card redaction across real HTTP and socket paths",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Privacy tests are a release gate, including reconnect and folded showdown cards. This suite verifies transport output rather than trusting projection-unit tests alone.",
-      "tasks": [
-        "- [ ] Add apps/server/src/privacy.test.ts with two/four authenticated synthetic viewers and deterministic engine fixtures injected only in the test process.",
-        "- [ ] Inspect create/join/resume responses, initial/mutation/timeout/reconnect snapshots and any emitted animation events for each recipient.",
-        "- [ ] Test pre-showdown own-only visibility, contested non-folded reveals, opponents’ folded cards hidden after showdown and uncontested non-reveal.",
-        "- [ ] Reject any undealt-card/deck/foreign-token sentinel in serialized output; distinguish the requesting seat’s intentionally returned HTTP credential from the token-free view.",
-        "- [ ] Keep captured test output sanitized and never save live authentication frames or raw payloads as evidence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Every pre-showdown HTTP/socket view exposes only the requesting seat’s cards, with zero foreign-card or undealt-deck sentinel occurrences.",
-        "- [ ] A resumed seat receives only its own private view and the fenced old socket receives no subsequent snapshots/events.",
-        "- [ ] Contested showdown reveals all non-folded contenders and no opponents’ folded cards in snapshots or events; uncontested settlement reveals no opponents.",
-        "- [ ] Only the requesting seat’s create/join credential may occur in its HTTP response; all views/events exclude tokens, and no response contains another seat’s credential."
-      ],
-      "verification": "Run bun test apps/server/src/privacy.test.ts. Expected: all two/four-viewer HTTP, socket mutation/timeout, resume/fencing, contested/folded/uncontested and event cases pass, with zero hidden sentinel matches. If animations are omitted, assert no animation events are emitted rather than introducing them. Capture named-case totals and a redaction assertion summary only; live token/card/deck/full-payload logging remains forbidden.",
-      "prd_refs": ["F03", "F04", "F06", "R3", "R7", "R9", "R13"],
-      "depends_on": ["S11", "S12", "S13", "S14"]
-    },
-    {
-      "key": "S21",
-      "title": "Test room capacity and queued recovery and completion boundaries",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Server-level tests must prove capacity and latency/recovery behavior across the room adapter, not only reducer fixtures. Fake clocks keep reservation and idle-expiry boundaries verifiable without long waits.",
-      "tasks": [
-        "- [ ] Add apps/server/src/lifecycle-integration.test.ts using real room HTTP/socket handlers, an injected clock and existing engine fixtures.",
-        "- [ ] Cover four-seat admission/fifth-seat rejection, post-start roster lock, lobby host transfer and start/rematch connected-count rules.",
-        "- [ ] Exercise delayed duplicate/stale commands plus a timeout, resume just before expiry, fenced old sockets and expiry during unsettled play.",
-        "- [ ] Assert shared connected-only/tied/abandoned results, bust/ten-hand termination, same-room reset and 30-minute idle expiry without persistence or test-only production controls."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Four sockets occupy distinct seats; fifth join returns ROOM_FULL and join during play returns MATCH_STARTED with unchanged roster.",
-        "- [ ] Duplicate/stale command and timeout races conserve chips and converge to one revision sequence across viewers.",
-        "- [ ] Resume at 59.999 seconds preserves deadline and fences the old socket; expiry at 60 seconds settles the current hand before connected-only/tied/abandoned results.",
-        "- [ ] Host transfer, bust/ten-hand finish, same-code rematch reset and idle expiry match their focused unit tests through the HTTP/socket adapter."
-      ],
-      "verification": "Run bun test apps/server/src/lifecycle-integration.test.ts && bun test apps/server/src. Expected: both commands exit 0; the integration suite’s capacity, locked roster, host transfer, duplicate/stale/timeout race, 59.999s/60s recovery, connected-winner/tie/abandoned, bust/ten-hand, reset and 30-minute cases all pass. Assert exact error codes, deadlines, revision sequences and result fields; capture named-case output with no raw tokens/private payloads.",
-      "prd_refs": ["F01", "F02", "F04", "F05", "F06", "R2", "R4", "R8", "R9", "R10", "R11", "R13"],
-      "depends_on": ["S13", "S14", "S9"]
-    },
-    {
-      "key": "S22",
-      "title": "Automate the two-context lifecycle with refresh and timeout",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The final milestone explicitly requires one Playwright two-context end-to-end lifecycle. Browser tests must use actual WebSockets and server-validated actions rather than a mocked local game.",
-      "tasks": [
-        "- [ ] Add apps/web/tests/lifecycle.spec.ts with two isolated browser contexts and a base URL configurable by PLAYWRIGHT_BASE_URL; run actual Hono/Bun networking.",
-        "- [ ] Execute create/share/join/start, legal bet/call and hand settlement, then play to match finish and perform an eligible same-room rematch.",
-        "- [ ] Reload one context within 60 seconds, compare its recovered private cards/seat/deadline, then allow one 12-second turn to auto-fold.",
-        "- [ ] Compare public board/pot/stacks/actor/revisions and final result across contexts; assert rematch reset and no token in the invitation URL.",
-        "- [ ] Save assertion summaries and sanitized screenshots; do not retain traces/HARs or console dumps containing real tokens/private payloads."
-      ],
-      "acceptance_criteria": [
-        "- [ ] One test completes join→start→play→finish→rematch through real WebSockets in two isolated contexts and exits with no failed assertions.",
-        "- [ ] At acknowledged checkpoints both contexts have identical public fields/results while only their own cards are visible before showdown.",
-        "- [ ] Reload restores the same seat/cards with an unchanged deadline, and a real elapsed 12-second turn produces one server auto-fold visible in both contexts.",
-        "- [ ] Rematch retains the room code and resets required state; evidence contains no tokens, full private frames or undealt cards."
-      ],
-      "verification": "Run bunx playwright install chromium, boot the independent apps with bun run dev, then run PLAYWRIGHT_BASE_URL=<local-web-url> bunx playwright test apps/web/tests/lifecycle.spec.ts --project=chromium --workers=1. Expected: the lifecycle test passes all create/join/start, synchronized betting/settlement, reload/same-deadline, 12-second auto-fold, identical match result and same-room reset assertions using actual ws:// locally. Real deals may use repeated legal folds/all-ins until bust or the ten-hand limit; no production deterministic-deck hook is added. Capture sanitized checkpoint screenshots and the passing test summary. Re-run on HTTPS/WSS in S23.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "R1", "R2", "R3", "R4", "R7", "R9", "R10", "R11", "R13"],
-      "depends_on": ["S18", "S19", "S20", "S21"]
-    },
-    {
-      "key": "S23",
-      "title": "Verify the release on published WSS and save its checkpoint",
-      "type": "verification",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Passing local tests does not prove the published multiplayer requirement. This release gate repeats ingress with production authentication, verifies restart loss and binds the tested build to a Manus checkpoint.",
-      "tasks": [
-        "- [ ] Run all engine/server and browser suites, publish the tested build through Manus webdev and verify a single in-memory server instance with no smoke/auth bypass or normal deterministic-deck mode.",
-        "- [ ] Re-run the two-context lifecycle against the published HTTPS URL and inspect authenticated WSS handshakes and public state convergence.",
-        "- [ ] In four browser contexts join a published room, verify a fifth receives ROOM_FULL, then verify a new seat during play receives MATCH_STARTED.",
-        "- [ ] In a disposable published room restart the backend; confirm clients show Room lost — create again instead of restoring or inventing a match.",
-        "- [ ] Save a Manus checkpoint and record its identifier, published URL, build/commit identifier, sanitized test summaries, handshake/capacity screenshots and restart-loss evidence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] bun test packages/engine apps/server/src and the browser suite exit 0; the published lifecycle also passes over HTTPS/WSS.",
-        "- [ ] Two authenticated browsers receive HTTP 101 on /api/ws and share one authoritative public state on exactly one backend instance; no temporary smoke bypass remains.",
-        "- [ ] Published four-seat/fifth-seat and playing-roster-lock checks return the exact ROOM_FULL and MATCH_STARTED outcomes.",
-        "- [ ] Backend restart loses the disposable room and both clients display Room lost — create again; normal deployment has no enabled deterministic deck.",
-        "- [ ] A saved Manus checkpoint identifier and the tested build/URL are recorded with sanitized pass evidence."
-      ],
-      "verification": "Run bun test packages/engine apps/server/src, then bunx playwright test apps/web/tests --project=chromium --workers=1 against local running apps. Publish and run PLAYWRIGHT_BASE_URL=<published-https-url> bunx playwright test apps/web/tests/lifecycle.spec.ts --project=chromium --workers=1. Expected: all commands exit 0. On the published site, capture two authenticated 101 WSS handshakes without auth payloads, four occupied seats and the fifth-seat ROOM_FULL message, then MATCH_STARTED for a new join after start. Capture the one-instance configuration. Restart the disposable backend and capture both Room lost — create again messages. Save a checkpoint and record its ID/build/URL. Any failed WSS, state mismatch, privacy leak, enabled normal deterministic deck or missing checkpoint fails this gate.",
-      "prd_refs": ["F01", "F03", "F04", "F06", "R1", "R2", "R3", "R7", "R8", "R12", "R13"],
-      "depends_on": ["S2", "S9", "S20", "S21", "S22"]
-    },
-    {
-      "key": "S24",
-      "title": "Rehearse and capture the PRD’s timed two-browser demo",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The final issue is the PRD demo-script rehearsal, not feature work. A judge must observe the published lifecycle, networking, privacy, recovery, finish and replay in under five minutes with passing tests and a checkpoint.",
-      "tasks": [
-        "- [ ] Prepare two independent browser profiles on the published release, sanitized test summaries and the S23 checkpoint; start a visible timer and capture only non-secret evidence.",
-        "- [ ] At 0:00–0:40 create/share/join/start and explain Hold’em/free chips; at 0:40–1:20 bet/call, show synchronized public fields and inspect recipient frames for redaction.",
-        "- [ ] At 1:20–1:50 refresh to restore seat/cards without resetting the server deadline, then let a turn auto-fold; at 1:50–3:30 finish a hand and play an all-in/bust to matching results.",
-        "- [ ] At 3:30–4:30 rematch and demonstrate reset, show rules/redaction/e2e test passes and checkpoint, and demonstrate borderless keyboard focus/filled controls.",
-        "- [ ] Record elapsed checkpoints and pass/fail for R1–R13; inspect auth/private frames live but capture only sanitized assertion notes, redacted screenshots and public result evidence. If an already-existing deterministic deck mechanism is used, label the test deployment and prove it disabled in normal deployment; do not add one for this issue."
-      ],
-      "acceptance_criteria": [
-        "- [ ] By 0:40 two human browser profiles have joined and started on published WSS; rules/free chips are explained, satisfying R1, R2, R4–R6, R8 and R12.",
-        "- [ ] By 1:20 bet/call changes converge to identical public state and inspected snapshots/events expose no foreign private cards or deck, satisfying R3, R7 and R10.",
-        "- [ ] By 1:50 refresh restores the same seat/cards and exact deadline, and a server timeout visibly auto-folds without pausing for disconnection, satisfying R9.",
-        "- [ ] By 3:30 a hand and an all-in/bust finish with identical winner(s), stacks and termination reason; by 4:30 same-room rematch resets state, satisfying R4–R7 and R11.",
-        "- [ ] By 4:30 passing rules/privacy/e2e summaries, checkpoint and visible borderless keyboard focus/filled controls are shown; total rehearsal is under five minutes, no secret frames are saved and no out-of-scope feature is used, satisfying R13."
-      ],
-      "verification": "Perform the exact timed steps on the S23 published build with two human-operated browser profiles and a stopwatch. Expected: each stated timestamp gate passes and the final demonstration ends by 4:30, below five minutes. Capture sanitized two-browser lobby/play/result/rematch screenshots, unchanged deadline before/after refresh, the visible auto-fold, a focus-shadow screenshot, test summaries and checkpoint ID, plus an R1–R13 timing/pass checklist. Inspect received frames live for own-card-only views before showdown; record a redaction pass statement without exporting tokens/full payloads. If a split all-in delays the bust, continue another legal all-in hand; missing the 3:30 result gate fails the rehearsal. If a labeled existing test-deck mechanism is used, capture configuration evidence that normal production disables it. Any missed gate, differing settlement, deadline reset or hidden-card leak is a fail requiring correction before completion.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13"],
-      "depends_on": ["S23"]
-    }
-  ]
+ "product": "flopside",
+ "epic_title": "Flopside: multiplayer 2.5D browser poker",
+ "epic_summary": "Ship play-money Texas Hold’em for two to four human players in an independent Better-T-Stack scaffold, using Next.js for the browser and one authoritative Hono/Bun WebSocket server with in-memory rooms. Players can create/share/join, start, play legal hands with private cards and 12-second turns, recover their seat within 60 seconds, finish with identical results, and rematch in the same room. The MVP is done when poker, privacy, recovery and lifecycle tests pass, the published two-browser WebSocket lifecycle succeeds, and the timed demo and checkpoint are captured. Use Bun everywhere and the black-and-white, borderless shadcn design; leave generated auth, Mongo, payments, native, extension and AI integrations unwired. Bots, chat, spectators, accounts, persistence, purchases/cash-out/prizes, analytics, poker twists, polling, WebGL, verifiable shuffle and optional effects are outside this delivery.",
+ "epic_done_when": [
+  "The independent Bun scaffold boots and its Manus-published HTTPS/WSS deployment demonstrably routes two browsers to the same single in-memory server instance.",
+  "Two to four humans can create/share/join/start; a fifth seat receives ROOM_FULL, joins during play receive MATCH_STARTED, and heads-up and four-seat games use the required turn order.",
+  "Automated poker tests pass for hand ranking, wheel/kickers/ties, total-to wagers, short raises, side pots/refunds, chip conservation and server-clock auto-fold after 12 seconds.",
+  "Every HTTP response, WebSocket snapshot and animation event exposes only the viewer’s private cards before eligible showdown; privacy, stale-command, duplicate-command and recovery tests pass.",
+  "Reconnect within 60 seconds preserves seat/cards/deadline; expiry, bust or ten hands produce identical results; same-room rematch resets the required state and rejects starts with fewer than two connected seats.",
+  "The responsive, keyboard-accessible borderless monochrome UI shows rules/free chips and shared state; the Playwright two-context lifecycle, published checks, saved checkpoint and under-five-minute PRD demo all pass.",
+  "Final gate passed: tests, a continuous computer-use video covering every element, per-element screenshots and an independent verifier's rerun are attached."
+ ],
+ "areas": [
+  "infra",
+  "engine",
+  "server",
+  "client",
+  "security",
+  "tests"
+ ],
+ "issues": [
+  {
+   "key": "S1",
+   "title": "Scaffold and boot the independent Bun web and server apps",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Appendix B overrides the proposed minimal stack: use the exact shared Better-T-Stack wrapper in a separate flopside directory. Install and full boot have not previously been verified; generated integrations are not MVP behaviors.",
+   "tasks": [
+    "- [ ] In an interactive TTY outside /home/ubuntu/manus-interview, run /home/ubuntu/manus-interview/scaffold/02-flopside.sh ./flopside without --yes or altered stack flags; complete the addon prompts.",
+    "- [ ] Run bun install and configure Bun dev scripts to boot apps/web and apps/server; use Next.js, Hono and hono/bun upgradeWebSocket without substituting frameworks.",
+    "- [ ] Leave auth, Mongo/Mongoose, Polar, native, WXT and the generated AI example unwired from Flopside routes and startup; do not require their credentials or services.",
+    "- [ ] Retain the independent scaffold/repository and record install/start commands and sanitized boot output as verification evidence."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The exact wrapper creates a standalone flopside/ repository with apps/web and apps/server, not a project inside manus-interview or another product.",
+    "- [ ] bun install exits 0 and bun run dev starts both the Next.js browser app and the Hono/Bun server.",
+    "- [ ] The browser root and configured server root return HTTP 200 without Mongo, auth, payment, AI, mobile or extension credentials."
+   ],
+   "verification": "From a workspace outside the source repo, use a TTY to run /home/ubuntu/manus-interview/scaffold/02-flopside.sh ./flopside; then cd flopside && bun install && bun run dev. Expected: scaffold/install succeed and both apps report listening addresses. Request the two logged root URLs with curl -s -o /dev/null -w '%{http_code}' <URL>; each prints 200. Capture the sanitized terminal output and the standalone directory path; confirm startup makes no connection to Mongo or external generated integrations. All subsequent test paths and commands in this plan are to be created and run from this independent flopside root.",
+   "prd_refs": [
+    "F06",
+    "R12",
+    "R13"
+   ],
+   "depends_on": []
+  },
+  {
+   "key": "S2",
+   "title": "Prove WebSocket ingress reaches one Bun instance in a production build",
+   "type": "verification",
+   "priority": "P0",
+   "area": "infra",
+   "context": "The first milestone requires WebSocket verification before poker implementation. The game is built from scratch and self-hosted (no Manus webdev). Unsupported ingress blocks the release rather than permitting polling, a local substitute game or a replacement scaffold.",
+   "tasks": [
+    "Mount /api/ws with Hono/Bun upgradeWebSocket and run the production build (`bun run build && bun run start`, also via the Dockerfile) as exactly one backend instance.",
+    "Use a temporary transport-only smoke probe to demonstrate two browser sockets reach the same in-memory process; record only a non-secret boot marker and connection counts.",
+    "Capture the origin, single-instance setting, handshake statuses and the two connections' shared boot marker; remove any smoke bypass when authenticated gameplay is connected.",
+    "If upgrades fail or the deployment cannot stay single-instance, record the failed handshake/configuration and mark the gate blocked without implementing a fallback."
+   ],
+   "acceptance_criteria": [
+    "Two independent browser contexts opened on the production-build origin each establish a WebSocket to /api/ws with HTTP 101 (ws:// locally, wss:// behind TLS).",
+    "Both connections are observed on the same boot marker while the configuration specifies exactly one server instance.",
+    "No polling or local game fallback is introduced; a failed WebSocket or single-instance check blocks further release verification."
+   ],
+   "verification": "Run the production build and open two Playwright browser contexts on its origin (`bunx playwright test apps/web/tests/ingress.spec.ts --project=chromium`). Expected: two 101 upgrades and server evidence of one boot marker and two connections; capture both handshake screenshots and the sanitized marker/configuration evidence. If either socket fails or requests land on different instances, this issue fails. Repeat with production authentication in the release gate; temporary probing must not survive release.",
+   "prd_refs": [
+    "F06",
+    "R1",
+    "R3",
+    "R8",
+    "R12",
+    "R13"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S3",
+   "title": "Evaluate the best five-card Hold’em hand and compare ties",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "The authoritative engine must determine winners without browser input. A pure evaluator is an independently testable prerequisite for settlement.",
+   "tasks": [
+    "- [ ] Add a pure seven-card best-five evaluator with a comparable rank and ordered tiebreak vector.",
+    "- [ ] Cover all nine categories from high card through straight flush, ace-low straights, kickers and equal best-five hands; suits do not break ties.",
+    "- [ ] Add focused Bun unit cases in packages/engine/evaluator.test.ts using explicit cards and expected rankings."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Each of the nine hand categories produces the expected ordered category and best-five tiebreak values.",
+    "- [ ] A-2-3-4-5 is a five-high straight, loses to a six-high straight, and does not treat ace as both high and low in another sequence.",
+    "- [ ] Equal best-five hands compare equal regardless of suits or unused hole-card kickers; unequal kickers select the expected winner."
+   ],
+   "verification": "Run bun test packages/engine/evaluator.test.ts. Expected: every case passes, including all nine categories, five-high versus six-high straight, paired-hand kicker comparison, board-only tie and suit-independent equality; failures include the explicit input cards and expected rank without any live-game data.",
+   "prd_refs": [
+    "F02",
+    "R5",
+    "R7"
+   ],
+   "depends_on": [
+    "S2"
+   ]
+  },
+  {
+   "key": "S4",
+   "title": "Deal server-owned hands and advance Hold’em streets and actors",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "The reducer owns the deck, blinds, board and action order for two to four players. Heads-up order differs from the multi-seat order and must be implemented before betting is connected.",
+   "tasks": [
+    "- [ ] Define the private hand state and pure transitions; supply server-only cryptographic randomness to an unbiased Fisher–Yates shuffle.",
+    "- [ ] Start a match with 200 chips per seat, fixed blinds 5/10, two hole cards per seat and an initially empty board; advance preflop/flop/turn/river with street contributions reset.",
+    "- [ ] Rotate dealer between hands and implement heads-up dealer/small-blind and multi-seat blind/action ordering, skipping folded/all-in seats.",
+    "- [ ] Add packages/engine/dealing.test.ts with injected card fixtures for unit tests only; do not expose test cards or the deck to clients."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A new two-, three- or four-seat match starts at 200 chips per seat before posting blinds, deals unique hole cards and uses a 52-card permutation.",
+    "- [ ] Heads-up dealer posts 5, acts first preflop and last postflop; with three/four seats, first action is left of the big blind preflop and left of the dealer postflop.",
+    "- [ ] Board counts are 0/3/4/5 across the four streets; street contributions reset and folded/all-in players never receive an action turn.",
+    "- [ ] The next hand rotates the dealer and production shuffle uses cryptographic, unbiased index selection rather than Math.random."
+   ],
+   "verification": "Run bun test packages/engine/dealing.test.ts. Expected: all two/three/four-seat blind and order cases pass, dealer rotation passes, board-count assertions are 0/3/4/5, and every dealt fixture contains unique cards. Inspect the production shuffle call site: crypto randomness plus rejection sampling for bounded indices feeds Fisher–Yates; the test fixture is not selected by normal deployment configuration. Capture test output and the shuffle source location, not a live deck.",
+   "prd_refs": [
+    "F02",
+    "R2",
+    "R5",
+    "R7"
+   ],
+   "depends_on": [
+    "S2"
+   ]
+  },
+  {
+   "key": "S5",
+   "title": "Enforce total-to wagers and full-raise reopening rules",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "No-limit betting must be decided by the server, including short all-ins that do not reopen an already-acted player’s raise right. The same reducer must produce the legal-action information used by the HUD.",
+   "tasks": [
+    "- [ ] Implement fold, check, call, bet, raise and all-in transitions with totalTo interpreted as total contribution on the current street.",
+    "- [ ] Enforce turn ownership, stack limits, integer chip amounts, minimum opening bet of 10, full-raise increments and short-all-in reopening rights.",
+    "- [ ] Compute each actor’s legal actions and wager bounds from authoritative state; invalid transitions leave all state unchanged.",
+    "- [ ] Add packages/engine/betting.test.ts for legal transitions and rejected actions, including already-acted versus not-yet-acted responses to a short all-in."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A seat already contributing 10 that raises to totalTo 30 pays exactly 20 more; calls pay only the outstanding amount or remaining stack.",
+    "- [ ] Checking facing a wager, betting below 10 without a short all-in, over-stack wagers and out-of-turn actions are rejected without chip changes.",
+    "- [ ] After a bet to 10 and a full raise to 30, the next minimum full raise is to 50; a later short all-in to 40 does not reopen a previously acted seat’s raise right.",
+    "- [ ] Legal actions omit forbidden actions, preserve raise rights for eligible not-yet-acted seats and never offer a turn to folded/all-in seats.",
+    "- [ ] For a prior actor last acting at 30 with a full-raise increment of 20, cumulative short all-ins to 40 then 50 reopen that actor’s raise right when action returns; the single increase to 40 does not."
+   ],
+   "verification": "Run bun test packages/engine/betting.test.ts. Expected: all cases pass, including contribution 10→30 charging 20, minimum raise 30→50, short all-in to 40 leaving prior actors unable to reraise, cumulative short all-ins to 40 then 50 reopening a prior actor last acting at 30 with full-raise increment 20, eligible unacted players retaining raise rights, short calls and byte-equal state after rejected moves. Test fixtures assert stacks, contributions and legal-action lists explicitly.",
+   "prd_refs": [
+    "F02",
+    "R3",
+    "R5",
+    "R6",
+    "R7"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S6",
+   "title": "Settle eligible side pots and return unmatched wagers",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "Unequal stacks and folds require settlement beyond a single pot. The reducer must award only eligible contenders, preserve chips and finish a hand when no further betting is possible.",
+   "tasks": [
+    "- [ ] Construct main/side pots from contribution tiers, excluding folded seats from winning while retaining their contributed chips.",
+    "- [ ] Return unmatched excess; award uncontested pots without requiring private-card exposure and contested pots using the evaluator.",
+    "- [ ] Split tied pots with a deterministic chip-conserving odd-chip rule and encode the shared payouts and showdown-eligible seat set.",
+    "- [ ] Run out the remaining board once betting cannot continue and add packages/engine/settlement.test.ts for refunds, folds, side pots and ties."
+   ],
+   "acceptance_criteria": [
+    "- [ ] For contributions 50/100/150 with three non-folded seats, settlement refunds 50 to the third seat and awards pots of 150 and 100 only to their eligible seats.",
+    "- [ ] Folded seats cannot win a pot; a sole remaining contender receives the settled pot without revealing any hole cards.",
+    "- [ ] When no further betting can occur, the board reaches five cards and contested settlement identifies every non-folded contender for showdown.",
+    "- [ ] Every fixture preserves initial chips as remaining stacks plus unresolved contributions/pots, and tied payouts sum exactly to the pot including odd chips."
+   ],
+   "verification": "Run bun test packages/engine/settlement.test.ts. Expected: all cases pass, including 50/100/150 contributions yielding 50 refund plus 150/100 pots, folded-player ineligibility, multi-pot ties, odd-chip conservation, sole-contender win and all-in runout to a five-card board. Each fixture asserts eligible winners, exact payouts and total chips.",
+   "prd_refs": [
+    "F02",
+    "R4",
+    "R5",
+    "R7"
+   ],
+   "depends_on": [
+    "S3",
+    "S5"
+   ]
+  },
+  {
+   "key": "S7",
+   "title": "Expire turns against an authoritative 12-second deadline",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "Deadlines must not depend on client timers or connection status. This change supplies clock-driven reducer transitions; the room queue will schedule them when the server adapter is connected.",
+   "tasks": [
+    "- [ ] Assign an absolute server deadline of now + 12000ms on each new action turn and expose it with the public actor state.",
+    "- [ ] Auto-fold the current actor at or after that deadline, even when checking would have been legal or the seat is disconnected.",
+    "- [ ] Guard scheduled expiration with actor/hand/deadline identity so an obsolete timer cannot fold a later actor or hand.",
+    "- [ ] Add packages/engine/deadline.test.ts using an injected fake clock, not sleeps."
+   ],
+   "acceptance_criteria": [
+    "- [ ] At deadline minus 1ms no auto-fold occurs; at exactly deadline the actor folds once and the next eligible turn or settlement begins.",
+    "- [ ] Changing connection status or resuming a seat does not change the current turn’s absolute deadline.",
+    "- [ ] A timer captured before an accepted action cannot mutate the subsequent turn or apply a second fold.",
+    "- [ ] Timeout applies fold, not check, and preserves the chip-conservation invariant."
+   ],
+   "verification": "Run bun test packages/engine/deadline.test.ts. Expected: all fake-clock cases pass for 11999ms/12000ms, disconnected actor, check-available actor, reconnect preserving the timestamp, stale callback after a player action and timeout-triggered settlement. Each expected fold occurs exactly once; no test waits 12 real seconds.",
+   "prd_refs": [
+    "F02",
+    "F04",
+    "R5",
+    "R7",
+    "R9",
+    "R10"
+   ],
+   "depends_on": [
+    "S6"
+   ]
+  },
+  {
+   "key": "S8",
+   "title": "Finish matches and reset eligible same-room rematches",
+   "type": "feature",
+   "priority": "P0",
+   "area": "engine",
+   "context": "A settled hand must lead to another hand or a shared match result, never an endless partial game. Connection expiry will signal this lifecycle reducer after its current hand settles.",
+   "tasks": [
+    "- [ ] End after a settled hand with a busted seat or the tenth completed hand; otherwise start the next hand with the rotated dealer.",
+    "- [ ] Support pending seat-expiry termination after current-hand settlement: highest-stack connected seat(s) win, or abandoned when none remain.",
+    "- [ ] Store one public result containing final stacks, winning seat IDs and termination reason; use highest stacks and shared victory for tied normal finishes.",
+    "- [ ] Allow only the host to rematch with at least two connected seats, preserve room code, and reset stacks to 200, deck/hole cards/board, dealer, match/hand identifiers and counters.",
+    "- [ ] Add packages/engine/lifecycle.test.ts with bust, ten-hand, expiry, tie, abandonment and reset fixtures."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Bust and tenth-hand fixtures finish only after settlement and produce the expected final stacks, highest-stack winner(s) and termination reason.",
+    "- [ ] Pending expiry never interrupts settlement; connected tied leaders share victory and zero connected seats yield abandoned.",
+    "- [ ] A non-host or host with fewer than two connected seats cannot rematch; rejection preserves final results.",
+    "- [ ] Accepted rematch keeps the code and connected seats but resets each stack to 200 before blinds, clears prior cards/results, resets dealer/counters and gives the new match distinct identifiers."
+   ],
+   "verification": "Run bun test packages/engine/lifecycle.test.ts. Expected: every fixture passes for post-settlement bust, exactly ten completed hands, normal tied leaders, expiry with connected leaders, none-connected abandonment, rejected rematches and successful reset. Assert the exact final result object and reset fields; repeated rematch rejection must not mutate them.",
+   "prd_refs": [
+    "F05",
+    "F04",
+    "R4",
+    "R6",
+    "R9",
+    "R11"
+   ],
+   "depends_on": [
+    "S6"
+   ]
+  },
+  {
+   "key": "S9",
+   "title": "Prove the poker reducer’s edge cases with deterministic regressions",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The rules milestone requires explicit evidence for heads-up order, short raises, side pots, chip conservation and fake-clock auto-fold before UI effects. Add cross-transition regressions to the focused unit cases, not new game mechanics.",
+   "tasks": [
+    "- [ ] Add packages/engine/rules-regression.test.ts composing existing deterministic card fixtures and fake clocks across complete legal hand traces.",
+    "- [ ] Cover two- and four-seat order across streets, short all-in non-reopening, unequal-stack side-pot eligibility/refunds and a tie with chip conservation after every accepted action.",
+    "- [ ] Include a timeout-completed hand and a final-hand/bust trace leading to a lifecycle result; keep fixture injection unit-test-only.",
+    "- [ ] Run the entire packages/engine suite and preserve the passing named-case output for the release/demo evidence."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A heads-up trace asserts dealer-first preflop and dealer-last postflop; a four-seat trace asserts the required blind-relative and dealer-relative order.",
+    "- [ ] The short-raise trace rejects the closed raise right without a state change and the unequal-stack trace awards exact eligible pots with unmatched excess returned.",
+    "- [ ] Every trace asserts chip conservation after every action and settlement, including a tie and a timeout-completed hand.",
+    "- [ ] All evaluator, dealing, betting, settlement, deadline, lifecycle and regression suites exit 0 under bun test."
+   ],
+   "verification": "Run bun test packages/engine. Expected: zero failures across evaluator.test.ts, dealing.test.ts, betting.test.ts, settlement.test.ts, deadline.test.ts, lifecycle.test.ts and rules-regression.test.ts. The regression output includes named heads-up/four-seat ordering, closed short-raise right, side-pot refund, tied conservation, timeout and match-finish traces; capture the complete summary. No client-controlled or production deterministic deck is needed.",
+   "prd_refs": [
+    "F02",
+    "F06",
+    "R2",
+    "R5",
+    "R7",
+    "R13"
+   ],
+   "depends_on": [
+    "S3",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "S8"
+   ]
+  },
+  {
+   "key": "S10",
+   "title": "Create in-memory rooms and enforce lobby seating and start rules",
+   "type": "feature",
+   "priority": "P0",
+   "area": "server",
+   "context": "Nickname-only rooms need a six-character invitation code, a bounded roster and host-controlled start. This change implements the room store and HTTP create/join surface; socket commands will invoke its start operation.",
+   "tasks": [
+    "- [ ] Define room/seats/host/revision/phase state and POST /api/rooms {nickname} plus POST /api/rooms/:code/join {nickname} with 1–16-character validation.",
+    "- [ ] Generate collision-checked six-character room codes and unpredictable per-seat tokens; return the caller’s seat and viewer-specific lobby state, never another seat’s token.",
+    "- [ ] Reject a fifth seat with ROOM_FULL and any new seat during play with MATCH_STARTED; allow host start only with 2–4 connected seats and lock the roster.",
+    "- [ ] Transfer a disconnected lobby host to the lowest connected seat and expire idle rooms after 30 minutes using the server clock.",
+    "- [ ] Add apps/server/src/rooms.test.ts for nickname bounds, capacity, start ownership/count, host selection and idle expiry."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Create/join accepts nicknames of length 1 and 16, rejects length 0 and 17, returns a six-character code and exposes only the joining seat’s token.",
+    "- [ ] Four seats can join; a fifth gets ROOM_FULL; after host start a new join gets MATCH_STARTED and the roster is unchanged.",
+    "- [ ] Only the host can start with 2–4 connected seats; one connected seat cannot start; a disconnected lobby host transfers to the lowest connected seat.",
+    "- [ ] An idle room exists at 29 minutes 59.999 seconds and requests at 30 minutes receive ROOM_EXPIRED with no recreated game."
+   ],
+   "verification": "Run bun test apps/server/src/rooms.test.ts. Expected: all named nickname-boundary, six-character-code, four/fifth-seat, playing-roster-lock, host-only-start, connected-count, lowest-connected-host and fake-clock idle-expiry cases pass. HTTP assertions verify the exact ROOM_FULL, MATCH_STARTED and ROOM_EXPIRED error codes and absence of foreign tokens. These tests operate against the in-memory store without a database.",
+   "prd_refs": [
+    "F01",
+    "F04",
+    "R2",
+    "R4",
+    "R8",
+    "R9"
+   ],
+   "depends_on": [
+    "S4"
+   ]
+  },
+  {
+   "key": "S11",
+   "title": "Project viewer-specific snapshots and redact every card event",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "The private reducer state must never be serialized directly. A single viewer projection must serve HTTP responses, socket snapshots and any card-event payloads before transport is wired.",
+   "tasks": [
+    "- [ ] Build an allowlisted per-seat public view containing public board/pot/stacks/turn/connectivity/results, own hole cards and only that viewer’s legal actions.",
+    "- [ ] Keep opponent cards as backs before showdown; reveal only non-folded contenders at contested showdown, with opponents’ folded cards hidden even after settlement.",
+    "- [ ] Exclude private deck, unused cards and every token from all views; apply the identical visibility predicate to event projection if events are emitted.",
+    "- [ ] Route create/join responses through this projection and add apps/server/src/views.test.ts with preflop, contested/uncontested and folded-showdown fixtures."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Before showdown a serialized view contains the viewer’s two hole cards and no foreign hole-card identity, undealt deck or seat token.",
+    "- [ ] At contested showdown each view reveals non-folded contenders’ cards and continues to hide opponents’ folded cards; an uncontested win reveals no opponent cards.",
+    "- [ ] HTTP view and event projection use the same card-visibility rules; events cannot include identities absent from the recipient’s snapshot.",
+    "- [ ] Legal actions are derived for the viewer from authoritative state and do not leak a different seat’s private cards."
+   ],
+   "verification": "Run bun test apps/server/src/views.test.ts. Expected: all serialized-payload assertions pass for two and four viewers, pre-showdown own cards only, contested non-folded reveal, opponents’ folded-card non-reveal and uncontested no reveal. Assert recursively that no token/deck field or hidden fixture-card identity appears; a folded viewer may still see their own cards. If no animation events are implemented, assert no card-animation events are emitted; optional effects are not required.",
+   "prd_refs": [
+    "F03",
+    "R3",
+    "R7"
+   ],
+   "depends_on": [
+    "S10",
+    "S5",
+    "S6",
+    "S8"
+   ]
+  },
+  {
+   "key": "S12",
+   "title": "Serialize authenticated socket commands with revisions and deduplication",
+   "type": "feature",
+   "priority": "P0",
+   "area": "server",
+   "context": "Actual networking must drive one authoritative state, including races between player actions and timer callbacks. Commands must be acknowledged without repeating a wager or accepting stale intent.",
+   "tasks": [
+    "- [ ] Authenticate /api/ws with {code,token}, map each socket to one seat, and remove the temporary transport smoke bypass.",
+    "- [ ] Accept {seq,expectedRev,handId,action,totalTo?} for start, betting and rematch; serialize HTTP room mutations, socket commands and timeouts through each room’s queue.",
+    "- [ ] Send acknowledgements {seq,accepted,rev,error?}; deduplicate per-seat sequences, validate expected revision and hand identity, and return STALE_STATE, NOT_YOUR_TURN or ILLEGAL_ACTION without mutation.",
+    "- [ ] Broadcast per-connection snapshots {rev,serverNow,view} from the redaction projection after accepted mutations and server timeouts; retain original deadlines.",
+    "- [ ] Add apps/server/src/commands.test.ts for authorization, duplicate wagers, stale/wrong-hand actions and action-timeout races."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A valid seat socket receives its redacted snapshot; a missing/invalid token receives AUTH_REQUIRED and cannot submit commands.",
+    "- [ ] Replaying one sequence applies its wager once, changes revision once and receives a consistent acknowledgement; a duplicate never creates another debit.",
+    "- [ ] Stale revision or hand identity yields STALE_STATE, wrong actor yields NOT_YOUR_TURN and illegal amounts yield ILLEGAL_ACTION, with no state mutation.",
+    "- [ ] Queued player/timeout races produce exactly one legal transition, and all connected viewers receive the same public revision, board, pot, stacks and actor."
+   ],
+   "verification": "Run bun test apps/server/src/commands.test.ts. Expected: all socket integration cases pass for AUTH_REQUIRED, duplicate seq, stale revision/wrong hand, NOT_YOUR_TURN, ILLEGAL_ACTION, host start/rematch dispatch and queued action-versus-deadline race. Assert one debit/one accepted revision for duplicate wagers and identical public fields across two viewer snapshots. Capture only test-case names and public revision/state comparisons, not live private payloads.",
+   "prd_refs": [
+    "F02",
+    "F04",
+    "F03",
+    "R1",
+    "R3",
+    "R7",
+    "R8",
+    "R10"
+   ],
+   "depends_on": [
+    "S2",
+    "S7",
+    "S11"
+   ]
+  },
+  {
+   "key": "S13",
+   "title": "Resume reserved seats and settle matches after connection expiry",
+   "type": "feature",
+   "priority": "P0",
+   "area": "server",
+   "context": "A refresh must restore the same private seat without resetting a turn, while disconnected seats reserve their position for only 60 seconds. Recovery and expiry must share the authoritative queue.",
+   "tasks": [
+    "- [ ] Add POST /api/rooms/:code/resume {token}, returning the same seat and fresh viewer state; successful resume fences the old socket and its commands.",
+    "- [ ] Add heartbeat-based loss detection, public connectivity updates and a 60-second reservation starting at detected disconnect; reconnect does not reset actor/deadline or chips.",
+    "- [ ] Queue expiry and host-transfer mutations; during play, mark termination pending until current-hand settlement and select only connected highest-stack winners or abandoned.",
+    "- [ ] Handle expired/lost rooms with ROOM_EXPIRED rather than silently recreating state; stale expiry callbacks cannot expire a resumed seat.",
+    "- [ ] Add apps/server/src/recovery.test.ts with fake-clock heartbeat, resume/fencing and reservation-boundary cases."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Resume at 59.999 seconds restores the same seat, own cards and exact deadline/revision-derived public state; an old socket cannot mutate the room.",
+    "- [ ] At 60 seconds without resume the seat expires; a resume at/after expiry cannot restore its game seat and a stale expiry callback after earlier resume does nothing.",
+    "- [ ] Disconnection never pauses the 12-second turn; expiry during a hand ends the match only after settlement with connected winners or abandoned.",
+    "- [ ] Heartbeat-detected loss and resume broadcast connected/disconnected status, and disconnecting a lobby host selects the lowest connected successor."
+   ],
+   "verification": "Run bun test apps/server/src/recovery.test.ts. Expected: all fake-clock 59.999s/60s boundary cases pass, resume preserves the deadline timestamp, the fenced socket has no accepted mutations, a dropped heartbeat marks loss, stale expiry is ignored and pending expiry settles before connected-only/tied/abandoned results. Unknown or restart-lost rooms return ROOM_EXPIRED, not a fresh game. Capture passing named-case output without tokens or cards.",
+   "prd_refs": [
+    "F04",
+    "F05",
+    "R4",
+    "R8",
+    "R9",
+    "R10"
+   ],
+   "depends_on": [
+    "S12",
+    "S8"
+   ]
+  },
+  {
+   "key": "S14",
+   "title": "Bound transport input and prevent secret logging",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "The PRD requires allowed-Origin checks, validated bounded inputs and non-secret logs. Generated logging and examples must not bypass the game’s privacy boundary.",
+   "tasks": [
+    "- [ ] Apply an explicit allowed-Origin policy to browser HTTP mutations and WebSocket upgrades; production browser transport uses HTTPS/WSS.",
+    "- [ ] Validate all HTTP/socket schemas and numeric wager fields before queued mutations; enforce documented finite per-connection/request rate and payload-size limits.",
+    "- [ ] Disable body/URL/full-payload logging in evlog and other handlers; log only allowlisted non-secret operation/error metadata and never seat tokens, private cards or decks.",
+    "- [ ] Add apps/server/src/security.test.ts for disallowed Origin, malformed input, over-limit payload/rate and captured-log sentinel checks; add no auth/accounts or persistence."
+   ],
+   "acceptance_criteria": [
+    "- [ ] An allowed published Origin can upgrade; a disallowed Origin cannot obtain a 101 or mutate a room.",
+    "- [ ] Missing fields, malformed commands, non-finite/fractional wager amounts and payloads above the configured limit are rejected without state changes.",
+    "- [ ] A burst exceeding the finite configured rate limit is rejected while valid under-limit commands remain usable.",
+    "- [ ] Captured HTTP, socket, validation and exception logs contain none of the test token/card/deck/full-payload sentinel values, including rejected requests."
+   ],
+   "verification": "Run bun test apps/server/src/security.test.ts. Expected: all allowed/disallowed Origin, schema, finite-integer amount, configured-boundary payload/rate and log-redaction cases pass; tests read the configured limits and exercise limit and limit+1 rather than assuming PRD-unspecified numbers. The disallowed-Origin test sees no 101 and no room mutation. Scan captured test logs for injected secret sentinels: zero occurrences. Confirm published browser traffic uses https:// and wss:// in S23.",
+   "prd_refs": [
+    "F03",
+    "F04",
+    "F06",
+    "R7",
+    "R8",
+    "R10",
+    "R12"
+   ],
+   "depends_on": [
+    "S12",
+    "S13"
+   ]
+  },
+  {
+   "key": "S15",
+   "title": "Build the nickname lobby and shareable room invitation",
+   "type": "feature",
+   "priority": "P0",
+   "area": "client",
+   "context": "Friends must create and join without accounts, then see who can start. The lobby establishes the required black-and-white borderless shadcn primitives used by later game screens.",
+   "tasks": [
+    "- [ ] Install @playwright/test with bun add -D @playwright/test, configure the root runner for apps/web/tests and a chromium project, and run bunx playwright install chromium so the specified browser-test commands are executable.",
+    "- [ ] Add create/join forms with 1–16-character nickname validation, six-character code entry and room-link parsing containing only the room code.",
+    "- [ ] Display code and share/copy link, seat nicknames/connectivity, host identity and a host-only start control enabled with 2–4 connected seats.",
+    "- [ ] Store only the caller’s seat token in tab-scoped sessionStorage; never put it in URLs or cross-tab localStorage.",
+    "- [ ] Restyle shadcn primitives with border/outline width 0, monochrome fills, 10px radius, Geist/Inter at 14px with weights 400/600 and an offset shadow focus indicator.",
+    "- [ ] Display ROOM_FULL, MATCH_STARTED and invalid-nickname responses as explicit errors rather than entering a local game; add apps/web/tests/lobby.spec.ts."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A nickname-only creator sees a six-character code and link; another browser opens that link, enters a nickname and joins the same lobby.",
+    "- [ ] Start is absent or disabled for non-hosts and for fewer than two connected seats; eligible host start sends the server command and uses the acknowledged state.",
+    "- [ ] Invalid nickname, full-room and playing-room errors are visible; the URL contains no token and the token exists only in that tab’s sessionStorage.",
+    "- [ ] Lobby controls have no border/outline lines, use only the specified black/white/grey palette and show a visible 2px offset shadow focus indicator."
+   ],
+   "verification": "Run bunx playwright test apps/web/tests/lobby.spec.ts against the running apps. Expected: all create/link-join, nickname bounds, host-start gating, ROOM_FULL/MATCH_STARTED, storage/URL and computed-style assertions pass. Manually tab through the lobby and capture a focused-control screenshot; expected no border/outline and a visible offset shadow. Capture two lobby screenshots sharing the same code, with no token visible; the test fixture authenticates sockets when testing start.",
+   "prd_refs": [
+    "F01",
+    "F04",
+    "R2",
+    "R4",
+    "R6",
+    "R8"
+   ],
+   "depends_on": [
+    "S12",
+    "S14"
+   ]
+  },
+  {
+   "key": "S16",
+   "title": "Reconcile client snapshots and recover without replaying betting intent",
+   "type": "feature",
+   "priority": "P0",
+   "area": "client",
+   "context": "The browser renders server state rather than predicting chips or cards. Pending commands, stale acknowledgements and refreshed sessions must not cause duplicate or changed-intent bets.",
+   "tasks": [
+    "- [ ] Authenticate the browser socket from tab sessionStorage, apply monotonic revisions and attach seq/expectedRev/handId to start, betting and rematch commands.",
+    "- [ ] Disable repeat submissions until acknowledgement; reconcile stale-state responses with a fresh authoritative snapshot and require the human to resubmit any changed betting intent.",
+    "- [ ] On refresh/loss, call resume and authenticate a new socket; replace the view with the fresh per-seat snapshot and fence obsolete local connection callbacks.",
+    "- [ ] Display heartbeat/connection failure and server-time-derived countdown without changing authoritative chips, cards or deadlines, including in background tabs.",
+    "- [ ] Add apps/web/tests/connection.spec.ts for delayed ack, stale revision, out-of-order snapshot and refresh recovery."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Repeated clicks while an acknowledgement is delayed send one command; chips/cards do not change until an authoritative snapshot arrives.",
+    "- [ ] Older revisions never overwrite newer views; STALE_STATE causes reconciliation and no automatic retransmission of betting intent.",
+    "- [ ] Refresh within the reservation restores the same seat and private cards with the original deadline; old-socket callbacks cannot overwrite resumed state.",
+    "- [ ] Socket/heartbeat failure is visible, actions are disabled while disconnected and no polling or local game replaces the server."
+   ],
+   "verification": "Run bunx playwright test apps/web/tests/connection.spec.ts. Expected: delayed-ack double-click emits one seq, stacks stay unchanged before snapshot, old revisions are ignored, stale intent is not resent, refresh retains seat/cards/deadline and simulated loss disables actions with a visible connection error. The test compares the server deadline before/after reload and checks no polling requests or local reducer mutation occur. Capture test output, not authentication frames.",
+   "prd_refs": [
+    "F04",
+    "R1",
+    "R3",
+    "R7",
+    "R9",
+    "R10"
+   ],
+   "depends_on": [
+    "S13",
+    "S15"
+   ]
+  },
+  {
+   "key": "S17",
+   "title": "Render legal poker controls and the free-chip rules summary",
+   "type": "feature",
+   "priority": "P0",
+   "area": "client",
+   "context": "Approachable human competition requires a short rules explanation and controls that follow the server’s legal-action view. The HUD stays upright even when the table is perspective-transformed.",
+   "tasks": [
+    "- [ ] Render actor/deadline, pot, stacks and fold/check/call/bet/raise/all-in controls from the authoritative legal-action list and wager bounds.",
+    "- [ ] Label wager entry as total street contribution; show the call amount and legal minimum/maximum, and disable actions outside the viewer’s turn or pending acknowledgement.",
+    "- [ ] Add a short visible or keyboard-openable rules summary covering turns, 200 free chips, 5/10 blinds, Hold’em board/hand goal, 12-second auto-fold and play-money-only with no purchases/cash-out/prizes.",
+    "- [ ] Support keyboard use, 44px targets and the existing borderless monochrome components; expose server rejection messages without silently retrying.",
+    "- [ ] Add apps/web/tests/actions.spec.ts for legal controls, total-to submission, pending state and rules access."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Non-actors cannot submit betting actions; the current actor sees exactly the server-offered action set and wager bounds.",
+    "- [ ] Entering a raise total of 30 sends totalTo: 30, not an incremental 30; unavailable check/raise actions cannot be submitted through the UI.",
+    "- [ ] All betting controls are keyboard-operable, at least 44px in each target dimension and disabled until pending commands are acknowledged.",
+    "- [ ] A user can read the stated Hold’em/turn/free-chip rules and the absence of purchases, cash-out and prizes without leaving the game."
+   ],
+   "verification": "Run bunx playwright test apps/web/tests/actions.spec.ts. Expected: legal-action fixtures render the exact offered controls, a keyboard-submitted raise emits totalTo 30, non-actor/pending commands emit nothing, every control’s bounding box is at least 44×44px, and the rules summary contains 200 chips, 5/10 blinds, 12-second auto-fold and play-money/no-purchases/cash-out/prizes statements. Capture a keyboard-focused HUD/rules screenshot; use a fake transport that records command fields without tokens.",
+   "prd_refs": [
+    "F02",
+    "F05",
+    "R5",
+    "R6",
+    "R7",
+    "R10"
+   ],
+   "depends_on": [
+    "S16",
+    "S5"
+   ]
+  },
+  {
+   "key": "S18",
+   "title": "Render the responsive 2.5D table with accessible card labels",
+   "type": "feature",
+   "priority": "P0",
+   "area": "client",
+   "context": "CSS perspective and layered cards/chips provide the required 2.5D presentation without WebGL. Card visibility must follow the redacted view, and the monochrome no-borders directive applies in light and inverted dark appearances.",
+   "tasks": [
+    "- [ ] Build a responsive CSS/SVG perspective table showing 2–4 seats, board, chip/pot layers, own cards, opponent backs, actor and connectivity; keep the HUD upright.",
+    "- [ ] Render visible cards with text rank/suit labels and generic opponent-back accessibility labels; never place hidden card identities in DOM attributes or announcements.",
+    "- [ ] Apply the specified monochrome palette, 10px radius and borderless surfaces in light and inverted dark appearances; preserve 7:1 body-text contrast and visible shadow focus states.",
+    "- [ ] Use instant state updates for the MVP; if existing deal/flip/chip movement is retained, limit transitions to 150ms ease-out opacity/translate and disable them under prefers-reduced-motion. Do not add an animation feature.",
+    "- [ ] Add apps/web/tests/table.spec.ts for seat layouts, card visibility, computed styles, contrast, focus and reduced motion."
+   ],
+   "acceptance_criteria": [
+    "- [ ] At 375px and 1280px viewport widths, two- and four-seat tables show board/pot/actor and the upright actionable HUD without horizontal page overflow.",
+    "- [ ] Own/revealed cards have readable rank/suit labels; opponent backs and accessibility announcements contain no unrevealed rank/suit identity.",
+    "- [ ] Cards, controls and panels have zero border/outline width and only the PRD monochrome palette; light/dark body text contrast is at least 7:1 and keyboard focus is visible.",
+    "- [ ] CSS perspective and layering provide the 2.5D table without WebGL; reduced motion has instant updates and no card/chip animation."
+   ],
+   "verification": "Run bunx playwright test apps/web/tests/table.spec.ts. Expected: all 375px/1280px two/four-seat layout, generic-card-back DOM/accessibility, zero-border/outline, palette, 7:1 contrast, focus-shadow and reduced-motion cases pass. Capture light and dark screenshots at both widths, including a focused HUD control; inspect that perspective applies to the table, not the HUD. With reduced motion emulated, capture computed animation/transition evidence showing instant updates.",
+   "prd_refs": [
+    "F03",
+    "F05",
+    "R2",
+    "R5",
+    "R6",
+    "R7"
+   ],
+   "depends_on": [
+    "S17",
+    "S11"
+   ]
+  },
+  {
+   "key": "S19",
+   "title": "Display shared results and host-controlled same-room replay",
+   "type": "feature",
+   "priority": "P0",
+   "area": "client",
+   "context": "Both browsers must see the same termination result and return to play without changing rooms. Lost-room errors must explain server restart loss rather than presenting an invented local match.",
+   "tasks": [
+    "- [ ] Render final winner(s), final stacks and termination reason directly from the server result, including ties and abandoned matches.",
+    "- [ ] Provide host-only rematch with at least two connected seats; await acknowledgement and render the reset match without navigating to another code.",
+    "- [ ] Show required room/action/auth errors and lost/expired-room recovery; on restart loss show the text Room lost — create again and an explicit create-again route.",
+    "- [ ] Add apps/web/tests/results.spec.ts for shared finish, rematch gating/reset and restart/expiry error rendering."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Two views of one finished match display identical winning seat IDs/names, final stacks and termination reason, including tied and abandoned fixtures.",
+    "- [ ] Only an eligible host can rematch; after acknowledgement both views retain the room code and discard old result/cards/counters for the reset state.",
+    "- [ ] A host with one connected seat cannot rematch and the result remains visible.",
+    "- [ ] Restart-lost/expired-room state displays Room lost — create again, sends no local-game substitute and permits explicit creation of a different room."
+   ],
+   "verification": "Run bunx playwright test apps/web/tests/results.spec.ts. Expected: all shared-winner/tie/abandoned, host/count gating, same-code reset, explicit error and lost-room cases pass. Compare normalized result fields in both page fixtures before rematch; after server reset expect old cards/results absent and new match state present. Capture matching result screenshots and the lost-room message screenshot without session tokens.",
+   "prd_refs": [
+    "F05",
+    "F04",
+    "R4",
+    "R6",
+    "R9",
+    "R11"
+   ],
+   "depends_on": [
+    "S16",
+    "S8",
+    "S13"
+   ]
+  },
+  {
+   "key": "S20",
+   "title": "Assert private-card redaction across real HTTP and socket paths",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Privacy tests are a release gate, including reconnect and folded showdown cards. This suite verifies transport output rather than trusting projection-unit tests alone.",
+   "tasks": [
+    "- [ ] Add apps/server/src/privacy.test.ts with two/four authenticated synthetic viewers and deterministic engine fixtures injected only in the test process.",
+    "- [ ] Inspect create/join/resume responses, initial/mutation/timeout/reconnect snapshots and any emitted animation events for each recipient.",
+    "- [ ] Test pre-showdown own-only visibility, contested non-folded reveals, opponents’ folded cards hidden after showdown and uncontested non-reveal.",
+    "- [ ] Reject any undealt-card/deck/foreign-token sentinel in serialized output; distinguish the requesting seat’s intentionally returned HTTP credential from the token-free view.",
+    "- [ ] Keep captured test output sanitized and never save live authentication frames or raw payloads as evidence."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Every pre-showdown HTTP/socket view exposes only the requesting seat’s cards, with zero foreign-card or undealt-deck sentinel occurrences.",
+    "- [ ] A resumed seat receives only its own private view and the fenced old socket receives no subsequent snapshots/events.",
+    "- [ ] Contested showdown reveals all non-folded contenders and no opponents’ folded cards in snapshots or events; uncontested settlement reveals no opponents.",
+    "- [ ] Only the requesting seat’s create/join credential may occur in its HTTP response; all views/events exclude tokens, and no response contains another seat’s credential."
+   ],
+   "verification": "Run bun test apps/server/src/privacy.test.ts. Expected: all two/four-viewer HTTP, socket mutation/timeout, resume/fencing, contested/folded/uncontested and event cases pass, with zero hidden sentinel matches. If animations are omitted, assert no animation events are emitted rather than introducing them. Capture named-case totals and a redaction assertion summary only; live token/card/deck/full-payload logging remains forbidden.",
+   "prd_refs": [
+    "F03",
+    "F04",
+    "F06",
+    "R3",
+    "R7",
+    "R9",
+    "R13"
+   ],
+   "depends_on": [
+    "S11",
+    "S12",
+    "S13",
+    "S14"
+   ]
+  },
+  {
+   "key": "S21",
+   "title": "Test room capacity and queued recovery and completion boundaries",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Server-level tests must prove capacity and latency/recovery behavior across the room adapter, not only reducer fixtures. Fake clocks keep reservation and idle-expiry boundaries verifiable without long waits.",
+   "tasks": [
+    "- [ ] Add apps/server/src/lifecycle-integration.test.ts using real room HTTP/socket handlers, an injected clock and existing engine fixtures.",
+    "- [ ] Cover four-seat admission/fifth-seat rejection, post-start roster lock, lobby host transfer and start/rematch connected-count rules.",
+    "- [ ] Exercise delayed duplicate/stale commands plus a timeout, resume just before expiry, fenced old sockets and expiry during unsettled play.",
+    "- [ ] Assert shared connected-only/tied/abandoned results, bust/ten-hand termination, same-room reset and 30-minute idle expiry without persistence or test-only production controls."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Four sockets occupy distinct seats; fifth join returns ROOM_FULL and join during play returns MATCH_STARTED with unchanged roster.",
+    "- [ ] Duplicate/stale command and timeout races conserve chips and converge to one revision sequence across viewers.",
+    "- [ ] Resume at 59.999 seconds preserves deadline and fences the old socket; expiry at 60 seconds settles the current hand before connected-only/tied/abandoned results.",
+    "- [ ] Host transfer, bust/ten-hand finish, same-code rematch reset and idle expiry match their focused unit tests through the HTTP/socket adapter."
+   ],
+   "verification": "Run bun test apps/server/src/lifecycle-integration.test.ts && bun test apps/server/src. Expected: both commands exit 0; the integration suite’s capacity, locked roster, host transfer, duplicate/stale/timeout race, 59.999s/60s recovery, connected-winner/tie/abandoned, bust/ten-hand, reset and 30-minute cases all pass. Assert exact error codes, deadlines, revision sequences and result fields; capture named-case output with no raw tokens/private payloads.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F04",
+    "F05",
+    "F06",
+    "R2",
+    "R4",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R13"
+   ],
+   "depends_on": [
+    "S13",
+    "S14",
+    "S9"
+   ]
+  },
+  {
+   "key": "S22",
+   "title": "Automate the two-context lifecycle with refresh and timeout",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The final milestone explicitly requires one Playwright two-context end-to-end lifecycle. Browser tests must use actual WebSockets and server-validated actions rather than a mocked local game.",
+   "tasks": [
+    "- [ ] Add apps/web/tests/lifecycle.spec.ts with two isolated browser contexts and a base URL configurable by PLAYWRIGHT_BASE_URL; run actual Hono/Bun networking.",
+    "- [ ] Execute create/share/join/start, legal bet/call and hand settlement, then play to match finish and perform an eligible same-room rematch.",
+    "- [ ] Reload one context within 60 seconds, compare its recovered private cards/seat/deadline, then allow one 12-second turn to auto-fold.",
+    "- [ ] Compare public board/pot/stacks/actor/revisions and final result across contexts; assert rematch reset and no token in the invitation URL.",
+    "- [ ] Save assertion summaries and sanitized screenshots; do not retain traces/HARs or console dumps containing real tokens/private payloads."
+   ],
+   "acceptance_criteria": [
+    "- [ ] One test completes join→start→play→finish→rematch through real WebSockets in two isolated contexts and exits with no failed assertions.",
+    "- [ ] At acknowledged checkpoints both contexts have identical public fields/results while only their own cards are visible before showdown.",
+    "- [ ] Reload restores the same seat/cards with an unchanged deadline, and a real elapsed 12-second turn produces one server auto-fold visible in both contexts.",
+    "- [ ] Rematch retains the room code and resets required state; evidence contains no tokens, full private frames or undealt cards."
+   ],
+   "verification": "Run bunx playwright install chromium, boot the independent apps with bun run dev, then run PLAYWRIGHT_BASE_URL=<local-web-url> bunx playwright test apps/web/tests/lifecycle.spec.ts --project=chromium --workers=1. Expected: the lifecycle test passes all create/join/start, synchronized betting/settlement, reload/same-deadline, 12-second auto-fold, identical match result and same-room reset assertions using actual ws:// locally. Real deals may use repeated legal folds/all-ins until bust or the ten-hand limit; no production deterministic-deck hook is added. Capture sanitized checkpoint screenshots and the passing test summary. Re-run on HTTPS/WSS in S23.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R7",
+    "R9",
+    "R10",
+    "R11",
+    "R13"
+   ],
+   "depends_on": [
+    "S18",
+    "S19",
+    "S20",
+    "S21"
+   ]
+  },
+  {
+   "key": "S23",
+   "title": "Verify the release build over real WebSockets and record the tested commit",
+   "type": "verification",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Passing unit tests does not prove the multiplayer requirement. This release gate repeats ingress with production authentication against the production build, verifies restart loss and binds the tested build to a git commit.",
+   "tasks": [
+    "Run all engine/server and browser suites against the production build; verify a single in-memory server instance with no smoke/auth bypass or normal deterministic-deck mode.",
+    "Re-run the two-context lifecycle against the production origin and inspect authenticated WebSocket handshakes and public state convergence.",
+    "In four browser contexts join a room, verify a fifth receives ROOM_FULL, then verify a new seat during play receives MATCH_STARTED.",
+    "In a disposable room restart the backend; confirm clients show Room lost — create again instead of restoring or inventing a match.",
+    "Record the tested git commit SHA, origin, sanitized test summaries, handshake/capacity screenshots and restart-loss evidence."
+   ],
+   "acceptance_criteria": [
+    "bun test packages/engine apps/server/src and the browser suite exit 0 against the production build.",
+    "Two authenticated browsers receive HTTP 101 on /api/ws and share one authoritative public state on exactly one backend instance; no temporary smoke bypass remains.",
+    "Four-seat/fifth-seat and playing-roster-lock checks return the exact ROOM_FULL and MATCH_STARTED outcomes.",
+    "Backend restart loses the disposable room and both clients display Room lost — create again; normal deployment has no enabled deterministic deck.",
+    "The tested commit SHA and origin are recorded with sanitized pass evidence."
+   ],
+   "verification": "Run bun test packages/engine apps/server/src, then PLAYWRIGHT_BASE_URL=<production-build-origin> bunx playwright test apps/web/tests --project=chromium --workers=1. Expected: all commands exit 0. Capture two authenticated 101 WebSocket handshakes without auth payloads, four occupied seats and the fifth-seat ROOM_FULL message, then MATCH_STARTED for a new join after start. Capture the one-instance configuration. Restart the disposable backend and capture both Room lost — create again messages. Record `git rev-parse HEAD`. Any failed WebSocket, state mismatch, privacy leak, enabled normal deterministic deck or missing commit record fails this gate.",
+   "prd_refs": [
+    "F01",
+    "F03",
+    "F04",
+    "F06",
+    "R1",
+    "R2",
+    "R3",
+    "R7",
+    "R8",
+    "R12",
+    "R13"
+   ],
+   "depends_on": [
+    "S2",
+    "S9",
+    "S20",
+    "S21",
+    "S22"
+   ]
+  },
+  {
+   "key": "S24",
+   "title": "Rehearse and capture the PRD’s timed two-browser demo",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The final issue is the PRD demo-script rehearsal, not feature work. A judge must observe the published lifecycle, networking, privacy, recovery, finish and replay in under five minutes with passing tests and a checkpoint.",
+   "tasks": [
+    "- [ ] Prepare two independent browser profiles on the published release, sanitized test summaries and the S23 checkpoint; start a visible timer and capture only non-secret evidence.",
+    "- [ ] At 0:00–0:40 create/share/join/start and explain Hold’em/free chips; at 0:40–1:20 bet/call, show synchronized public fields and inspect recipient frames for redaction.",
+    "- [ ] At 1:20–1:50 refresh to restore seat/cards without resetting the server deadline, then let a turn auto-fold; at 1:50–3:30 finish a hand and play an all-in/bust to matching results.",
+    "- [ ] At 3:30–4:30 rematch and demonstrate reset, show rules/redaction/e2e test passes and checkpoint, and demonstrate borderless keyboard focus/filled controls.",
+    "- [ ] Record elapsed checkpoints and pass/fail for R1–R13; inspect auth/private frames live but capture only sanitized assertion notes, redacted screenshots and public result evidence. If an already-existing deterministic deck mechanism is used, label the test deployment and prove it disabled in normal deployment; do not add one for this issue."
+   ],
+   "acceptance_criteria": [
+    "- [ ] By 0:40 two human browser profiles have joined and started on published WSS; rules/free chips are explained, satisfying R1, R2, R4–R6, R8 and R12.",
+    "- [ ] By 1:20 bet/call changes converge to identical public state and inspected snapshots/events expose no foreign private cards or deck, satisfying R3, R7 and R10.",
+    "- [ ] By 1:50 refresh restores the same seat/cards and exact deadline, and a server timeout visibly auto-folds without pausing for disconnection, satisfying R9.",
+    "- [ ] By 3:30 a hand and an all-in/bust finish with identical winner(s), stacks and termination reason; by 4:30 same-room rematch resets state, satisfying R4–R7 and R11.",
+    "- [ ] By 4:30 passing rules/privacy/e2e summaries, checkpoint and visible borderless keyboard focus/filled controls are shown; total rehearsal is under five minutes, no secret frames are saved and no out-of-scope feature is used, satisfying R13."
+   ],
+   "verification": "Perform the exact timed steps on the S23 published build with two human-operated browser profiles and a stopwatch. Expected: each stated timestamp gate passes and the final demonstration ends by 4:30, below five minutes. Capture sanitized two-browser lobby/play/result/rematch screenshots, unchanged deadline before/after refresh, the visible auto-fold, a focus-shadow screenshot, test summaries and checkpoint ID, plus an R1–R13 timing/pass checklist. Inspect received frames live for own-card-only views before showdown; record a redaction pass statement without exporting tokens/full payloads. If a split all-in delays the bust, continue another legal all-in hand; missing the 3:30 result gate fails the rehearsal. If a labeled existing test-deck mechanism is used, capture configuration evidence that normal production disables it. Any missed gate, differing settlement, deadline reset or hidden-card leak is a fail requiring correction before completion.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13"
+   ],
+   "depends_on": [
+    "S23"
+   ]
+  },
+  {
+   "key": "VX",
+   "title": "Final gate: full-coverage computer-use verification with video and screenshots",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Tests alone do not prove the product works. This gate proves every element of the finished product by driving it the way a user does. Environment: the production build running locally (one Bun process) with up to four real browser windows. Surface to cover: home/create-room, share link, join, name entry, seat selection, start, every in-hand action (fold, check, call, bet/raise, all-in), the 2.5D table (hole cards visible only to their owner, community cards, pot, dealer button, chip stacks, turn timer), showdown, next hand, ROOM_FULL, MATCH_STARTED, disconnect/reconnect and Room lost — create again. Method: computer use controlling 2-4 real browser windows side by side, recorded as one continuous screen video, plus screenshots of every element and state.",
+   "tasks": [
+    "Build the element inventory `evidence/inventory.md`: one row per user-reachable element, state, command or tool, derived from the built product (routes, components, CLI help, MCP tool list) and from the PRD; no row may be omitted because it is hard to reach.",
+    "Run the full automated suites from a clean clone (`bun install --frozen-lockfile`, lint, typecheck, unit, integration, e2e) and save the sanitized logs under evidence/tests/.",
+    "Perform a computer-use walkthrough that touches every inventory row while screen recording continuously (ffmpeg x11grab/gdigrab or the platform recorder); say or overlay the row id when each element is exercised.",
+    "Take at least one screenshot per inventory row (success state, and error state where one exists) named `evidence/screens/<row-id>.png`, and fill the coverage matrix in `evidence/coverage.md`: row id, video timestamp, screenshot file, covering test name, result.",
+    "Run `bun run verify:coverage` (create it here): it fails if any inventory row lacks a screenshot file, a timestamp inside the video duration, or a result, and prints ffprobe duration/resolution of the video. Upload the video as a release asset and record its URL and sha256 in evidence/manifest.json.",
+    "Have an agent that did not build the product re-run the suites and replay the walkthrough from a clean clone, and attach its own screenshots and verdict."
+   ],
+   "acceptance_criteria": [
+    "All automated suites pass from a clean clone with exit code 0; sanitized logs are committed.",
+    "evidence/inventory.md covers every user-reachable element, state, command or tool in the shipped product, with no unexplained omissions.",
+    "A continuous screen recording shows every inventory row being exercised through real interaction, with a timestamp per row in evidence/coverage.md.",
+    "Every inventory row has a screenshot file, and `bun run verify:coverage` exits 0.",
+    "An independent verifier's rerun matches the builder's results; any divergence is listed and resolved, not hidden."
+   ],
+   "verification": "From a clean clone run `bun install --frozen-lockfile && bun run lint && bun run typecheck && bun test` plus the e2e command listed in the README; expect exit 0 for each. Run `bun run verify:coverage`; expect exit 0 and output `rows=<N> screenshots=<N> timestamps=<N> missing=0` and ffprobe duration > 0. Open the video and spot-check at least five random rows by seeking to their timestamps and confirming the element on screen matches the row. Open the independent verifier's report and confirm every row shows PASS. Any missing row, screenshot, timestamp, failed test or unexplained divergence fails the gate.",
+   "prd_refs": [
+    "All release requirements"
+   ],
+   "depends_on": [
+    "S24"
+   ]
+  }
+ ]
 }

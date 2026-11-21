@@ -1,551 +1,901 @@
 {
-  "product": "sidekick",
-  "epic_title": "Sidekick: supervised Chrome side-panel agent",
-  "epic_summary": "Ship an unpacked Manifest V3 WXT/React extension and an authenticated HTTPS Hono proxy using Bun and the scaffold's Google Gemini integration. The visible Side Panel accepts a natural-language task, shows a plan before Run, executes one validated browser action at a time, and presents progress, confirmation, Stop, and fresh completion evidence. The MVP is complete only when Wikipedia research with a reference tab and dummy-form preparation on httpbin both pass, safety/error tests pass, the proxy is reachable, and the prescribed demo finishes in under five minutes. Exclude arbitrary-site guarantees, background continuation, accounts, databases, payments, web/native applications, extra providers, debugger/screenshot control, iframe/shadow-root/canvas/PDF control, history/export, uploads/downloads, authentication/CAPTCHA automation, and Web Store submission.",
-  "epic_done_when": [
-    "An independent Bun-based Sidekick scaffold builds an unpacked MV3 extension; its toolbar opens chrome.sidePanel and its authenticated HTTPS proxy uses a single server-fixed Gemini model without exposing the provider key.",
-    "The panel presents task input, selected-tab context, token configuration, provider disclosure, a pre-execution plan, Run, labelled step states, confirmation, and Stop; it meets the prescribed borderless monochrome design and keyboard/320-pixel requirements.",
-    "Indexed, bounded, redacted top-frame snapshots ground read/find, scroll, click, ordinary fill, and open/switch-tab tools; every action validates its target identity and receives fresh observation, and unsafe actions cannot bypass extension-side policy.",
-    "Runs enforce 15 turns, 120 active seconds excluding approvals, a 20-second model deadline, one read retry, no uncertain mutation replay, cancellation on Stop/panel closure, and evidence-based Success versus Failed, Stopped, or Unverified.",
-    "The Wikipedia and httpbin acceptances each pass twice; regression tests prove stale-index handling, malformed-tool rejection, network failure, Stop, denied submission, and injected-page-instruction handling with zero failures.",
-    "Installation/preflight instructions are usable and the exact four-part PRD demo completes in under five minutes with live evidence and passing safety/error tests."
-  ],
-  "areas": ["infra", "panel", "page", "agent", "security", "tests"],
-  "issues": [
-    {
-      "key": "S1",
-      "title": "Scaffold the independent Bun workspace and boot only extension and proxy",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Appendix B overrides generic stack wiring. Generate Sidekick once outside the interview repository and retain only the WXT/React and Bun/Hono paths in the runnable MVP; scaffold boot was not previously verified.",
-      "tasks": [
-        "[ ] Run /home/ubuntu/manus-interview/scaffold/04-sidekick.sh /home/ubuntu/sidekick from outside the interview repo in an interactive TTY; use the documented Biome, React WXT, and Project-scope answers without --yes.",
-        "[ ] Remove unused Better Auth, MongoDB, Polar, Next/native pages, and native-uniwind wiring from runnable imports, environment validation, and startup scripts; do not implement those products.",
-        "[ ] Add Bun root scripts dev:extension, dev:server, build:extension, and typecheck that target the retained apps; preserve Bun installation and testing.",
-        "[ ] Run installation, type checking, both development processes, and the WXT Chrome build; record actual boot results rather than treating scaffold validation as proof."
-      ],
-      "acceptance_criteria": [
-        "[ ] /home/ubuntu/sidekick is one independent Better-T-Stack workspace/git repository, not a directory inside manus-interview or a shared product scaffold.",
-        "[ ] bun install and bun run typecheck exit 0; bun run build:extension produces apps/extension/.output/chrome-mv3/manifest.json.",
-        "[ ] bun run dev:extension and bun run dev:server start without requiring account, database, payment, web, or native configuration."
-      ],
-      "verification": "From /home/ubuntu, execute the scaffold command above in a TTY exactly once. In /home/ubuntu/sidekick run bun install, bun run typecheck, and bun run build:extension; expect exit 0 and the Chrome MV3 build directory. In separate terminals run bun run dev:extension and bun run dev:server; expect WXT build-ready output and a listening Bun/Hono process with no missing auth/database/payment/native variable error. Capture both startup log excerpts and the generated manifest path, with secrets omitted.",
-      "prd_refs": ["P0-F1", "R1", "R9", "R16"],
-      "depends_on": []
-    },
-    {
-      "key": "S2",
-      "title": "Register the MV3 Side Panel and scoped browser permissions",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "The WXT addon supplies popup, background, and content entrypoints but no Side Panel. The MV3 worker must only set up toolbar/panel behavior; browser orchestration belongs in the visible panel.",
-      "tasks": [
-        "[ ] Add apps/extension/entrypoints/sidepanel/ and configure the generated MV3 side_panel path and toolbar opening through chrome.sidePanel.",
-        "[ ] Declare sidePanel, activeTab, scripting, tabs, and storage; configure the HTTPS proxy origin and user-granted demo/reference origins without silently granting arbitrary-site access.",
-        "[ ] Keep the worker limited to panel/toolbar setup and package a top-frame content-script entrypoint for isolated chrome.scripting use.",
-        "[ ] Add a Bun manifest test proving the entrypoint, permissions, and exclusion of debugger/native-messaging/background-agent wiring."
-      ],
-      "acceptance_criteria": [
-        "[ ] Loading apps/extension/.output/chrome-mv3 as unpacked in Chrome succeeds and clicking the toolbar icon opens the Side Panel.",
-        "[ ] The generated manifest has manifest_version 3, a resolvable side_panel.default_path, and the five required permissions.",
-        "[ ] No debugger or nativeMessaging permission exists, the script targets the top frame in an isolated world, and no agent loop runs in the service worker."
-      ],
-      "verification": "Run bun run build:extension and bun test apps/extension/tests/manifest.test.ts; expect exit 0 and zero failed assertions for the manifest requirements and exclusions. At chrome://extensions enable Developer mode, Load unpacked apps/extension/.output/chrome-mv3, then click Sidekick's toolbar icon. Expect its panel to open with no extension error. Capture the manifest excerpt, open-panel screenshot, and empty extension error view.",
-      "prd_refs": ["P0-F1", "P0-F2", "R1", "R9", "R10", "R11", "R13", "R14"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S3",
-      "title": "Secure and publish the Hono proxy over authenticated HTTPS",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Reachable HTTPS hosting is the first infrastructure release gate. A server-configured static bearer token and request limits must protect the proxy independently of CORS, and provider-bound bodies must not be logged.",
-      "tasks": [
-        "[ ] Mount a POST /v1/agent/turn shell that rejects an empty/invalid request with 400 before any adapter call; protect it with a server-only static token, HTTPS-only production endpoint configuration, and explicit configurable request-size and request-rate limits.",
-        "[ ] Disable request/response body logging, including evlog paths; prevent authorization tokens and provider keys from entering logs or extension bundles.",
-        "[ ] Deploy the Bun/Hono proxy to the supplied HTTPS host and configure the extension's proxy origin; report missing hosting/token as an unmet gate instead of asserting connectivity.",
-        "[ ] Add Bun middleware tests and an HTTPS smoke test using SIDEKICK_PROXY_URL and SIDEKICK_DEMO_TOKEN without printing either secret."
-      ],
-      "acceptance_criteria": [
-        "[ ] Missing or incorrect bearer tokens receive 401, including requests carrying an otherwise allowed Origin; CORS alone never authorizes a turn.",
-        "[ ] Requests beyond configured body/rate limits receive 413/429 and never reach the model adapter.",
-        "[ ] The deployed HTTPS endpoint accepts the configured token, and production configuration rejects a non-HTTPS proxy URL.",
-        "[ ] Captured request logs contain no body, bearer token, provider key, or seeded sensitive-value sentinel."
-      ],
-      "verification": "Run bun test apps/server/src/agent/security.test.ts; expect zero failures for token, Origin-independence, 413, 429, HTTPS-configuration, and logging-sentinel assertions. With SIDEKICK_PROXY_URL set to the deployed HTTPS origin and SIDEKICK_DEMO_TOKEN supplied privately, run bun test apps/server/tests/https.smoke.test.ts. Expect an invalid turn body with a valid token to receive 400 and the same request with no/bad token to receive 401, proving reachable authenticated routing without spending a model turn. Capture the sanitized test output and sanitized log sample; an absent HTTPS host is a failing gate.",
-      "prd_refs": ["P0-F3", "R15", "R16", "R21"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S4",
-      "title": "Implement the Gemini single-tool turn endpoint and validated protocol",
-      "type": "feature",
-      "priority": "P0",
-      "area": "agent",
-      "context": "The proxy converts a goal, current-run transcript, and snapshot into assistant text and at most one tool call. Only the extension executes tools; the scaffold's Google Gemini adapter and one server-fixed model are the entire provider surface.",
-      "tasks": [
-        "[ ] Define shared Zod schemas for Snapshot, Action, turn input/output, allowed tool signatures, and matching tool-call/tool-result identifiers.",
-        "[ ] Replace unused scaffold /ai behavior with authenticated POST /v1/agent/turn using the Google Gemini integration and one server-fixed model; keep the provider key in server environment only.",
-        "[ ] Validate turn payloads and model outputs; reject malformed arguments, unknown tools, multiple tool calls, and unmatched tool-result IDs instead of executing or forwarding them as actions.",
-        "[ ] Add deterministic Bun contract tests with a fake Gemini adapter; confirm the server never calls browser execution APIs."
-      ],
-      "acceptance_criteria": [
-        "[ ] A valid authenticated turn returns assistant text and zero or one schema-valid tool call with its original call ID preserved.",
-        "[ ] Malformed input, unknown tools, invalid arguments, multiple calls, and mismatched transcript IDs produce explicit errors and no browser action.",
-        "[ ] Only the fixed Google Gemini model is used; the extension has neither a provider picker nor a provider key."
-      ],
-      "verification": "Run bun run build:extension, bun test apps/server/src/agent/turn.test.ts, and bun run typecheck in that order; expect exit 0 and zero failed tests. Tests must assert exact call-ID round trips, zero/one-call responses, rejected multi-call/malformed/unknown-tool/transcript cases, a fixed Google adapter/model selection, no browser dispatch from the server, and absence of a seeded server-key sentinel from the generated extension bundle.",
-      "prd_refs": ["P0-F3", "R15", "R16"],
-      "depends_on": ["S3"]
-    },
-    {
-      "key": "S5",
-      "title": "Build the borderless panel shell with context, token, and disclosure",
-      "type": "feature",
-      "priority": "P0",
-      "area": "panel",
-      "context": "The panel needs task entry and trustworthy selected-tab context before any model request. Appendix A governs the UI: monochrome shadcn/Radix primitives, no borders/outlines/dividers, and keyboard-accessible controls at 320 pixels.",
-      "tasks": [
-        "[ ] Add labelled task input, selected-tab title/URL, demo-token configuration, provider-bound-text/retention disclosure, and non-animated plan, Run, timeline, and Stop regions for subsequent control wiring.",
-        "[ ] Query only the selected tab's metadata; retain task/transcript in panel memory and store only the demo token in chrome.storage.session, never persistent storage.",
-        "[ ] Keep model requests disabled until the token is configured and the provider disclosure has been presented before real-data use.",
-        "[ ] Apply shadcn/Radix with Tailwind, zero border widths/outlines, 10px radii, Geist or Inter at 14px/400/600, neutral colors, at least 7:1 body contrast, and an offset shadow-ring for focus; add session/disclosure tests."
-      ],
-      "acceptance_criteria": [
-        "[ ] The panel shows the actual selected-tab title/URL, task input, token configuration, and provider/retention disclosure before any provider-bound page text is sent.",
-        "[ ] Storage tests show only the demo token in session storage and no goal, transcript, page snapshot, or token in local/sync storage.",
-        "[ ] At 320px panel width all controls remain usable without horizontal scrolling, have accessible names, and are reachable by keyboard.",
-        "[ ] UI inspection shows only black/white/neutral greys, no borders/outlines/dividers or animations, 10px radii, prescribed typography, at least 7:1 body contrast, and visible shadow-ring keyboard focus."
-      ],
-      "verification": "Run bun test apps/extension/src/panel/config.test.ts; expect zero failures for selected-tab-only querying, session-only token storage, and disclosure-before-request assertions. Load the extension, set the panel to 320px, and Tab/Shift+Tab through every enabled control; expect a visible offset shadow-ring and no unreachable or clipped control. Inspect computed typography/border/outline/color values and calculate body-text contrast in DevTools; expect the specified values and ratio >=7:1. Capture the 320px screenshot with disclosure and focused input, accessibility-name inspection, computed-style/contrast results, and storage contents with the token redacted.",
-      "prd_refs": ["P0-F1", "P0-F4", "R2", "R3", "R6", "R10", "R16", "R18", "R19", "R21"],
-      "depends_on": ["S2"]
-    },
-    {
-      "key": "S6",
-      "title": "Capture indexed top-frame DOM snapshots with document identity",
-      "type": "feature",
-      "priority": "P0",
-      "area": "page",
-      "context": "The agent grounds actions in a DOM-derived, accessibility-inspired snapshot rather than screenshots or debugger access. Every snapshot must identify both the document and its indexed visible controls.",
-      "tasks": [
-        "[ ] Implement the packaged content-script observer returning snapshotId, documentToken, tabId, URL, title, rendered text, truncation flag, and indexed element descriptors.",
-        "[ ] Derive roles/names from ordinary top-frame visible/enabled controls, headings, and labels; retain an in-document index-to-element map for action validation.",
-        "[ ] Rotate snapshot IDs on observation and document tokens on document replacement; exclude iframe, shadow-root, canvas, and PDF control traversal.",
-        "[ ] Add Bun DOM-fixture tests for descriptors, visibility, enabledness, index uniqueness, and document/snapshot identity."
-      ],
-      "acceptance_criteria": [
-        "[ ] Observing a fixture yields every required Snapshot field and unique indexes whose roles/names match its visible controls, headings, and labels.",
-        "[ ] Hidden/disabled controls and unsupported frame/shadow/canvas/PDF contents are not actionable indexed targets.",
-        "[ ] Re-observation produces a new snapshotId; replacing the document produces a new documentToken rather than reusing an old target map."
-      ],
-      "verification": "Run bun test apps/extension/src/page/snapshot.test.ts; expect exit 0 and zero failures for exact Snapshot fields, visible control/heading/label roles and names, URL/title, hidden/disabled exclusions, unique indexes, unsupported-boundary exclusions, new snapshot IDs on observation, and new document tokens on replacement. Assert each fixture index resolves to its original live DOM element and no excluded control appears in the actionable map; capture the named test output.",
-      "prd_refs": ["P0-F2", "R3", "R4", "R11", "R12", "R13"],
-      "depends_on": ["S2"]
-    },
-    {
-      "key": "S7",
-      "title": "Redact and bound snapshots while supporting targeted text observation",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "Section 7 caps each snapshot and excludes browser secrets and existing sensitive values from provider payloads. Truncation must be visible and recoverable through targeted observation rather than an unbounded full-page dump.",
-      "tasks": [
-        "[ ] Cap snapshot text at 20,000 characters and indexed descriptors at 300 controls; set truncated whenever content was omitted.",
-        "[ ] Implement observe(tabId, query?) targeted rendered-text search returning bounded relevant excerpts and valid current-document indexes.",
-        "[ ] Exclude cookies, storage, hidden DOM, password content, and existing sensitive control values from rendered text/tool results; send local check outcomes instead of values and use seeded secret fixtures to prove exclusion rather than hard-coding sentinel removal.",
-        "[ ] Add boundary and redaction tests covering long pages, many controls, targeted matches outside the initial cap, and seeded secrets."
-      ],
-      "acceptance_criteria": [
-        "[ ] Every snapshot has text.length <=20000 and elements.length <=300; truncated is true whenever either cap omits content.",
-        "[ ] A targeted query locates text beyond the initial excerpt and returns bounded evidence tied to the current snapshot/document rather than stale indexes.",
-        "[ ] Serialized provider payloads and tool results contain none of the seeded cookie/storage/hidden/password/existing-sensitive-value sentinels."
-      ],
-      "verification": "Run bun test apps/extension/src/page/snapshot-privacy.test.ts; expect zero failures at exactly/above both caps, truncation marking, targeted retrieval beyond the first 20,000 characters, and all secret-sentinel exclusions. Inspect the tests' serialized outbound turn fixture; expect only rendered permitted content, descriptors, and redacted/boolean check results, with no browser-storage/cookie read performed by the observer.",
-      "prd_refs": ["P0-F2", "P0-F5", "R3", "R4", "R12", "R21"],
-      "depends_on": ["S6", "S4"]
-    },
-    {
-      "key": "S8",
-      "title": "Reject stale actions before isolated content-script dispatch",
-      "type": "feature",
-      "priority": "P0",
-      "area": "page",
-      "context": "An index is meaningful only for its recorded tab, document, snapshot, and element. Stale targets must be re-observed without guessing; chrome.scripting executes only the packaged isolated-world dispatcher.",
-      "tasks": [
-        "[ ] Build a Zod-validated dispatcher carrying runId, actionId, tabId, snapshotId, documentToken, tool, args, and preview.",
-        "[ ] Check active-run identity and the current document/index map immediately before execution; verify the target still exists, remains visible/enabled, and retains its observed identity.",
-        "[ ] Return a structured stale-target result that triggers fresh observation rather than resolving another element at the old index.",
-        "[ ] Add dispatch tests for removed/replaced/reordered controls, document navigation, unknown indexes, malformed envelopes, and isolated packaged-script execution."
-      ],
-      "acceptance_criteria": [
-        "[ ] A matching action dispatches once through the packaged isolated script to its recorded element.",
-        "[ ] Changed document/snapshot identity, removed/replaced target, unknown index, or invalid envelope dispatches zero mutations and requests re-observation.",
-        "[ ] Reordered controls cannot cause an old index to select a different element, and no model-supplied JavaScript is evaluated."
-      ],
-      "verification": "Run bun test apps/extension/src/page/dispatch.test.ts; expect zero failures and mutation count 0 in every stale/malformed case, mutation count 1 for the matching-target case, and an assertion that chrome.scripting receives the packaged isolated dispatcher rather than model code. The stale result must explicitly identify re-observation as required; no fallback index/selector may be invoked.",
-      "prd_refs": ["P0-F2", "P0-F3", "P0-F5", "R5", "R11", "R12", "R13", "R21"],
-      "depends_on": ["S6", "S4"]
-    },
-    {
-      "key": "S9",
-      "title": "Implement validated observe, find-text, and clamped scroll tools",
-      "type": "feature",
-      "priority": "P0",
-      "area": "page",
-      "context": "Research requires reading necessary rendered information, finding a passage, and scrolling without manual target selection. Tool results must describe observable page state and leave the next action grounded in fresh observation.",
-      "tasks": [
-        "[ ] Expose observe(tabId, query?), findText(query), and scroll(direction, pixels) through the validated dispatcher.",
-        "[ ] Return live text-match evidence for findText and before/after position evidence for scroll; clamp scroll pixels to a documented finite range and reject invalid directions/non-finite values.",
-        "[ ] Obtain a fresh bounded/redacted snapshot after execution; return explicit no-match or no-movement results instead of inventing evidence.",
-        "[ ] Add Bun tests for found/missing text, targeted observation, scroll boundaries, invalid arguments, and fresh result identity."
-      ],
-      "acceptance_criteria": [
-        "[ ] observe/findText return the fixture's live passage and current-document identity; a missing query returns an explicit no-match result.",
-        "[ ] Valid scroll changes the top-frame scroll position within the configured clamp, while invalid direction/NaN/infinite pixels cause no dispatch.",
-        "[ ] Each executed tool returns a fresh bounded/redacted observation; a page boundary with zero movement is reported rather than counted as movement."
-      ],
-      "verification": "Run bun test apps/extension/src/page/read-scroll.test.ts; expect exit 0 and zero failures for exact found/missing-query results, targeted retrieval beyond the initial cap, clamped before/after scroll positions, invalid direction/NaN/infinite inputs causing zero dispatch, page-boundary zero movement, and a fresh bounded/redacted snapshot after each execution. Assert returned passage evidence equals the fixture's currently rendered text, not a model summary; capture the named test output.",
-      "prd_refs": ["P0-F2", "P0-F3", "R4", "R5", "R12", "R20"],
-      "depends_on": ["S7", "S8"]
-    },
-    {
-      "key": "S10",
-      "title": "Execute ordinary click and fill tools with local value checks",
-      "type": "feature",
-      "priority": "P0",
-      "area": "page",
-      "context": "Sidekick supports ordinary top-frame links and form controls, not arbitrary input automation. Dummy fills must be checked against the DOM locally without echoing existing sensitive values to the provider.",
-      "tasks": [
-        "[ ] Add click(index) and fill(index, value) handlers using validated target identity; dispatch the ordinary DOM events needed by supported controls.",
-        "[ ] Limit fills to visible/enabled ordinary editable controls and reject password/payment/file/hidden targets at the handler even if a caller bypasses orchestration.",
-        "[ ] Verify filled values locally, returning equality booleans/redacted evidence; refresh observation after click/fill and never automatically submit after filling.",
-        "[ ] Add Bun tests for permitted link click, three text-field fills, emitted events, local mismatch, unsupported targets, and absence of implicit submission."
-      ],
-      "acceptance_criteria": [
-        "[ ] A permitted link click targets the recorded live element, and three ordinary dummy-field fills set their exact supplied values and emit expected input/change events.",
-        "[ ] Fill results contain local equality outcomes, not sensitive field contents; a site-altered value yields a failed equality check.",
-        "[ ] Password/payment/file/hidden/disabled targets cannot be filled, and completing fills dispatches no submit event or outbound form request."
-      ],
-      "verification": "Run bun test apps/extension/src/page/click-fill.test.ts; expect exit 0 and zero failures. The three ordinary-control fixtures must equal custname='Sidekick Demo', custtel='5550100', custemail='sidekick@example.com' locally with input/change events recorded, equality=true and no existing sensitive value in results. A site-modified field must report equality=false; forbidden field types must have mutation count 0; the link fixture must record exactly one click on its indexed element; submit count must remain 0 after all fills. Capture the named test output.",
-      "prd_refs": ["P0-F3", "P0-F5", "P0-F6", "R5", "R17", "R20", "R21"],
-      "depends_on": ["S8", "S7"]
-    },
-    {
-      "key": "S11",
-      "title": "Manage requested tabs and pause or stop on browser-target changes",
-      "type": "feature",
-      "priority": "P0",
-      "area": "page",
-      "context": "The research task opens/switches a reference tab while preserving the selected target. Missing origin access pauses for a user grant; closed targets and unexpected user tab switches stop rather than continuing against another page.",
-      "tasks": [
-        "[ ] Implement validated HTTP(S) openTab(url) and switchTab(tabId), retaining only current-run target/reference tab IDs and selected-tab metadata.",
-        "[ ] After an intentional tab operation select/re-observe its destination and distinguish its expected activation event from an unrelated user switch.",
-        "[ ] Pause without dispatch when origin access is missing and request the configured demo/reference origin only on a user gesture; explain denial.",
-        "[ ] Stop dispatch when the target closes or the user unexpectedly switches tabs; add tests for expected switches, closed IDs, denied permissions, and unexpected activation."
-      ],
-      "acceptance_criteria": [
-        "[ ] A requested HTTP(S) reference tab opens/switches and its current URL is verified from fresh selected-tab state.",
-        "[ ] Missing access results in zero page actions until the user grants that origin; denial remains non-executing with a visible explanation.",
-        "[ ] Closing the target or unexpectedly selecting another tab prevents all later actions; an agent-requested switch does not trigger that interruption.",
-        "[ ] The agent does not collect metadata/snapshots of unrelated tabs."
-      ],
-      "verification": "Run bun test apps/extension/src/page/tabs.test.ts; expect exit 0 and zero failures for exact opened/switched destination URLs, expected-versus-unexpected activation, closed-target interruption, permission pause/grant/denial, and selected-tab-only observation. Chrome mock assertions must show zero page dispatch before grant or after denial, no later dispatch after target closure/unexpected switch, uninterrupted execution for the agent-requested switch, and no metadata/snapshot request for unrelated tabs. Capture the named test output.",
-      "prd_refs": ["P0-F1", "P0-F3", "P0-F4", "R3", "R5", "R14", "R19", "R21"],
-      "depends_on": ["S2", "S8", "S9"]
-    },
-    {
-      "key": "S12",
-      "title": "Enforce extension-side action safety and untrusted-page boundaries",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "Model output and page text are not authority to change the user's task or expose secrets. Deterministic policy outside Gemini must block forbidden actions and distinguish routine actions from consequential or unclear ones, without claiming prompt-injection immunity.",
-      "tasks": [
-        "[ ] Classify proposed actions against the immutable user goal and live DOM as allow, require confirmation, or block; routine reads/navigation/scrolls/ordinary fills/requested tabs are allowed, consequential submissions or unclear effects require confirmation.",
-        "[ ] Block secret requests, password/payment/file/hidden editing, non-HTTP(S) destinations, unknown tools, and model-generated JavaScript in the extension before dispatch; share defense-in-depth validation with handlers.",
-        "[ ] Delimit observations and page-derived results as untrusted data in the Gemini request; prohibit page instructions from rewriting the stored goal or granting tool permissions.",
-        "[ ] Add Bun policy tests including injected instructions to ignore the task, read a password, and transmit it; no secret or unauthorized mutation may leave the boundary."
-      ],
-      "acceptance_criteria": [
-        "[ ] Policy allows the named routine tool cases, requires confirmation for submit/unclear-consequence cases, and blocks every named forbidden case before dispatch.",
-        "[ ] A page-injection fixture cannot change the stored user goal, request a secret read, authorize a forbidden action, or remove confirmation requirements.",
-        "[ ] Outbound prompts explicitly delimit page observations as untrusted; seeded secrets remain absent from prompts/results and no immunity guarantee is displayed."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/policy.test.ts apps/server/src/agent/prompt-boundary.test.ts; expect zero failures for allow/confirm/block classification, non-HTTP(S)/JavaScript rejection, immutable-goal assertions, untrusted delimiters, and injected secret/exfiltration cases. For every forbidden model proposal assert dispatch count 0 and absence of the seeded secret in serialized requests; for injected submission assert confirmation is still required rather than being silently granted.",
-      "prd_refs": ["P0-F3", "P0-F5", "R5", "R15", "R17", "R21"],
-      "depends_on": ["S4", "S7", "S8", "S10", "S11"]
-    },
-    {
-      "key": "S13",
-      "title": "Connect plan-before-Run to a one-action Gemini execution loop",
-      "type": "feature",
-      "priority": "P0",
-      "area": "agent",
-      "context": "Natural-language tasks must produce a visible plan before any browser mutation. Once Run is pressed, orchestration remains in the visible panel and alternates exactly one validated action with fresh observation and a matching tool result.",
-      "tasks": [
-        "[ ] Submit the task with the selected-tab snapshot to obtain/display plan text; hold any proposed action without execution until explicit Run.",
-        "[ ] Maintain memory-only run/action IDs and current-run messages/tool results; request one turn, validate it, apply policy, dispatch at most one action, re-observe, and return the matching call ID.",
-        "[ ] Route stale-target results to fresh observation without guessing or executing the stale proposal; route confirmation-required actions to a paused boundary for later confirmation wiring.",
-        "[ ] Add fake-model loop tests for plan gating, three consecutive actions, one-action-per-turn, matching IDs, malformed/multi-call rejection, and fresh snapshots."
-      ],
-      "acceptance_criteria": [
-        "[ ] Task submission displays a plan and enables Run while browser mutation count stays 0 until Run is activated.",
-        "[ ] A three-action fake-model task executes without manual target selection, never has more than one action in flight, and supplies a fresh snapshot after each action.",
-        "[ ] Tool-result IDs match model call IDs and no malformed, multi-call, stale, or confirmation-pending proposal is dispatched.",
-        "[ ] Runs/transcripts live only in panel memory; no background worker continuation or persistent history is created."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/loop.test.ts; expect zero failures with mutation count 0 before Run, exactly three allowed actions after Run, maximum concurrent dispatch count 1, a distinct post-action snapshot per turn, matching tool IDs, and zero dispatch for invalid/stale/confirmation-pending proposals. On https://en.wikipedia.org/wiki/Ada_Lovelace submit 'Find Ada Lovelace's published work, scroll there, and open a reference' in the panel without pressing Run; expect a visible plan and mutation count 0. Capture the plan screenshot and sanitized pre-Run dispatch log.",
-      "prd_refs": ["P0-F1", "P0-F3", "P0-F4", "R2", "R3", "R5", "R6", "R15", "R18"],
-      "depends_on": ["S4", "S5", "S9", "S10", "S11", "S12"]
-    },
-    {
-      "key": "S14",
-      "title": "Bound run duration and prevent uncertain mutation retries",
-      "type": "feature",
-      "priority": "P0",
-      "area": "agent",
-      "context": "Section 7 sets exact execution budgets and retry rules. Network failure must not cause the client to replay a mutation whose outcome may already have occurred.",
-      "tasks": [
-        "[ ] Cap each run at 15 turns and 120 active seconds; pause active-time accounting during user approvals and apply a 20-second model-request deadline.",
-        "[ ] Retry a failed read/observation at most once, but never retry an uncertain click/fill/tab/submission mutation or reinterpret it as success.",
-        "[ ] Distinguish deadline, exhausted budget, known failure, and uncertain mutation outcomes; invalidate queued proposals at terminal boundaries.",
-        "[ ] Add fake-clock/network tests for exact limits, approval-time exclusion, single read retry, and zero mutation replay."
-      ],
-      "acceptance_criteria": [
-        "[ ] No 16th model turn is sent; no new action starts after 120 active seconds, while approval waiting does not consume that budget.",
-        "[ ] A model request still pending at 20 seconds is aborted and cannot later dispatch its returned proposal.",
-        "[ ] A read may be attempted twice total; an uncertain mutation is attempted once total and terminates with an explicit non-Success explanation."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/budgets.test.ts; expect zero failures using fake clocks at the 15/16-turn, 119.999/120-second, and 19.999/20-second boundaries. Assert approval wait is excluded, read attempt count <=2, uncertain mutation attempt count exactly 1, and no queued or late-response action dispatch after a deadline/budget terminal state.",
-      "prd_refs": ["P0-F3", "P0-F4", "P0-F6", "R5", "R8", "R15", "R19", "R20"],
-      "depends_on": ["S13"]
-    },
-    {
-      "key": "S15",
-      "title": "Render explicit intent, execution, and outcome states in the timeline",
-      "type": "feature",
-      "priority": "P0",
-      "area": "panel",
-      "context": "The user must distinguish the next action from the currently executing action and its result. State changes are text/weight/fill updates, not timed animation or an editable-plan interface.",
-      "tasks": [
-        "[ ] Bind the plan and timeline to loop events with About to do, Doing, Success, Failure, Awaiting confirmation, and Stopped labels.",
-        "[ ] Show the action preview before dispatch, current target/tool while executing, and evidence or reason when its result arrives; keep Stop visible during active and approval-wait states.",
-        "[ ] Preserve Appendix A styles and accessible names/keyboard operation; do not add plan editing, timed animation, history, or export.",
-        "[ ] Add state-rendering tests that distinguish pending versus executing and render failure/awaiting/stopped outcomes from controlled loop events."
-      ],
-      "acceptance_criteria": [
-        "[ ] A queued action displays About to do and its preview before dispatch; dispatch changes that same step to Doing, not Success.",
-        "[ ] The timeline shows Success/Failure with evidence/reason, Awaiting confirmation while paused, and Stopped when interrupted.",
-        "[ ] Stop remains visible and keyboard reachable during execution and approval wait, with no animation or editable-plan control."
-      ],
-      "verification": "Run bun test apps/extension/src/panel/timeline.test.ts; expect exit 0 and zero failures. Render controlled loop events and assert visible About to do plus preview before dispatch, Doing with no Success while in flight, then Success with evidence or Failure with reason after completion. Assert Awaiting confirmation and Stopped render for their events, Stop remains an enabled labelled keyboard-reachable control in active/waiting states, and no editable-plan or animated component is rendered. Capture the named state-test output; live screenshots are checked in the real-site verification issues.",
-      "prd_refs": ["P0-F1", "P0-F4", "R6", "R7", "R18", "R19"],
-      "depends_on": ["S5", "S13"]
-    },
-    {
-      "key": "S16",
-      "title": "Cancel pending requests and queued actions on Stop or panel closure",
-      "type": "feature",
-      "priority": "P0",
-      "area": "agent",
-      "context": "Stop cannot undo an action already dispatched, but it must prevent later dispatches. Closing the panel interrupts orchestration and reopening must start fresh rather than resuming memory from a worker or storage.",
-      "tasks": [
-        "[ ] Wire Stop to abort in-flight model/read requests, invalidate the run and queued action/approval identities, and render Stopped immediately.",
-        "[ ] Check cancellation immediately before every dispatch and ignore late asynchronous results from stopped runs.",
-        "[ ] Apply the same cleanup on panel teardown; reopening has no task transcript, pending action, or approval, while session token configuration may remain.",
-        "[ ] Add race tests for Stop before dispatch, during a model request, after an already-dispatched mutation, during approval, and close/reopen."
-      ],
-      "acceptance_criteria": [
-        "[ ] Pressing Stop before dispatch yields zero dispatched actions and aborts any pending model request.",
-        "[ ] Pressing Stop after one mutation was dispatched does not claim to undo it, but no later action or late response can dispatch.",
-        "[ ] Stop invalidates pending approval; closing/reopening the panel shows a fresh run with no resumed goal/transcript/action."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/cancel.test.ts; expect zero failures, aborted request signals, post-Stop dispatch count 0, rejection of late responses/approval, and empty run state after reopen. On the Wikipedia article enter 'Scroll down twice', Run the plan, and press Stop while the next step is About to do, before its dispatch; expect Stopped and no dispatch-log entry after the Stop timestamp. Start a fresh task, close the panel while awaiting a model turn, and reopen it; expect an empty task/run view and no continued action. Capture the timestamped dispatch log, Stopped screenshot, and before/after close screenshots; do not claim already-dispatched effects were reversed.",
-      "prd_refs": ["P0-F4", "P0-F6", "R7", "R8", "R19", "R20"],
-      "depends_on": ["S14", "S15"]
-    },
-    {
-      "key": "S17",
-      "title": "Bind risky-action confirmation to exact outbound data and target identity",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "Consequential submissions and unclear-consequence actions require informed consent. Approval must authorize only the displayed action and destination, not a replacement document, changed argument set, or later action.",
-      "tasks": [
-        "[ ] Present Awaiting confirmation with action intent, destination/origin, and the complete outbound dummy-field name/value set for the pending submission; keep actual sensitive values blocked.",
-        "[ ] Bind approval to run/action IDs, arguments, origin, tab, documentToken, and snapshotId; recheck the live target/outbound fields before dispatch and invalidate on changes.",
-        "[ ] Resume exactly the approved action once; rejection or Stop discards it and prevents submission with an explicit reason.",
-        "[ ] Add tests for approval, rejection, duplicate approval, changed args/fields/origin/document/snapshot, and Stop while waiting."
-      ],
-      "acceptance_criteria": [
-        "[ ] Submit/unclear actions wait with destination and outbound field names/dummy values visible, while routine permitted actions do not ask for confirmation.",
-        "[ ] Reject or Stop dispatches zero submissions; approving the unchanged pending action dispatches exactly once.",
-        "[ ] Changed arguments, outbound fields, origin, tab, document, or snapshot invalidate approval and cannot dispatch under the earlier consent."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/confirmation.test.ts; expect exit 0 and zero failures. Assert the rendered preview names https://httpbin.org/post and every outbound dummy field/value, routine-action cases create no confirmation, and the pending action is not dispatched while waiting. Submit count must be 0 for rejection, Stop, and each altered arguments/fields/origin/tab/document/snapshot binding; unchanged approval must yield count 1 even if approval is repeated. Capture the named test output; live network/confirmation evidence is checked in S22.",
-      "prd_refs": ["P0-F4", "P0-F5", "R5", "R6", "R17", "R19", "R21"],
-      "depends_on": ["S12", "S15", "S16", "S10"]
-    },
-    {
-      "key": "S18",
-      "title": "Determine completion from fresh local and destination evidence",
-      "type": "feature",
-      "priority": "P0",
-      "area": "agent",
-      "context": "Model finish text is a proposal, not proof. Fresh text, local field equality, tab destination, or submission-response checks establish Success; missing evidence must produce Failed, Stopped, or Unverified with a reason.",
-      "tasks": [
-        "[ ] Implement finish(summary) as an evidence-gated terminal proposal, with fresh checks for the task's passage, dummy fills, reference-tab destination, and approved submission response where applicable.",
-        "[ ] Associate evidence with the current document/tab and action; reject stale evidence, contradictory local checks, and unsupported model-only completion claims.",
-        "[ ] Render overall Success only when required checks pass; distinguish known Failed, user/interruption Stopped, and uncertain Unverified with an explanation and redacted check results.",
-        "[ ] Add completion tests for live matching evidence, changed fields, wrong/closed reference destination, missing submission response, stale evidence, denied submission, and premature finish."
-      ],
-      "acceptance_criteria": [
-        "[ ] Matching fresh passage/local equality/destination/response checks establish Success and show evidence tied to the live target.",
-        "[ ] Model-only claims, missing response, or stale/uncertain evidence never produce Success; uncertainty is labelled Unverified with the missing check named.",
-        "[ ] Known mismatches show Failed and user rejection/interruption shows Stopped; neither claims that a rejected submission succeeded.",
-        "[ ] Provider-bound verification results are redacted checks rather than sensitive field values."
-      ],
-      "verification": "Run bun test apps/extension/src/agent/completion.test.ts; expect exit 0 and zero failures for every terminal status and zero Success results in stale/missing/uncertain/denied/premature cases. Assert a matching fresh dummy response produces rendered Success with evidence; remove that response in the fixture and expect rendered Unverified naming the missing response. Assert known mismatches render Failed, rejection/interruption render Stopped, and outbound results contain only redacted checks. Capture the named status-test output; real-page evidence is verified in S21/S22.",
-      "prd_refs": ["P0-F6", "R4", "R8", "R14", "R20", "R21"],
-      "depends_on": ["S9", "S10", "S11", "S14", "S17"]
-    },
-    {
-      "key": "S19",
-      "title": "Prove stale-index, malformed-tool, and injection defenses across boundaries",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The demo must show passing safety/error tests, not just isolated happy-path handlers. This suite exercises model output through policy and dispatch against adversarial page fixtures without adding a third real-site task.",
-      "tasks": [
-        "[ ] Build a deterministic fake-model/page integration fixture spanning turn output validation, policy, snapshot identity, and isolated dispatch.",
-        "[ ] Cover stale/replaced/reordered indexes, malformed/unknown/multiple tool calls, forbidden field types, non-HTTP(S)/JavaScript proposals, and changed approval bindings.",
-        "[ ] Inject page text that orders goal replacement, password disclosure, and unapproved submission; assert immutable goal, secret-free payloads, zero forbidden dispatch, and mandatory confirmation.",
-        "[ ] Assert no rejected or evidence-less path reports overall Success and expose named passing cases in Bun output for the PRD demo."
-      ],
-      "acceptance_criteria": [
-        "[ ] Stale-index and malformed-tool integration cases pass with zero unintended mutations and fresh observation required for stale targets.",
-        "[ ] Injected instructions cannot change the goal or disclose secrets, and cannot bypass blocked targets or submission confirmation.",
-        "[ ] Every forbidden/invalid-binding case has dispatch count 0 and no overall Success, with named tests visible in output."
-      ],
-      "verification": "Run bun test apps/extension/tests/safety.integration.test.ts; expect exit 0 and zero failed cases named stale indexes, malformed tools, injected page instructions, forbidden targets/destinations, and changed approval binding. Inspect assertions for mutation/dispatch count 0, unchanged goal, secret sentinel absent, and no Success on rejected paths. Capture the complete sanitized named-test output for demo segment four.",
-      "prd_refs": ["P0-F2", "P0-F3", "P0-F5", "P0-F6", "R8", "R12", "R17", "R20", "R21"],
-      "depends_on": ["S12", "S17", "S18"]
-    },
-    {
-      "key": "S20",
-      "title": "Prove cancellation, denied submission, and network uncertainty end to end",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The remaining release tests must prove that asynchronous errors cannot cause replay, late dispatch, or false success. Use controlled clocks, network responses, and Chrome lifecycle events for observable counts and statuses.",
-      "tasks": [
-        "[ ] Add integration cases for request failure before an action, lost result after mutation, one read retry, model deadline, turn/time limits, and approval-time exclusion.",
-        "[ ] Cover Stop before dispatch and during a late model response, rejected submission, panel close/reopen, target closure, and unexpected user switch.",
-        "[ ] Assert exact attempt/dispatch counts and terminal status/evidence explanations; ensure uncertain outcomes cannot be Success.",
-        "[ ] Keep the named network failure, Stop, and denied submission cases directly runnable with bun test for the demo."
-      ],
-      "acceptance_criteria": [
-        "[ ] Network-failure cases permit at most two read attempts and exactly one uncertain mutation attempt, with Unverified rather than Success for missing mutation evidence.",
-        "[ ] Stop, rejected submission, panel closure, target closure, and unexpected switch cause zero later dispatch, including after late responses.",
-        "[ ] The 15-turn/120-active-second/20-second boundaries and approval exclusion pass under fake clocks, with no action beyond a terminal boundary."
-      ],
-      "verification": "Run bun test apps/extension/tests/runtime.integration.test.ts; expect exit 0 and zero failures, including named network failure, Stop, and denied submission cases. Assert read count <=2, uncertain mutation count 1, submission count 0 when denied, post-interruption dispatch count 0, and exact budget/deadline boundaries. Capture the complete sanitized named-test output for demo segment four.",
-      "prd_refs": ["P0-F3", "P0-F4", "P0-F5", "P0-F6", "R8", "R17", "R19", "R20", "R21"],
-      "depends_on": ["S14", "S16", "S17", "S18", "S11"]
-    },
-    {
-      "key": "S21",
-      "title": "Verify consecutive Wikipedia research actions and the reference tab",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "U1 and the release gate require a real Wikipedia task, not a synthetic page or manual element selection. Verify that live passage evidence and the opened/switched reference destination match what the panel claims.",
-      "tasks": [
-        "[ ] Preflight Ada Lovelace's Wikipedia article and a real reference linked from its published-work passage; obtain only required origin grants.",
-        "[ ] Enter 'Find Ada Lovelace's published work, scroll there, and open a reference' in the Side Panel and Run the displayed plan without choosing target indexes manually.",
-        "[ ] Verify at least three consecutive dispatched actions, visible intent/current/result states, passage evidence against the live article, and open/switch reference destination checks.",
-        "[ ] Capture the dispatch sequence, passage/reference screenshots, and final evidence status; record any changed site or unmet acceptance rather than substituting a fixture."
-      ],
-      "acceptance_criteria": [
-        "[ ] The real-site run executes at least three consecutive actions without manual target selection, including read/find, scroll or click, and reference-tab management.",
-        "[ ] The displayed published-work passage matches the live article and the verified reference tab URL matches the actual opened/switched destination.",
-        "[ ] Plan, About to do, Doing, and result states are visible, and overall Success is supported by fresh passage and destination evidence."
-      ],
-      "verification": "Build with bun run build:extension and load the unpacked build with the deployed proxy/token. Open https://en.wikipedia.org/wiki/Ada_Lovelace, submit the exact task above, inspect the plan, then press Run and do not select indexes or targets. Expect >=3 consecutive actions, a live matching passage, an opened/switched reference tab, and evidence-backed Success. Capture a sanitized ordered dispatch log with action IDs/snapshot IDs, screenshots of the article passage and reference URL, and the final panel evidence. If permission is requested, grant only that origin; manual permission consent is not manual target selection.",
-      "prd_refs": ["P0-F1", "P0-F2", "P0-F3", "P0-F4", "P0-F6", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R14", "R15", "R18", "R20"],
-      "depends_on": ["S18", "S19", "S20"]
-    },
-    {
-      "key": "S22",
-      "title": "Verify dummy-form preparation, rejection, approved evidence, and Stop",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "U2/U3 require three locally verified dummy fills, informed submission consent, and a demonstrated dispatch boundary for Stop. Approved submission is the same named httpbin flow and must also distinguish a verified response from an uncertain result.",
-      "tasks": [
-        "[ ] On https://httpbin.org/forms/post request custname='Sidekick Demo', custtel='5550100', and custemail='sidekick@example.com', then ask before submitting; do not manually select targets.",
-        "[ ] Compare the three local values, inspect destination and all outbound fields in confirmation, reject, and prove no /post request occurred.",
-        "[ ] In a separate unchanged dummy run approve once and compare fresh response evidence with the live httpbin response; absent evidence must be Unverified.",
-        "[ ] Start a scrolling task and press Stop before its next dispatch; capture the boundary log and verify no later action occurs."
-      ],
-      "acceptance_criteria": [
-        "[ ] Three consecutive fills set the exact dummy values and their local checks pass without manual target selection or automatic submission.",
-        "[ ] The confirmation names https://httpbin.org/post and its outbound fields; rejection produces zero submission requests and no submission-success claim.",
-        "[ ] Unchanged approval produces one submission and Success only with matching fresh response evidence; missing response evidence is Unverified.",
-        "[ ] Stop pressed before a queued scroll dispatch prevents that and every later dispatch, with Stopped visible."
-      ],
-      "verification": "Load https://httpbin.org/forms/post and ask 'Fill customer name Sidekick Demo, telephone 5550100, and email sidekick@example.com, then ask before submitting.' Run the plan; inspect local DOM values, confirmation, and Network with Preserve log. Reject: expect the three exact values and zero POST /post requests. Reload and repeat with one approval: expect exactly one POST and fresh matching response evidence, not model-only Success. Return to the form, enter 'Scroll down twice', Run its plan, and Stop while the next step is About to do before dispatch: expect no log entry after the Stop timestamp. Capture dummy-only DOM/value checks, full confirmation screenshot, rejected/approved network logs and terminal evidence, and the Stop dispatch-boundary log. Run bun test apps/extension/src/agent/completion.test.ts to prove missing-response Unverified with zero failures.",
-      "prd_refs": ["P0-F3", "P0-F4", "P0-F5", "P0-F6", "R5", "R6", "R7", "R8", "R17", "R19", "R20", "R21"],
-      "depends_on": ["S18", "S19", "S20"]
-    },
-    {
-      "key": "S23",
-      "title": "Document unpacked installation and the required demo preflight",
-      "type": "docs",
-      "priority": "P1",
-      "area": "infra",
-      "context": "Milestone five explicitly requires installation instructions. Keep this handoff limited to building/loading the unpacked extension and preparing the named proxy/sites outside the demo timer; do not add Web Store packaging or extra product documentation.",
-      "tasks": [
-        "[ ] Write installation instructions for Bun dependencies/build scripts, the apps/extension/.output/chrome-mv3 Load unpacked path, toolbar/Side Panel opening, and required Chrome origin grants.",
-        "[ ] Explain server-only Gemini key/fixed model, HTTPS proxy configuration, static demo-token setup in session storage, disabled body logging, and provider retention disclosure before real data.",
-        "[ ] Include the PRD's two exact site tasks, dummy values, safety/error test commands, and preflight checks for hosting/token/sites outside the timer.",
-        "[ ] State top-frame-only support, panel-close/Stop semantics, memory-only runs, and honest reporting of unmet acceptance; follow the instructions once from a fresh unpacked load."
-      ],
-      "acceptance_criteria": [
-        "[ ] Following the instructions from a fresh unpacked load yields a built extension, opening Side Panel, and authenticated reachable HTTPS proxy without undocumented steps.",
-        "[ ] Documentation uses bun install/run/bun test, keeps provider secrets server-side, and contains no real token/key or request-body sample with sensitive data.",
-        "[ ] Preflight names both demo sites, dummy values, required permissions/disclosure, and the two release-test commands; it does not instruct Web Store submission or unsupported controls."
-      ],
-      "verification": "Using only the new installation instructions, run bun install, bun run typecheck, bun run build:extension, and bun run dev:server; expect exit 0 for finite commands and the server listening. Load apps/extension/.output/chrome-mv3 in a fresh Chrome profile, configure the demo token, open the panel, and run bun test apps/server/tests/https.smoke.test.ts with the documented private environment values; expect authenticated 400/no-token 401 smoke results and zero failures. Run bun test apps/extension/tests/safety.integration.test.ts apps/extension/tests/runtime.integration.test.ts; expect zero failures. Capture a step checklist with no omitted/manual undocumented fix, the opened panel, and sanitized command output.",
-      "prd_refs": ["P0-F1", "P0-F3", "R1", "R9", "R10", "R11", "R13", "R16", "R19", "R21"],
-      "depends_on": ["S2", "S3", "S4", "S5", "S19", "S20"]
-    },
-    {
-      "key": "S24",
-      "title": "Rehearse the exact release demo twice within five minutes",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The final PRD release gate is the four-part judge demo, with both real-site acceptances and passing safety tests. Preflight stays outside the timer; incomplete safety/evidence or unreachable hosting must be reported as a failure, not edited out of the demonstration.",
-      "tasks": [
-        "[ ] Preflight unpacked installation, HTTPS proxy/token, provider disclosure, origin grants, Wikipedia/reference/httpbin availability, and passing tests outside each timed attempt.",
-        "[ ] Rehearse twice: 0:00-0:30 panel/manifest/indexed snapshot/proxy/debugger exclusion; 0:30-2:15 Wikipedia plan, consecutive actions, live passage/reference evidence; 2:15-3:45 three httpbin fills, confirmation rejection, and Stop before dispatch; 3:45-4:45 named safety/error test results and uncertain non-Success outcomes.",
-        "[ ] Check the required controls by keyboard at 320px and preserve monochrome borderless/focus/contrast evidence from the release build.",
-        "[ ] Capture each attempt's elapsed time, segment evidence, R1-R21 pass/fail checklist, and test output; explicitly list any unmet acceptance rather than claiming the cut line passed."
-      ],
-      "acceptance_criteria": [
-        "[ ] Two complete rehearsals each finish in less than 300 seconds, with preflight excluded and all four segments shown in the prescribed order.",
-        "[ ] Each attempt shows the real Wikipedia acceptance and three exact dummy httpbin fills, rejected submission with zero POST, and Stop with zero later dispatch.",
-        "[ ] Named stale-index, malformed-tool, network-failure, Stop, denied-submission, and injected-instruction tests all pass; uncertain outcomes are visibly not Success.",
-        "[ ] Evidence covers every R1-R21 requirement, reachable authenticated proxy, debugger exclusion, and keyboard-usable borderless controls at 320px; no release gate remains unmet."
-      ],
-      "verification": "Complete the documented preflight and privately supply the HTTPS smoke-test variables before running bun run typecheck, bun run build:extension, and bun test; expect exit 0 and zero failed tests before starting a stopwatch. Perform the four exact PRD segments above twice, resetting the task/page state between attempts; each elapsed time must be <300 seconds and each segment must show the specified visible result. In segment four run bun test apps/extension/tests/safety.integration.test.ts apps/extension/tests/runtime.integration.test.ts; expect the six named safety/error categories to pass with zero failures. Capture each attempt's timed screen recording or timestamped screenshots plus dispatch/network logs, test output, R1-R21 binary checklist, and a 320px keyboard-focus screenshot. A missing acceptance, false Success, failed test, unreachable proxy, or >=300-second attempt is a failing rehearsal.",
-      "prd_refs": ["P0-F1", "P0-F2", "P0-F3", "P0-F4", "P0-F5", "P0-F6", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18", "R19", "R20", "R21"],
-      "depends_on": ["S21", "S22", "S23"]
-    }
-  ]
+ "product": "sidekick",
+ "epic_title": "Sidekick: supervised Chrome side-panel agent",
+ "epic_summary": "Ship an unpacked Manifest V3 WXT/React extension and an authenticated HTTPS Hono proxy using Bun and the scaffold's OpenRouter integration (OpenAI-compatible chat completions with OPENROUTER_API_KEY from .env). The visible Side Panel accepts a natural-language task, shows a plan before Run, executes one validated browser action at a time, and presents progress, confirmation, Stop, and fresh completion evidence. The MVP is complete only when Wikipedia research with a reference tab and dummy-form preparation on httpbin both pass, safety/error tests pass, the proxy is reachable, and the prescribed demo finishes in under five minutes. Exclude arbitrary-site guarantees, background continuation, accounts, databases, payments, web/native applications, extra providers, debugger/screenshot control, iframe/shadow-root/canvas/PDF control, history/export, uploads/downloads, authentication/CAPTCHA automation, and Web Store submission.",
+ "epic_done_when": [
+  "An independent Bun-based Sidekick scaffold builds an unpacked MV3 extension; its toolbar opens chrome.sidePanel and its authenticated HTTPS proxy uses a single server-fixed OpenRouter model model without exposing the provider key.",
+  "The panel presents task input, selected-tab context, token configuration, provider disclosure, a pre-execution plan, Run, labelled step states, confirmation, and Stop; it meets the prescribed borderless monochrome design and keyboard/320-pixel requirements.",
+  "Indexed, bounded, redacted top-frame snapshots ground read/find, scroll, click, ordinary fill, and open/switch-tab tools; every action validates its target identity and receives fresh observation, and unsafe actions cannot bypass extension-side policy.",
+  "Runs enforce 15 turns, 120 active seconds excluding approvals, a 20-second model deadline, one read retry, no uncertain mutation replay, cancellation on Stop/panel closure, and evidence-based Success versus Failed, Stopped, or Unverified.",
+  "The Wikipedia and httpbin acceptances each pass twice; regression tests prove stale-index handling, malformed-tool rejection, network failure, Stop, denied submission, and injected-page-instruction handling with zero failures.",
+  "Installation/preflight instructions are usable and the exact four-part PRD demo completes in under five minutes with live evidence and passing safety/error tests.",
+  "Final gate passed: tests, a continuous computer-use video covering every element, per-element screenshots and an independent verifier's rerun are attached."
+ ],
+ "areas": [
+  "infra",
+  "panel",
+  "page",
+  "agent",
+  "security",
+  "tests"
+ ],
+ "issues": [
+  {
+   "key": "S1",
+   "title": "Scaffold the independent Bun workspace and boot only extension and proxy",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Appendix B overrides generic stack wiring. Generate Sidekick once outside the interview repository and retain only the WXT/React and Bun/Hono paths in the runnable MVP; scaffold boot was not previously verified.",
+   "tasks": [
+    "[ ] Run /home/ubuntu/manus-interview/scaffold/04-sidekick.sh /home/ubuntu/sidekick from outside the interview repo in an interactive TTY; use the documented Biome, React WXT, and Project-scope answers without --yes.",
+    "[ ] Remove unused Better Auth, MongoDB, Polar, Next/native pages, and native-uniwind wiring from runnable imports, environment validation, and startup scripts; do not implement those products.",
+    "[ ] Add Bun root scripts dev:extension, dev:server, build:extension, and typecheck that target the retained apps; preserve Bun installation and testing.",
+    "[ ] Run installation, type checking, both development processes, and the WXT Chrome build; record actual boot results rather than treating scaffold validation as proof."
+   ],
+   "acceptance_criteria": [
+    "[ ] /home/ubuntu/sidekick is one independent Better-T-Stack workspace/git repository, not a directory inside manus-interview or a shared product scaffold.",
+    "[ ] bun install and bun run typecheck exit 0; bun run build:extension produces apps/extension/.output/chrome-mv3/manifest.json.",
+    "[ ] bun run dev:extension and bun run dev:server start without requiring account, database, payment, web, or native configuration."
+   ],
+   "verification": "From /home/ubuntu, execute the scaffold command above in a TTY exactly once. In /home/ubuntu/sidekick run bun install, bun run typecheck, and bun run build:extension; expect exit 0 and the Chrome MV3 build directory. In separate terminals run bun run dev:extension and bun run dev:server; expect WXT build-ready output and a listening Bun/Hono process with no missing auth/database/payment/native variable error. Capture both startup log excerpts and the generated manifest path, with secrets omitted.",
+   "prd_refs": [
+    "P0-F1",
+    "R1",
+    "R9",
+    "R16"
+   ],
+   "depends_on": []
+  },
+  {
+   "key": "S2",
+   "title": "Register the MV3 Side Panel and scoped browser permissions",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "The WXT addon supplies popup, background, and content entrypoints but no Side Panel. The MV3 worker must only set up toolbar/panel behavior; browser orchestration belongs in the visible panel.",
+   "tasks": [
+    "[ ] Add apps/extension/entrypoints/sidepanel/ and configure the generated MV3 side_panel path and toolbar opening through chrome.sidePanel.",
+    "[ ] Declare sidePanel, activeTab, scripting, tabs, and storage; configure the HTTPS proxy origin and user-granted demo/reference origins without silently granting arbitrary-site access.",
+    "[ ] Keep the worker limited to panel/toolbar setup and package a top-frame content-script entrypoint for isolated chrome.scripting use.",
+    "[ ] Add a Bun manifest test proving the entrypoint, permissions, and exclusion of debugger/native-messaging/background-agent wiring."
+   ],
+   "acceptance_criteria": [
+    "[ ] Loading apps/extension/.output/chrome-mv3 as unpacked in Chrome succeeds and clicking the toolbar icon opens the Side Panel.",
+    "[ ] The generated manifest has manifest_version 3, a resolvable side_panel.default_path, and the five required permissions.",
+    "[ ] No debugger or nativeMessaging permission exists, the script targets the top frame in an isolated world, and no agent loop runs in the service worker."
+   ],
+   "verification": "Run bun run build:extension and bun test apps/extension/tests/manifest.test.ts; expect exit 0 and zero failed assertions for the manifest requirements and exclusions. At chrome://extensions enable Developer mode, Load unpacked apps/extension/.output/chrome-mv3, then click Sidekick's toolbar icon. Expect its panel to open with no extension error. Capture the manifest excerpt, open-panel screenshot, and empty extension error view.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F2",
+    "R1",
+    "R9",
+    "R10",
+    "R11",
+    "R13",
+    "R14"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S3",
+   "title": "Secure and publish the Hono proxy over authenticated HTTPS",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Reachable HTTPS hosting is the first infrastructure release gate. A server-configured static bearer token and request limits must protect the proxy independently of CORS, and provider-bound bodies must not be logged.",
+   "tasks": [
+    "[ ] Mount a POST /v1/agent/turn shell that rejects an empty/invalid request with 400 before any adapter call; protect it with a server-only static token, HTTPS-only production endpoint configuration, and explicit configurable request-size and request-rate limits.",
+    "[ ] Disable request/response body logging, including evlog paths; prevent authorization tokens and provider keys from entering logs or extension bundles.",
+    "[ ] Deploy the Bun/Hono proxy to the supplied HTTPS host and configure the extension's proxy origin; report missing hosting/token as an unmet gate instead of asserting connectivity.",
+    "[ ] Add Bun middleware tests and an HTTPS smoke test using SIDEKICK_PROXY_URL and SIDEKICK_DEMO_TOKEN without printing either secret."
+   ],
+   "acceptance_criteria": [
+    "[ ] Missing or incorrect bearer tokens receive 401, including requests carrying an otherwise allowed Origin; CORS alone never authorizes a turn.",
+    "[ ] Requests beyond configured body/rate limits receive 413/429 and never reach the model adapter.",
+    "[ ] The deployed HTTPS endpoint accepts the configured token, and production configuration rejects a non-HTTPS proxy URL.",
+    "[ ] Captured request logs contain no body, bearer token, provider key, or seeded sensitive-value sentinel."
+   ],
+   "verification": "Run bun test apps/server/src/agent/security.test.ts; expect zero failures for token, Origin-independence, 413, 429, HTTPS-configuration, and logging-sentinel assertions. With SIDEKICK_PROXY_URL set to the deployed HTTPS origin and SIDEKICK_DEMO_TOKEN supplied privately, run bun test apps/server/tests/https.smoke.test.ts. Expect an invalid turn body with a valid token to receive 400 and the same request with no/bad token to receive 401, proving reachable authenticated routing without spending a model turn. Capture the sanitized test output and sanitized log sample; an absent HTTPS host is a failing gate.",
+   "prd_refs": [
+    "P0-F3",
+    "R15",
+    "R16",
+    "R21"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S4",
+   "title": "Implement the OpenRouter model single-tool turn endpoint and validated protocol",
+   "type": "feature",
+   "priority": "P0",
+   "area": "agent",
+   "context": "The proxy converts a goal, current-run transcript, and snapshot into assistant text and at most one tool call. Only the extension executes tools; the OpenRouter adapter and one server-fixed model are the entire provider surface. The server reads OPENROUTER_API_KEY and OPENROUTER_MODEL from .env (default candidate: anthropic/claude-sonnet-5.5, which supports tool calling). The key never reaches the extension.",
+   "tasks": [
+    "[ ] Define shared Zod schemas for Snapshot, Action, turn input/output, allowed tool signatures, and matching tool-call/tool-result identifiers.",
+    "[ ] Replace unused scaffold /ai behavior with authenticated POST /v1/agent/turn using the OpenRouter integration (OpenAI-compatible chat completions with OPENROUTER_API_KEY from .env) and one server-fixed model; keep the provider key in server environment only.",
+    "[ ] Validate turn payloads and model outputs; reject malformed arguments, unknown tools, multiple tool calls, and unmatched tool-result IDs instead of executing or forwarding them as actions.",
+    "[ ] Add deterministic Bun contract tests with a fake OpenRouter adapter; confirm the server never calls browser execution APIs."
+   ],
+   "acceptance_criteria": [
+    "[ ] A valid authenticated turn returns assistant text and zero or one schema-valid tool call with its original call ID preserved.",
+    "[ ] Malformed input, unknown tools, invalid arguments, multiple calls, and mismatched transcript IDs produce explicit errors and no browser action.",
+    "[ ] Only the fixed OpenRouter model (OPENROUTER_MODEL) is used; the extension has neither a provider picker nor a provider key."
+   ],
+   "verification": "Run bun run build:extension, bun test apps/server/src/agent/turn.test.ts, and bun run typecheck in that order; expect exit 0 and zero failed tests. Tests must assert exact call-ID round trips, zero/one-call responses, rejected multi-call/malformed/unknown-tool/transcript cases, a fixed Google adapter/model selection, no browser dispatch from the server, and absence of a seeded server-key sentinel from the generated extension bundle.",
+   "prd_refs": [
+    "P0-F3",
+    "R15",
+    "R16"
+   ],
+   "depends_on": [
+    "S3"
+   ]
+  },
+  {
+   "key": "S5",
+   "title": "Build the borderless panel shell with context, token, and disclosure",
+   "type": "feature",
+   "priority": "P0",
+   "area": "panel",
+   "context": "The panel needs task entry and trustworthy selected-tab context before any model request. Appendix A governs the UI: monochrome shadcn/Radix primitives, no borders/outlines/dividers, and keyboard-accessible controls at 320 pixels.",
+   "tasks": [
+    "[ ] Add labelled task input, selected-tab title/URL, demo-token configuration, provider-bound-text/retention disclosure, and non-animated plan, Run, timeline, and Stop regions for subsequent control wiring.",
+    "[ ] Query only the selected tab's metadata; retain task/transcript in panel memory and store only the demo token in chrome.storage.session, never persistent storage.",
+    "[ ] Keep model requests disabled until the token is configured and the provider disclosure has been presented before real-data use.",
+    "[ ] Apply shadcn/Radix with Tailwind, zero border widths/outlines, 10px radii, Geist or Inter at 14px/400/600, neutral colors, at least 7:1 body contrast, and an offset shadow-ring for focus; add session/disclosure tests."
+   ],
+   "acceptance_criteria": [
+    "[ ] The panel shows the actual selected-tab title/URL, task input, token configuration, and provider/retention disclosure before any provider-bound page text is sent.",
+    "[ ] Storage tests show only the demo token in session storage and no goal, transcript, page snapshot, or token in local/sync storage.",
+    "[ ] At 320px panel width all controls remain usable without horizontal scrolling, have accessible names, and are reachable by keyboard.",
+    "[ ] UI inspection shows only black/white/neutral greys, no borders/outlines/dividers or animations, 10px radii, prescribed typography, at least 7:1 body contrast, and visible shadow-ring keyboard focus."
+   ],
+   "verification": "Run bun test apps/extension/src/panel/config.test.ts; expect zero failures for selected-tab-only querying, session-only token storage, and disclosure-before-request assertions. Load the extension, set the panel to 320px, and Tab/Shift+Tab through every enabled control; expect a visible offset shadow-ring and no unreachable or clipped control. Inspect computed typography/border/outline/color values and calculate body-text contrast in DevTools; expect the specified values and ratio >=7:1. Capture the 320px screenshot with disclosure and focused input, accessibility-name inspection, computed-style/contrast results, and storage contents with the token redacted.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F4",
+    "R2",
+    "R3",
+    "R6",
+    "R10",
+    "R16",
+    "R18",
+    "R19",
+    "R21"
+   ],
+   "depends_on": [
+    "S2"
+   ]
+  },
+  {
+   "key": "S6",
+   "title": "Capture indexed top-frame DOM snapshots with document identity",
+   "type": "feature",
+   "priority": "P0",
+   "area": "page",
+   "context": "The agent grounds actions in a DOM-derived, accessibility-inspired snapshot rather than screenshots or debugger access. Every snapshot must identify both the document and its indexed visible controls.",
+   "tasks": [
+    "[ ] Implement the packaged content-script observer returning snapshotId, documentToken, tabId, URL, title, rendered text, truncation flag, and indexed element descriptors.",
+    "[ ] Derive roles/names from ordinary top-frame visible/enabled controls, headings, and labels; retain an in-document index-to-element map for action validation.",
+    "[ ] Rotate snapshot IDs on observation and document tokens on document replacement; exclude iframe, shadow-root, canvas, and PDF control traversal.",
+    "[ ] Add Bun DOM-fixture tests for descriptors, visibility, enabledness, index uniqueness, and document/snapshot identity."
+   ],
+   "acceptance_criteria": [
+    "[ ] Observing a fixture yields every required Snapshot field and unique indexes whose roles/names match its visible controls, headings, and labels.",
+    "[ ] Hidden/disabled controls and unsupported frame/shadow/canvas/PDF contents are not actionable indexed targets.",
+    "[ ] Re-observation produces a new snapshotId; replacing the document produces a new documentToken rather than reusing an old target map."
+   ],
+   "verification": "Run bun test apps/extension/src/page/snapshot.test.ts; expect exit 0 and zero failures for exact Snapshot fields, visible control/heading/label roles and names, URL/title, hidden/disabled exclusions, unique indexes, unsupported-boundary exclusions, new snapshot IDs on observation, and new document tokens on replacement. Assert each fixture index resolves to its original live DOM element and no excluded control appears in the actionable map; capture the named test output.",
+   "prd_refs": [
+    "P0-F2",
+    "R3",
+    "R4",
+    "R11",
+    "R12",
+    "R13"
+   ],
+   "depends_on": [
+    "S2"
+   ]
+  },
+  {
+   "key": "S7",
+   "title": "Redact and bound snapshots while supporting targeted text observation",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "Section 7 caps each snapshot and excludes browser secrets and existing sensitive values from provider payloads. Truncation must be visible and recoverable through targeted observation rather than an unbounded full-page dump.",
+   "tasks": [
+    "[ ] Cap snapshot text at 20,000 characters and indexed descriptors at 300 controls; set truncated whenever content was omitted.",
+    "[ ] Implement observe(tabId, query?) targeted rendered-text search returning bounded relevant excerpts and valid current-document indexes.",
+    "[ ] Exclude cookies, storage, hidden DOM, password content, and existing sensitive control values from rendered text/tool results; send local check outcomes instead of values and use seeded secret fixtures to prove exclusion rather than hard-coding sentinel removal.",
+    "[ ] Add boundary and redaction tests covering long pages, many controls, targeted matches outside the initial cap, and seeded secrets."
+   ],
+   "acceptance_criteria": [
+    "[ ] Every snapshot has text.length <=20000 and elements.length <=300; truncated is true whenever either cap omits content.",
+    "[ ] A targeted query locates text beyond the initial excerpt and returns bounded evidence tied to the current snapshot/document rather than stale indexes.",
+    "[ ] Serialized provider payloads and tool results contain none of the seeded cookie/storage/hidden/password/existing-sensitive-value sentinels."
+   ],
+   "verification": "Run bun test apps/extension/src/page/snapshot-privacy.test.ts; expect zero failures at exactly/above both caps, truncation marking, targeted retrieval beyond the first 20,000 characters, and all secret-sentinel exclusions. Inspect the tests' serialized outbound turn fixture; expect only rendered permitted content, descriptors, and redacted/boolean check results, with no browser-storage/cookie read performed by the observer.",
+   "prd_refs": [
+    "P0-F2",
+    "P0-F5",
+    "R3",
+    "R4",
+    "R12",
+    "R21"
+   ],
+   "depends_on": [
+    "S6",
+    "S4"
+   ]
+  },
+  {
+   "key": "S8",
+   "title": "Reject stale actions before isolated content-script dispatch",
+   "type": "feature",
+   "priority": "P0",
+   "area": "page",
+   "context": "An index is meaningful only for its recorded tab, document, snapshot, and element. Stale targets must be re-observed without guessing; chrome.scripting executes only the packaged isolated-world dispatcher.",
+   "tasks": [
+    "[ ] Build a Zod-validated dispatcher carrying runId, actionId, tabId, snapshotId, documentToken, tool, args, and preview.",
+    "[ ] Check active-run identity and the current document/index map immediately before execution; verify the target still exists, remains visible/enabled, and retains its observed identity.",
+    "[ ] Return a structured stale-target result that triggers fresh observation rather than resolving another element at the old index.",
+    "[ ] Add dispatch tests for removed/replaced/reordered controls, document navigation, unknown indexes, malformed envelopes, and isolated packaged-script execution."
+   ],
+   "acceptance_criteria": [
+    "[ ] A matching action dispatches once through the packaged isolated script to its recorded element.",
+    "[ ] Changed document/snapshot identity, removed/replaced target, unknown index, or invalid envelope dispatches zero mutations and requests re-observation.",
+    "[ ] Reordered controls cannot cause an old index to select a different element, and no model-supplied JavaScript is evaluated."
+   ],
+   "verification": "Run bun test apps/extension/src/page/dispatch.test.ts; expect zero failures and mutation count 0 in every stale/malformed case, mutation count 1 for the matching-target case, and an assertion that chrome.scripting receives the packaged isolated dispatcher rather than model code. The stale result must explicitly identify re-observation as required; no fallback index/selector may be invoked.",
+   "prd_refs": [
+    "P0-F2",
+    "P0-F3",
+    "P0-F5",
+    "R5",
+    "R11",
+    "R12",
+    "R13",
+    "R21"
+   ],
+   "depends_on": [
+    "S6",
+    "S4"
+   ]
+  },
+  {
+   "key": "S9",
+   "title": "Implement validated observe, find-text, and clamped scroll tools",
+   "type": "feature",
+   "priority": "P0",
+   "area": "page",
+   "context": "Research requires reading necessary rendered information, finding a passage, and scrolling without manual target selection. Tool results must describe observable page state and leave the next action grounded in fresh observation.",
+   "tasks": [
+    "[ ] Expose observe(tabId, query?), findText(query), and scroll(direction, pixels) through the validated dispatcher.",
+    "[ ] Return live text-match evidence for findText and before/after position evidence for scroll; clamp scroll pixels to a documented finite range and reject invalid directions/non-finite values.",
+    "[ ] Obtain a fresh bounded/redacted snapshot after execution; return explicit no-match or no-movement results instead of inventing evidence.",
+    "[ ] Add Bun tests for found/missing text, targeted observation, scroll boundaries, invalid arguments, and fresh result identity."
+   ],
+   "acceptance_criteria": [
+    "[ ] observe/findText return the fixture's live passage and current-document identity; a missing query returns an explicit no-match result.",
+    "[ ] Valid scroll changes the top-frame scroll position within the configured clamp, while invalid direction/NaN/infinite pixels cause no dispatch.",
+    "[ ] Each executed tool returns a fresh bounded/redacted observation; a page boundary with zero movement is reported rather than counted as movement."
+   ],
+   "verification": "Run bun test apps/extension/src/page/read-scroll.test.ts; expect exit 0 and zero failures for exact found/missing-query results, targeted retrieval beyond the initial cap, clamped before/after scroll positions, invalid direction/NaN/infinite inputs causing zero dispatch, page-boundary zero movement, and a fresh bounded/redacted snapshot after each execution. Assert returned passage evidence equals the fixture's currently rendered text, not a model summary; capture the named test output.",
+   "prd_refs": [
+    "P0-F2",
+    "P0-F3",
+    "R4",
+    "R5",
+    "R12",
+    "R20"
+   ],
+   "depends_on": [
+    "S7",
+    "S8"
+   ]
+  },
+  {
+   "key": "S10",
+   "title": "Execute ordinary click and fill tools with local value checks",
+   "type": "feature",
+   "priority": "P0",
+   "area": "page",
+   "context": "Sidekick supports ordinary top-frame links and form controls, not arbitrary input automation. Dummy fills must be checked against the DOM locally without echoing existing sensitive values to the provider.",
+   "tasks": [
+    "[ ] Add click(index) and fill(index, value) handlers using validated target identity; dispatch the ordinary DOM events needed by supported controls.",
+    "[ ] Limit fills to visible/enabled ordinary editable controls and reject password/payment/file/hidden targets at the handler even if a caller bypasses orchestration.",
+    "[ ] Verify filled values locally, returning equality booleans/redacted evidence; refresh observation after click/fill and never automatically submit after filling.",
+    "[ ] Add Bun tests for permitted link click, three text-field fills, emitted events, local mismatch, unsupported targets, and absence of implicit submission."
+   ],
+   "acceptance_criteria": [
+    "[ ] A permitted link click targets the recorded live element, and three ordinary dummy-field fills set their exact supplied values and emit expected input/change events.",
+    "[ ] Fill results contain local equality outcomes, not sensitive field contents; a site-altered value yields a failed equality check.",
+    "[ ] Password/payment/file/hidden/disabled targets cannot be filled, and completing fills dispatches no submit event or outbound form request."
+   ],
+   "verification": "Run bun test apps/extension/src/page/click-fill.test.ts; expect exit 0 and zero failures. The three ordinary-control fixtures must equal custname='Sidekick Demo', custtel='5550100', custemail='sidekick@example.com' locally with input/change events recorded, equality=true and no existing sensitive value in results. A site-modified field must report equality=false; forbidden field types must have mutation count 0; the link fixture must record exactly one click on its indexed element; submit count must remain 0 after all fills. Capture the named test output.",
+   "prd_refs": [
+    "P0-F3",
+    "P0-F5",
+    "P0-F6",
+    "R5",
+    "R17",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S8",
+    "S7"
+   ]
+  },
+  {
+   "key": "S11",
+   "title": "Manage requested tabs and pause or stop on browser-target changes",
+   "type": "feature",
+   "priority": "P0",
+   "area": "page",
+   "context": "The research task opens/switches a reference tab while preserving the selected target. Missing origin access pauses for a user grant; closed targets and unexpected user tab switches stop rather than continuing against another page.",
+   "tasks": [
+    "[ ] Implement validated HTTP(S) openTab(url) and switchTab(tabId), retaining only current-run target/reference tab IDs and selected-tab metadata.",
+    "[ ] After an intentional tab operation select/re-observe its destination and distinguish its expected activation event from an unrelated user switch.",
+    "[ ] Pause without dispatch when origin access is missing and request the configured demo/reference origin only on a user gesture; explain denial.",
+    "[ ] Stop dispatch when the target closes or the user unexpectedly switches tabs; add tests for expected switches, closed IDs, denied permissions, and unexpected activation."
+   ],
+   "acceptance_criteria": [
+    "[ ] A requested HTTP(S) reference tab opens/switches and its current URL is verified from fresh selected-tab state.",
+    "[ ] Missing access results in zero page actions until the user grants that origin; denial remains non-executing with a visible explanation.",
+    "[ ] Closing the target or unexpectedly selecting another tab prevents all later actions; an agent-requested switch does not trigger that interruption.",
+    "[ ] The agent does not collect metadata/snapshots of unrelated tabs."
+   ],
+   "verification": "Run bun test apps/extension/src/page/tabs.test.ts; expect exit 0 and zero failures for exact opened/switched destination URLs, expected-versus-unexpected activation, closed-target interruption, permission pause/grant/denial, and selected-tab-only observation. Chrome mock assertions must show zero page dispatch before grant or after denial, no later dispatch after target closure/unexpected switch, uninterrupted execution for the agent-requested switch, and no metadata/snapshot request for unrelated tabs. Capture the named test output.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F3",
+    "P0-F4",
+    "R3",
+    "R5",
+    "R14",
+    "R19",
+    "R21"
+   ],
+   "depends_on": [
+    "S2",
+    "S8",
+    "S9"
+   ]
+  },
+  {
+   "key": "S12",
+   "title": "Enforce extension-side action safety and untrusted-page boundaries",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "Model output and page text are not authority to change the user's task or expose secrets. Deterministic policy outside OpenRouter model must block forbidden actions and distinguish routine actions from consequential or unclear ones, without claiming prompt-injection immunity.",
+   "tasks": [
+    "[ ] Classify proposed actions against the immutable user goal and live DOM as allow, require confirmation, or block; routine reads/navigation/scrolls/ordinary fills/requested tabs are allowed, consequential submissions or unclear effects require confirmation.",
+    "[ ] Block secret requests, password/payment/file/hidden editing, non-HTTP(S) destinations, unknown tools, and model-generated JavaScript in the extension before dispatch; share defense-in-depth validation with handlers.",
+    "[ ] Delimit observations and page-derived results as untrusted data in the OpenRouter model request; prohibit page instructions from rewriting the stored goal or granting tool permissions.",
+    "[ ] Add Bun policy tests including injected instructions to ignore the task, read a password, and transmit it; no secret or unauthorized mutation may leave the boundary."
+   ],
+   "acceptance_criteria": [
+    "[ ] Policy allows the named routine tool cases, requires confirmation for submit/unclear-consequence cases, and blocks every named forbidden case before dispatch.",
+    "[ ] A page-injection fixture cannot change the stored user goal, request a secret read, authorize a forbidden action, or remove confirmation requirements.",
+    "[ ] Outbound prompts explicitly delimit page observations as untrusted; seeded secrets remain absent from prompts/results and no immunity guarantee is displayed."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/policy.test.ts apps/server/src/agent/prompt-boundary.test.ts; expect zero failures for allow/confirm/block classification, non-HTTP(S)/JavaScript rejection, immutable-goal assertions, untrusted delimiters, and injected secret/exfiltration cases. For every forbidden model proposal assert dispatch count 0 and absence of the seeded secret in serialized requests; for injected submission assert confirmation is still required rather than being silently granted.",
+   "prd_refs": [
+    "P0-F3",
+    "P0-F5",
+    "R5",
+    "R15",
+    "R17",
+    "R21"
+   ],
+   "depends_on": [
+    "S4",
+    "S7",
+    "S8",
+    "S10",
+    "S11"
+   ]
+  },
+  {
+   "key": "S13",
+   "title": "Connect plan-before-Run to a one-action OpenRouter execution loop",
+   "type": "feature",
+   "priority": "P0",
+   "area": "agent",
+   "context": "Natural-language tasks must produce a visible plan before any browser mutation. Once Run is pressed, orchestration remains in the visible panel and alternates exactly one validated action with fresh observation and a matching tool result.",
+   "tasks": [
+    "[ ] Submit the task with the selected-tab snapshot to obtain/display plan text; hold any proposed action without execution until explicit Run.",
+    "[ ] Maintain memory-only run/action IDs and current-run messages/tool results; request one turn, validate it, apply policy, dispatch at most one action, re-observe, and return the matching call ID.",
+    "[ ] Route stale-target results to fresh observation without guessing or executing the stale proposal; route confirmation-required actions to a paused boundary for later confirmation wiring.",
+    "[ ] Add fake-model loop tests for plan gating, three consecutive actions, one-action-per-turn, matching IDs, malformed/multi-call rejection, and fresh snapshots."
+   ],
+   "acceptance_criteria": [
+    "[ ] Task submission displays a plan and enables Run while browser mutation count stays 0 until Run is activated.",
+    "[ ] A three-action fake-model task executes without manual target selection, never has more than one action in flight, and supplies a fresh snapshot after each action.",
+    "[ ] Tool-result IDs match model call IDs and no malformed, multi-call, stale, or confirmation-pending proposal is dispatched.",
+    "[ ] Runs/transcripts live only in panel memory; no background worker continuation or persistent history is created."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/loop.test.ts; expect zero failures with mutation count 0 before Run, exactly three allowed actions after Run, maximum concurrent dispatch count 1, a distinct post-action snapshot per turn, matching tool IDs, and zero dispatch for invalid/stale/confirmation-pending proposals. On https://en.wikipedia.org/wiki/Ada_Lovelace submit 'Find Ada Lovelace's published work, scroll there, and open a reference' in the panel without pressing Run; expect a visible plan and mutation count 0. Capture the plan screenshot and sanitized pre-Run dispatch log.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F3",
+    "P0-F4",
+    "R2",
+    "R3",
+    "R5",
+    "R6",
+    "R15",
+    "R18"
+   ],
+   "depends_on": [
+    "S4",
+    "S5",
+    "S9",
+    "S10",
+    "S11",
+    "S12"
+   ]
+  },
+  {
+   "key": "S14",
+   "title": "Bound run duration and prevent uncertain mutation retries",
+   "type": "feature",
+   "priority": "P0",
+   "area": "agent",
+   "context": "Section 7 sets exact execution budgets and retry rules. Network failure must not cause the client to replay a mutation whose outcome may already have occurred.",
+   "tasks": [
+    "[ ] Cap each run at 15 turns and 120 active seconds; pause active-time accounting during user approvals and apply a 20-second model-request deadline.",
+    "[ ] Retry a failed read/observation at most once, but never retry an uncertain click/fill/tab/submission mutation or reinterpret it as success.",
+    "[ ] Distinguish deadline, exhausted budget, known failure, and uncertain mutation outcomes; invalidate queued proposals at terminal boundaries.",
+    "[ ] Add fake-clock/network tests for exact limits, approval-time exclusion, single read retry, and zero mutation replay."
+   ],
+   "acceptance_criteria": [
+    "[ ] No 16th model turn is sent; no new action starts after 120 active seconds, while approval waiting does not consume that budget.",
+    "[ ] A model request still pending at 20 seconds is aborted and cannot later dispatch its returned proposal.",
+    "[ ] A read may be attempted twice total; an uncertain mutation is attempted once total and terminates with an explicit non-Success explanation."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/budgets.test.ts; expect zero failures using fake clocks at the 15/16-turn, 119.999/120-second, and 19.999/20-second boundaries. Assert approval wait is excluded, read attempt count <=2, uncertain mutation attempt count exactly 1, and no queued or late-response action dispatch after a deadline/budget terminal state.",
+   "prd_refs": [
+    "P0-F3",
+    "P0-F4",
+    "P0-F6",
+    "R5",
+    "R8",
+    "R15",
+    "R19",
+    "R20"
+   ],
+   "depends_on": [
+    "S13"
+   ]
+  },
+  {
+   "key": "S15",
+   "title": "Render explicit intent, execution, and outcome states in the timeline",
+   "type": "feature",
+   "priority": "P0",
+   "area": "panel",
+   "context": "The user must distinguish the next action from the currently executing action and its result. State changes are text/weight/fill updates, not timed animation or an editable-plan interface.",
+   "tasks": [
+    "[ ] Bind the plan and timeline to loop events with About to do, Doing, Success, Failure, Awaiting confirmation, and Stopped labels.",
+    "[ ] Show the action preview before dispatch, current target/tool while executing, and evidence or reason when its result arrives; keep Stop visible during active and approval-wait states.",
+    "[ ] Preserve Appendix A styles and accessible names/keyboard operation; do not add plan editing, timed animation, history, or export.",
+    "[ ] Add state-rendering tests that distinguish pending versus executing and render failure/awaiting/stopped outcomes from controlled loop events."
+   ],
+   "acceptance_criteria": [
+    "[ ] A queued action displays About to do and its preview before dispatch; dispatch changes that same step to Doing, not Success.",
+    "[ ] The timeline shows Success/Failure with evidence/reason, Awaiting confirmation while paused, and Stopped when interrupted.",
+    "[ ] Stop remains visible and keyboard reachable during execution and approval wait, with no animation or editable-plan control."
+   ],
+   "verification": "Run bun test apps/extension/src/panel/timeline.test.ts; expect exit 0 and zero failures. Render controlled loop events and assert visible About to do plus preview before dispatch, Doing with no Success while in flight, then Success with evidence or Failure with reason after completion. Assert Awaiting confirmation and Stopped render for their events, Stop remains an enabled labelled keyboard-reachable control in active/waiting states, and no editable-plan or animated component is rendered. Capture the named state-test output; live screenshots are checked in the real-site verification issues.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F4",
+    "R6",
+    "R7",
+    "R18",
+    "R19"
+   ],
+   "depends_on": [
+    "S5",
+    "S13"
+   ]
+  },
+  {
+   "key": "S16",
+   "title": "Cancel pending requests and queued actions on Stop or panel closure",
+   "type": "feature",
+   "priority": "P0",
+   "area": "agent",
+   "context": "Stop cannot undo an action already dispatched, but it must prevent later dispatches. Closing the panel interrupts orchestration and reopening must start fresh rather than resuming memory from a worker or storage.",
+   "tasks": [
+    "[ ] Wire Stop to abort in-flight model/read requests, invalidate the run and queued action/approval identities, and render Stopped immediately.",
+    "[ ] Check cancellation immediately before every dispatch and ignore late asynchronous results from stopped runs.",
+    "[ ] Apply the same cleanup on panel teardown; reopening has no task transcript, pending action, or approval, while session token configuration may remain.",
+    "[ ] Add race tests for Stop before dispatch, during a model request, after an already-dispatched mutation, during approval, and close/reopen."
+   ],
+   "acceptance_criteria": [
+    "[ ] Pressing Stop before dispatch yields zero dispatched actions and aborts any pending model request.",
+    "[ ] Pressing Stop after one mutation was dispatched does not claim to undo it, but no later action or late response can dispatch.",
+    "[ ] Stop invalidates pending approval; closing/reopening the panel shows a fresh run with no resumed goal/transcript/action."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/cancel.test.ts; expect zero failures, aborted request signals, post-Stop dispatch count 0, rejection of late responses/approval, and empty run state after reopen. On the Wikipedia article enter 'Scroll down twice', Run the plan, and press Stop while the next step is About to do, before its dispatch; expect Stopped and no dispatch-log entry after the Stop timestamp. Start a fresh task, close the panel while awaiting a model turn, and reopen it; expect an empty task/run view and no continued action. Capture the timestamped dispatch log, Stopped screenshot, and before/after close screenshots; do not claim already-dispatched effects were reversed.",
+   "prd_refs": [
+    "P0-F4",
+    "P0-F6",
+    "R7",
+    "R8",
+    "R19",
+    "R20"
+   ],
+   "depends_on": [
+    "S14",
+    "S15"
+   ]
+  },
+  {
+   "key": "S17",
+   "title": "Bind risky-action confirmation to exact outbound data and target identity",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "Consequential submissions and unclear-consequence actions require informed consent. Approval must authorize only the displayed action and destination, not a replacement document, changed argument set, or later action.",
+   "tasks": [
+    "[ ] Present Awaiting confirmation with action intent, destination/origin, and the complete outbound dummy-field name/value set for the pending submission; keep actual sensitive values blocked.",
+    "[ ] Bind approval to run/action IDs, arguments, origin, tab, documentToken, and snapshotId; recheck the live target/outbound fields before dispatch and invalidate on changes.",
+    "[ ] Resume exactly the approved action once; rejection or Stop discards it and prevents submission with an explicit reason.",
+    "[ ] Add tests for approval, rejection, duplicate approval, changed args/fields/origin/document/snapshot, and Stop while waiting."
+   ],
+   "acceptance_criteria": [
+    "[ ] Submit/unclear actions wait with destination and outbound field names/dummy values visible, while routine permitted actions do not ask for confirmation.",
+    "[ ] Reject or Stop dispatches zero submissions; approving the unchanged pending action dispatches exactly once.",
+    "[ ] Changed arguments, outbound fields, origin, tab, document, or snapshot invalidate approval and cannot dispatch under the earlier consent."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/confirmation.test.ts; expect exit 0 and zero failures. Assert the rendered preview names https://httpbin.org/post and every outbound dummy field/value, routine-action cases create no confirmation, and the pending action is not dispatched while waiting. Submit count must be 0 for rejection, Stop, and each altered arguments/fields/origin/tab/document/snapshot binding; unchanged approval must yield count 1 even if approval is repeated. Capture the named test output; live network/confirmation evidence is checked in S22.",
+   "prd_refs": [
+    "P0-F4",
+    "P0-F5",
+    "R5",
+    "R6",
+    "R17",
+    "R19",
+    "R21"
+   ],
+   "depends_on": [
+    "S12",
+    "S15",
+    "S16",
+    "S10"
+   ]
+  },
+  {
+   "key": "S18",
+   "title": "Determine completion from fresh local and destination evidence",
+   "type": "feature",
+   "priority": "P0",
+   "area": "agent",
+   "context": "Model finish text is a proposal, not proof. Fresh text, local field equality, tab destination, or submission-response checks establish Success; missing evidence must produce Failed, Stopped, or Unverified with a reason.",
+   "tasks": [
+    "[ ] Implement finish(summary) as an evidence-gated terminal proposal, with fresh checks for the task's passage, dummy fills, reference-tab destination, and approved submission response where applicable.",
+    "[ ] Associate evidence with the current document/tab and action; reject stale evidence, contradictory local checks, and unsupported model-only completion claims.",
+    "[ ] Render overall Success only when required checks pass; distinguish known Failed, user/interruption Stopped, and uncertain Unverified with an explanation and redacted check results.",
+    "[ ] Add completion tests for live matching evidence, changed fields, wrong/closed reference destination, missing submission response, stale evidence, denied submission, and premature finish."
+   ],
+   "acceptance_criteria": [
+    "[ ] Matching fresh passage/local equality/destination/response checks establish Success and show evidence tied to the live target.",
+    "[ ] Model-only claims, missing response, or stale/uncertain evidence never produce Success; uncertainty is labelled Unverified with the missing check named.",
+    "[ ] Known mismatches show Failed and user rejection/interruption shows Stopped; neither claims that a rejected submission succeeded.",
+    "[ ] Provider-bound verification results are redacted checks rather than sensitive field values."
+   ],
+   "verification": "Run bun test apps/extension/src/agent/completion.test.ts; expect exit 0 and zero failures for every terminal status and zero Success results in stale/missing/uncertain/denied/premature cases. Assert a matching fresh dummy response produces rendered Success with evidence; remove that response in the fixture and expect rendered Unverified naming the missing response. Assert known mismatches render Failed, rejection/interruption render Stopped, and outbound results contain only redacted checks. Capture the named status-test output; real-page evidence is verified in S21/S22.",
+   "prd_refs": [
+    "P0-F6",
+    "R4",
+    "R8",
+    "R14",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S9",
+    "S10",
+    "S11",
+    "S14",
+    "S17"
+   ]
+  },
+  {
+   "key": "S19",
+   "title": "Prove stale-index, malformed-tool, and injection defenses across boundaries",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The demo must show passing safety/error tests, not just isolated happy-path handlers. This suite exercises model output through policy and dispatch against adversarial page fixtures without adding a third real-site task.",
+   "tasks": [
+    "[ ] Build a deterministic fake-model/page integration fixture spanning turn output validation, policy, snapshot identity, and isolated dispatch.",
+    "[ ] Cover stale/replaced/reordered indexes, malformed/unknown/multiple tool calls, forbidden field types, non-HTTP(S)/JavaScript proposals, and changed approval bindings.",
+    "[ ] Inject page text that orders goal replacement, password disclosure, and unapproved submission; assert immutable goal, secret-free payloads, zero forbidden dispatch, and mandatory confirmation.",
+    "[ ] Assert no rejected or evidence-less path reports overall Success and expose named passing cases in Bun output for the PRD demo."
+   ],
+   "acceptance_criteria": [
+    "[ ] Stale-index and malformed-tool integration cases pass with zero unintended mutations and fresh observation required for stale targets.",
+    "[ ] Injected instructions cannot change the goal or disclose secrets, and cannot bypass blocked targets or submission confirmation.",
+    "[ ] Every forbidden/invalid-binding case has dispatch count 0 and no overall Success, with named tests visible in output."
+   ],
+   "verification": "Run bun test apps/extension/tests/safety.integration.test.ts; expect exit 0 and zero failed cases named stale indexes, malformed tools, injected page instructions, forbidden targets/destinations, and changed approval binding. Inspect assertions for mutation/dispatch count 0, unchanged goal, secret sentinel absent, and no Success on rejected paths. Capture the complete sanitized named-test output for demo segment four.",
+   "prd_refs": [
+    "P0-F2",
+    "P0-F3",
+    "P0-F5",
+    "P0-F6",
+    "R8",
+    "R12",
+    "R17",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S12",
+    "S17",
+    "S18"
+   ]
+  },
+  {
+   "key": "S20",
+   "title": "Prove cancellation, denied submission, and network uncertainty end to end",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The remaining release tests must prove that asynchronous errors cannot cause replay, late dispatch, or false success. Use controlled clocks, network responses, and Chrome lifecycle events for observable counts and statuses.",
+   "tasks": [
+    "[ ] Add integration cases for request failure before an action, lost result after mutation, one read retry, model deadline, turn/time limits, and approval-time exclusion.",
+    "[ ] Cover Stop before dispatch and during a late model response, rejected submission, panel close/reopen, target closure, and unexpected user switch.",
+    "[ ] Assert exact attempt/dispatch counts and terminal status/evidence explanations; ensure uncertain outcomes cannot be Success.",
+    "[ ] Keep the named network failure, Stop, and denied submission cases directly runnable with bun test for the demo."
+   ],
+   "acceptance_criteria": [
+    "[ ] Network-failure cases permit at most two read attempts and exactly one uncertain mutation attempt, with Unverified rather than Success for missing mutation evidence.",
+    "[ ] Stop, rejected submission, panel closure, target closure, and unexpected switch cause zero later dispatch, including after late responses.",
+    "[ ] The 15-turn/120-active-second/20-second boundaries and approval exclusion pass under fake clocks, with no action beyond a terminal boundary."
+   ],
+   "verification": "Run bun test apps/extension/tests/runtime.integration.test.ts; expect exit 0 and zero failures, including named network failure, Stop, and denied submission cases. Assert read count <=2, uncertain mutation count 1, submission count 0 when denied, post-interruption dispatch count 0, and exact budget/deadline boundaries. Capture the complete sanitized named-test output for demo segment four.",
+   "prd_refs": [
+    "P0-F3",
+    "P0-F4",
+    "P0-F5",
+    "P0-F6",
+    "R8",
+    "R17",
+    "R19",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S14",
+    "S16",
+    "S17",
+    "S18",
+    "S11"
+   ]
+  },
+  {
+   "key": "S21",
+   "title": "Verify consecutive Wikipedia research actions and the reference tab",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "U1 and the release gate require a real Wikipedia task, not a synthetic page or manual element selection. Verify that live passage evidence and the opened/switched reference destination match what the panel claims.",
+   "tasks": [
+    "[ ] Preflight Ada Lovelace's Wikipedia article and a real reference linked from its published-work passage; obtain only required origin grants.",
+    "[ ] Enter 'Find Ada Lovelace's published work, scroll there, and open a reference' in the Side Panel and Run the displayed plan without choosing target indexes manually.",
+    "[ ] Verify at least three consecutive dispatched actions, visible intent/current/result states, passage evidence against the live article, and open/switch reference destination checks.",
+    "[ ] Capture the dispatch sequence, passage/reference screenshots, and final evidence status; record any changed site or unmet acceptance rather than substituting a fixture."
+   ],
+   "acceptance_criteria": [
+    "[ ] The real-site run executes at least three consecutive actions without manual target selection, including read/find, scroll or click, and reference-tab management.",
+    "[ ] The displayed published-work passage matches the live article and the verified reference tab URL matches the actual opened/switched destination.",
+    "[ ] Plan, About to do, Doing, and result states are visible, and overall Success is supported by fresh passage and destination evidence."
+   ],
+   "verification": "Build with bun run build:extension and load the unpacked build with the deployed proxy/token. Open https://en.wikipedia.org/wiki/Ada_Lovelace, submit the exact task above, inspect the plan, then press Run and do not select indexes or targets. Expect >=3 consecutive actions, a live matching passage, an opened/switched reference tab, and evidence-backed Success. Capture a sanitized ordered dispatch log with action IDs/snapshot IDs, screenshots of the article passage and reference URL, and the final panel evidence. If permission is requested, grant only that origin; manual permission consent is not manual target selection.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F2",
+    "P0-F3",
+    "P0-F4",
+    "P0-F6",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R14",
+    "R15",
+    "R18",
+    "R20"
+   ],
+   "depends_on": [
+    "S18",
+    "S19",
+    "S20"
+   ]
+  },
+  {
+   "key": "S22",
+   "title": "Verify dummy-form preparation, rejection, approved evidence, and Stop",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "U2/U3 require three locally verified dummy fills, informed submission consent, and a demonstrated dispatch boundary for Stop. Approved submission is the same named httpbin flow and must also distinguish a verified response from an uncertain result.",
+   "tasks": [
+    "[ ] On https://httpbin.org/forms/post request custname='Sidekick Demo', custtel='5550100', and custemail='sidekick@example.com', then ask before submitting; do not manually select targets.",
+    "[ ] Compare the three local values, inspect destination and all outbound fields in confirmation, reject, and prove no /post request occurred.",
+    "[ ] In a separate unchanged dummy run approve once and compare fresh response evidence with the live httpbin response; absent evidence must be Unverified.",
+    "[ ] Start a scrolling task and press Stop before its next dispatch; capture the boundary log and verify no later action occurs."
+   ],
+   "acceptance_criteria": [
+    "[ ] Three consecutive fills set the exact dummy values and their local checks pass without manual target selection or automatic submission.",
+    "[ ] The confirmation names https://httpbin.org/post and its outbound fields; rejection produces zero submission requests and no submission-success claim.",
+    "[ ] Unchanged approval produces one submission and Success only with matching fresh response evidence; missing response evidence is Unverified.",
+    "[ ] Stop pressed before a queued scroll dispatch prevents that and every later dispatch, with Stopped visible."
+   ],
+   "verification": "Load https://httpbin.org/forms/post and ask 'Fill customer name Sidekick Demo, telephone 5550100, and email sidekick@example.com, then ask before submitting.' Run the plan; inspect local DOM values, confirmation, and Network with Preserve log. Reject: expect the three exact values and zero POST /post requests. Reload and repeat with one approval: expect exactly one POST and fresh matching response evidence, not model-only Success. Return to the form, enter 'Scroll down twice', Run its plan, and Stop while the next step is About to do before dispatch: expect no log entry after the Stop timestamp. Capture dummy-only DOM/value checks, full confirmation screenshot, rejected/approved network logs and terminal evidence, and the Stop dispatch-boundary log. Run bun test apps/extension/src/agent/completion.test.ts to prove missing-response Unverified with zero failures.",
+   "prd_refs": [
+    "P0-F3",
+    "P0-F4",
+    "P0-F5",
+    "P0-F6",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R17",
+    "R19",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S18",
+    "S19",
+    "S20"
+   ]
+  },
+  {
+   "key": "S23",
+   "title": "Document unpacked installation and the required demo preflight",
+   "type": "docs",
+   "priority": "P1",
+   "area": "infra",
+   "context": "Milestone five explicitly requires installation instructions. Keep this handoff limited to building/loading the unpacked extension and preparing the named proxy/sites outside the demo timer; do not add Web Store packaging or extra product documentation.",
+   "tasks": [
+    "[ ] Write installation instructions for Bun dependencies/build scripts, the apps/extension/.output/chrome-mv3 Load unpacked path, toolbar/Side Panel opening, and required Chrome origin grants.",
+    "[ ] Explain server-only OpenRouter key/fixed model, HTTPS proxy configuration, static demo-token setup in session storage, disabled body logging, and provider retention disclosure before real data.",
+    "[ ] Include the PRD's two exact site tasks, dummy values, safety/error test commands, and preflight checks for hosting/token/sites outside the timer.",
+    "[ ] State top-frame-only support, panel-close/Stop semantics, memory-only runs, and honest reporting of unmet acceptance; follow the instructions once from a fresh unpacked load."
+   ],
+   "acceptance_criteria": [
+    "[ ] Following the instructions from a fresh unpacked load yields a built extension, opening Side Panel, and authenticated reachable HTTPS proxy without undocumented steps.",
+    "[ ] Documentation uses bun install/run/bun test, keeps provider secrets server-side, and contains no real token/key or request-body sample with sensitive data.",
+    "[ ] Preflight names both demo sites, dummy values, required permissions/disclosure, and the two release-test commands; it does not instruct Web Store submission or unsupported controls."
+   ],
+   "verification": "Using only the new installation instructions, run bun install, bun run typecheck, bun run build:extension, and bun run dev:server; expect exit 0 for finite commands and the server listening. Load apps/extension/.output/chrome-mv3 in a fresh Chrome profile, configure the demo token, open the panel, and run bun test apps/server/tests/https.smoke.test.ts with the documented private environment values; expect authenticated 400/no-token 401 smoke results and zero failures. Run bun test apps/extension/tests/safety.integration.test.ts apps/extension/tests/runtime.integration.test.ts; expect zero failures. Capture a step checklist with no omitted/manual undocumented fix, the opened panel, and sanitized command output.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F3",
+    "R1",
+    "R9",
+    "R10",
+    "R11",
+    "R13",
+    "R16",
+    "R19",
+    "R21"
+   ],
+   "depends_on": [
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S19",
+    "S20"
+   ]
+  },
+  {
+   "key": "S24",
+   "title": "Rehearse the exact release demo twice within five minutes",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The final PRD release gate is the four-part judge demo, with both real-site acceptances and passing safety tests. Preflight stays outside the timer; incomplete safety/evidence or unreachable hosting must be reported as a failure, not edited out of the demonstration.",
+   "tasks": [
+    "[ ] Preflight unpacked installation, HTTPS proxy/token, provider disclosure, origin grants, Wikipedia/reference/httpbin availability, and passing tests outside each timed attempt.",
+    "[ ] Rehearse twice: 0:00-0:30 panel/manifest/indexed snapshot/proxy/debugger exclusion; 0:30-2:15 Wikipedia plan, consecutive actions, live passage/reference evidence; 2:15-3:45 three httpbin fills, confirmation rejection, and Stop before dispatch; 3:45-4:45 named safety/error test results and uncertain non-Success outcomes.",
+    "[ ] Check the required controls by keyboard at 320px and preserve monochrome borderless/focus/contrast evidence from the release build.",
+    "[ ] Capture each attempt's elapsed time, segment evidence, R1-R21 pass/fail checklist, and test output; explicitly list any unmet acceptance rather than claiming the cut line passed."
+   ],
+   "acceptance_criteria": [
+    "[ ] Two complete rehearsals each finish in less than 300 seconds, with preflight excluded and all four segments shown in the prescribed order.",
+    "[ ] Each attempt shows the real Wikipedia acceptance and three exact dummy httpbin fills, rejected submission with zero POST, and Stop with zero later dispatch.",
+    "[ ] Named stale-index, malformed-tool, network-failure, Stop, denied-submission, and injected-instruction tests all pass; uncertain outcomes are visibly not Success.",
+    "[ ] Evidence covers every R1-R21 requirement, reachable authenticated proxy, debugger exclusion, and keyboard-usable borderless controls at 320px; no release gate remains unmet."
+   ],
+   "verification": "Complete the documented preflight and privately supply the HTTPS smoke-test variables before running bun run typecheck, bun run build:extension, and bun test; expect exit 0 and zero failed tests before starting a stopwatch. Perform the four exact PRD segments above twice, resetting the task/page state between attempts; each elapsed time must be <300 seconds and each segment must show the specified visible result. In segment four run bun test apps/extension/tests/safety.integration.test.ts apps/extension/tests/runtime.integration.test.ts; expect the six named safety/error categories to pass with zero failures. Capture each attempt's timed screen recording or timestamped screenshots plus dispatch/network logs, test output, R1-R21 binary checklist, and a 320px keyboard-focus screenshot. A missing acceptance, false Success, failed test, unreachable proxy, or >=300-second attempt is a failing rehearsal.",
+   "prd_refs": [
+    "P0-F1",
+    "P0-F2",
+    "P0-F3",
+    "P0-F4",
+    "P0-F5",
+    "P0-F6",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S21",
+    "S22",
+    "S23"
+   ]
+  },
+  {
+   "key": "VX",
+   "title": "Final gate: full-coverage computer-use verification with video and screenshots",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Tests alone do not prove the product works. This gate proves every element of the finished product by driving it the way a user does. Environment: headed Chromium/Chrome with the unpacked extension loaded (use xvfb on Linux, or a desktop) plus the Hono proxy running with a real OPENROUTER_API_KEY. Surface to cover: toolbar action opening the side panel, settings/token/proxy URL fields, permission grant flow, task input, plan view, Run/Stop, each tool action on a test page, each blocked or forbidden action, each error state, and the two named PRD tasks end to end. Method: computer use driving the real browser UI including the side panel, recorded as one continuous screen video, plus screenshots of every element and state.",
+   "tasks": [
+    "Build the element inventory `evidence/inventory.md`: one row per user-reachable element, state, command or tool, derived from the built product (routes, components, CLI help, MCP tool list) and from the PRD; no row may be omitted because it is hard to reach.",
+    "Run the full automated suites from a clean clone (`bun install --frozen-lockfile`, lint, typecheck, unit, integration, e2e) and save the sanitized logs under evidence/tests/.",
+    "Perform a computer-use walkthrough that touches every inventory row while screen recording continuously (ffmpeg x11grab/gdigrab or the platform recorder); say or overlay the row id when each element is exercised.",
+    "Take at least one screenshot per inventory row (success state, and error state where one exists) named `evidence/screens/<row-id>.png`, and fill the coverage matrix in `evidence/coverage.md`: row id, video timestamp, screenshot file, covering test name, result.",
+    "Run `bun run verify:coverage` (create it here): it fails if any inventory row lacks a screenshot file, a timestamp inside the video duration, or a result, and prints ffprobe duration/resolution of the video. Upload the video as a release asset and record its URL and sha256 in evidence/manifest.json.",
+    "Have an agent that did not build the product re-run the suites and replay the walkthrough from a clean clone, and attach its own screenshots and verdict."
+   ],
+   "acceptance_criteria": [
+    "All automated suites pass from a clean clone with exit code 0; sanitized logs are committed.",
+    "evidence/inventory.md covers every user-reachable element, state, command or tool in the shipped product, with no unexplained omissions.",
+    "A continuous screen recording shows every inventory row being exercised through real interaction, with a timestamp per row in evidence/coverage.md.",
+    "Every inventory row has a screenshot file, and `bun run verify:coverage` exits 0.",
+    "An independent verifier's rerun matches the builder's results; any divergence is listed and resolved, not hidden."
+   ],
+   "verification": "From a clean clone run `bun install --frozen-lockfile && bun run lint && bun run typecheck && bun test` plus the e2e command listed in the README; expect exit 0 for each. Run `bun run verify:coverage`; expect exit 0 and output `rows=<N> screenshots=<N> timestamps=<N> missing=0` and ffprobe duration > 0. Open the video and spot-check at least five random rows by seeking to their timestamps and confirming the element on screen matches the row. Open the independent verifier's report and confirm every row shows PASS. Any missing row, screenshot, timestamp, failed test or unexplained divergence fails the gate.",
+   "prd_refs": [
+    "All release requirements"
+   ],
+   "depends_on": [
+    "S24"
+   ]
+  }
+ ]
 }

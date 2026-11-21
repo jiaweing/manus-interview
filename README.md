@@ -11,4 +11,8 @@ Scoping and discovery for seven interview products (problem 7, "bring your own i
 
 ## Issues
 
-See [docs/issues-index.md](docs/issues-index.md) for the 7 epics and 167 atomic sub-issues. Tooling is in `scripts/` (`create_issues.py`, `setup_project.py`).
+See [docs/issues-index.md](docs/issues-index.md) for the 7 epics and 174 atomic sub-issues. Tooling is in `scripts/` (`create_issues.py`, `setup_project.py`).
+
+## Swarm build prompts
+
+One self-contained prompt per product, each meant for its own fresh task: [docs/swarm-prompts/](docs/swarm-prompts/README.md).

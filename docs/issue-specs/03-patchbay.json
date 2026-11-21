@@ -1,563 +1,858 @@
 {
-  "product": "patchbay",
-  "epic_title": "Patchbay: local plugin-based AI agent harness",
-  "epic_summary": "Ship a Linux-only Bun CLI harness with a tool-free kernel, independently packaged workspace search and local-model plugins, and a bounded CLI agent loop that performs real inference. The MVP includes reviewed local installation, inspection, schema-validated configuration, host-enforced grants, generic stdio dispatch, reversible activation, and explicit failures with unchanged prior state. Completion requires the PRD release-gate tests, a real TODO workflow with file/line citations, an independently installed Text Metrics fixture with unchanged host source/build hashes and empty host diff, the extension guide, and the 4:30 rehearsal. Web/mobile/desktop surfaces and unrelated scaffold services remain dormant; additional production plugins/providers, remote inference fallback, histories, hooks, marketplaces, hardened sandboxing, and polish are out of scope.",
-  "epic_done_when": [
-    "A fresh Linux foreground CLI session starts with zero registered tools/providers and implements install, inspect, config, grants, enable, disable, direct run, and agent commands using stable errors and Bun throughout.",
-    "Installation executes no package code before enable, records the reviewed snapshot's installed path/version/hash, rejects invalid packages, and preserves prior state on cancellation or failure.",
-    "Configuration and permission tests pass; invalid updates preserve prior bytes, ungranted capabilities execute no handler, and inspection/output reveal no secret values.",
-    "Protocol, lifecycle, and bounds tests pass, including zero leaked registrations after failed initialization, disable, crash, and timeout, while healthy plugins remain usable.",
-    "Exactly two production plugins ship, and a pre-existing local model completes a real Scout TODO workflow with observable tool calls and verified file/line citations within the agent bounds.",
-    "The independent Text Metrics fixture returns its known result without host edits/rebuild/restart, source/build hashes and host diff are unchanged, the protocol guide is present, and the full demo completes within 4:30."
-  ],
-  "areas": ["infra", "kernel", "cli", "plugins", "tests", "docs"],
-  "issues": [
-    {
-      "key": "S1",
-      "title": "Scaffold the independent Bun project and boot an empty foreground CLI",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Appendix B requires one independent Better-T-Stack project, with the CLI and kernel in apps/server. The MVP has no UI or management server, and the kernel starts without built-in tools or providers.",
-      "tasks": [
-        "[ ] Run /home/ubuntu/manus-interview/scaffold/03-patchbay.sh from a workspace outside manus-interview, targeting its own patchbay directory and Git repository; use a TTY for the documented addon prompts.",
-        "[ ] Use Bun for installation, scripts, runtime, and tests; add a root bun run patchbay script for a foreground Linux command session and a bun run typecheck script for the active server code.",
-        "[ ] Put CLI parsing/session entrypoints and an initially empty kernel in apps/server; keep generated Next/native/extension, Hono API, MongoDB, auth, payments, remote AI example, and unrelated addons dormant.",
-        "[ ] Establish stable command error codes and startup/fatal exit codes; command errors keep the foreground session available, and EOF terminates it without hanging.",
-        "[ ] Add apps/server/test/cli-boot.test.ts for fresh-home boot, empty registrations, EOF, unknown-command errors, and NO_COLOR output."
-      ],
-      "acceptance_criteria": [
-        "[ ] The generated project has its own .git directory and Bun lockfile outside manus-interview; no shared scaffold is used.",
-        "[ ] With a temporary HOME, bun run patchbay starts a foreground session with zero tools and zero providers, requires no database or HTTP server, and exits on EOF.",
-        "[ ] Unknown commands report the same documented command error on repeated runs without terminating the session; fatal startup exits nonzero.",
-        "[ ] NO_COLOR=1 produces no ANSI color escape sequences; no UI is implemented."
-      ],
-      "verification": "In the new patchbay project root, run bun install, bun run typecheck, and bun test apps/server/test/cli-boot.test.ts. Expected: each command exits 0; tests confirm empty tools/providers, no network-service dependency, stable errors, EOF exit, and absent ANSI colors with NO_COLOR. Run git rev-parse --show-toplevel and test -f bun.lock; expected: the independent patchbay root is printed and the lockfile check exits 0. No scaffold command is run inside manus-interview.",
-      "prd_refs": ["F01", "F05", "R1", "R9", "R18"],
-      "depends_on": []
-    },
-    {
-      "key": "S2",
-      "title": "Validate declarative manifests and local package boundaries",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "The manifest is the authoritative extension boundary. Validation must reject unsafe local packages and incompatible versions without evaluating package code.",
-      "tasks": [
-        "[ ] Parse patchbay-plugin.toml and validate manifest version, ID/name/package version, minimum host version, Linux compatibility, runtime argv, permissions, config schema/defaults, and tool/provider declarations with TOML parsing and Ajv.",
-        "[ ] Validate every capability's name, description, input schema, RPC method, and required permissions; require permission references to be declared and reject ambiguous/duplicate declarations.",
-        "[ ] Validate the local package root and executable/entry paths; reject traversal and symlinks escaping the root, invalid argv, invalid schemas/defaults, and unsupported versions/platforms without loading code.",
-        "[ ] Add apps/server/test/manifest.test.ts with accepted minimal tool/provider manifests and rejected path, schema, declaration, argv, and compatibility cases."
-      ],
-      "acceptance_criteria": [
-        "[ ] Valid Linux manifests for a tool and an llm@1 provider parse into declarations without importing or executing the package.",
-        "[ ] Traversal, escaping symlinks, malformed argv, malformed schemas/defaults, unsupported manifest versions, incompatible host versions, and non-Linux declarations each fail validation.",
-        "[ ] A capability that refers to an undeclared permission or duplicates an exact capability declaration is rejected.",
-        "[ ] Validation failures return stable errors and leave the installed registry unchanged."
-      ],
-      "verification": "Run bun test apps/server/test/manifest.test.ts. Expected: exit 0; all accepted and rejected cases pass, rejected fixtures produce their expected stable errors, an execution-marker fixture remains absent during validation, and registry bytes match their pre-validation snapshot.",
-      "prd_refs": ["F02", "R2", "R12", "R16", "R21"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S3",
-      "title": "Preview and atomically install the reviewed package snapshot disabled",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Installation is a trust review, not an execution step. Confirmation must install exactly the snapshot previewed and record its provenance beneath ~/.patchbay.",
-      "tasks": [
-        "[ ] Implement plugin install <path> with preview of source location, package version/hash, runtime argv, schemas, permissions, and the current-user unsandboxed warning before explicit confirmation.",
-        "[ ] Snapshot validated package contents without following escaping symlinks; compute a deterministic package hash, and copy the reviewed snapshot rather than mutable source contents after confirmation.",
-        "[ ] Persist installed path/version/hash and disabled state beneath ~/.patchbay with an atomic write; reject duplicate IDs without replacing the prior installation.",
-        "[ ] Provide serialized registry mutation and atomic-write helpers for installation, configuration, grants, and lifecycle state; failed staging/commit removes temporary installation artifacts without changing prior state.",
-        "[ ] Add apps/server/test/install.test.ts covering confirmation, cancellation, duplicate IDs, copy/write failure, and mutation of source after preview."
-      ],
-      "acceptance_criteria": [
-        "[ ] The full preview and explicit unsandboxed warning appear before confirmation, and no runtime, dependency download, build, or hook executes during preview or installation.",
-        "[ ] Confirmation stores the previewed snapshot with matching installed path/version/hash and enabled=false, with no registered capabilities.",
-        "[ ] Cancellation, duplicate ID, staging failure, and persistence failure preserve the previous registry and installed packages.",
-        "[ ] Changing source contents after preview cannot change the confirmed installed snapshot or its recorded hash."
-      ],
-      "verification": "Run bun test apps/server/test/install.test.ts. Expected: exit 0; preview fields precede the confirmation prompt, execution markers and download/build invocations are absent, cancellation/failure preserve registry bytes, duplicate IDs are rejected, and the installed bytes/hash equal the reviewed snapshot even when the source changes after preview.",
-      "prd_refs": ["F01", "F02", "R3", "R16", "R21"],
-      "depends_on": ["S2"]
-    },
-    {
-      "key": "S4",
-      "title": "Apply schema-validated default and user configuration atomically",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Configuration has exactly two layers: manifest defaults followed by user overrides. Invalid updates must not partially write state or mutate an already active worker's configuration.",
-      "tasks": [
-        "[ ] Implement effective configuration by recursively merging objects and replacing arrays/scalars with user override values.",
-        "[ ] Implement plugin config <id> get|set using Ajv validation, rejecting unknown fields and invalid values before committing overrides atomically.",
-        "[ ] Keep configuration changes separate from worker reload: a fresh enable handshake receives the validated effective configuration; do not add reload hooks or extra layers.",
-        "[ ] Add apps/server/test/config.test.ts covering defaults, nested object merges, array/scalar replacement, unknown fields, invalid updates, and atomic write failure."
-      ],
-      "acceptance_criteria": [
-        "[ ] Effective config equals defaults followed by recursive object overrides; arrays/scalars are replaced rather than concatenated or merged.",
-        "[ ] Unknown fields and schema-invalid updates fail with stable errors and preserve the previous overrides and registry bytes.",
-        "[ ] A successful set persists only user overrides, and config get reports the effective value with secret values redacted.",
-        "[ ] The host's effective-config accessor returns the accepted configuration for a future activation and does not trigger worker reload or add a third configuration layer."
-      ],
-      "verification": "Run bun test apps/server/test/config.test.ts. Expected: exit 0; exact merge/replacement fixtures match expected objects, unknown-field/invalid/write-failure cases preserve pre-operation bytes, redaction hides the fixture secret, and the effective-config accessor returns the accepted value without invoking any reload callback. S8 separately verifies transmission in initialize.",
-      "prd_refs": ["F01", "F04", "R5", "R15", "R20"],
-      "depends_on": ["S3"]
-    },
-    {
-      "key": "S5",
-      "title": "Persist explicit grants only for declared permissions",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Permission decisions belong to the host and are simple allow/deny, not model approvals or a policy plugin. Users need an explicit CLI action to grant declarations before invoking capabilities.",
-      "tasks": [
-        "[ ] Add plugin grant <id> <permission> for an installed plugin, validating the permission against its authoritative manifest before an atomic, serialized state update.",
-        "[ ] Store grants beneath ~/.patchbay and expose read-only grant lookup for the dispatch layer; installation starts with no grants.",
-        "[ ] Keep grants separate from config and all plugin/model response handling; no manifest, configuration value, or model text can silently grant a permission.",
-        "[ ] Add apps/server/test/grants.test.ts for declared/undeclared grants, unknown IDs, initial empty grants, repeated grants, and failed persistence."
-      ],
-      "acceptance_criteria": [
-        "[ ] Installed plugins begin with zero grants, and only an explicit user grant command persists a declared permission.",
-        "[ ] Granting an undeclared permission or unknown plugin fails with a stable error and leaves state unchanged.",
-        "[ ] Repeating an existing grant does not create duplicate entries; persistence failure preserves prior state.",
-        "[ ] Grant lookup is host-owned and cannot be changed through configuration or plugin/model text."
-      ],
-      "verification": "Run bun test apps/server/test/grants.test.ts. Expected: exit 0; declared-grant state matches the expected permission set, repeated grants remain singular, undeclared/unknown/write-failure operations preserve bytes, and config/text fixtures do not change the grant set.",
-      "prd_refs": ["F04", "R13", "R18", "R20"],
-      "depends_on": ["S3", "S4"]
-    },
-    {
-      "key": "S6",
-      "title": "Show plugin declarations and redacted effective state in CLI inspection",
-      "type": "feature",
-      "priority": "P0",
-      "area": "cli",
-      "context": "Inspection must let users compare the two packages and understand configuration and trust without exposing credentials. This is terminal output only, not a UI surface.",
-      "tasks": [
-        "[ ] Implement plugin inspect <id> showing installed source/path, version/hash, runtime argv, tool/provider declarations, schemas, permissions, effective config, grants, and enabled state.",
-        "[ ] Share secret redaction with configuration get, previews, CLI errors, and captured worker diagnostics; ensure configured credentials do not appear as values in output.",
-        "[ ] Render keyboard-only readable output respecting NO_COLOR, including the unsandboxed boundary and stable unknown-plugin errors.",
-        "[ ] Add apps/server/test/inspect.test.ts for complete inspection fields, state transitions, secret sentinel absence, and NO_COLOR."
-      ],
-      "acceptance_criteria": [
-        "[ ] Inspection contains every declared capability/schema, effective non-secret config, granted permission, installed version/hash, and current enabled state.",
-        "[ ] A configured credential sentinel is absent from inspect, config get, preview, and error/diagnostic output; redaction is visible instead.",
-        "[ ] Output states that workers run as the current user without a sandbox and that grants cover host-mediated dispatch only.",
-        "[ ] NO_COLOR output contains no color escapes, and unknown IDs produce a stable readable error."
-      ],
-      "verification": "Run bun test apps/server/test/inspect.test.ts. Expected: exit 0; required labels/values are present in captured terminal output, the credential sentinel and ANSI colors are absent, and the unsandboxed warning and stable unknown-ID error are present.",
-      "prd_refs": ["F01", "R4", "R5", "R13", "R16", "R21"],
-      "depends_on": ["S3", "S4", "S5"]
-    },
-    {
-      "key": "S7",
-      "title": "Supervise shell-free workers with bounded JSON-RPC stdio transport",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Plugins are separate current-user processes using patchbay/1 rather than an in-process extension API. The transport must frame, correlate, and bound protocol traffic while treating stderr as diagnostics.",
-      "tasks": [
-        "[ ] Launch validated runtime argv with Bun subprocess APIs and no shell, a minimized inherited environment, and credential values supplied only to the configured model adapter.",
-        "[ ] Implement UTF-8 newline-delimited JSON-RPC 2.0 framing with stdout reserved for protocol and stderr handled through the redactor.",
-        "[ ] Correlate request IDs, handle split/coalesced frames, reject invalid UTF-8/malformed or non-protocol stdout, and cap each protocol message at 256 KB including unterminated input.",
-        "[ ] Provide cancellable per-request deadlines and worker termination primitives used by activation and dispatch; avoid unbounded receive buffers.",
-        "[ ] Add apps/server/test/transport.test.ts for framing, concurrent out-of-order replies, malformed output, oversized messages, shell-literal argv, environment filtering, and worker termination."
-      ],
-      "acceptance_criteria": [
-        "[ ] Separate worker PIDs communicate via newline-delimited JSON-RPC 2.0; split/coalesced frames and out-of-order replies resolve the matching request IDs only.",
-        "[ ] Malformed/non-protocol stdout, invalid encoding, messages above 256 KB, and oversized unterminated input fail the worker without unbounded buffering.",
-        "[ ] Argv metacharacters are literal arguments, not executed by a shell; an unrelated inherited secret is absent from workers.",
-        "[ ] Only the configured model adapter receives its credential, and stderr diagnostics do not expose secret values."
-      ],
-      "verification": "Run bun test apps/server/test/transport.test.ts. Expected: exit 0; PID/framing/correlation assertions pass, malformed/oversized fixtures are terminated, a shell-injection marker is absent, environment probes show no unrelated secret, and the credential is present only in the designated adapter probe and absent from captured output.",
-      "prd_refs": ["F02", "F03", "R14", "R16", "R18"],
-      "depends_on": ["S2", "S6"]
-    },
-    {
-      "key": "S8",
-      "title": "Activate plugins through authoritative handshakes and owned registrations",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "The host must discover capabilities from manifests and protocol, never plugin IDs. Every registration belongs to one activation and is reversible even when startup fails partway through.",
-      "tasks": [
-        "[ ] Implement plugin enable <id> to spawn the installed snapshot and send initialize with patchbay/1 version, plugin ID, effective configuration, and workspace context.",
-        "[ ] Require initialization within three seconds, compatible protocol/version replies, and tool/provider declarations matching the static manifest; use tools/list to verify tools.",
-        "[ ] Own all tool/provider registrations by activation token; publish activation only after validation, dispose partial registrations on any error, and persist enabled state only after success.",
-        "[ ] Use exact namespaced capability keys and generic tool/provider routing with no plugin-ID branches or kernel tool/model implementations.",
-        "[ ] Add apps/server/test/activation.test.ts for tool/provider startup, declaration mismatch, incompatible response, partial startup, duplicate activation, and the three-second deadline."
-      ],
-      "acceptance_criteria": [
-        "[ ] Enabling a valid package registers exactly its manifest declarations and records enabled=true after its compatible handshake.",
-        "[ ] A worker that does not initialize within three seconds, reports an incompatible version, or mismatches declarations fails activation and leaves zero owned routes.",
-        "[ ] Failed enable leaves prior persisted state and unrelated activations unchanged; duplicate enable creates no duplicate routes.",
-        "[ ] Capability lookup is exact and namespaced, and registration code contains no special handling for shipped plugin IDs."
-      ],
-      "verification": "Run bun test apps/server/test/activation.test.ts. Expected: exit 0; valid manifest route sets match exactly, every failed/partial activation owns zero routes and preserves prior state, unrelated routes remain present, and the delayed fixture is rejected at the three-second deadline using the test clock.",
-      "prd_refs": ["F01", "F03", "R6", "R11", "R12", "R14", "R15", "R19"],
-      "depends_on": ["S3", "S4", "S7"]
-    },
-    {
-      "key": "S9",
-      "title": "Dispatch exact capabilities with argument validation and host permission denial",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Direct CLI execution and the later agent loop must share the same generic permission-enforced dispatcher. Invalid arguments and denied capabilities cannot reach a plugin handler.",
-      "tasks": [
-        "[ ] Implement plugin run <id> <capability> --json <arguments> with exact namespaced lookup and JSON parsing, dispatching tools/call or services/call from the declaration.",
-        "[ ] Validate arguments with the capability input schema and check every required declared permission against host grants before sending RPC.",
-        "[ ] Return -32602 for invalid arguments and structured handler/permission errors; preserve text content and isError in tool results and display direct calls/results in the CLI.",
-        "[ ] Enforce ten-second tool deadlines and thirty-second inference deadlines; terminate timed-out activations through the shared disposal path.",
-        "[ ] Add apps/server/test/dispatch.test.ts with permitted/denied handler counters, invalid JSON/schema, exact-name mismatches, provider dispatch, structured errors, and both deadlines."
-      ],
-      "acceptance_criteria": [
-        "[ ] Direct tool/provider calls use the declared RPC methods and exact registered capability name; partial names and shell-like text do not select a capability.",
-        "[ ] Invalid arguments return -32602 and denied permissions return a structured denial, each with zero handler executions.",
-        "[ ] Successful tool output retains text content and isError; handler failures are structured and readable rather than silent successes.",
-        "[ ] Tools exceeding ten seconds and inference exceeding thirty seconds fail, terminate the timed-out worker, and dispose its routes."
-      ],
-      "verification": "Run bun test apps/server/test/dispatch.test.ts. Expected: exit 0; handler counters remain zero for invalid/denied cases, exact-name negative cases fail, tool/provider payloads and structured result/error shapes match expected JSON, and simulated ten/thirty-second expiries leave no routes owned by the timed-out activation.",
-      "prd_refs": ["F01", "F03", "F04", "R7", "R13", "R14", "R18"],
-      "depends_on": ["S5", "S8"]
-    },
-    {
-      "key": "S10",
-      "title": "Disable activations immediately while draining calls to their deadlines",
-      "type": "feature",
-      "priority": "P0",
-      "area": "kernel",
-      "context": "Disable is the only reload boundary in this MVP. Registrations must disappear immediately, while previously admitted calls may finish only within their existing deadlines.",
-      "tasks": [
-        "[ ] Implement plugin disable <id> to block new dispatch and remove all tool/provider routes immediately, then drain admitted calls to their original deadlines and issue shutdown/terminate the worker.",
-        "[ ] Route crash and timeout cleanup through the same activation disposal function, including routes created during partial initialization.",
-        "[ ] Serialize enable/disable/install/config/grant mutations, atomically persist disabled state, and keep command failures from leaving partially committed registry/config state.",
-        "[ ] Re-enable with a new worker and fresh initialize handshake; do not reuse the disposed activation or add reload hooks.",
-        "[ ] Add apps/server/test/disable.test.ts for immediate removal, in-flight completion/deadline, idempotent disposal, mutation ordering, and fresh re-enable."
-      ],
-      "acceptance_criteria": [
-        "[ ] Once disable begins, new dispatch fails and the activation owns zero tool/provider routes even if an admitted call is still draining.",
-        "[ ] Admitted calls finish or fail by their existing ten/thirty-second deadline; shutdown is followed by worker termination with no orphan process.",
-        "[ ] Concurrent lifecycle mutations have one serialized order, and failed persistence does not partially update registry/config state.",
-        "[ ] Re-enable creates a new activation and worker PID with a fresh handshake, and its routes are registered exactly once."
-      ],
-      "verification": "Run bun test apps/server/test/disable.test.ts. Expected: exit 0; immediate post-disable route counts are zero, new calls are denied, draining calls obey original deadlines, child PIDs terminate, ordered mutation/state assertions pass, and re-enabled worker/activation identities differ from the disabled ones.",
-      "prd_refs": ["F01", "F03", "R6", "R15", "R19"],
-      "depends_on": ["S8", "S9"]
-    },
-    {
-      "key": "S11",
-      "title": "Prove lifecycle failures leave no routes and do not break healthy plugins",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Registration leaks and cross-plugin failure propagation are explicit release blockers. Adversarial worker fixtures must exercise the supervisor through the host boundary, not only isolated helpers.",
-      "tasks": [
-        "[ ] Add independent worker fixtures for failed/partial initialization, incompatible replies, crash during a call, never-reply tool/provider, malformed output, oversized output, and unresponsive shutdown.",
-        "[ ] Add apps/server/test/lifecycle-failures.test.ts that runs each failure while a second healthy activation is registered and callable.",
-        "[ ] Assert zero failed-activation tool/provider routes, settled pending requests, child termination, and a successful healthy-plugin call after each failure.",
-        "[ ] Exercise disabling a provider as well as a tool plugin and repeating cleanup, using deterministic clocks for deadline assertions."
-      ],
-      "acceptance_criteria": [
-        "[ ] Every startup/crash/timeout/malformed/oversized failure leaves zero routes owned by the failed activation, including partial-startup routes.",
-        "[ ] All affected pending calls settle with explicit errors and failed workers terminate without orphan PIDs.",
-        "[ ] The healthy activation's route set is unchanged and its next call returns the expected result after every failure.",
-        "[ ] Disable and repeated disposal remove both provider and tool registrations without duplicate cleanup effects."
-      ],
-      "verification": "Run bun test apps/server/test/lifecycle-failures.test.ts. Expected: exit 0; each named failure fixture passes the zero-route, settled-request, terminated-PID, and healthy-call assertions, and tool/provider disable plus repeated disposal pass. Capture the test runner output as release evidence; no failing or skipped fixture case is accepted.",
-      "prd_refs": ["F03", "R14", "R15", "R19"],
-      "depends_on": ["S10"]
-    },
-    {
-      "key": "S12",
-      "title": "Prove grant immutability and subprocess secret boundaries",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The trust claim is host-mediated allow/deny, not sandbox containment. Tests must distinguish these boundaries and prove that plugin text, credentials, or argv cannot bypass host decisions.",
-      "tasks": [
-        "[ ] Add apps/server/test/trust-boundary.test.ts using workers that request extra grants or emit instruction-like text and a denied capability with an execution counter.",
-        "[ ] Verify malformed grant requests, response text, and configuration cannot mutate grants or dispatch an ungranted handler.",
-        "[ ] Probe worker environments and shell-literal argv, and capture inspect/config/error/stderr output containing configured secret sentinels.",
-        "[ ] Instrument host-owned networking and logging entrypoints during CLI commands; assert no telemetry event or telemetry request is emitted and scaffold telemetry addons remain dormant.",
-        "[ ] Assert the preview/inspection warning explicitly says workers are unsandboxed current-user processes and grants do not restrict arbitrary plugin filesystem/network access; do not add a sandbox or policy provider."
-      ],
-      "acceptance_criteria": [
-        "[ ] Plugin response instructions and undeclared permission requests leave the host grant set unchanged.",
-        "[ ] Denied host dispatch returns an explicit structured error and the worker handler execution counter remains zero.",
-        "[ ] Environment probes see only intended values, argv injection creates no marker, and configured secret sentinels are absent from captured human-readable output.",
-        "[ ] Host CLI/kernel command execution emits zero telemetry events and zero telemetry network requests.",
-        "[ ] Trust output describes current-user unsandboxed execution and the limited scope of host grants, with no sandbox claim."
-      ],
-      "verification": "Run bun test apps/server/test/trust-boundary.test.ts. Expected: exit 0; grant hashes/sets remain unchanged, the denied handler counter equals 0, the shell marker is absent, credentials appear only in the configured adapter probe and never in captured output, telemetry event/request counters equal 0, and both required unsandboxed warning statements are present.",
-      "prd_refs": ["F02", "F04", "R13", "R16", "R18", "R20"],
-      "depends_on": ["S6", "S9", "S10"]
-    },
-    {
-      "key": "S13",
-      "title": "Package read-only workspace search with file and result bounds",
-      "type": "feature",
-      "priority": "P0",
-      "area": "plugins",
-      "context": "workspace-scout is one of exactly two production plugins. It supplies bounded repository search and real file/line citations without putting tool code in the kernel.",
-      "tasks": [
-        "[ ] Create plugins/workspace-scout as an independently runnable Bun package with patchbay-plugin.toml, schema/defaults for workspace root, declared read permission, and a search tool using patchbay/1.",
-        "[ ] Implement bounded read-only UTF-8 search under the configured root with at most 100 files and 256 KB per file, rejecting paths/symlinks outside the root.",
-        "[ ] Return matches as text with actual workspace-relative file paths and one-based line numbers; report skipped limits/truncation explicitly rather than fabricating complete search coverage.",
-        "[ ] Make the prepared package require no build/download at installation and handle initialize, tools/list, tools/call, and shutdown.",
-        "[ ] Add apps/server/test/scout.test.ts using known TODO files, outside-root/symlink probes, 101-file input, oversized/non-UTF-8 files, and before/after file hashes."
-      ],
-      "acceptance_criteria": [
-        "[ ] The package installs and activates through generic host code; its search declaration and read permission come from its own manifest.",
-        "[ ] A known TODO query returns the expected actual relative path and one-based line number, and searched files' bytes are unchanged.",
-        "[ ] Outside-root paths and escaping symlinks are rejected; no more than 100 UTF-8 files of at most 256 KB each are read.",
-        "[ ] Limit/skipped/truncated outcomes are explicit in results, and installation executes no download/build hook."
-      ],
-      "verification": "Run bun test apps/server/test/scout.test.ts. Expected: exit 0; known matches equal fixture file/line pairs, before/after hashes match, outside-root reads never occur, read counters stay at or below 100 and 256 KB per accepted file, invalid-encoding/limit cases report their reason, and package install uses only prepared contents.",
-      "prd_refs": ["F04", "F05", "R2", "R7", "R10", "R13", "R18"],
-      "depends_on": ["S9"]
-    },
-    {
-      "key": "S14",
-      "title": "Package the llm@1 adapter for one existing local model endpoint",
-      "type": "feature",
-      "priority": "P0",
-      "area": "plugins",
-      "context": "model-openai-compat is the second and only other production plugin. It performs actual OpenAI-compatible inference against one configured pre-existing local endpoint; no model server or remote fallback is built.",
-      "tasks": [
-        "[ ] Create plugins/model-openai-compat as an independent prepared Bun package declaring an llm@1 provider, endpoint/model/optional credential schema, required host grant, and services/call method.",
-        "[ ] Translate llm@1 conversation/tool-schema input into the configured local endpoint's chat-completion request and translate text/tool-call responses into the shared provider response schema.",
-        "[ ] Use native fetch, propagate explicit endpoint/response errors, obey the thirty-second inference deadline, and expose no simulated inference or alternative-provider fallback.",
-        "[ ] Keep credentials confined to the configured adapter and out of human-readable diagnostics; implement initialize and shutdown without build/download hooks.",
-        "[ ] Add apps/server/test/model-adapter.test.ts with a local HTTP test server covering request translation, tool calls, completion text, endpoint failure, invalid responses, and timeout."
-      ],
-      "acceptance_criteria": [
-        "[ ] Generic activation registers llm@1 from the package declaration; the kernel contains no model implementation or provider-ID branch.",
-        "[ ] Requests go only to the configured local endpoint and preserve supplied messages/tool schemas; text and tool calls map to the declared provider response shape.",
-        "[ ] Endpoint failures and invalid responses produce structured errors, and inference exceeding thirty seconds is stopped.",
-        "[ ] No remote-provider fallback, model installation, simulated production inference, or credential-bearing diagnostic output is present."
-      ],
-      "verification": "Run bun test apps/server/test/model-adapter.test.ts. Expected: exit 0; the local test server observes the exact configured endpoint, messages and tool schemas, translated text/tool-call fixtures match expected JSON, error/timeout cases fail explicitly, no fallback request is observed, and credential sentinels are absent from output. These transport tests do not substitute for S15/S18 real-model acceptance.",
-      "prd_refs": ["F05", "R2", "R7", "R10", "R14", "R18"],
-      "depends_on": ["S9"]
-    },
-    {
-      "key": "S15",
-      "title": "Preflight real local inference and tool-calling before building the agent loop",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The PRD identifies endpoint readiness as a potential demo blocker and requires preflight before loop construction. A direct llm@1 call diagnoses the chosen endpoint but is not the final agent-workflow acceptance.",
-      "tasks": [
-        "[ ] Add apps/server/verification/model-preflight.ts using the real host install/config/grant/enable/direct-provider path against LOCAL_MODEL_ENDPOINT and LOCAL_MODEL_NAME supplied by the operator.",
-        "[ ] Verify an ordinary completion and a small tool-calling request against the same pre-existing local endpoint, recording sanitized request/response evidence and elapsed inference time.",
-        "[ ] Exit nonzero with an actionable endpoint/model/tool-support error when the endpoint is absent, incompatible, lacks tool calling, or exceeds thirty seconds; do not substitute a mock or remote fallback.",
-        "[ ] State in the script output that passing preflight does not prove the final Scout agent workflow."
-      ],
-      "acceptance_criteria": [
-        "[ ] Preflight uses the installed model plugin against the operator's existing local endpoint, not a canned response or test server.",
-        "[ ] The same configured model returns a nonempty completion and a schema-valid tool call, each within thirty seconds.",
-        "[ ] Captured evidence includes endpoint/model identity, sanitized real responses, and timings, with no credential values.",
-        "[ ] Missing/incompatible/slow endpoints fail with a nonzero exit and an actionable error; no fallback is attempted."
-      ],
-      "verification": "With the operator's actual endpoint/model set, run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/model-preflight.ts. Expected: exit 0 and PREFLIGHT_PASS with nonempty completion, a schema-valid tool call, and both durations below thirty seconds. Capture the sanitized terminal transcript. An unset or incompatible endpoint must exit nonzero with PREFLIGHT_FAIL; lacking a supplied endpoint is an unresolved release blocker, not a pass.",
-      "prd_refs": ["F05", "R1", "R10", "R18"],
-      "depends_on": ["S14"]
-    },
-    {
-      "key": "S16",
-      "title": "Compose a bounded CLI agent loop from enabled capabilities",
-      "type": "feature",
-      "priority": "P0",
-      "area": "cli",
-      "context": "Only the CLI orchestration layer owns the agent loop. It uses generic llm@1 lookup and registered tools, with observable calls/results and no conversation persistence.",
-      "tasks": [
-        "[ ] Implement agent <prompt> in the foreground CLI by resolving an enabled llm@1 adapter, supplying registered tool schemas, and returning tool results to the model until completion.",
-        "[ ] Dispatch requested tools through the same schema/permission-enforced host path as direct run; show tool names, validated arguments, and text results/errors in terminal output.",
-        "[ ] Bound a run to ninety seconds or six model steps, whichever occurs first, retaining the thirty-second inference and ten-second tool bounds.",
-        "[ ] Cap model-visible tool results at 8 KB with an explicit truncation marker within the cap; report unknown/disabled tools as errors and keep model/plugin text from changing grants.",
-        "[ ] Add apps/server/test/agent-loop.test.ts with minimal adapter-to-tool-to-final-text composition, missing-adapter, and disabled-tool cases; S17 extends it with adversarial bounds.",
-        "[ ] Resolve adapter availability at execution time; missing/disabled adapter stops with an actionable error. Keep the loop out of the kernel and add no history, persistent session log, hooks, or dependency graph."
-      ],
-      "acceptance_criteria": [
-        "[ ] agent <prompt> uses the enabled llm@1 capability and current registered tool schemas, displaying each dispatched call/result and final model text.",
-        "[ ] No agent run starts or continues model dispatch through a missing/disabled adapter; an actionable error is displayed.",
-        "[ ] Runs stop by ninety seconds or six model steps and retain per-call deadlines; model-visible tool result text including truncation markers is at most 8 KB.",
-        "[ ] Tool requests cannot bypass argument validation/grants or reach a disabled tool; no tool/model/loop implementation or hard-coded extension routing enters the kernel.",
-        "[ ] Conversation state is transient and no history/session file is written beneath ~/.patchbay."
-      ],
-      "verification": "Run bun run typecheck and bun test apps/server/test/agent-loop.test.ts after adding the minimal composition cases in that file. Expected: exit 0; a fixture adapter requests a registered tool, sees its exact host-dispatched result, returns final text, and captured output shows call/result/final text; missing-adapter and disabled-tool cases return explicit errors. Inspect the kernel source for imports of CLI loop or plugins: expected none. S17 adds adversarial bound coverage; S18 must separately prove real inference.",
-      "prd_refs": ["F01", "F04", "F05", "R1", "R7", "R11", "R18", "R19"],
-      "depends_on": ["S13", "S14", "S15", "S10"]
-    },
-    {
-      "key": "S17",
-      "title": "Test agent deadlines, truncation, denials, and disabled-adapter behavior",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Automated fixtures prove orchestration bounds independently of endpoint latency. They are test material only and cannot replace the required real-model workflow.",
-      "tasks": [
-        "[ ] Extend apps/server/test/agent-loop.test.ts with never-finishing/repeated-tool-call adapters and deterministic clocks for ninety-second/six-step termination and ten/thirty-second subcall bounds.",
-        "[ ] Test UTF-8 tool results at and above 8 KB, asserting byte-based truncation and an explicit marker without invalid encoding.",
-        "[ ] Test disabling Scout/provider during a foreground session and during a run; new tool/provider dispatch must fail and model execution must not continue through a disposed adapter.",
-        "[ ] Test malformed/unknown tools, ungranted calls with handler counters, model/plugin grant-injection text, and the absence of persisted conversation files."
-      ],
-      "acceptance_criteria": [
-        "[ ] A repeated-calling fixture makes no seventh model step and a slow run dispatches nothing after ninety seconds.",
-        "[ ] Every model-visible tool result is valid UTF-8 at most 8 KB; over-limit input includes an explicit truncation marker.",
-        "[ ] Disabling an adapter prevents subsequent model dispatch and reports an actionable error; disabling Scout prevents new Scout handler execution.",
-        "[ ] Invalid/unknown/denied calls return explicit errors, denied handler counters equal zero, and instruction-like text does not change grants.",
-        "[ ] Run completion/failure creates no conversation history or persistent session log."
-      ],
-      "verification": "Run bun test apps/server/test/agent-loop.test.ts. Expected: exit 0; named six-step/ninety-second/ten-second/thirty-second cases pass with exact dispatch counts, byte length and truncation assertions pass, disabled-adapter/tool calls are absent from worker counters, grant snapshots match, and before/after ~/.patchbay listings show no conversation files.",
-      "prd_refs": ["F03", "F04", "F05", "R13", "R18", "R19", "R20"],
-      "depends_on": ["S16"]
-    },
-    {
-      "key": "S18",
-      "title": "Verify real inference finds TODOs and observes Scout disable and re-enable",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The release gate requires the composed real Scout/model workflow, not just direct calls or canned model tests. The same foreground session must demonstrate denial and reversible tool availability.",
-      "tasks": [
-        "[ ] Add apps/server/verification/real-workflow.ts to prepare a temporary repository with known TODO locations and drive one foreground host session with the two prepared production packages.",
-        "[ ] Verify invalid configuration preserves the previous value and search without its declared grant sends zero tool calls; then configure/grant/enable for the real run.",
-        "[ ] Run the real local model agent to find TODOs, capture visible tool calls/results and final citations, and compare cited relative paths/one-based lines to fixture contents.",
-        "[ ] Disable Scout, prove its routes and new calls are unavailable, re-enable via a fresh handshake, and verify a direct search without restarting the host."
-      ],
-      "acceptance_criteria": [
-        "[ ] The agent uses the preflighted real local endpoint and invokes Scout; all reported fixture TODO citations match actual files and line numbers.",
-        "[ ] Invalid config preserves its prior state and denied search executes zero handlers before grants are added.",
-        "[ ] Visible transcript includes tool calls/results and final cited answer; the real run completes within ninety seconds and no more than six model steps.",
-        "[ ] Scout disable removes its routes immediately and rejects new calls; re-enable uses a new handshake and direct search succeeds in the same host process."
-      ],
-      "verification": "Run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/real-workflow.ts. Expected: exit 0 and REAL_WORKFLOW_PASS, with verified fixture file/line pairs, zero denied handler calls, successful disabled-route rejection and fresh re-enable, and recorded runtime/step count within bounds. Capture the sanitized terminal transcript including actual model output and tool calls. Any missing endpoint, absent tool call, wrong citation, timeout, or canned answer is a failure.",
-      "prd_refs": ["F01", "F03", "F04", "F05", "R1", "R5", "R6", "R7", "R10", "R13", "R19"],
-      "depends_on": ["S15", "S17"]
-    },
-    {
-      "key": "S19",
-      "title": "Author an independent Text Metrics protocol conformance fixture",
-      "type": "test",
-      "priority": "P0",
-      "area": "plugins",
-      "context": "The independent fixture proves extension through the documented boundary. It is test material, not a third shipped production plugin, and must not import host source or require host changes.",
-      "tasks": [
-        "[ ] Create conformance/text-metrics as a standalone Bun package with its own manifest/runtime files and no host-source imports or dependency on the shipped plugin implementations.",
-        "[ ] Declare a text metrics tool accepting a text string and returning deterministic character/word/line counts through patchbay/1; define its counting semantics in fixture documentation.",
-        "[ ] Implement initialize, tools/list, tools/call, and shutdown using only the published manifest/protocol shape and prepared package contents.",
-        "[ ] Add apps/server/test/text-metrics.test.ts for known input hello world\nBun, expecting 15 Unicode characters, 3 whitespace-delimited words, and 2 lines, plus schema-error and shutdown cases.",
-        "[ ] Keep the production plugin inventory limited to workspace-scout and model-openai-compat; clearly mark conformance/text-metrics as test-only."
-      ],
-      "acceptance_criteria": [
-        "[ ] The fixture is a separately packaged manifest/runtime with no imports from host source or production plugins and no install-time build/download.",
-        "[ ] Its manifest and initialize/tools/list declarations agree, and the tool returns characters=15, words=3, lines=2 for hello world\nBun.",
-        "[ ] Invalid tool arguments return -32602 and shutdown exits the fixture worker.",
-        "[ ] The bundled production inventory remains exactly the two required plugins; Text Metrics is identified as conformance material."
-      ],
-      "verification": "Run bun test apps/server/test/text-metrics.test.ts. Expected: exit 0; standalone protocol initialization/list/call/shutdown pass, the known input produces exactly 15/3/2, invalid arguments return -32602, and the package inventory/import checks confirm two production plugins and no fixture host imports.",
-      "prd_refs": ["F06", "R2", "R10", "R11", "R17"],
-      "depends_on": ["S9"]
-    },
-    {
-      "key": "S20",
-      "title": "Record zero-host-change proof for live third-plugin installation",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "A known fixture result alone does not prove zero-host-change extension. Evidence must cover the already-running host, source/build hashes, empty host diff, and cleanup after installation.",
-      "tasks": [
-        "[ ] Add bun run build:host for the active apps/server entrypoint and apps/server/verification/third-plugin-proof.ts to prepare a clean, built host baseline before the proof starts.",
-        "[ ] Define and record deterministic SHA-256 manifests of host CLI/kernel source and build artifacts, plus empty tracked/untracked host working-tree status before installation; store evidence outside the host repository.",
-        "[ ] Start one foreground host process, drop in the independent prepared fixture from outside the host repo, preview/install/enable/run its known input, and disable it without host edits, rebuild, or restart.",
-        "[ ] Record known result, before/after source/build hash manifests, host PID, empty host diff/status, and zero fixture registrations/terminated worker after disable; fail on any mismatch."
-      ],
-      "acceptance_criteria": [
-        "[ ] In one unchanged host process, the external fixture installs/enables/runs and returns the exact 15/3/2 result for its known input.",
-        "[ ] Before and after SHA-256 manifests for host source and build artifacts are identical; no host rebuild occurs within the proof window.",
-        "[ ] Host git diff --exit-code and git diff --cached --exit-code pass, and git status --porcelain --untracked-files=all is empty before and after.",
-        "[ ] Disabling the fixture leaves zero owned registrations and no fixture worker; the evidence records identical host PID throughout."
-      ],
-      "verification": "On the independent project with the implementation committed and no generated untracked artifacts, run bun run build:host, then bun run apps/server/verification/third-plugin-proof.ts. Expected: exit 0 and THIRD_PLUGIN_PASS; the external evidence directory contains exact 15/3/2 output, matching before/after SHA-256 manifests, identical host PID, empty before/after diff/status outputs, and cleanup counts of zero. Capture the evidence directory path and contents; a dirty baseline, hash change, rebuild, restart, or leaked route fails the proof.",
-      "prd_refs": ["F03", "F06", "R6", "R11", "R17", "R19", "R21"],
-      "depends_on": ["S10", "S19"]
-    },
-    {
-      "key": "S21",
-      "title": "Document the manifest, extension protocol, and unsandboxed boundary",
-      "type": "docs",
-      "priority": "P0",
-      "area": "docs",
-      "context": "A concise protocol guide is an explicit requirement and must be sufficient to author an independent extension. It must distinguish MCP-style tool data from full MCP wire compatibility and avoid promising removed architecture.",
-      "tasks": [
-        "[ ] Write docs/plugin-protocol.md describing every manifest field, version/platform checks, schemas/defaults, runtime argv, permissions, capability declarations, and reviewed snapshot/hash installation.",
-        "[ ] Specify patchbay/1 newline-delimited JSON-RPC framing, stdout/stderr separation, initialize inputs/replies, tools/list, tools/call, services/call/llm@1 input/output, shutdown, request correlation, error codes, and static-declaration authority.",
-        "[ ] Document config merge/unknown-field rejection, host grants, activation ownership, enable/disable/drain behavior, deadlines, 256 KB frames, 8 KB model results, and Scout file bounds.",
-        "[ ] State that this is not full MCP wire compatibility and that plugins are unsandboxed current-user processes; document minimal environment, credential redaction, and the host-mediated-only grant boundary.",
-        "[ ] Include exact Bun CLI examples for the two packages and independent Text Metrics fixture, the known result, and zero-host-change evidence procedure; document stable CLI errors without adding other platforms or features."
-      ],
-      "acceptance_criteria": [
-        "[ ] The guide contains all declared manifest fields and valid request/reply examples for each supported protocol method, including llm@1 response/tool-call shape.",
-        "[ ] The guide specifies config merge semantics, version rejection, argument error -32602, permission denial, all deadlines/size bounds, and reversible registrations.",
-        "[ ] The guide explicitly states non-MCP-wire compatibility and current-user unsandboxed execution with grants limited to host dispatch.",
-        "[ ] Published Bun examples reproduce the fixture known result and explain the unchanged-host hash/diff evidence; no removed work is presented as MVP functionality."
-      ],
-      "verification": "Read docs/plugin-protocol.md and compare each manifest field and method example with the checked-in schemas and protocol tests. Run bun test apps/server/test/manifest.test.ts apps/server/test/transport.test.ts apps/server/test/text-metrics.test.ts, then repeat its fixture commands with the known input. Expected: tests exit 0, examples agree with schemas, fixture yields 15/3/2, and every named boundary/deadline is stated. Capture a review checklist with document section links and the fixture terminal transcript; missing fields, incompatible examples, or an MCP/sandbox compatibility claim fail review.",
-      "prd_refs": ["F03", "F06", "R8", "R12", "R14", "R15", "R16", "R17", "R20", "R21"],
-      "depends_on": ["S13", "S14", "S19", "S20"]
-    },
-    {
-      "key": "S22",
-      "title": "Test package rejection and atomic state preservation through CLI commands",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Final requirement tests must exercise rejected installs and state mutations through the real command boundary. This closes the gap between validator/helper tests and the release promise that failed operations preserve prior state.",
-      "tasks": [
-        "[ ] Add apps/server/test/cli-state-safety.test.ts driving a foreground CLI with traversal, escaping symlink, duplicate-ID, incompatible-version, invalid-schema/defaults, and invalid-argv packages.",
-        "[ ] Test preview cancellation, source replacement after preview, failed install copy/commit, invalid config, undeclared grant, failed enable, and state persistence failure through commands.",
-        "[ ] Compare registry/config/installed snapshot bytes and route ownership before/after rejected operations; use execution markers to prove rejected and cancelled packages execute nothing.",
-        "[ ] Assert stable command errors and subsequent valid commands succeed in the same session; maintain a test-name-to-F01/F02/F04/R-ID mapping in the suite."
-      ],
-      "acceptance_criteria": [
-        "[ ] Each unsafe/incompatible package is rejected by the CLI with its stable error, no package execution marker, and unchanged prior installation/state.",
-        "[ ] Cancellation and failed copy/commit/config/grant/enable preserve prior registry/config bytes and unrelated active routes.",
-        "[ ] Confirmation after source replacement installs only the reviewed snapshot/hash, not changed source bytes.",
-        "[ ] After every rejection, a valid command succeeds in the same session; each case identifies the requirement it proves."
-      ],
-      "verification": "Run bun test apps/server/test/cli-state-safety.test.ts, then bun test apps/server/test. Expected: both exit 0 with no skipped release-gate cases; named CLI rejection/atomicity tests show byte equality, no execution markers, preserved unrelated routes, exact reviewed hashes, and stable errors followed by valid command success. Capture the complete runner output and the suite's requirement mapping.",
-      "prd_refs": ["F01", "F02", "F04", "R3", "R5", "R13", "R15", "R16", "R20", "R21"],
-      "depends_on": ["S11", "S12", "S17"]
-    },
-    {
-      "key": "S23",
-      "title": "Rehearse the full release-gate demo within four minutes thirty seconds",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The final issue is the PRD judge-demo rehearsal. Prepared packages, a clean built host, and the preflighted real local model are prerequisites; every failed release gate blocks completion.",
-      "tasks": [
-        "[ ] Add apps/server/verification/demo-rehearsal.ts as a Bun-driven demo script reproducing the PRD's five timed segments without installing dependencies/building during package installation.",
-        "[ ] Before timing, run all automated release tests, preflight the actual model, prepare known TODO files and the independent external fixture, and record clean host source/build hashes and status.",
-        "[ ] Record one terminal session: 0:00-0:50 empty kernel and two previews/installs/inspections; 0:50-1:30 invalid config, denied search, accepted config/grants/enable; 1:30-2:30 real cited TODO agent workflow.",
-        "[ ] Continue: 2:30-3:10 disable Scout/unavailable/re-enable/direct search; 3:10-4:30 external Text Metrics install/enable/known result/unchanged host hashes and diff/disable cleanup, with spoken or printed unsandboxed warning.",
-        "[ ] Capture the elapsed time, sanitized terminal transcript or screen recording, hash/diff artifacts, route/handler counters, and an F01-F06/R1-R21 evidence checklist; fail rather than substituting a mock if any gate is absent."
-      ],
-      "acceptance_criteria": [
-        "[ ] bun test apps/server/test passes with no skipped release-gate tests, and the real endpoint preflight passes before the timed rehearsal.",
-        "[ ] One foreground-session recording completes all five PRD segments in no more than 4:30, starting with zero tools/providers and showing exactly the two production plugins plus test-only Text Metrics.",
-        "[ ] Evidence shows invalid config unchanged, denied search handler count zero, real model-driven Scout calls with correct file/line citations, and immediate Scout unavailability followed by fresh re-enable/direct success.",
-        "[ ] Text Metrics returns 15/3/2 with unchanged host source/build SHA-256 manifests, empty host diff/status, no host rebuild/restart, and zero registrations after its disable.",
-        "[ ] The recording states the current-user unsandboxed/host-mediated-grants boundary, reveals no credentials, and the evidence checklist has a pass artifact for every F01-F06 and R1-R21 requirement."
-      ],
-      "verification": "Run bun test apps/server/test and LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/model-preflight.ts; expected exit 0 for both. Then run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/demo-rehearsal.ts while recording the terminal. Expected: DEMO_PASS, total elapsed <=270 seconds, all five specified segments visible, actual cited inference and zero denied-handler calls, unchanged source/build hashes and empty git diff/status, same host PID, and zero disabled-fixture routes. Capture the recording/transcript, timing line, test output, before/after hash/diff files, and complete F/R evidence checklist outside the host repository. Any missing proof or exceeded time is DEMO_FAIL.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18", "R19", "R20", "R21"],
-      "depends_on": ["S18", "S20", "S21", "S22"]
-    }
-  ]
+ "product": "patchbay",
+ "epic_title": "Patchbay: local plugin-based AI agent harness",
+ "epic_summary": "Ship a Linux-only Bun CLI harness with a tool-free kernel, independently packaged workspace search and local-model plugins, and a bounded CLI agent loop that performs real inference. The MVP includes reviewed local installation, inspection, schema-validated configuration, host-enforced grants, generic stdio dispatch, reversible activation, and explicit failures with unchanged prior state. Completion requires the PRD release-gate tests, a real TODO workflow with file/line citations, an independently installed Text Metrics fixture with unchanged host source/build hashes and empty host diff, the extension guide, and the 4:30 rehearsal. Web/mobile/desktop surfaces and unrelated scaffold services remain dormant; additional production plugins/providers, remote inference fallback, histories, hooks, marketplaces, hardened sandboxing, and polish are out of scope.",
+ "epic_done_when": [
+  "A fresh Linux foreground CLI session starts with zero registered tools/providers and implements install, inspect, config, grants, enable, disable, direct run, and agent commands using stable errors and Bun throughout.",
+  "Installation executes no package code before enable, records the reviewed snapshot's installed path/version/hash, rejects invalid packages, and preserves prior state on cancellation or failure.",
+  "Configuration and permission tests pass; invalid updates preserve prior bytes, ungranted capabilities execute no handler, and inspection/output reveal no secret values.",
+  "Protocol, lifecycle, and bounds tests pass, including zero leaked registrations after failed initialization, disable, crash, and timeout, while healthy plugins remain usable.",
+  "Exactly two production plugins ship, and a pre-existing local model completes a real Scout TODO workflow with observable tool calls and verified file/line citations within the agent bounds.",
+  "The independent Text Metrics fixture returns its known result without host edits/rebuild/restart, source/build hashes and host diff are unchanged, the protocol guide is present, and the full demo completes within 4:30.",
+  "Final gate passed: tests, a continuous computer-use video covering every element, per-element screenshots and an independent verifier's rerun are attached."
+ ],
+ "areas": [
+  "infra",
+  "kernel",
+  "cli",
+  "plugins",
+  "tests",
+  "docs"
+ ],
+ "issues": [
+  {
+   "key": "S1",
+   "title": "Scaffold the independent Bun project and boot an empty foreground CLI",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Appendix B requires one independent Better-T-Stack project, with the CLI and kernel in apps/server. The MVP has no UI or management server, and the kernel starts without built-in tools or providers.",
+   "tasks": [
+    "[ ] Run /home/ubuntu/manus-interview/scaffold/03-patchbay.sh from a workspace outside manus-interview, targeting its own patchbay directory and Git repository; use a TTY for the documented addon prompts.",
+    "[ ] Use Bun for installation, scripts, runtime, and tests; add a root bun run patchbay script for a foreground Linux command session and a bun run typecheck script for the active server code.",
+    "[ ] Put CLI parsing/session entrypoints and an initially empty kernel in apps/server; keep generated Next/native/extension, Hono API, MongoDB, auth, payments, remote AI example, and unrelated addons dormant.",
+    "[ ] Establish stable command error codes and startup/fatal exit codes; command errors keep the foreground session available, and EOF terminates it without hanging.",
+    "[ ] Add apps/server/test/cli-boot.test.ts for fresh-home boot, empty registrations, EOF, unknown-command errors, and NO_COLOR output."
+   ],
+   "acceptance_criteria": [
+    "[ ] The generated project has its own .git directory and Bun lockfile outside manus-interview; no shared scaffold is used.",
+    "[ ] With a temporary HOME, bun run patchbay starts a foreground session with zero tools and zero providers, requires no database or HTTP server, and exits on EOF.",
+    "[ ] Unknown commands report the same documented command error on repeated runs without terminating the session; fatal startup exits nonzero.",
+    "[ ] NO_COLOR=1 produces no ANSI color escape sequences; no UI is implemented."
+   ],
+   "verification": "In the new patchbay project root, run bun install, bun run typecheck, and bun test apps/server/test/cli-boot.test.ts. Expected: each command exits 0; tests confirm empty tools/providers, no network-service dependency, stable errors, EOF exit, and absent ANSI colors with NO_COLOR. Run git rev-parse --show-toplevel and test -f bun.lock; expected: the independent patchbay root is printed and the lockfile check exits 0. No scaffold command is run inside manus-interview.",
+   "prd_refs": [
+    "F01",
+    "F05",
+    "R1",
+    "R9",
+    "R18"
+   ],
+   "depends_on": []
+  },
+  {
+   "key": "S2",
+   "title": "Validate declarative manifests and local package boundaries",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "The manifest is the authoritative extension boundary. Validation must reject unsafe local packages and incompatible versions without evaluating package code.",
+   "tasks": [
+    "[ ] Parse patchbay-plugin.toml and validate manifest version, ID/name/package version, minimum host version, Linux compatibility, runtime argv, permissions, config schema/defaults, and tool/provider declarations with TOML parsing and Ajv.",
+    "[ ] Validate every capability's name, description, input schema, RPC method, and required permissions; require permission references to be declared and reject ambiguous/duplicate declarations.",
+    "[ ] Validate the local package root and executable/entry paths; reject traversal and symlinks escaping the root, invalid argv, invalid schemas/defaults, and unsupported versions/platforms without loading code.",
+    "[ ] Add apps/server/test/manifest.test.ts with accepted minimal tool/provider manifests and rejected path, schema, declaration, argv, and compatibility cases."
+   ],
+   "acceptance_criteria": [
+    "[ ] Valid Linux manifests for a tool and an llm@1 provider parse into declarations without importing or executing the package.",
+    "[ ] Traversal, escaping symlinks, malformed argv, malformed schemas/defaults, unsupported manifest versions, incompatible host versions, and non-Linux declarations each fail validation.",
+    "[ ] A capability that refers to an undeclared permission or duplicates an exact capability declaration is rejected.",
+    "[ ] Validation failures return stable errors and leave the installed registry unchanged."
+   ],
+   "verification": "Run bun test apps/server/test/manifest.test.ts. Expected: exit 0; all accepted and rejected cases pass, rejected fixtures produce their expected stable errors, an execution-marker fixture remains absent during validation, and registry bytes match their pre-validation snapshot.",
+   "prd_refs": [
+    "F02",
+    "R2",
+    "R12",
+    "R16",
+    "R21"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S3",
+   "title": "Preview and atomically install the reviewed package snapshot disabled",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Installation is a trust review, not an execution step. Confirmation must install exactly the snapshot previewed and record its provenance beneath ~/.patchbay.",
+   "tasks": [
+    "[ ] Implement plugin install <path> with preview of source location, package version/hash, runtime argv, schemas, permissions, and the current-user unsandboxed warning before explicit confirmation.",
+    "[ ] Snapshot validated package contents without following escaping symlinks; compute a deterministic package hash, and copy the reviewed snapshot rather than mutable source contents after confirmation.",
+    "[ ] Persist installed path/version/hash and disabled state beneath ~/.patchbay with an atomic write; reject duplicate IDs without replacing the prior installation.",
+    "[ ] Provide serialized registry mutation and atomic-write helpers for installation, configuration, grants, and lifecycle state; failed staging/commit removes temporary installation artifacts without changing prior state.",
+    "[ ] Add apps/server/test/install.test.ts covering confirmation, cancellation, duplicate IDs, copy/write failure, and mutation of source after preview."
+   ],
+   "acceptance_criteria": [
+    "[ ] The full preview and explicit unsandboxed warning appear before confirmation, and no runtime, dependency download, build, or hook executes during preview or installation.",
+    "[ ] Confirmation stores the previewed snapshot with matching installed path/version/hash and enabled=false, with no registered capabilities.",
+    "[ ] Cancellation, duplicate ID, staging failure, and persistence failure preserve the previous registry and installed packages.",
+    "[ ] Changing source contents after preview cannot change the confirmed installed snapshot or its recorded hash."
+   ],
+   "verification": "Run bun test apps/server/test/install.test.ts. Expected: exit 0; preview fields precede the confirmation prompt, execution markers and download/build invocations are absent, cancellation/failure preserve registry bytes, duplicate IDs are rejected, and the installed bytes/hash equal the reviewed snapshot even when the source changes after preview.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "R3",
+    "R16",
+    "R21"
+   ],
+   "depends_on": [
+    "S2"
+   ]
+  },
+  {
+   "key": "S4",
+   "title": "Apply schema-validated default and user configuration atomically",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Configuration has exactly two layers: manifest defaults followed by user overrides. Invalid updates must not partially write state or mutate an already active worker's configuration.",
+   "tasks": [
+    "[ ] Implement effective configuration by recursively merging objects and replacing arrays/scalars with user override values.",
+    "[ ] Implement plugin config <id> get|set using Ajv validation, rejecting unknown fields and invalid values before committing overrides atomically.",
+    "[ ] Keep configuration changes separate from worker reload: a fresh enable handshake receives the validated effective configuration; do not add reload hooks or extra layers.",
+    "[ ] Add apps/server/test/config.test.ts covering defaults, nested object merges, array/scalar replacement, unknown fields, invalid updates, and atomic write failure."
+   ],
+   "acceptance_criteria": [
+    "[ ] Effective config equals defaults followed by recursive object overrides; arrays/scalars are replaced rather than concatenated or merged.",
+    "[ ] Unknown fields and schema-invalid updates fail with stable errors and preserve the previous overrides and registry bytes.",
+    "[ ] A successful set persists only user overrides, and config get reports the effective value with secret values redacted.",
+    "[ ] The host's effective-config accessor returns the accepted configuration for a future activation and does not trigger worker reload or add a third configuration layer."
+   ],
+   "verification": "Run bun test apps/server/test/config.test.ts. Expected: exit 0; exact merge/replacement fixtures match expected objects, unknown-field/invalid/write-failure cases preserve pre-operation bytes, redaction hides the fixture secret, and the effective-config accessor returns the accepted value without invoking any reload callback. S8 separately verifies transmission in initialize.",
+   "prd_refs": [
+    "F01",
+    "F04",
+    "R5",
+    "R15",
+    "R20"
+   ],
+   "depends_on": [
+    "S3"
+   ]
+  },
+  {
+   "key": "S5",
+   "title": "Persist explicit grants only for declared permissions",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Permission decisions belong to the host and are simple allow/deny, not model approvals or a policy plugin. Users need an explicit CLI action to grant declarations before invoking capabilities.",
+   "tasks": [
+    "[ ] Add plugin grant <id> <permission> for an installed plugin, validating the permission against its authoritative manifest before an atomic, serialized state update.",
+    "[ ] Store grants beneath ~/.patchbay and expose read-only grant lookup for the dispatch layer; installation starts with no grants.",
+    "[ ] Keep grants separate from config and all plugin/model response handling; no manifest, configuration value, or model text can silently grant a permission.",
+    "[ ] Add apps/server/test/grants.test.ts for declared/undeclared grants, unknown IDs, initial empty grants, repeated grants, and failed persistence."
+   ],
+   "acceptance_criteria": [
+    "[ ] Installed plugins begin with zero grants, and only an explicit user grant command persists a declared permission.",
+    "[ ] Granting an undeclared permission or unknown plugin fails with a stable error and leaves state unchanged.",
+    "[ ] Repeating an existing grant does not create duplicate entries; persistence failure preserves prior state.",
+    "[ ] Grant lookup is host-owned and cannot be changed through configuration or plugin/model text."
+   ],
+   "verification": "Run bun test apps/server/test/grants.test.ts. Expected: exit 0; declared-grant state matches the expected permission set, repeated grants remain singular, undeclared/unknown/write-failure operations preserve bytes, and config/text fixtures do not change the grant set.",
+   "prd_refs": [
+    "F04",
+    "R13",
+    "R18",
+    "R20"
+   ],
+   "depends_on": [
+    "S3",
+    "S4"
+   ]
+  },
+  {
+   "key": "S6",
+   "title": "Show plugin declarations and redacted effective state in CLI inspection",
+   "type": "feature",
+   "priority": "P0",
+   "area": "cli",
+   "context": "Inspection must let users compare the two packages and understand configuration and trust without exposing credentials. This is terminal output only, not a UI surface.",
+   "tasks": [
+    "[ ] Implement plugin inspect <id> showing installed source/path, version/hash, runtime argv, tool/provider declarations, schemas, permissions, effective config, grants, and enabled state.",
+    "[ ] Share secret redaction with configuration get, previews, CLI errors, and captured worker diagnostics; ensure configured credentials do not appear as values in output.",
+    "[ ] Render keyboard-only readable output respecting NO_COLOR, including the unsandboxed boundary and stable unknown-plugin errors.",
+    "[ ] Add apps/server/test/inspect.test.ts for complete inspection fields, state transitions, secret sentinel absence, and NO_COLOR."
+   ],
+   "acceptance_criteria": [
+    "[ ] Inspection contains every declared capability/schema, effective non-secret config, granted permission, installed version/hash, and current enabled state.",
+    "[ ] A configured credential sentinel is absent from inspect, config get, preview, and error/diagnostic output; redaction is visible instead.",
+    "[ ] Output states that workers run as the current user without a sandbox and that grants cover host-mediated dispatch only.",
+    "[ ] NO_COLOR output contains no color escapes, and unknown IDs produce a stable readable error."
+   ],
+   "verification": "Run bun test apps/server/test/inspect.test.ts. Expected: exit 0; required labels/values are present in captured terminal output, the credential sentinel and ANSI colors are absent, and the unsandboxed warning and stable unknown-ID error are present.",
+   "prd_refs": [
+    "F01",
+    "R4",
+    "R5",
+    "R13",
+    "R16",
+    "R21"
+   ],
+   "depends_on": [
+    "S3",
+    "S4",
+    "S5"
+   ]
+  },
+  {
+   "key": "S7",
+   "title": "Supervise shell-free workers with bounded JSON-RPC stdio transport",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Plugins are separate current-user processes using patchbay/1 rather than an in-process extension API. The transport must frame, correlate, and bound protocol traffic while treating stderr as diagnostics.",
+   "tasks": [
+    "[ ] Launch validated runtime argv with Bun subprocess APIs and no shell, a minimized inherited environment, and credential values supplied only to the configured model adapter.",
+    "[ ] Implement UTF-8 newline-delimited JSON-RPC 2.0 framing with stdout reserved for protocol and stderr handled through the redactor.",
+    "[ ] Correlate request IDs, handle split/coalesced frames, reject invalid UTF-8/malformed or non-protocol stdout, and cap each protocol message at 256 KB including unterminated input.",
+    "[ ] Provide cancellable per-request deadlines and worker termination primitives used by activation and dispatch; avoid unbounded receive buffers.",
+    "[ ] Add apps/server/test/transport.test.ts for framing, concurrent out-of-order replies, malformed output, oversized messages, shell-literal argv, environment filtering, and worker termination."
+   ],
+   "acceptance_criteria": [
+    "[ ] Separate worker PIDs communicate via newline-delimited JSON-RPC 2.0; split/coalesced frames and out-of-order replies resolve the matching request IDs only.",
+    "[ ] Malformed/non-protocol stdout, invalid encoding, messages above 256 KB, and oversized unterminated input fail the worker without unbounded buffering.",
+    "[ ] Argv metacharacters are literal arguments, not executed by a shell; an unrelated inherited secret is absent from workers.",
+    "[ ] Only the configured model adapter receives its credential, and stderr diagnostics do not expose secret values."
+   ],
+   "verification": "Run bun test apps/server/test/transport.test.ts. Expected: exit 0; PID/framing/correlation assertions pass, malformed/oversized fixtures are terminated, a shell-injection marker is absent, environment probes show no unrelated secret, and the credential is present only in the designated adapter probe and absent from captured output.",
+   "prd_refs": [
+    "F02",
+    "F03",
+    "R14",
+    "R16",
+    "R18"
+   ],
+   "depends_on": [
+    "S2",
+    "S6"
+   ]
+  },
+  {
+   "key": "S8",
+   "title": "Activate plugins through authoritative handshakes and owned registrations",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "The host must discover capabilities from manifests and protocol, never plugin IDs. Every registration belongs to one activation and is reversible even when startup fails partway through.",
+   "tasks": [
+    "[ ] Implement plugin enable <id> to spawn the installed snapshot and send initialize with patchbay/1 version, plugin ID, effective configuration, and workspace context.",
+    "[ ] Require initialization within three seconds, compatible protocol/version replies, and tool/provider declarations matching the static manifest; use tools/list to verify tools.",
+    "[ ] Own all tool/provider registrations by activation token; publish activation only after validation, dispose partial registrations on any error, and persist enabled state only after success.",
+    "[ ] Use exact namespaced capability keys and generic tool/provider routing with no plugin-ID branches or kernel tool/model implementations.",
+    "[ ] Add apps/server/test/activation.test.ts for tool/provider startup, declaration mismatch, incompatible response, partial startup, duplicate activation, and the three-second deadline."
+   ],
+   "acceptance_criteria": [
+    "[ ] Enabling a valid package registers exactly its manifest declarations and records enabled=true after its compatible handshake.",
+    "[ ] A worker that does not initialize within three seconds, reports an incompatible version, or mismatches declarations fails activation and leaves zero owned routes.",
+    "[ ] Failed enable leaves prior persisted state and unrelated activations unchanged; duplicate enable creates no duplicate routes.",
+    "[ ] Capability lookup is exact and namespaced, and registration code contains no special handling for shipped plugin IDs."
+   ],
+   "verification": "Run bun test apps/server/test/activation.test.ts. Expected: exit 0; valid manifest route sets match exactly, every failed/partial activation owns zero routes and preserves prior state, unrelated routes remain present, and the delayed fixture is rejected at the three-second deadline using the test clock.",
+   "prd_refs": [
+    "F01",
+    "F03",
+    "R6",
+    "R11",
+    "R12",
+    "R14",
+    "R15",
+    "R19"
+   ],
+   "depends_on": [
+    "S3",
+    "S4",
+    "S7"
+   ]
+  },
+  {
+   "key": "S9",
+   "title": "Dispatch exact capabilities with argument validation and host permission denial",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Direct CLI execution and the later agent loop must share the same generic permission-enforced dispatcher. Invalid arguments and denied capabilities cannot reach a plugin handler.",
+   "tasks": [
+    "[ ] Implement plugin run <id> <capability> --json <arguments> with exact namespaced lookup and JSON parsing, dispatching tools/call or services/call from the declaration.",
+    "[ ] Validate arguments with the capability input schema and check every required declared permission against host grants before sending RPC.",
+    "[ ] Return -32602 for invalid arguments and structured handler/permission errors; preserve text content and isError in tool results and display direct calls/results in the CLI.",
+    "[ ] Enforce ten-second tool deadlines and thirty-second inference deadlines; terminate timed-out activations through the shared disposal path.",
+    "[ ] Add apps/server/test/dispatch.test.ts with permitted/denied handler counters, invalid JSON/schema, exact-name mismatches, provider dispatch, structured errors, and both deadlines."
+   ],
+   "acceptance_criteria": [
+    "[ ] Direct tool/provider calls use the declared RPC methods and exact registered capability name; partial names and shell-like text do not select a capability.",
+    "[ ] Invalid arguments return -32602 and denied permissions return a structured denial, each with zero handler executions.",
+    "[ ] Successful tool output retains text content and isError; handler failures are structured and readable rather than silent successes.",
+    "[ ] Tools exceeding ten seconds and inference exceeding thirty seconds fail, terminate the timed-out worker, and dispose its routes."
+   ],
+   "verification": "Run bun test apps/server/test/dispatch.test.ts. Expected: exit 0; handler counters remain zero for invalid/denied cases, exact-name negative cases fail, tool/provider payloads and structured result/error shapes match expected JSON, and simulated ten/thirty-second expiries leave no routes owned by the timed-out activation.",
+   "prd_refs": [
+    "F01",
+    "F03",
+    "F04",
+    "R7",
+    "R13",
+    "R14",
+    "R18"
+   ],
+   "depends_on": [
+    "S5",
+    "S8"
+   ]
+  },
+  {
+   "key": "S10",
+   "title": "Disable activations immediately while draining calls to their deadlines",
+   "type": "feature",
+   "priority": "P0",
+   "area": "kernel",
+   "context": "Disable is the only reload boundary in this MVP. Registrations must disappear immediately, while previously admitted calls may finish only within their existing deadlines.",
+   "tasks": [
+    "[ ] Implement plugin disable <id> to block new dispatch and remove all tool/provider routes immediately, then drain admitted calls to their original deadlines and issue shutdown/terminate the worker.",
+    "[ ] Route crash and timeout cleanup through the same activation disposal function, including routes created during partial initialization.",
+    "[ ] Serialize enable/disable/install/config/grant mutations, atomically persist disabled state, and keep command failures from leaving partially committed registry/config state.",
+    "[ ] Re-enable with a new worker and fresh initialize handshake; do not reuse the disposed activation or add reload hooks.",
+    "[ ] Add apps/server/test/disable.test.ts for immediate removal, in-flight completion/deadline, idempotent disposal, mutation ordering, and fresh re-enable."
+   ],
+   "acceptance_criteria": [
+    "[ ] Once disable begins, new dispatch fails and the activation owns zero tool/provider routes even if an admitted call is still draining.",
+    "[ ] Admitted calls finish or fail by their existing ten/thirty-second deadline; shutdown is followed by worker termination with no orphan process.",
+    "[ ] Concurrent lifecycle mutations have one serialized order, and failed persistence does not partially update registry/config state.",
+    "[ ] Re-enable creates a new activation and worker PID with a fresh handshake, and its routes are registered exactly once."
+   ],
+   "verification": "Run bun test apps/server/test/disable.test.ts. Expected: exit 0; immediate post-disable route counts are zero, new calls are denied, draining calls obey original deadlines, child PIDs terminate, ordered mutation/state assertions pass, and re-enabled worker/activation identities differ from the disabled ones.",
+   "prd_refs": [
+    "F01",
+    "F03",
+    "R6",
+    "R15",
+    "R19"
+   ],
+   "depends_on": [
+    "S8",
+    "S9"
+   ]
+  },
+  {
+   "key": "S11",
+   "title": "Prove lifecycle failures leave no routes and do not break healthy plugins",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Registration leaks and cross-plugin failure propagation are explicit release blockers. Adversarial worker fixtures must exercise the supervisor through the host boundary, not only isolated helpers.",
+   "tasks": [
+    "[ ] Add independent worker fixtures for failed/partial initialization, incompatible replies, crash during a call, never-reply tool/provider, malformed output, oversized output, and unresponsive shutdown.",
+    "[ ] Add apps/server/test/lifecycle-failures.test.ts that runs each failure while a second healthy activation is registered and callable.",
+    "[ ] Assert zero failed-activation tool/provider routes, settled pending requests, child termination, and a successful healthy-plugin call after each failure.",
+    "[ ] Exercise disabling a provider as well as a tool plugin and repeating cleanup, using deterministic clocks for deadline assertions."
+   ],
+   "acceptance_criteria": [
+    "[ ] Every startup/crash/timeout/malformed/oversized failure leaves zero routes owned by the failed activation, including partial-startup routes.",
+    "[ ] All affected pending calls settle with explicit errors and failed workers terminate without orphan PIDs.",
+    "[ ] The healthy activation's route set is unchanged and its next call returns the expected result after every failure.",
+    "[ ] Disable and repeated disposal remove both provider and tool registrations without duplicate cleanup effects."
+   ],
+   "verification": "Run bun test apps/server/test/lifecycle-failures.test.ts. Expected: exit 0; each named failure fixture passes the zero-route, settled-request, terminated-PID, and healthy-call assertions, and tool/provider disable plus repeated disposal pass. Capture the test runner output as release evidence; no failing or skipped fixture case is accepted.",
+   "prd_refs": [
+    "F03",
+    "R14",
+    "R15",
+    "R19"
+   ],
+   "depends_on": [
+    "S10"
+   ]
+  },
+  {
+   "key": "S12",
+   "title": "Prove grant immutability and subprocess secret boundaries",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The trust claim is host-mediated allow/deny, not sandbox containment. Tests must distinguish these boundaries and prove that plugin text, credentials, or argv cannot bypass host decisions.",
+   "tasks": [
+    "[ ] Add apps/server/test/trust-boundary.test.ts using workers that request extra grants or emit instruction-like text and a denied capability with an execution counter.",
+    "[ ] Verify malformed grant requests, response text, and configuration cannot mutate grants or dispatch an ungranted handler.",
+    "[ ] Probe worker environments and shell-literal argv, and capture inspect/config/error/stderr output containing configured secret sentinels.",
+    "[ ] Instrument host-owned networking and logging entrypoints during CLI commands; assert no telemetry event or telemetry request is emitted and scaffold telemetry addons remain dormant.",
+    "[ ] Assert the preview/inspection warning explicitly says workers are unsandboxed current-user processes and grants do not restrict arbitrary plugin filesystem/network access; do not add a sandbox or policy provider."
+   ],
+   "acceptance_criteria": [
+    "[ ] Plugin response instructions and undeclared permission requests leave the host grant set unchanged.",
+    "[ ] Denied host dispatch returns an explicit structured error and the worker handler execution counter remains zero.",
+    "[ ] Environment probes see only intended values, argv injection creates no marker, and configured secret sentinels are absent from captured human-readable output.",
+    "[ ] Host CLI/kernel command execution emits zero telemetry events and zero telemetry network requests.",
+    "[ ] Trust output describes current-user unsandboxed execution and the limited scope of host grants, with no sandbox claim."
+   ],
+   "verification": "Run bun test apps/server/test/trust-boundary.test.ts. Expected: exit 0; grant hashes/sets remain unchanged, the denied handler counter equals 0, the shell marker is absent, credentials appear only in the configured adapter probe and never in captured output, telemetry event/request counters equal 0, and both required unsandboxed warning statements are present.",
+   "prd_refs": [
+    "F02",
+    "F04",
+    "R13",
+    "R16",
+    "R18",
+    "R20"
+   ],
+   "depends_on": [
+    "S6",
+    "S9",
+    "S10"
+   ]
+  },
+  {
+   "key": "S13",
+   "title": "Package read-only workspace search with file and result bounds",
+   "type": "feature",
+   "priority": "P0",
+   "area": "plugins",
+   "context": "workspace-scout is one of exactly two production plugins. It supplies bounded repository search and real file/line citations without putting tool code in the kernel.",
+   "tasks": [
+    "[ ] Create plugins/workspace-scout as an independently runnable Bun package with patchbay-plugin.toml, schema/defaults for workspace root, declared read permission, and a search tool using patchbay/1.",
+    "[ ] Implement bounded read-only UTF-8 search under the configured root with at most 100 files and 256 KB per file, rejecting paths/symlinks outside the root.",
+    "[ ] Return matches as text with actual workspace-relative file paths and one-based line numbers; report skipped limits/truncation explicitly rather than fabricating complete search coverage.",
+    "[ ] Make the prepared package require no build/download at installation and handle initialize, tools/list, tools/call, and shutdown.",
+    "[ ] Add apps/server/test/scout.test.ts using known TODO files, outside-root/symlink probes, 101-file input, oversized/non-UTF-8 files, and before/after file hashes."
+   ],
+   "acceptance_criteria": [
+    "[ ] The package installs and activates through generic host code; its search declaration and read permission come from its own manifest.",
+    "[ ] A known TODO query returns the expected actual relative path and one-based line number, and searched files' bytes are unchanged.",
+    "[ ] Outside-root paths and escaping symlinks are rejected; no more than 100 UTF-8 files of at most 256 KB each are read.",
+    "[ ] Limit/skipped/truncated outcomes are explicit in results, and installation executes no download/build hook."
+   ],
+   "verification": "Run bun test apps/server/test/scout.test.ts. Expected: exit 0; known matches equal fixture file/line pairs, before/after hashes match, outside-root reads never occur, read counters stay at or below 100 and 256 KB per accepted file, invalid-encoding/limit cases report their reason, and package install uses only prepared contents.",
+   "prd_refs": [
+    "F04",
+    "F05",
+    "R2",
+    "R7",
+    "R10",
+    "R13",
+    "R18"
+   ],
+   "depends_on": [
+    "S9"
+   ]
+  },
+  {
+   "key": "S14",
+   "title": "Package the llm@1 adapter for one existing local model endpoint",
+   "type": "feature",
+   "priority": "P0",
+   "area": "plugins",
+   "context": "model-openai-compat is the second and only other production plugin. It performs actual OpenAI-compatible inference against one configured pre-existing local endpoint; no model server or remote fallback is built. Default endpoint is OpenRouter (https://openrouter.ai/api/v1, OPENROUTER_API_KEY from .env, model from OPENROUTER_MODEL); any other OpenAI-compatible endpoint must also work via configuration.",
+   "tasks": [
+    "[ ] Create plugins/model-openai-compat as an independent prepared Bun package declaring an llm@1 provider, endpoint/model/optional credential schema, required host grant, and services/call method.",
+    "[ ] Translate llm@1 conversation/tool-schema input into the configured local endpoint's chat-completion request and translate text/tool-call responses into the shared provider response schema.",
+    "[ ] Use native fetch, propagate explicit endpoint/response errors, obey the thirty-second inference deadline, and expose no simulated inference or alternative-provider fallback.",
+    "[ ] Keep credentials confined to the configured adapter and out of human-readable diagnostics; implement initialize and shutdown without build/download hooks.",
+    "[ ] Add apps/server/test/model-adapter.test.ts with a local HTTP test server covering request translation, tool calls, completion text, endpoint failure, invalid responses, and timeout."
+   ],
+   "acceptance_criteria": [
+    "[ ] Generic activation registers llm@1 from the package declaration; the kernel contains no model implementation or provider-ID branch.",
+    "[ ] Requests go only to the configured local endpoint and preserve supplied messages/tool schemas; text and tool calls map to the declared provider response shape.",
+    "[ ] Endpoint failures and invalid responses produce structured errors, and inference exceeding thirty seconds is stopped.",
+    "[ ] No remote-provider fallback, model installation, simulated production inference, or credential-bearing diagnostic output is present."
+   ],
+   "verification": "Run bun test apps/server/test/model-adapter.test.ts. Expected: exit 0; the local test server observes the exact configured endpoint, messages and tool schemas, translated text/tool-call fixtures match expected JSON, error/timeout cases fail explicitly, no fallback request is observed, and credential sentinels are absent from output. These transport tests do not substitute for S15/S18 real-model acceptance.",
+   "prd_refs": [
+    "F05",
+    "R2",
+    "R7",
+    "R10",
+    "R14",
+    "R18"
+   ],
+   "depends_on": [
+    "S9"
+   ]
+  },
+  {
+   "key": "S15",
+   "title": "Preflight real local inference and tool-calling before building the agent loop",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The PRD identifies endpoint readiness as a potential demo blocker and requires preflight before loop construction. A direct llm@1 call diagnoses the chosen endpoint but is not the final agent-workflow acceptance.",
+   "tasks": [
+    "[ ] Add apps/server/verification/model-preflight.ts using the real host install/config/grant/enable/direct-provider path against LOCAL_MODEL_ENDPOINT and LOCAL_MODEL_NAME supplied by the operator.",
+    "[ ] Verify an ordinary completion and a small tool-calling request against the same pre-existing local endpoint, recording sanitized request/response evidence and elapsed inference time.",
+    "[ ] Exit nonzero with an actionable endpoint/model/tool-support error when the endpoint is absent, incompatible, lacks tool calling, or exceeds thirty seconds; do not substitute a mock or remote fallback.",
+    "[ ] State in the script output that passing preflight does not prove the final Scout agent workflow."
+   ],
+   "acceptance_criteria": [
+    "[ ] Preflight uses the installed model plugin against the operator's existing local endpoint, not a canned response or test server.",
+    "[ ] The same configured model returns a nonempty completion and a schema-valid tool call, each within thirty seconds.",
+    "[ ] Captured evidence includes endpoint/model identity, sanitized real responses, and timings, with no credential values.",
+    "[ ] Missing/incompatible/slow endpoints fail with a nonzero exit and an actionable error; no fallback is attempted."
+   ],
+   "verification": "With the operator's actual endpoint/model set, run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/model-preflight.ts. Expected: exit 0 and PREFLIGHT_PASS with nonempty completion, a schema-valid tool call, and both durations below thirty seconds. Capture the sanitized terminal transcript. An unset or incompatible endpoint must exit nonzero with PREFLIGHT_FAIL; lacking a supplied endpoint is an unresolved release blocker, not a pass.",
+   "prd_refs": [
+    "F05",
+    "R1",
+    "R10",
+    "R18"
+   ],
+   "depends_on": [
+    "S14"
+   ]
+  },
+  {
+   "key": "S16",
+   "title": "Compose a bounded CLI agent loop from enabled capabilities",
+   "type": "feature",
+   "priority": "P0",
+   "area": "cli",
+   "context": "Only the CLI orchestration layer owns the agent loop. It uses generic llm@1 lookup and registered tools, with observable calls/results and no conversation persistence.",
+   "tasks": [
+    "[ ] Implement agent <prompt> in the foreground CLI by resolving an enabled llm@1 adapter, supplying registered tool schemas, and returning tool results to the model until completion.",
+    "[ ] Dispatch requested tools through the same schema/permission-enforced host path as direct run; show tool names, validated arguments, and text results/errors in terminal output.",
+    "[ ] Bound a run to ninety seconds or six model steps, whichever occurs first, retaining the thirty-second inference and ten-second tool bounds.",
+    "[ ] Cap model-visible tool results at 8 KB with an explicit truncation marker within the cap; report unknown/disabled tools as errors and keep model/plugin text from changing grants.",
+    "[ ] Add apps/server/test/agent-loop.test.ts with minimal adapter-to-tool-to-final-text composition, missing-adapter, and disabled-tool cases; S17 extends it with adversarial bounds.",
+    "[ ] Resolve adapter availability at execution time; missing/disabled adapter stops with an actionable error. Keep the loop out of the kernel and add no history, persistent session log, hooks, or dependency graph."
+   ],
+   "acceptance_criteria": [
+    "[ ] agent <prompt> uses the enabled llm@1 capability and current registered tool schemas, displaying each dispatched call/result and final model text.",
+    "[ ] No agent run starts or continues model dispatch through a missing/disabled adapter; an actionable error is displayed.",
+    "[ ] Runs stop by ninety seconds or six model steps and retain per-call deadlines; model-visible tool result text including truncation markers is at most 8 KB.",
+    "[ ] Tool requests cannot bypass argument validation/grants or reach a disabled tool; no tool/model/loop implementation or hard-coded extension routing enters the kernel.",
+    "[ ] Conversation state is transient and no history/session file is written beneath ~/.patchbay."
+   ],
+   "verification": "Run bun run typecheck and bun test apps/server/test/agent-loop.test.ts after adding the minimal composition cases in that file. Expected: exit 0; a fixture adapter requests a registered tool, sees its exact host-dispatched result, returns final text, and captured output shows call/result/final text; missing-adapter and disabled-tool cases return explicit errors. Inspect the kernel source for imports of CLI loop or plugins: expected none. S17 adds adversarial bound coverage; S18 must separately prove real inference.",
+   "prd_refs": [
+    "F01",
+    "F04",
+    "F05",
+    "R1",
+    "R7",
+    "R11",
+    "R18",
+    "R19"
+   ],
+   "depends_on": [
+    "S13",
+    "S14",
+    "S15",
+    "S10"
+   ]
+  },
+  {
+   "key": "S17",
+   "title": "Test agent deadlines, truncation, denials, and disabled-adapter behavior",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Automated fixtures prove orchestration bounds independently of endpoint latency. They are test material only and cannot replace the required real-model workflow.",
+   "tasks": [
+    "[ ] Extend apps/server/test/agent-loop.test.ts with never-finishing/repeated-tool-call adapters and deterministic clocks for ninety-second/six-step termination and ten/thirty-second subcall bounds.",
+    "[ ] Test UTF-8 tool results at and above 8 KB, asserting byte-based truncation and an explicit marker without invalid encoding.",
+    "[ ] Test disabling Scout/provider during a foreground session and during a run; new tool/provider dispatch must fail and model execution must not continue through a disposed adapter.",
+    "[ ] Test malformed/unknown tools, ungranted calls with handler counters, model/plugin grant-injection text, and the absence of persisted conversation files."
+   ],
+   "acceptance_criteria": [
+    "[ ] A repeated-calling fixture makes no seventh model step and a slow run dispatches nothing after ninety seconds.",
+    "[ ] Every model-visible tool result is valid UTF-8 at most 8 KB; over-limit input includes an explicit truncation marker.",
+    "[ ] Disabling an adapter prevents subsequent model dispatch and reports an actionable error; disabling Scout prevents new Scout handler execution.",
+    "[ ] Invalid/unknown/denied calls return explicit errors, denied handler counters equal zero, and instruction-like text does not change grants.",
+    "[ ] Run completion/failure creates no conversation history or persistent session log."
+   ],
+   "verification": "Run bun test apps/server/test/agent-loop.test.ts. Expected: exit 0; named six-step/ninety-second/ten-second/thirty-second cases pass with exact dispatch counts, byte length and truncation assertions pass, disabled-adapter/tool calls are absent from worker counters, grant snapshots match, and before/after ~/.patchbay listings show no conversation files.",
+   "prd_refs": [
+    "F03",
+    "F04",
+    "F05",
+    "R13",
+    "R18",
+    "R19",
+    "R20"
+   ],
+   "depends_on": [
+    "S16"
+   ]
+  },
+  {
+   "key": "S18",
+   "title": "Verify real inference finds TODOs and observes Scout disable and re-enable",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The release gate requires the composed real Scout/model workflow, not just direct calls or canned model tests. The same foreground session must demonstrate denial and reversible tool availability.",
+   "tasks": [
+    "[ ] Add apps/server/verification/real-workflow.ts to prepare a temporary repository with known TODO locations and drive one foreground host session with the two prepared production packages.",
+    "[ ] Verify invalid configuration preserves the previous value and search without its declared grant sends zero tool calls; then configure/grant/enable for the real run.",
+    "[ ] Run the real local model agent to find TODOs, capture visible tool calls/results and final citations, and compare cited relative paths/one-based lines to fixture contents.",
+    "[ ] Disable Scout, prove its routes and new calls are unavailable, re-enable via a fresh handshake, and verify a direct search without restarting the host."
+   ],
+   "acceptance_criteria": [
+    "[ ] The agent uses the preflighted real local endpoint and invokes Scout; all reported fixture TODO citations match actual files and line numbers.",
+    "[ ] Invalid config preserves its prior state and denied search executes zero handlers before grants are added.",
+    "[ ] Visible transcript includes tool calls/results and final cited answer; the real run completes within ninety seconds and no more than six model steps.",
+    "[ ] Scout disable removes its routes immediately and rejects new calls; re-enable uses a new handshake and direct search succeeds in the same host process."
+   ],
+   "verification": "Run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/real-workflow.ts. Expected: exit 0 and REAL_WORKFLOW_PASS, with verified fixture file/line pairs, zero denied handler calls, successful disabled-route rejection and fresh re-enable, and recorded runtime/step count within bounds. Capture the sanitized terminal transcript including actual model output and tool calls. Any missing endpoint, absent tool call, wrong citation, timeout, or canned answer is a failure.",
+   "prd_refs": [
+    "F01",
+    "F03",
+    "F04",
+    "F05",
+    "R1",
+    "R5",
+    "R6",
+    "R7",
+    "R10",
+    "R13",
+    "R19"
+   ],
+   "depends_on": [
+    "S15",
+    "S17"
+   ]
+  },
+  {
+   "key": "S19",
+   "title": "Author an independent Text Metrics protocol conformance fixture",
+   "type": "test",
+   "priority": "P0",
+   "area": "plugins",
+   "context": "The independent fixture proves extension through the documented boundary. It is test material, not a third shipped production plugin, and must not import host source or require host changes.",
+   "tasks": [
+    "[ ] Create conformance/text-metrics as a standalone Bun package with its own manifest/runtime files and no host-source imports or dependency on the shipped plugin implementations.",
+    "[ ] Declare a text metrics tool accepting a text string and returning deterministic character/word/line counts through patchbay/1; define its counting semantics in fixture documentation.",
+    "[ ] Implement initialize, tools/list, tools/call, and shutdown using only the published manifest/protocol shape and prepared package contents.",
+    "[ ] Add apps/server/test/text-metrics.test.ts for known input hello world\nBun, expecting 15 Unicode characters, 3 whitespace-delimited words, and 2 lines, plus schema-error and shutdown cases.",
+    "[ ] Keep the production plugin inventory limited to workspace-scout and model-openai-compat; clearly mark conformance/text-metrics as test-only."
+   ],
+   "acceptance_criteria": [
+    "[ ] The fixture is a separately packaged manifest/runtime with no imports from host source or production plugins and no install-time build/download.",
+    "[ ] Its manifest and initialize/tools/list declarations agree, and the tool returns characters=15, words=3, lines=2 for hello world\nBun.",
+    "[ ] Invalid tool arguments return -32602 and shutdown exits the fixture worker.",
+    "[ ] The bundled production inventory remains exactly the two required plugins; Text Metrics is identified as conformance material."
+   ],
+   "verification": "Run bun test apps/server/test/text-metrics.test.ts. Expected: exit 0; standalone protocol initialization/list/call/shutdown pass, the known input produces exactly 15/3/2, invalid arguments return -32602, and the package inventory/import checks confirm two production plugins and no fixture host imports.",
+   "prd_refs": [
+    "F06",
+    "R2",
+    "R10",
+    "R11",
+    "R17"
+   ],
+   "depends_on": [
+    "S9"
+   ]
+  },
+  {
+   "key": "S20",
+   "title": "Record zero-host-change proof for live third-plugin installation",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "A known fixture result alone does not prove zero-host-change extension. Evidence must cover the already-running host, source/build hashes, empty host diff, and cleanup after installation.",
+   "tasks": [
+    "[ ] Add bun run build:host for the active apps/server entrypoint and apps/server/verification/third-plugin-proof.ts to prepare a clean, built host baseline before the proof starts.",
+    "[ ] Define and record deterministic SHA-256 manifests of host CLI/kernel source and build artifacts, plus empty tracked/untracked host working-tree status before installation; store evidence outside the host repository.",
+    "[ ] Start one foreground host process, drop in the independent prepared fixture from outside the host repo, preview/install/enable/run its known input, and disable it without host edits, rebuild, or restart.",
+    "[ ] Record known result, before/after source/build hash manifests, host PID, empty host diff/status, and zero fixture registrations/terminated worker after disable; fail on any mismatch."
+   ],
+   "acceptance_criteria": [
+    "[ ] In one unchanged host process, the external fixture installs/enables/runs and returns the exact 15/3/2 result for its known input.",
+    "[ ] Before and after SHA-256 manifests for host source and build artifacts are identical; no host rebuild occurs within the proof window.",
+    "[ ] Host git diff --exit-code and git diff --cached --exit-code pass, and git status --porcelain --untracked-files=all is empty before and after.",
+    "[ ] Disabling the fixture leaves zero owned registrations and no fixture worker; the evidence records identical host PID throughout."
+   ],
+   "verification": "On the independent project with the implementation committed and no generated untracked artifacts, run bun run build:host, then bun run apps/server/verification/third-plugin-proof.ts. Expected: exit 0 and THIRD_PLUGIN_PASS; the external evidence directory contains exact 15/3/2 output, matching before/after SHA-256 manifests, identical host PID, empty before/after diff/status outputs, and cleanup counts of zero. Capture the evidence directory path and contents; a dirty baseline, hash change, rebuild, restart, or leaked route fails the proof.",
+   "prd_refs": [
+    "F03",
+    "F06",
+    "R6",
+    "R11",
+    "R17",
+    "R19",
+    "R21"
+   ],
+   "depends_on": [
+    "S10",
+    "S19"
+   ]
+  },
+  {
+   "key": "S21",
+   "title": "Document the manifest, extension protocol, and unsandboxed boundary",
+   "type": "docs",
+   "priority": "P0",
+   "area": "docs",
+   "context": "A concise protocol guide is an explicit requirement and must be sufficient to author an independent extension. It must distinguish MCP-style tool data from full MCP wire compatibility and avoid promising removed architecture.",
+   "tasks": [
+    "[ ] Write docs/plugin-protocol.md describing every manifest field, version/platform checks, schemas/defaults, runtime argv, permissions, capability declarations, and reviewed snapshot/hash installation.",
+    "[ ] Specify patchbay/1 newline-delimited JSON-RPC framing, stdout/stderr separation, initialize inputs/replies, tools/list, tools/call, services/call/llm@1 input/output, shutdown, request correlation, error codes, and static-declaration authority.",
+    "[ ] Document config merge/unknown-field rejection, host grants, activation ownership, enable/disable/drain behavior, deadlines, 256 KB frames, 8 KB model results, and Scout file bounds.",
+    "[ ] State that this is not full MCP wire compatibility and that plugins are unsandboxed current-user processes; document minimal environment, credential redaction, and the host-mediated-only grant boundary.",
+    "[ ] Include exact Bun CLI examples for the two packages and independent Text Metrics fixture, the known result, and zero-host-change evidence procedure; document stable CLI errors without adding other platforms or features."
+   ],
+   "acceptance_criteria": [
+    "[ ] The guide contains all declared manifest fields and valid request/reply examples for each supported protocol method, including llm@1 response/tool-call shape.",
+    "[ ] The guide specifies config merge semantics, version rejection, argument error -32602, permission denial, all deadlines/size bounds, and reversible registrations.",
+    "[ ] The guide explicitly states non-MCP-wire compatibility and current-user unsandboxed execution with grants limited to host dispatch.",
+    "[ ] Published Bun examples reproduce the fixture known result and explain the unchanged-host hash/diff evidence; no removed work is presented as MVP functionality."
+   ],
+   "verification": "Read docs/plugin-protocol.md and compare each manifest field and method example with the checked-in schemas and protocol tests. Run bun test apps/server/test/manifest.test.ts apps/server/test/transport.test.ts apps/server/test/text-metrics.test.ts, then repeat its fixture commands with the known input. Expected: tests exit 0, examples agree with schemas, fixture yields 15/3/2, and every named boundary/deadline is stated. Capture a review checklist with document section links and the fixture terminal transcript; missing fields, incompatible examples, or an MCP/sandbox compatibility claim fail review.",
+   "prd_refs": [
+    "F03",
+    "F06",
+    "R8",
+    "R12",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S13",
+    "S14",
+    "S19",
+    "S20"
+   ]
+  },
+  {
+   "key": "S22",
+   "title": "Test package rejection and atomic state preservation through CLI commands",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Final requirement tests must exercise rejected installs and state mutations through the real command boundary. This closes the gap between validator/helper tests and the release promise that failed operations preserve prior state.",
+   "tasks": [
+    "[ ] Add apps/server/test/cli-state-safety.test.ts driving a foreground CLI with traversal, escaping symlink, duplicate-ID, incompatible-version, invalid-schema/defaults, and invalid-argv packages.",
+    "[ ] Test preview cancellation, source replacement after preview, failed install copy/commit, invalid config, undeclared grant, failed enable, and state persistence failure through commands.",
+    "[ ] Compare registry/config/installed snapshot bytes and route ownership before/after rejected operations; use execution markers to prove rejected and cancelled packages execute nothing.",
+    "[ ] Assert stable command errors and subsequent valid commands succeed in the same session; maintain a test-name-to-F01/F02/F04/R-ID mapping in the suite."
+   ],
+   "acceptance_criteria": [
+    "[ ] Each unsafe/incompatible package is rejected by the CLI with its stable error, no package execution marker, and unchanged prior installation/state.",
+    "[ ] Cancellation and failed copy/commit/config/grant/enable preserve prior registry/config bytes and unrelated active routes.",
+    "[ ] Confirmation after source replacement installs only the reviewed snapshot/hash, not changed source bytes.",
+    "[ ] After every rejection, a valid command succeeds in the same session; each case identifies the requirement it proves."
+   ],
+   "verification": "Run bun test apps/server/test/cli-state-safety.test.ts, then bun test apps/server/test. Expected: both exit 0 with no skipped release-gate cases; named CLI rejection/atomicity tests show byte equality, no execution markers, preserved unrelated routes, exact reviewed hashes, and stable errors followed by valid command success. Capture the complete runner output and the suite's requirement mapping.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F04",
+    "R3",
+    "R5",
+    "R13",
+    "R15",
+    "R16",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S11",
+    "S12",
+    "S17"
+   ]
+  },
+  {
+   "key": "S23",
+   "title": "Rehearse the full release-gate demo within four minutes thirty seconds",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The final issue is the PRD judge-demo rehearsal. Prepared packages, a clean built host, and the preflighted real local model are prerequisites; every failed release gate blocks completion.",
+   "tasks": [
+    "[ ] Add apps/server/verification/demo-rehearsal.ts as a Bun-driven demo script reproducing the PRD's five timed segments without installing dependencies/building during package installation.",
+    "[ ] Before timing, run all automated release tests, preflight the actual model, prepare known TODO files and the independent external fixture, and record clean host source/build hashes and status.",
+    "[ ] Record one terminal session: 0:00-0:50 empty kernel and two previews/installs/inspections; 0:50-1:30 invalid config, denied search, accepted config/grants/enable; 1:30-2:30 real cited TODO agent workflow.",
+    "[ ] Continue: 2:30-3:10 disable Scout/unavailable/re-enable/direct search; 3:10-4:30 external Text Metrics install/enable/known result/unchanged host hashes and diff/disable cleanup, with spoken or printed unsandboxed warning.",
+    "[ ] Capture the elapsed time, sanitized terminal transcript or screen recording, hash/diff artifacts, route/handler counters, and an F01-F06/R1-R21 evidence checklist; fail rather than substituting a mock if any gate is absent."
+   ],
+   "acceptance_criteria": [
+    "[ ] bun test apps/server/test passes with no skipped release-gate tests, and the real endpoint preflight passes before the timed rehearsal.",
+    "[ ] One foreground-session recording completes all five PRD segments in no more than 4:30, starting with zero tools/providers and showing exactly the two production plugins plus test-only Text Metrics.",
+    "[ ] Evidence shows invalid config unchanged, denied search handler count zero, real model-driven Scout calls with correct file/line citations, and immediate Scout unavailability followed by fresh re-enable/direct success.",
+    "[ ] Text Metrics returns 15/3/2 with unchanged host source/build SHA-256 manifests, empty host diff/status, no host rebuild/restart, and zero registrations after its disable.",
+    "[ ] The recording states the current-user unsandboxed/host-mediated-grants boundary, reveals no credentials, and the evidence checklist has a pass artifact for every F01-F06 and R1-R21 requirement."
+   ],
+   "verification": "Run bun test apps/server/test and LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/model-preflight.ts; expected exit 0 for both. Then run LOCAL_MODEL_ENDPOINT=\"$LOCAL_MODEL_ENDPOINT\" LOCAL_MODEL_NAME=\"$LOCAL_MODEL_NAME\" bun run apps/server/verification/demo-rehearsal.ts while recording the terminal. Expected: DEMO_PASS, total elapsed <=270 seconds, all five specified segments visible, actual cited inference and zero denied-handler calls, unchanged source/build hashes and empty git diff/status, same host PID, and zero disabled-fixture routes. Capture the recording/transcript, timing line, test output, before/after hash/diff files, and complete F/R evidence checklist outside the host repository. Any missing proof or exceeded time is DEMO_FAIL.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21"
+   ],
+   "depends_on": [
+    "S18",
+    "S20",
+    "S21",
+    "S22"
+   ]
+  },
+  {
+   "key": "VX",
+   "title": "Final gate: full-coverage computer-use verification with video and screenshots",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Tests alone do not prove the product works. This gate proves every element of the finished product by driving it the way a user does. Environment: the Linux sandbox or any terminal; the product is CLI only. Surface to cover: every CLI command, subcommand, flag and exit code, plugin discovery/load/unload/failure paths, both shipped plugins (workspace-scout, model-openai-compat), the independent conformance-fixture plugin, JSON-RPC stdio errors and a real inference round-trip through OpenRouter. Method: computer use driving a real terminal window (typing commands, reading output), recorded as one continuous screen video, plus screenshots of every element and state.",
+   "tasks": [
+    "Build the element inventory `evidence/inventory.md`: one row per user-reachable element, state, command or tool, derived from the built product (routes, components, CLI help, MCP tool list) and from the PRD; no row may be omitted because it is hard to reach.",
+    "Run the full automated suites from a clean clone (`bun install --frozen-lockfile`, lint, typecheck, unit, integration, e2e) and save the sanitized logs under evidence/tests/.",
+    "Perform a computer-use walkthrough that touches every inventory row while screen recording continuously (ffmpeg x11grab/gdigrab or the platform recorder); say or overlay the row id when each element is exercised.",
+    "Take at least one screenshot per inventory row (success state, and error state where one exists) named `evidence/screens/<row-id>.png`, and fill the coverage matrix in `evidence/coverage.md`: row id, video timestamp, screenshot file, covering test name, result.",
+    "Run `bun run verify:coverage` (create it here): it fails if any inventory row lacks a screenshot file, a timestamp inside the video duration, or a result, and prints ffprobe duration/resolution of the video. Upload the video as a release asset and record its URL and sha256 in evidence/manifest.json.",
+    "Have an agent that did not build the product re-run the suites and replay the walkthrough from a clean clone, and attach its own screenshots and verdict."
+   ],
+   "acceptance_criteria": [
+    "All automated suites pass from a clean clone with exit code 0; sanitized logs are committed.",
+    "evidence/inventory.md covers every user-reachable element, state, command or tool in the shipped product, with no unexplained omissions.",
+    "A continuous screen recording shows every inventory row being exercised through real interaction, with a timestamp per row in evidence/coverage.md.",
+    "Every inventory row has a screenshot file, and `bun run verify:coverage` exits 0.",
+    "An independent verifier's rerun matches the builder's results; any divergence is listed and resolved, not hidden."
+   ],
+   "verification": "From a clean clone run `bun install --frozen-lockfile && bun run lint && bun run typecheck && bun test` plus the e2e command listed in the README; expect exit 0 for each. Run `bun run verify:coverage`; expect exit 0 and output `rows=<N> screenshots=<N> timestamps=<N> missing=0` and ffprobe duration > 0. Open the video and spot-check at least five random rows by seeking to their timestamps and confirming the element on screen matches the row. Open the independent verifier's report and confirm every row shows PASS. Any missing row, screenshot, timestamp, failed test or unexplained divergence fails the gate.",
+   "prd_refs": [
+    "All release requirements"
+   ],
+   "depends_on": [
+    "S23"
+   ]
+  }
+ ]
 }

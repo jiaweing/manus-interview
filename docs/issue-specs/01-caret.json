@@ -1,555 +1,908 @@
 {
-  "product": "caret",
-  "epic_title": "Caret: desktop voice input",
-  "epic_summary": "Ship an independent Bun-managed Better-T-Stack scaffold with a hand-added Electron desktop app and C++ Win32 helper, delivered as a portable Windows x64 build. The MVP uses Ctrl+Alt+Space to toggle default-microphone recording, one OpenAI file transcription request, one neutral cleanup request, and one clipboard-paste attempt into the unchanged target without submitting or stealing focus. Completion requires a non-focusable status overlay, protected local key and phrase configuration, explicit cloud disclosure, bounded and cancellable sessions, conditional clipboard restoration, and requirement-linked evidence in Notepad and Chrome email compose. Electron, toggle activation, cloud STT, neutral prose, and Windows clipboard insertion are the selected alternatives; Linux provides fixture tests but cannot certify native Windows behavior. Exclude macOS/Linux delivery, streaming/local Whisper, insertion fallbacks, dictionary UI, per-app profiles, history, accounts, payments, extra integrations, elevated/password targets, rich-clipboard insertion, signing, updating, and additional polish.",
-  "epic_done_when": [
-    "A portable Windows 11 x64 build runs as one tray instance, accepts a protected provider key, and registers Ctrl+Alt+Space while another application remains active.",
-    "Packaged dictation inserts meaning-preserving neutral plain text in both Notepad and Chrome email compose, leaves the target focused, never sends Enter or clicks Send, and restores the unchanged plain-text clipboard sentinel.",
-    "Recording is activation-only, capped at 60 seconds and 10 MB, and cancellation, silence, device loss, deadlines, invalid cleanup, or a changed target cannot produce a subsequent insertion; Windows safety evidence records zero wrong-window pastes.",
-    "The non-focusable Starting, Listening, Transcribing, Cleaning, Done, and Error overlay and setup controls satisfy Appendix A; Done is labeled as Paste requested rather than application acceptance.",
-    "Only activated audio, phrase hints, and transcript are sent externally; the protected key and local phrases persist, audio/transcripts do not persist, and payloads and secrets are absent from logs.",
-    "All Linux fixture checks, Windows native and packaged smoke checks, and the 4:30 requirement-linked demo rehearsal have recorded passing outcomes, including unsupported-clipboard rejection and newer-copy preservation."
-  ],
-  "areas": ["infra", "desktop", "native", "pipeline", "security", "tests"],
-  "issues": [
-    {
-      "key": "S1",
-      "title": "Scaffold an independent Bun project and boot the Electron desktop shell",
-      "type": "setup",
-      "priority": "P0",
-      "area": "infra",
-      "context": "Appendix B requires exactly one independent scaffold and a hand-added apps/desktop; the generated applications are not Caret features. Establish the desktop-only boot path without starting the dormant web, server, auth, database, payment, mobile, extension, or docs artifacts.",
-      "tasks": [
-        "- [ ] Run /home/ubuntu/manus-interview/scaffold/01-caret.sh caret once from an external workspace in an interactive TTY; retain its exact flags and use the documented addon answers, without --yes.",
-        "- [ ] Add apps/desktop with Electron main, TypeScript React renderer, preload entry, and build configuration; keep Electron's required Node runtime while using Bun for installs, scripts, and tests.",
-        "- [ ] Define desktop dev, build, and typecheck scripts invoked with bun run --cwd apps/desktop; ensure these scripts do not invoke dormant applications."
-      ],
-      "acceptance_criteria": [
-        "- [ ] caret has its own .git directory, bts.jsonc, and Bun lockfile, is outside the source repository, and was produced by one scaffold invocation.",
-        "- [ ] bun install and the desktop build/typecheck scripts exit 0; the dev script launches an Electron renderer showing Caret.",
-        "- [ ] Desktop startup requires no Hono/Next server, MongoDB, auth service, Polar configuration, Expo, or extension runtime."
-      ],
-      "verification": "From the new caret root run `bun install`, `bun run --cwd apps/desktop typecheck`, and `bun run --cwd apps/desktop build`; expect exit 0 from each. Run `git rev-parse --show-toplevel` and `test -f bts.jsonc`; expect the external caret directory and exit 0. On Windows run `bun run --cwd apps/desktop dev` with no dormant services running; expect one Electron window displaying Caret. Capture the startup screenshot, resolved repo path, scaffold command transcript, and build logs.",
-      "prd_refs": ["F01", "R1", "R7", "R15", "Appendix B"],
-      "depends_on": []
-    },
-    {
-      "key": "S2",
-      "title": "Restrict renderer privileges and validate the preload message boundary",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "The renderer may capture audio and display setup/status, but main owns secrets, sessions, requests, and helper execution. Implement the bounded IPC contract before microphone or provider integration.",
-      "tasks": [
-        "- [ ] Disable renderer Node integration, enable context isolation and sandboxing, load bundled content only, and reject navigation and new-window requests.",
-        "- [ ] Expose only key setup, status subscription, cancellation, and bounded audio submission through preload; expose no generic IPC, process, filesystem, or helper command API.",
-        "- [ ] Validate the sender and message schemas; make audio submission require an active matching session in the capture-complete state, an allowed WebM MIME, and at most 10 MB, with state supplied by main."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The renderer cannot access require, process, filesystem APIs, raw ipcRenderer, or a generic helper-command channel.",
-        "- [ ] Untrusted senders, unknown operations, malformed payloads, wrong session/state, non-WebM MIME, and audio over 10 MB are rejected before handler side effects.",
-        "- [ ] Bundled UI loads, while an external navigation and a window.open request are blocked."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/ipc-boundary.test.ts`; expect exit 0 with PASS cases for the four permitted operations and rejection of every invalid sender/schema/session/state/MIME/size case. On Windows run `bun run --cwd apps/desktop dev`; from renderer DevTools evaluate `typeof require`, `typeof process`, and attempts to navigate to https://example.com and open that URL. Expect both types to be undefined, no external page or extra window, and only the four documented preload capabilities. Capture the console output and blocked-navigation log without payloads.",
-      "prd_refs": ["F07", "R14", "section 9"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S3",
-      "title": "Implement single-instance tray startup and the fixed toggle shortcut",
-      "type": "feature",
-      "priority": "P0",
-      "area": "desktop",
-      "context": "Caret must activate from another application rather than behaving as a transcript page. Provide the application lifecycle and readiness hooks without adding shortcut configuration or push-to-talk.",
-      "tasks": [
-        "- [ ] Acquire the Electron single-instance lock, add the tray with setup and Cancel actions, and minimize/close the setup window to the tray without terminating the utility.",
-        "- [ ] Register only Ctrl+Alt+Space and unregister it on exit; surface registration failure and prevent recording when registration, key, or microphone readiness is false.",
-        "- [ ] Route shortcut activation and the tray Cancel action to main callbacks without focusing or reopening a window; ignore activation while a non-recording session is busy."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Launching a second instance leaves exactly one Caret process group and one tray icon without foregrounding setup.",
-        "- [ ] Ctrl+Alt+Space calls the toggle callback while Notepad is foreground; setup remains minimized and Notepad retains focus.",
-        "- [ ] A registration failure or false key/microphone readiness blocks the start callback and exposes the corresponding error.",
-        "- [ ] Tray Cancel calls cancellation without activating Caret, and app exit releases the shortcut."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/tray-hotkey.test.ts`; expect exit 0 and PASS for second-instance exit, successful registration, conflicting registration, each readiness blocker, busy activation, and shutdown unregister. On Windows run `bun run --cwd apps/desktop dev` twice, minimize setup, focus Notepad, and press Ctrl+Alt+Space with readiness provided by the test adapter. Expect one tray icon, one toggle event, and the unchanged Notepad foreground handle. Capture a tray screenshot and payload-free foreground/event log.",
-      "prd_refs": ["F01", "F05", "R1", "R2", "R3", "R6", "R8"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S4",
-      "title": "Render the six-state overlay without taking application focus",
-      "type": "feature",
-      "priority": "P0",
-      "area": "desktop",
-      "context": "The small floating overlay is the only dictation UI needed. It must communicate recording readiness and paste-request status without stealing the target application's focus.",
-      "tasks": [
-        "- [ ] Add a non-focusable overlay window driven by main status updates for Starting, Listening, Transcribing, Cleaning, Done, and Error.",
-        "- [ ] Display Done with the explanatory text Paste requested; do not imply that the application accepted text.",
-        "- [ ] Use the Appendix A black/white and neutral-grey shadcn no-borders styling, 10px radius, Geist or Inter at 14px, 400/600 weights, and 150ms opacity/translate transitions disabled for reduced motion."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Each of the six main statuses yields its corresponding visible overlay label; Done also displays Paste requested.",
-        "- [ ] Showing and updating the overlay never changes the foreground window or focused-control handles.",
-        "- [ ] Overlay surfaces use only the prescribed palette, have zero border/outline widths, and body text contrast is at least 7:1 in light and dark presentations.",
-        "- [ ] Emulated prefers-reduced-motion removes the overlay transitions."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/overlay-state.test.ts`; expect exit 0 and six state-to-label cases passing, including the Done wording. On Windows run `bun run --cwd apps/desktop fixture:overlay`, focus Notepad, and cycle all states from the test harness. Expect identical foreground/focus handles before and after every transition. Capture six screenshots and the handle log; inspect computed border/outline widths, palette, radius, font and transition duration, and record body-text contrast >=7:1. Emulate reduced motion in DevTools and expect zero transition duration.",
-      "prd_refs": ["F06", "R3", "R6", "R12", "Appendix A"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S5",
-      "title": "Add the bounded Win32 helper protocol and target snapshot operation",
-      "type": "feature",
-      "priority": "P0",
-      "area": "native",
-      "context": "The native helper must expose only the two PRD operations, not arbitrary commands. Snapshot the foreground window and focused native control so insertion can compare the original target later.",
-      "tasks": [
-        "- [ ] Add a C++ Win32 helper and a typed main-process client for JSON snapshot and insert requests and the documented outcomes.",
-        "- [ ] Implement snapshot with foreground-window and focused-control handles, returning an error when no usable target exists.",
-        "- [ ] Validate complete request schemas and maintain insert session-ID deduplication within the app-lifetime helper; reject unknown operations, malformed requests, and duplicate insert IDs before native side effects.",
-        "- [ ] Define a Bun script build:helper that invokes the Windows C++ toolchain and a helper-protocol test harness."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The helper compiles for Windows x64, and snapshot reports the currently foreground Notepad window and its focused input control.",
-        "- [ ] Only snapshot and insert schemas are accepted; malformed JSON, unknown operations, missing/wrong-type fields, and duplicate insert session IDs cause zero clipboard or input calls.",
-        "- [ ] Main parses helper responses as typed outcomes and treats malformed responses or helper termination as errors rather than requesting another insertion."
-      ],
-      "verification": "On Windows run `bun run --cwd apps/desktop build:helper` and `bun run --cwd apps/desktop test:windows:helper-protocol`; expect exit 0 and PASS for valid snapshot, invalid JSON/schema/operation, duplicate session ID, malformed response, and helper exit. Focus Notepad and use the harness snapshot command; expect returned foreground/focused-control handles to equal independently recorded Win32 handles. Capture the handle comparison and native-side-effect counters; all rejected operations must have counters of zero.",
-      "prd_refs": ["F05", "R5", "R11", "section 9"],
-      "depends_on": ["S1"]
-    },
-    {
-      "key": "S6",
-      "title": "Request one Unicode paste only when the captured Windows target is unchanged",
-      "type": "feature",
-      "priority": "P0",
-      "area": "native",
-      "context": "Implement the chosen Windows clipboard insertion path without typing, accessibility fallbacks, refocusing, or submission. Target comparison must occur immediately before the paste request, including after shortcut modifiers are released.",
-      "tasks": [
-        "- [ ] Implement insert(expectedTarget, sessionId, text) for nonempty validated plain text, writing Unicode clipboard text and emitting only the Ctrl+V input sequence.",
-        "- [ ] Recheck foreground and focused-control handles before clipboard mutation and again immediately before sending input; refuse a changed target without refocusing it.",
-        "- [ ] Wait for Ctrl/Alt/Space from activation to be released, and allow main cancellation to terminate the pending helper attempt before any paste input; reject unsupported elevated targets rather than implementing a fallback.",
-        "- [ ] Emit paste_requested only after one successful input request; report target_changed or an existing failure outcome with no second automatic attempt."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A matching non-elevated Notepad target receives the Unicode fixture exactly once, including non-ASCII characters, after shortcut modifiers are released.",
-        "- [ ] Changed foreground/focused-control handles, a cancelled pending attempt, or an elevated target prevent paste input; no API forcibly refocuses a target.",
-        "- [ ] Captured input events contain only the Ctrl+V sequence and contain no Enter or submission action.",
-        "- [ ] A duplicate session ID or failed input request cannot generate another paste attempt."
-      ],
-      "verification": "On Windows run `bun run --cwd apps/desktop test:windows:paste-target`; expect exit 0 and PASS cases for Unicode insertion, modifier-release ordering, foreground/control change, cancellation while waiting, unsupported elevated target, duplicate ID, and failed input. The harness must record Ctrl+V count=1 for success and 0 for rejected cases, Enter count=0 in all cases, and no foreground-setting calls. In Notepad expect exactly `Jia Wei Ng — Manus 42` for the success fixture. Save the input-event log and resulting Notepad screenshot.",
-      "prd_refs": ["F05", "R5", "R6", "R11", "section 8"],
-      "depends_on": ["S5"]
-    },
-    {
-      "key": "S7",
-      "title": "Restore owned clipboard text conditionally and reject unsupported formats",
-      "type": "feature",
-      "priority": "P0",
-      "area": "native",
-      "context": "Clipboard paste is acceptable only if it preserves the user's unchanged text clipboard and never overwrites a newer copy. Restrict support to empty/plain-text clipboards, including system-derived text formats, rather than attempting rich-format preservation.",
-      "tasks": [
-        "- [ ] Before mutation, enumerate formats and accept only empty/plain-text contents; reject rich text, HTML, image, or private formats without altering them, and return clipboard_busy if the clipboard cannot be opened.",
-        "- [ ] Snapshot the supported contents, write the owned Unicode payload, and record the clipboard sequence and payload identity.",
-        "- [ ] After 700 ms, restore the snapshot only when both sequence and owned payload remain unchanged; restore an originally empty clipboard to empty. Apply the same conditional restoration on every exit after clipboard mutation, including cancellation, late target change, and failed input.",
-        "- [ ] Preserve a newer copy, perform no clipboard retry loop, and return a failure outcome if restoration cannot open the clipboard instead of overwriting blindly."
-      ],
-      "acceptance_criteria": [
-        "- [ ] An unchanged plain-text sentinel and an originally empty clipboard are restored after the 700 ms wait, including cancellation, late target change, and failed input after mutation.",
-        "- [ ] A sequence change or an owned-payload mismatch skips restoration and leaves the newer clipboard contents untouched.",
-        "- [ ] HTML/RTF, image, and private-format clipboards are rejected before mutation with unsupported; an unavailable clipboard returns clipboard_busy.",
-        "- [ ] A restoration-open failure makes no second open/restore attempt and is reported as an error; no newer clipboard value is overwritten."
-      ],
-      "verification": "On Windows run `bun run --cwd apps/desktop test:windows:clipboard-policy`; expect exit 0 and PASS for plain-text restore, empty restore, post-mutation cancel/target-change/input-failure restore, newer sequence, payload mismatch, HTML/RTF, bitmap, private format, initial busy, and restore busy. Assert the restoration timer is scheduled for 700 ms and native snapshots before/after have identical format IDs and data hashes for rejected clips. Assert newer-copy text is unchanged, initial-busy paste count is 0, and restore-busy open-attempt count has no retries. Save the clipboard hash/timing report.",
-      "prd_refs": ["F05", "R5", "R11", "R14", "section 8"],
-      "depends_on": ["S6"]
-    },
-    {
-      "key": "S8",
-      "title": "Pass the packaged Windows Notepad native-loop gate before cloud work",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Milestone 1 explicitly gates the pipeline on a packaged Windows native loop. A Linux run, Preview, or Wine is not acceptance evidence; use a test-only fixture entry rather than adding a user-facing insertion feature.",
-      "tasks": [
-        "- [ ] Add the Bun package:native-gate and fixture:native scripts to build/launch a Windows x64 Electron test artifact with its helper and a fixed plain-text fixture instead of provider calls.",
-        "- [ ] On Windows 11 x64, minimize to tray, set a clipboard sentinel, focus Notepad, activate the global shortcut, and prove overlay, Unicode paste, target focus, and restoration from the packaged artifact.",
-        "- [ ] Save requirement-linked screenshots, handle/input logs, clipboard result, artifact SHA-256, Windows version, and pass/fail outcomes; stop pipeline implementation until the gate passes."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The packaged native-gate artifact launches without a development renderer server and locates its included x64 helper.",
-        "- [ ] A single Ctrl+Alt+Space activation inserts the fixed fixture once into foreground Notepad; overlay display does not change the target and no Enter is emitted.",
-        "- [ ] Pasting the sentinel afterward in a separate evidence field yields its original text, and the record contains a SHA-256 hash plus Windows-native screenshots/logs.",
-        "- [ ] The recorded gate result is PASS before any pipeline milestone is accepted."
-      ],
-      "verification": "On Windows run `bun run --cwd apps/desktop package:native-gate` then `bun run --cwd apps/desktop fixture:native`; expect the packaged test artifact to launch with its included helper. Copy `CARET_NATIVE_SENTINEL`, focus empty Notepad, and press/release Ctrl+Alt+Space. Expect exactly the fixed fixture `Jia Wei Ng — Manus 42`, unchanged foreground/focus handles, one Ctrl+V and zero Enter events. After more than 700 ms, paste into a separate evidence field and expect `CARET_NATIVE_SENTINEL`. Save screenshots and logs to `evidence/windows/native-gate/` and run `bun run --cwd apps/desktop hash:artifact -- <artifact-path>`; expect a recorded 64-hex SHA-256. No Preview/Wine screenshot qualifies.",
-      "prd_refs": ["F01", "F05", "F06", "F07", "R1", "R2", "R5", "R6", "R7", "R11", "R12", "R15", "Milestone 1"],
-      "depends_on": ["S3", "S4", "S7"]
-    },
-    {
-      "key": "S9",
-      "title": "Implement the bounded session state machine and stale-response invalidation",
-      "type": "feature",
-      "priority": "P0",
-      "area": "pipeline",
-      "context": "One active session owns the captured target and all transient data. Cancellation and busy shortcut behavior must be deterministic before capture and providers are connected.",
-      "tasks": [
-        "- [ ] Add main-owned session IDs, target snapshot, states and transition guards; emit Starting immediately on an eligible activation and Listening only on capture-ready acknowledgment.",
-        "- [ ] Treat a second shortcut during Listening as stop, the 60-second cap as stop, and presses during Starting/Transcribing/Cleaning/insertion as busy without creating another session.",
-        "- [ ] Give each stage an abortable lifetime; invalidate IDs on Cancel/error/completion, close capture on termination, and reject callbacks from old IDs.",
-        "- [ ] Enforce 15-second transcription and 5-second cleanup deadlines with no retries; expose terminal status and readiness for a fresh session."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Eligible activation emits Starting before asynchronous work; Listening cannot occur before the matching capture-ready callback.",
-        "- [ ] At most one session exists; second Listening activation or exactly 60 seconds requests one stop, and busy presses create no session/request.",
-        "- [ ] Cancel and errors abort the active stage, request microphone shutdown, invalidate the ID, and make late callbacks incapable of advancing or inserting.",
-        "- [ ] Deadline expiry at 15 seconds for STT or 5 seconds for cleanup yields Error with no automatic retry; a fresh activation uses a new ID."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/session-machine.test.ts`; expect exit 0 with fake-clock PASS cases for immediate Starting, capture-gated Listening, toggle stop, 60-second cap, busy presses in every non-listening stage, Cancel, stale callbacks, 15/5-second deadlines, and fresh ID after termination. For every cancel/deadline case assert capture-stop requested, insertion count=0, and provider retry count=0. The native gate evidence from S8 must already be PASS.",
-      "prd_refs": ["F01", "F02", "F05", "F06", "R2", "R3", "R8", "R14", "section 7", "Milestone 2"],
-      "depends_on": ["S2", "S3", "S4", "S5", "S8"]
-    },
-    {
-      "key": "S10",
-      "title": "Capture bounded WebM audio and release the microphone on every exit",
-      "type": "feature",
-      "priority": "P0",
-      "area": "desktop",
-      "context": "Users can speak once Listening appears; no idle microphone or continuous listening is permitted. Capture remains in the renderer, but main controls the session and readiness.",
-      "tasks": [
-        "- [ ] Request the default microphone only for an activated session and record supported WebM; acknowledge Listening only after capture starts, and report denied permission or unavailable device as blocking errors.",
-        "- [ ] Collect bounded chunks in memory, stop at 60 seconds through the main state machine, and reject an aggregate above 10 MB before IPC submission.",
-        "- [ ] Detect silence/no usable audio and device-track termination without sending transcription; submit successful audio once with session ID and MIME.",
-        "- [ ] Stop every media track and release recorder/chunk references after stop, Cancel, permission failure, size failure, device loss, and renderer shutdown."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Idle startup never calls getUserMedia; activated capture uses the default microphone and Listening occurs only after the recorder starts.",
-        "- [ ] A stopped valid recording submits one WebM buffer no larger than 10 MB; the 60-second cap stops capture.",
-        "- [ ] Silence, permission denial, device loss, or oversize audio yields Error and zero provider submissions.",
-        "- [ ] All acquired tracks have readyState ended and recorder/chunk references are cleared on every exit, including Cancel and renderer shutdown."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/audio-capture.test.ts`; expect exit 0 and PASS for idle, ready ordering, default device, valid stop, cap, silence, denied permission, missing/lost device, oversize audio, Cancel, and shutdown with track-stop/ref-release assertions. On Windows run `bun run --cwd apps/desktop dev`, record then Cancel, and repeat after unplugging or disabling the chosen microphone. Expect the Windows microphone-use indicator to disappear and no insertion/provider request after each abort. Capture timestamped indicator screenshots and payload-free capture-stop events.",
-      "prd_refs": ["F01", "F02", "R3", "R14", "section 7"],
-      "depends_on": ["S2", "S9"]
-    },
-    {
-      "key": "S11",
-      "title": "Send one abortable OpenAI file-STT request with phrase hints",
-      "type": "feature",
-      "priority": "P0",
-      "area": "pipeline",
-      "context": "The selected transcription path is one cloud file-STT provider, not local Whisper or streaming. Freeze a supported model after a real API smoke test and avoid adding a model selector or proxy.",
-      "tasks": [
-        "- [ ] Add a main-process OpenAI file-STT adapter accepting the in-memory WebM recording, protected-key accessor, and configured phrase hints.",
-        "- [ ] Smoke-test one available file-transcription model with an authorized key, then freeze its ID and request format in code; do not persist the live request payload.",
-        "- [ ] Apply the session AbortSignal and 15-second deadline; make exactly one request and reject empty/invalid transcripts, HTTP failures, timeouts, and late responses."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A valid stopped session produces exactly one OpenAI file-STT call from main with activated audio and the supplied phrase hints.",
-        "- [ ] One smoke-tested model ID is fixed in code, and no renderer model/provider selector or backend proxy is added.",
-        "- [ ] Empty transcript, HTTP failure, abort, or 15-second deadline yields an error and no retry or cleanup invocation from this adapter.",
-        "- [ ] The smoke outcome records model ID, HTTP success/failure and duration without key, audio, or transcript content."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/stt-adapter.test.ts`; expect exit 0 and PASS for one request, hint serialization, frozen model, empty result, HTTP error, abort, deadline and stale response, with retry count=0. With an authorized key on the builder machine run `bun run --cwd apps/desktop smoke:stt`; expect exit 0, one successful file-STT response containing nonempty text, and a report with the frozen model ID/status/duration only. Inspect the report and request spy to confirm no clipboard, screenshots, or surrounding text was sent. If a usable key/API is unavailable, record BLOCKED rather than claiming the smoke passed.",
-      "prd_refs": ["F03", "R4", "R9", "R13", "R14", "section 7"],
-      "depends_on": ["S9"]
-    },
-    {
-      "key": "S12",
-      "title": "Apply one neutral cleanup request and reject invalid or renumbered output",
-      "type": "feature",
-      "priority": "P0",
-      "area": "pipeline",
-      "context": "Cleanup removes fillers and false starts and adds punctuation/simple paragraphs without changing meaning. Embedded dictated instructions are data, not instructions to the model; invalid output must never reach insertion.",
-      "tasks": [
-        "- [ ] Add a main-process cleanup adapter and fixed neutral editing policy that preserves facts, negation, names, and numbers across applications while returning plain text in {text:string}.",
-        "- [ ] Smoke-test and freeze one compatible cleanup model; send transcript as untrusted dictation, use no tools, set store:false, and add no tone selector or per-app profile.",
-        "- [ ] Validate the response object, nonempty plain-text value, and unchanged numeric-token sequence; reject malformed JSON/types, empty output, non-plain formatting, and added/removed/changed numeric tokens.",
-        "- [ ] Apply one 5-second abortable request with no retry and no side effects for cancelled/stale sessions."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Cleanup makes one request to the frozen model with store:false, no tools, and the same neutral policy for Notepad and Chrome.",
-        "- [ ] Fixture output removes filler/false-start material and adds punctuation/paragraphs while retaining asserted names, facts, negation, and numbers.",
-        "- [ ] Malformed shape, empty text, non-plain formatting, or any changed numeric-token sequence is rejected before insertion.",
-        "- [ ] Abort, stale response, HTTP failure, or 5-second deadline yields an error with zero retries."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/cleanup-adapter.test.ts`; expect exit 0 and PASS for request store:false/no tools/frozen neutral policy, valid {text:string}, malformed/empty/non-plain outputs, added/removed/reordered/changed numeric tokens, timeout, abort, and stale response. Run `bun run --cwd apps/desktop smoke:cleanup` with an authorized key; expect one request, exit 0, and validated nonempty plain text preserving the fixture's Jia Wei Ng, Manus, negation, and numeric tokens. Record only model ID/status/duration plus manually recorded pass/fail assertions, not returned transcript content. An unavailable API key is BLOCKED, not PASS.",
-      "prd_refs": ["F03", "F04", "R4", "R10", "R14", "section 9"],
-      "depends_on": ["S9"]
-    },
-    {
-      "key": "S13",
-      "title": "Connect capture, transcription, cleanup, and one guarded paste attempt",
-      "type": "feature",
-      "priority": "P0",
-      "area": "pipeline",
-      "context": "Integrate the implemented adapters into the cross-application dictation loop. The helper's paste_requested outcome is not proof that the target accepted the text, and no failed step may trigger an automatic attempt.",
-      "tasks": [
-        "- [ ] Snapshot the target at activation and wire capture stop to Transcribing, one STT result to Cleaning, and one validated cleanup result to helper insertion.",
-        "- [ ] Recheck session ID/state and current target before invoking insert; retain the helper's final target recheck and abort pending helper work on cancellation.",
-        "- [ ] Drive overlay statuses and tray Cancel from the live session; show Done/Paste requested only for paste_requested and show Error for silence, deadlines, invalid output, changed target, helper failure, or device loss.",
-        "- [ ] Record payload-free stop-to-paste-request timing, enforce insertion count <=1 per session, and return to fresh-activation readiness without retry."
-      ],
-      "acceptance_criteria": [
-        "- [ ] A successful session follows Starting, Listening, Transcribing, Cleaning, Done and makes exactly one STT, one cleanup, and one paste request.",
-        "- [ ] Cancelled/stale sessions and every upstream failure make zero insertion requests; helper failures never trigger another request.",
-        "- [ ] Changed target handles block insertion without refocusing; only paste_requested produces Done with Paste requested.",
-        "- [ ] A payload-free log records stop and paste-request timestamps and their elapsed milliseconds without asserting a provider-latency target."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/dictation-pipeline.test.ts`; expect exit 0 with PASS for the exact successful state/call sequence, every upstream failure, cancellation in each stage, changed target, late responses, duplicate audio/shortcut, helper failure, and a fresh session. Assert request counts STT=1/cleanup=1/insert=1 on success, insert=0 for pre-insert failures, and never insert>1. With provider test doubles run `bun run --cwd apps/desktop fixture:pipeline`; expect Done/Paste requested only after the native paste request and a stop-to-paste timing log without audio, text, or secrets.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "R2", "R3", "R4", "R5", "R6", "R10", "R12", "R14", "section 7"],
-      "depends_on": ["S6", "S7", "S9", "S10", "S11", "S12"]
-    },
-    {
-      "key": "S14",
-      "title": "Persist the protected provider key and disclose cloud processing in setup",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "The product uses the user's key from desktop main and must disclose external processing without claiming zero retention. Setup is the only required settings UI; no account or provider-selection screen is needed.",
-      "tasks": [
-        "- [ ] Add setup disclosure that activated audio and phrase hints go to OpenAI for STT and transcripts go for cleanup; state that Caret does not persist audio/transcripts and do not make provider zero-retention claims.",
-        "- [ ] Persist version and encryptedKey under Electron userData using Windows-protected Electron secret storage, preserve the phrases field, and block saving/use if encryption is unavailable.",
-        "- [ ] Clear the submitted key from renderer input/state, decrypt only in main, and connect key readiness to tray/start gating with a visible setup error when absent/unusable.",
-        "- [ ] Style setup using Appendix A's black/white no-borders shadcn rules, light/dark inversion, filled controls and 2px offset shadow-ring keyboard focus instead of outlines."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Setup visibly names both cloud-processing stages and contains no zero-retention claim, account flow, or provider/model selector.",
-        "- [ ] Relaunch loads the saved key through protected storage; the userData configuration contains version/encryptedKey/phrases but not the raw test key.",
-        "- [ ] Missing key or unavailable decryption/encryption blocks recording and shows an error; the renderer cannot read the saved/decrypted key.",
-        "- [ ] Setup controls have zero border/outline widths, a visible prescribed focus shadow, supported palette/type/radius, body contrast >=7:1, and reduced-motion behavior."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/protected-settings.test.ts`; expect exit 0 and PASS for encrypt/save/load, schema/version, phrase preservation, missing/corrupt key, unavailable encryption, main-only access, and readiness gating. On Windows run `bun run --cwd apps/desktop dev`, enter a non-sensitive test key, save and relaunch; expect setup readiness and no raw key in the userData config when searched by the test harness. Capture disclosure and keyboard-focus screenshots in light/dark presentations, computed border/outline=0 and 2px offset shadow-ring, contrast report >=7:1, and reduced-motion transition=0. Evidence must not include the key.",
-      "prd_refs": ["F01", "F07", "R1", "R3", "R14", "section 9", "Appendix A"],
-      "depends_on": ["S2", "S3", "S9"]
-    },
-    {
-      "key": "S15",
-      "title": "Load local phrase configuration and pass it only as transcription hints",
-      "type": "feature",
-      "priority": "P0",
-      "area": "pipeline",
-      "context": "R13 is satisfied by a local phrase list, not a dictionary editor or guaranteed recognition. Preserve the same userData record used for the protected key and supply phrase hints only to STT.",
-      "tasks": [
-        "- [ ] Read and validate a phrases string list from the versioned userData configuration, defaulting an absent list to empty without touching encryptedKey.",
-        "- [ ] Provide a documented file-edit-and-relaunch configuration path, with sample phrases Jia Wei Ng and Manus, and surface malformed configuration as a setup error rather than sending unvalidated hints.",
-        "- [ ] Supply the loaded list to the STT adapter for each newly activated session; add no editor UI, per-app phrase profile, or spelling guarantee."
-      ],
-      "acceptance_criteria": [
-        "- [ ] An absent phrase list loads as empty; a valid saved list survives relaunch with encryptedKey unchanged.",
-        "- [ ] A configured Jia Wei Ng/Manus list reaches the next STT request as hints and is not sent to clipboard insertion or unrelated services.",
-        "- [ ] Malformed/non-string phrase configuration blocks that configuration from being used and produces a visible setup error.",
-        "- [ ] Configuration requires editing the local file and relaunching; there is no dictionary editor UI or guaranteed-spelling claim."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/phrases.test.ts`; expect exit 0 and PASS for absent list, valid round trip, encryptedKey preservation, malformed/non-string entries, and exact STT-hint propagation. On Windows quit Caret, edit only phrases in its userData JSON to [\"Jia Wei Ng\",\"Manus\"], and relaunch. Use `bun run --cwd apps/desktop fixture:phrases` to assert the next request contains those hints without writing live payloads to logs; expect PASS and unchanged encryptedKey hash. Save the hash comparison and phrase-configuration screenshot; confirm no dictionary editor exists.",
-      "prd_refs": ["F03", "F07", "R13", "section 9"],
-      "depends_on": ["S11", "S14"]
-    },
-    {
-      "key": "S16",
-      "title": "Remove transient content on termination and exclude sensitive data from logs",
-      "type": "feature",
-      "priority": "P0",
-      "area": "security",
-      "context": "The privacy requirement concerns Caret's storage and outbound boundary, not an unverifiable provider-retention promise. Audit the integrated paths, including scaffold logging addons, so only explicitly activated content leaves main.",
-      "tasks": [
-        "- [ ] Clear session references to audio, transcript, cleaned text, capture chunks, and helper request text after completion, cancellation, and every error; do not claim physical RAM zeroization.",
-        "- [ ] Disable or restrict inherited logging so payload bodies, headers containing secrets, provider errors containing content, and IPC/helper text never enter application logs.",
-        "- [ ] Ensure no application audio/transcript files, history, telemetry, or idle capture are created; restrict outbound provider payloads to activated audio/phrase hints for STT and transcript for cleanup.",
-        "- [ ] Add an in-process request/storage/log spy for synthetic canary tests without persisting the synthetic payloads in application output."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Terminal success, Cancel, and each failure clear all application-owned transient audio/transcript/cleaned-text references.",
-        "- [ ] Startup and idle operation acquire no microphone and issue no provider requests.",
-        "- [ ] Provider payload spies contain only the selected stage's activated content and required API fields, with no clipboard, screenshots, surrounding text, or extra integration calls.",
-        "- [ ] Synthetic audio/transcript/key canaries are absent from application logs and newly created application data files; only the protected settings persist."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/privacy.test.ts`; expect exit 0 and PASS for reference release on all terminal paths, idle zero capture/request counts, STT/cleanup payload allowlists, and redaction of canaries including provider-error bodies. Run `bun run --cwd apps/desktop audit:privacy` using non-sensitive synthetic inputs; expect a PASS report containing only counts/booleans, no raw canaries, zero audio/transcript files, and no canary matches in app logs/userData. Record the audited file list and boolean/count report; do not publish keys or live dictation.",
-      "prd_refs": ["F02", "F07", "R14", "section 7", "Appendix B"],
-      "depends_on": ["S10", "S13", "S14", "S15"]
-    },
-    {
-      "key": "S17",
-      "title": "Prove recording and cancellation release invariants with Linux fixtures",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Linux can verify deterministic lifecycle behavior with fake media and providers, but not Windows microphone or injection behavior. Add cross-module fixtures beyond the component checks to prove stale/cancelled sessions cannot insert.",
-      "tasks": [
-        "- [ ] Build a Bun integration fixture with fake clock, media tracks, STT/cleanup promises, and helper client that exercises the real state machine, audio boundary, and pipeline.",
-        "- [ ] Cover cancel during capture/STT/cleanup/pre-paste modifier wait, old responses after a fresh session, duplicate submissions and busy activations, 60-second stop, silence, device loss, and 15/5-second deadlines.",
-        "- [ ] Assert track shutdown, released references, one-session/one-request limits, and no automatic retry; emit requirement-linked fixture outcomes without claiming Windows certification."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Every cancelled/stale/timed-out/pre-paste-aborted session has insertion count=0, all of its acquired tracks ended, and no retained content; a later valid session is counted separately.",
-        "- [ ] Duplicate audio and busy activations cannot increase session/STT/cleanup/insert counts beyond one per successful session.",
-        "- [ ] The 60-second cap produces one stop; silence and device loss produce Error with zero STT calls.",
-        "- [ ] The entire integration suite passes on Linux under bun test and identifies its evidence as mocked, not native Windows acceptance."
-      ],
-      "verification": "On Linux run `bun test apps/desktop/tests/integration/session-safety.test.ts`; expect exit 0 with PASS for cancel-capture, cancel-STT, cancel-cleanup, cancel-before-paste, stale-after-fresh-session, duplicate-audio, busy-toggle, cap-60s, silence, device-loss, STT-15s-timeout and cleanup-5s-timeout. Each named case must report the specified request/track/reference assertions. Save the test log to `evidence/linux/session-safety.txt` with R3/R5/R14/R15 mapping and a mocked-native disclaimer.",
-      "prd_refs": ["F02", "F05", "F07", "R3", "R5", "R14", "R15", "section 7"],
-      "depends_on": ["S13", "S16"]
-    },
-    {
-      "key": "S18",
-      "title": "Test neutral cleanup fidelity and embedded-instruction rejection",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "A schema check alone does not prove communication-ready editing or numeric rejection. Use explicit non-sensitive fixtures and a frozen-model smoke check to test the policy while keeping automated tests deterministic.",
-      "tasks": [
-        "- [ ] Add fixtures for filler removal, false starts, punctuation/simple paragraphs, Jia Wei Ng/Manus names, factual clauses, negation, and decimal/signed/percentage/numeric-token preservation.",
-        "- [ ] Add adversarial dictation that asks the editor to follow instructions, use tools, reveal secrets, change numbers, or emit markdown; assert the request treats it as untrusted dictation and invalid responses are rejected.",
-        "- [ ] Verify successful accepted fixtures use the same neutral policy for both application labels; extend the live cleanup smoke with predicate-based fidelity assertions instead of exact model wording."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Deterministic accepted fixtures are plain text with the specified filler/false-start removal, punctuation/paragraphs, and unchanged asserted names/facts/negation/numeric tokens.",
-        "- [ ] Added, removed, reordered, or changed numeric tokens and malformed/empty/markdown responses produce rejection with insertion count=0.",
-        "- [ ] Embedded commands do not alter the system policy, enable tools, reveal a secret, or cause a second request; application labels do not change the policy.",
-        "- [ ] The frozen-model live smoke records pass/fail predicates for fidelity and neutral plain text without persisting input/output."
-      ],
-      "verification": "Run `bun test apps/desktop/tests/integration/cleanup-fidelity.test.ts`; expect exit 0 and PASS for fillers, false-starts, paragraphs, names, facts, negation, signed/decimal/percentage tokens, each numeric rejection, embedded-instructions, invalid format, and shared-policy cases. Run `bun run --cwd apps/desktop smoke:cleanup -- --fidelity`; expect exit 0 with all named predicate assertions passing on the frozen model, one call per fixture, and no input/output in the report. Save requirement-linked boolean outcomes in `evidence/cleanup/`; unavailable live API access is BLOCKED, not PASS.",
-      "prd_refs": ["F03", "F04", "R4", "R10", "R13", "R14"],
-      "depends_on": ["S12", "S13"]
-    },
-    {
-      "key": "S19",
-      "title": "Test IPC and insertion rejection paths with Linux protocol fixtures",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Exercise main's trust boundary and helper-client behavior without pretending a mock certifies Win32. These tests provide the duplicate/stale, invalid-input, and helper-outcome evidence shown in the PRD demo.",
-      "tasks": [
-        "- [ ] Add a Linux-compatible helper-process fixture implementing the documented JSON outcomes and response failures, and route tests through the real main IPC and helper client.",
-        "- [ ] Cover untrusted senders, malformed operation/schema, wrong session/state, unsupported MIME, 10 MB boundary/oversize, duplicate/stale messages, changed target, and malformed/exited helper.",
-        "- [ ] Cover target_changed, clipboard_busy, unsupported, and paste_requested response mapping, verifying no fallback, retry, or unauthorized insert path."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Exact-limit WebM is accepted in the eligible session state; oversized/non-WebM/wrong-session inputs are rejected before helper/provider calls.",
-        "- [ ] Every invalid sender/schema/state, stale/duplicate submission, target change, and helper failure makes zero new unauthorized insertion attempts.",
-        "- [ ] Only paste_requested maps to Done/Paste requested; the other helper outcomes map to Error with retry/fallback count=0.",
-        "- [ ] The Bun suite runs on Linux and explicitly labels helper-native behavior as simulated."
-      ],
-      "verification": "On Linux run `bun test apps/desktop/tests/integration/ipc-insertion.test.ts`; expect exit 0 and PASS for sender/schema/session/state checks, WebM limit boundary, oversize/MIME rejection, duplicate/stale input, target change, helper malformed/exit, and all four outcome mappings. Assert helper insert count=0 for rejected requests and retry/fallback count=0 for every failure. Save `evidence/linux/ipc-insertion.txt` with F05/F07 and R5/R11/R14/R15 mappings plus the simulated-helper disclaimer.",
-      "prd_refs": ["F05", "F06", "F07", "R5", "R11", "R14", "R15", "section 9"],
-      "depends_on": ["S2", "S5", "S13"]
-    },
-    {
-      "key": "S20",
-      "title": "Run native Windows clipboard regression tests with preservation evidence",
-      "type": "test",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Windows must prove the real clipboard format, sequencing, and restoration timing behavior. Convert the native policy checks into a repeatable suite against the packaged helper rather than accepting Linux mocks.",
-      "tasks": [
-        "- [ ] Add a Bun-driven Windows regression harness using the packaged helper and test-only native clipboard fixtures for empty/plain text, HTML/RTF, bitmap, private formats, and clipboard locking.",
-        "- [ ] Exercise restoration after the 700 ms wait, a newer copy during that interval, sequence changes even with identical text, and payload mismatch; record before/after hashes and format lists.",
-        "- [ ] Assert one paste at most, rejection before mutation for unsupported/initial-busy clips, and no overwrite or retry when restoration is unsafe; save requirement-linked native results."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Packaged-helper tests restore empty/plain text and reject HTML/RTF, bitmap, and private clips with byte-for-byte format/hash preservation.",
-        "- [ ] New-copy, changed-sequence/same-text, and changed-payload cases skip restoration and preserve the current clipboard.",
-        "- [ ] Initial clipboard busy produces no paste; restore busy produces no retry and is reported as an error without overwriting.",
-        "- [ ] A Windows-native report records the 700 ms wait, actual outcomes, hashes, one-attempt assertions, OS version, and R11/R15 mapping."
-      ],
-      "verification": "On Windows 11 x64 run `bun run --cwd apps/desktop test:windows:clipboard -- --packaged-helper`; expect exit 0 with PASS for empty-restore, text-sentinel-restore, HTML/RTF-reject, bitmap-reject, private-reject, initial-busy, restore-busy, newer-copy, sequence-changed-same-text, and payload-mismatch. Expect restoration scheduled after 700 ms, unchanged format/data hashes for rejected clips, preserved new-copy hash, paste count <=1, and no retries. Save report and payload-free timing/hash logs to `evidence/windows/clipboard/`; the harness must print the packaged helper path/hash used.",
-      "prd_refs": ["F05", "F07", "R5", "R11", "R14", "R15", "section 7", "section 8"],
-      "depends_on": ["S7", "S8"]
-    },
-    {
-      "key": "S21",
-      "title": "Verify Windows cancellation and target-switch safety without wrong-window pastes",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "Window switching and microphone release require Windows evidence, not only fake-provider tests. Keep browser-field limitations explicit: identical native handles do not prove that an in-browser caret never moved.",
-      "tasks": [
-        "- [ ] Add a Windows safety fixture that runs the real Electron capture/helper with deterministic delayed provider responses and payload-free stage/count logging.",
-        "- [ ] Cancel while recording and while STT/cleanup is pending; switch from the captured Notepad target to Chrome during processing and change between distinct focused native controls where available.",
-        "- [ ] Test cancellation while shortcut modifiers delay paste, busy repeated shortcuts, microphone loss, and a fresh session after an abort; record microphone shutdown and zero post-abort/wrong-window paste evidence.",
-        "- [ ] Save before/after target-content screenshots, foreground/focused-control logs, stage/request counters, and the native-handle limitation statement."
-      ],
-      "acceptance_criteria": [
-        "- [ ] Cancellation during recording/STT/cleanup or before paste releases microphone tracks and produces no later insertion when delayed callbacks resolve.",
-        "- [ ] A switch to a different foreground window or distinct focused-control handle yields target_changed/Error and zero paste in either target.",
-        "- [ ] Busy shortcut presses cannot create parallel sessions or duplicate insertion; microphone loss yields Error and no insertion, and a fresh activation uses a new session.",
-        "- [ ] Every case records zero wrong-window pastes; abort/target-change/device-loss cases preserve target contents, while only intentional valid sessions may change their retained target. Evidence does not claim universal browser-field detection."
-      ],
-      "verification": "On Windows run `bun run --cwd apps/desktop fixture:windows-safety` and follow its labeled cases: cancel-recording, cancel-STT, cancel-cleanup, cancel-modifier-wait, switch-window, switch-distinct-control, busy-toggle, device-loss, and fresh-after-abort. For cancellation/target/device-loss cases, wait until the harness resolves late provider callbacks; expect unchanged target text, insert count=0, ended tracks, and the microphone-use indicator cleared. For busy-toggle expect one session and at most one insertion; for fresh-after-abort expect a new ID and success only in the retained target. Capture before/after screenshots and handle/count logs in `evidence/windows/session-safety/`, including zero wrong-window pastes and the shared-browser-handle limitation.",
-      "prd_refs": ["F01", "F02", "F05", "F07", "R2", "R3", "R5", "R6", "R14", "R15", "section 7", "section 10"],
-      "depends_on": ["S13", "S16"]
-    },
-    {
-      "key": "S22",
-      "title": "Document the selected alternatives and Linux-to-Windows verification runbook",
-      "type": "docs",
-      "priority": "P0",
-      "area": "infra",
-      "context": "R7-R11 require documented choices, and R15 requires explaining Windows-builder versus Linux-sandbox development/testing. Keep documentation limited to required setup, decisions, privacy/limitations, and the demo/evidence runbook.",
-      "tasks": [
-        "- [ ] Document Electron over Tauri, toggle over push-to-talk, cloud STT over local Whisper, neutral prose without profiles, and Windows clipboard paste over simulated typing/accessibility; identify macOS alternatives as not shipped.",
-        "- [ ] Document independent scaffold/Bun commands, dormant artifacts, Windows 11 x64/microphone/API-key prerequisites, protected userData setup, file-based phrases, and the frozen model IDs discovered by smoke tests.",
-        "- [ ] State cloud disclosure, no Caret audio/transcript persistence, no provider zero-retention guarantee, unsupported elevated/password/rich-clipboard targets, no forced refocus, shared-browser-handle limitation, and Done=Paste requested.",
-        "- [ ] Add exact Linux/Windows commands, native-gate sequencing, requirement-to-evidence links, and the five timed demo segments with Appendix A hover/focus/contrast checks."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The runbook names the chosen R7-R11 alternatives and their non-shipped alternatives without promising extra platforms or fallback behavior.",
-        "- [ ] A builder can locate exact Bun commands, Windows-only native prerequisites, key/phrase instructions, frozen model IDs, and all required evidence locations.",
-        "- [ ] Privacy and target/clipboard limitations match the PRD, and Linux/Preview/Wine results are explicitly excluded from native Windows certification.",
-        "- [ ] The demo section contains all five time ranges, associated R-IDs, sentinel/cancel/window-switch checks, and no-border hover/focus/contrast evidence steps."
-      ],
-      "verification": "Read `apps/desktop/README.md` and `apps/desktop/docs/verification.md`; manually check the R7-R11 decision table, setup/key/phrase steps, discovered model IDs, supported/unsupported target list, cloud/no-persistence disclosure, and Linux/native evidence distinction. Follow each listed Bun command against its implemented script/test path and expect no missing command/path. Verify demo ranges are 0:00-0:35, 0:35-1:40, 1:40-2:35, 2:35-3:40, and 3:40-4:30 with the PRD's R-ID mappings. Record a signed-off checklist in `evidence/docs-review.txt`; no product behavior is accepted from documentation alone.",
-      "prd_refs": ["F07", "R7", "R8", "R9", "R10", "R11", "R13", "R14", "R15", "section 11", "Appendix A", "Appendix B"],
-      "depends_on": ["S11", "S12", "S14", "S15", "S17", "S19", "S20", "S21"]
-    },
-    {
-      "key": "S23",
-      "title": "Package the portable Windows release and pass both application smoke checks",
-      "type": "verification",
-      "priority": "P0",
-      "area": "tests",
-      "context": "The release gate is a portable Windows x64 app with live dictation in both demo applications, not a development fixture. Use the real protected key and frozen providers and retain only requirement-linked non-sensitive acceptance evidence.",
-      "tasks": [
-        "- [ ] Add/finalize the Bun package:win script for the portable release with bundled renderer/helper and no signing/updater, development server, test-only fixture entry, or dormant scaffold services.",
-        "- [ ] Run all desktop Bun tests and build/typecheck, then launch the portable artifact on Windows 11 x64, configure protected key/phrases/disclosure, and perform real microphone dictation in Chrome email compose and Notepad.",
-        "- [ ] Check cleanup/meaning, focus, no Send/Enter, overlay state sequence, plain-text restoration, and actual stop-to-paste timings without a latency guarantee.",
-        "- [ ] Check setup/overlay light and dark presentations for Appendix A palette, zero borders/outlines, focus/hover visibility, body contrast >=7:1, and reduced motion; hash the accepted artifact and save requirement-linked evidence."
-      ],
-      "acceptance_criteria": [
-        "- [ ] The portable x64 artifact launches without installation, a dev renderer server, or dormant services and includes the matching native helper; test-only fixture entry points are absent from release startup.",
-        "- [ ] All desktop Bun tests/typecheck/build pass; release evidence links the passing Linux fixtures and Windows native/safety results to this artifact version.",
-        "- [ ] Live dictated text in both Notepad and Chrome retains Jia Wei Ng, Manus, tomorrow, and before three PM, omits the filler Um, and separates the review and draft-request clauses into two sentences ending in punctuation; focus is unchanged and the draft is not submitted.",
-        "- [ ] Each live session makes one STT, one cleanup, and one paste request; the unchanged clipboard sentinel restores in both applications and stop-to-paste milliseconds are recorded.",
-        "- [ ] Required setup/overlay visual and keyboard accessibility checks pass in light/dark and reduced-motion presentations, and screenshots/logs plus an artifact SHA-256 are saved."
-      ],
-      "verification": "From caret run `bun test apps/desktop/tests`, `bun run --cwd apps/desktop typecheck`, and `bun run --cwd apps/desktop build`; expect exit 0 for all. On Windows run `bun run --cwd apps/desktop package:win`, launch the produced portable artifact directly without dev services, and record its hash with `bun run --cwd apps/desktop hash:artifact -- <artifact-path>`. With phrases configured and a non-sensitive authorized key, copy `CARET_RELEASE_SENTINEL`, focus Chrome email compose, toggle recording and say `Um, Jia Wei Ng will review Manus tomorrow. Please send the draft before three PM.`, then toggle stop. Expect two punctuated sentences retaining Jia Wei Ng, Manus, tomorrow, and before three PM, omitting Um, with unchanged focus, draft unsent, and Done/Paste requested. After >700 ms paste in a separate evidence field; expect the sentinel. Repeat identically in Notepad. Save target screenshots, one-call counters, handle and stop-to-paste timing logs, sentinel proof, and light/dark computed-style/focus/contrast/reduced-motion checks to `evidence/windows/release/`; live provider or Windows access missing is BLOCKED, not PASS.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "R1", "R2", "R3", "R4", "R5", "R6", "R10", "R11", "R12", "R13", "R14", "R15", "section 7", "Milestone 4", "Appendix A"],
-      "depends_on": ["S13", "S14", "S15", "S16", "S17", "S18", "S19", "S20", "S21"]
-    },
-    {
-      "key": "S24",
-      "title": "Rehearse the 4:30 PRD demo and capture requirement-linked pass evidence",
-      "type": "verification",
-      "priority": "P1",
-      "area": "tests",
-      "context": "This is demo-only rehearsal of behaviors already accepted by P0 issues, not a feature or polish pass. The final issue must execute the PRD's timed script against the accepted portable build and preserve binary outcomes before judging.",
-      "tasks": [
-        "- [ ] Prepare the accepted portable artifact/hash, protected key, default microphone, Chrome email compose, Notepad, local phrases and plain-text sentinel; open the requirement-linked Linux/Windows results.",
-        "- [ ] Rehearse the exact five PRD time segments: setup/decisions, Chrome dictation, Notepad/restoration, cancellation/window switch, and fixture/safety outcomes.",
-        "- [ ] Capture a timestamped screen recording or timed screenshot sequence plus a requirement checklist, including microphone release, no insertion after cancel/target switch, no submission, sentinel preservation and UI hover/focus evidence.",
-        "- [ ] Mark any missed timing segment or failed behavioral/evidence assertion FAIL; fix only an existing scoped issue and repeat rehearsal without adding demo-only features."
-      ],
-      "acceptance_criteria": [
-        "- [ ] One recorded rehearsal completes all five required segments within 4 minutes 30 seconds against the same artifact hash accepted in S23.",
-        "- [ ] The Chrome and Notepad segments show the prescribed speech cleaned without factual change, unchanged focus, no submission, and successful plain-text sentinel restoration.",
-        "- [ ] Cancel and window-switch segments show released microphone tracks and zero subsequent/wrong-window insertions; the final segment displays PASS evidence for duplicate/stale requests, deadlines, cleanup validation, unsupported clipboard, and newer-copy preservation.",
-        "- [ ] The requirement checklist covers R1-R15, the selected alternatives, local phrases, cloud disclosure, Linux-versus-Windows distinction, and visible no-border hover/focus/contrast checks with evidence links."
-      ],
-      "verification": "Launch the S23 portable artifact on Windows and record a stopwatch-linked rehearsal. At 0:00-0:35 show tray, shortcut, disclosure, phrase file and R7-R9/R11 decisions; at 0:35-1:40 dictate the PRD sentence in Chrome and show cleaned facts/focus/no Send; at 1:40-2:35 repeat in Notepad and paste the original sentinel afterward; at 2:35-3:40 cancel one recording and switch windows during another request, then show microphone release and no insertion; at 3:40-4:30 show the passing Linux/Windows safety/validation reports. Expect all segments completed by 4:30, the accepted artifact SHA-256 unchanged, every acceptance assertion marked PASS, and evidence covering R1-R15 including Appendix A hover/focus/contrast. Save the timed recording or screenshot sequence, checklist and artifact hash in `evidence/demo/`; missing/failed evidence means FAIL, not a verbal claim of success.",
-      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "section 11", "Appendix A"],
-      "depends_on": ["S22", "S23"]
-    }
-  ]
+ "product": "caret",
+ "epic_title": "Caret: desktop voice input",
+ "epic_summary": "Ship an independent Bun-managed Better-T-Stack scaffold with a hand-added Electron desktop app and C++ Win32 helper, delivered as a portable Windows x64 build. The MVP uses Ctrl+Alt+Space to toggle default-microphone recording, one OpenAI file transcription request, one neutral cleanup request, and one clipboard-paste attempt into the unchanged target without submitting or stealing focus. Completion requires a non-focusable status overlay, protected local key and phrase configuration, explicit cloud disclosure, bounded and cancellable sessions, conditional clipboard restoration, and requirement-linked evidence in Notepad and Chrome email compose. Electron, toggle activation, cloud STT, neutral prose, and Windows clipboard insertion are the selected alternatives; Linux provides fixture tests but cannot certify native Windows behavior. Exclude macOS/Linux delivery, streaming/local Whisper, insertion fallbacks, dictionary UI, per-app profiles, history, accounts, payments, extra integrations, elevated/password targets, rich-clipboard insertion, signing, updating, and additional polish.",
+ "epic_done_when": [
+  "A portable Windows 11 x64 build runs as one tray instance, accepts a protected provider key, and registers Ctrl+Alt+Space while another application remains active.",
+  "Packaged dictation inserts meaning-preserving neutral plain text in both Notepad and Chrome email compose, leaves the target focused, never sends Enter or clicks Send, and restores the unchanged plain-text clipboard sentinel.",
+  "Recording is activation-only, capped at 60 seconds and 10 MB, and cancellation, silence, device loss, deadlines, invalid cleanup, or a changed target cannot produce a subsequent insertion; Windows safety evidence records zero wrong-window pastes.",
+  "The non-focusable Starting, Listening, Transcribing, Cleaning, Done, and Error overlay and setup controls satisfy Appendix A; Done is labeled as Paste requested rather than application acceptance.",
+  "Only activated audio, phrase hints, and transcript are sent externally; the protected key and local phrases persist, audio/transcripts do not persist, and payloads and secrets are absent from logs.",
+  "All Linux fixture checks, Windows native and packaged smoke checks, and the 4:30 requirement-linked demo rehearsal have recorded passing outcomes, including unsupported-clipboard rejection and newer-copy preservation.",
+  "Final gate passed: tests, a continuous computer-use video covering every element, per-element screenshots and an independent verifier's rerun are attached."
+ ],
+ "areas": [
+  "infra",
+  "desktop",
+  "native",
+  "pipeline",
+  "security",
+  "tests"
+ ],
+ "issues": [
+  {
+   "key": "S1",
+   "title": "Scaffold an independent Bun project and boot the Electron desktop shell",
+   "type": "setup",
+   "priority": "P0",
+   "area": "infra",
+   "context": "Appendix B requires exactly one independent scaffold and a hand-added apps/desktop; the generated applications are not Caret features. Establish the desktop-only boot path without starting the dormant web, server, auth, database, payment, mobile, extension, or docs artifacts.",
+   "tasks": [
+    "- [ ] Run /home/ubuntu/manus-interview/scaffold/01-caret.sh caret once from an external workspace in an interactive TTY; retain its exact flags and use the documented addon answers, without --yes.",
+    "- [ ] Add apps/desktop with Electron main, TypeScript React renderer, preload entry, and build configuration; keep Electron's required Node runtime while using Bun for installs, scripts, and tests.",
+    "- [ ] Define desktop dev, build, and typecheck scripts invoked with bun run --cwd apps/desktop; ensure these scripts do not invoke dormant applications."
+   ],
+   "acceptance_criteria": [
+    "- [ ] caret has its own .git directory, bts.jsonc, and Bun lockfile, is outside the source repository, and was produced by one scaffold invocation.",
+    "- [ ] bun install and the desktop build/typecheck scripts exit 0; the dev script launches an Electron renderer showing Caret.",
+    "- [ ] Desktop startup requires no Hono/Next server, MongoDB, auth service, Polar configuration, Expo, or extension runtime."
+   ],
+   "verification": "From the new caret root run `bun install`, `bun run --cwd apps/desktop typecheck`, and `bun run --cwd apps/desktop build`; expect exit 0 from each. Run `git rev-parse --show-toplevel` and `test -f bts.jsonc`; expect the external caret directory and exit 0. On Windows run `bun run --cwd apps/desktop dev` with no dormant services running; expect one Electron window displaying Caret. Capture the startup screenshot, resolved repo path, scaffold command transcript, and build logs.",
+   "prd_refs": [
+    "F01",
+    "R1",
+    "R7",
+    "R15",
+    "Appendix B"
+   ],
+   "depends_on": []
+  },
+  {
+   "key": "S2",
+   "title": "Restrict renderer privileges and validate the preload message boundary",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "The renderer may capture audio and display setup/status, but main owns secrets, sessions, requests, and helper execution. Implement the bounded IPC contract before microphone or provider integration.",
+   "tasks": [
+    "- [ ] Disable renderer Node integration, enable context isolation and sandboxing, load bundled content only, and reject navigation and new-window requests.",
+    "- [ ] Expose only key setup, status subscription, cancellation, and bounded audio submission through preload; expose no generic IPC, process, filesystem, or helper command API.",
+    "- [ ] Validate the sender and message schemas; make audio submission require an active matching session in the capture-complete state, an allowed WebM MIME, and at most 10 MB, with state supplied by main."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The renderer cannot access require, process, filesystem APIs, raw ipcRenderer, or a generic helper-command channel.",
+    "- [ ] Untrusted senders, unknown operations, malformed payloads, wrong session/state, non-WebM MIME, and audio over 10 MB are rejected before handler side effects.",
+    "- [ ] Bundled UI loads, while an external navigation and a window.open request are blocked."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/ipc-boundary.test.ts`; expect exit 0 with PASS cases for the four permitted operations and rejection of every invalid sender/schema/session/state/MIME/size case. On Windows run `bun run --cwd apps/desktop dev`; from renderer DevTools evaluate `typeof require`, `typeof process`, and attempts to navigate to https://example.com and open that URL. Expect both types to be undefined, no external page or extra window, and only the four documented preload capabilities. Capture the console output and blocked-navigation log without payloads.",
+   "prd_refs": [
+    "F07",
+    "R14",
+    "section 9"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S3",
+   "title": "Implement single-instance tray startup and the fixed toggle shortcut",
+   "type": "feature",
+   "priority": "P0",
+   "area": "desktop",
+   "context": "Caret must activate from another application rather than behaving as a transcript page. Provide the application lifecycle and readiness hooks without adding shortcut configuration or push-to-talk.",
+   "tasks": [
+    "- [ ] Acquire the Electron single-instance lock, add the tray with setup and Cancel actions, and minimize/close the setup window to the tray without terminating the utility.",
+    "- [ ] Register only Ctrl+Alt+Space and unregister it on exit; surface registration failure and prevent recording when registration, key, or microphone readiness is false.",
+    "- [ ] Route shortcut activation and the tray Cancel action to main callbacks without focusing or reopening a window; ignore activation while a non-recording session is busy."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Launching a second instance leaves exactly one Caret process group and one tray icon without foregrounding setup.",
+    "- [ ] Ctrl+Alt+Space calls the toggle callback while Notepad is foreground; setup remains minimized and Notepad retains focus.",
+    "- [ ] A registration failure or false key/microphone readiness blocks the start callback and exposes the corresponding error.",
+    "- [ ] Tray Cancel calls cancellation without activating Caret, and app exit releases the shortcut."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/tray-hotkey.test.ts`; expect exit 0 and PASS for second-instance exit, successful registration, conflicting registration, each readiness blocker, busy activation, and shutdown unregister. On Windows run `bun run --cwd apps/desktop dev` twice, minimize setup, focus Notepad, and press Ctrl+Alt+Space with readiness provided by the test adapter. Expect one tray icon, one toggle event, and the unchanged Notepad foreground handle. Capture a tray screenshot and payload-free foreground/event log.",
+   "prd_refs": [
+    "F01",
+    "F05",
+    "R1",
+    "R2",
+    "R3",
+    "R6",
+    "R8"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S4",
+   "title": "Render the six-state overlay without taking application focus",
+   "type": "feature",
+   "priority": "P0",
+   "area": "desktop",
+   "context": "The small floating overlay is the only dictation UI needed. It must communicate recording readiness and paste-request status without stealing the target application's focus.",
+   "tasks": [
+    "- [ ] Add a non-focusable overlay window driven by main status updates for Starting, Listening, Transcribing, Cleaning, Done, and Error.",
+    "- [ ] Display Done with the explanatory text Paste requested; do not imply that the application accepted text.",
+    "- [ ] Use the Appendix A black/white and neutral-grey shadcn no-borders styling, 10px radius, Geist or Inter at 14px, 400/600 weights, and 150ms opacity/translate transitions disabled for reduced motion."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Each of the six main statuses yields its corresponding visible overlay label; Done also displays Paste requested.",
+    "- [ ] Showing and updating the overlay never changes the foreground window or focused-control handles.",
+    "- [ ] Overlay surfaces use only the prescribed palette, have zero border/outline widths, and body text contrast is at least 7:1 in light and dark presentations.",
+    "- [ ] Emulated prefers-reduced-motion removes the overlay transitions."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/overlay-state.test.ts`; expect exit 0 and six state-to-label cases passing, including the Done wording. On Windows run `bun run --cwd apps/desktop fixture:overlay`, focus Notepad, and cycle all states from the test harness. Expect identical foreground/focus handles before and after every transition. Capture six screenshots and the handle log; inspect computed border/outline widths, palette, radius, font and transition duration, and record body-text contrast >=7:1. Emulate reduced motion in DevTools and expect zero transition duration.",
+   "prd_refs": [
+    "F06",
+    "R3",
+    "R6",
+    "R12",
+    "Appendix A"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S5",
+   "title": "Add the bounded Win32 helper protocol and target snapshot operation",
+   "type": "feature",
+   "priority": "P0",
+   "area": "native",
+   "context": "The native helper must expose only the two PRD operations, not arbitrary commands. Snapshot the foreground window and focused native control so insertion can compare the original target later.",
+   "tasks": [
+    "- [ ] Add a C++ Win32 helper and a typed main-process client for JSON snapshot and insert requests and the documented outcomes.",
+    "- [ ] Implement snapshot with foreground-window and focused-control handles, returning an error when no usable target exists.",
+    "- [ ] Validate complete request schemas and maintain insert session-ID deduplication within the app-lifetime helper; reject unknown operations, malformed requests, and duplicate insert IDs before native side effects.",
+    "- [ ] Define a Bun script build:helper that invokes the Windows C++ toolchain and a helper-protocol test harness."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The helper compiles for Windows x64, and snapshot reports the currently foreground Notepad window and its focused input control.",
+    "- [ ] Only snapshot and insert schemas are accepted; malformed JSON, unknown operations, missing/wrong-type fields, and duplicate insert session IDs cause zero clipboard or input calls.",
+    "- [ ] Main parses helper responses as typed outcomes and treats malformed responses or helper termination as errors rather than requesting another insertion."
+   ],
+   "verification": "On Windows run `bun run --cwd apps/desktop build:helper` and `bun run --cwd apps/desktop test:windows:helper-protocol`; expect exit 0 and PASS for valid snapshot, invalid JSON/schema/operation, duplicate session ID, malformed response, and helper exit. Focus Notepad and use the harness snapshot command; expect returned foreground/focused-control handles to equal independently recorded Win32 handles. Capture the handle comparison and native-side-effect counters; all rejected operations must have counters of zero.",
+   "prd_refs": [
+    "F05",
+    "R5",
+    "R11",
+    "section 9"
+   ],
+   "depends_on": [
+    "S1"
+   ]
+  },
+  {
+   "key": "S6",
+   "title": "Request one Unicode paste only when the captured Windows target is unchanged",
+   "type": "feature",
+   "priority": "P0",
+   "area": "native",
+   "context": "Implement the chosen Windows clipboard insertion path without typing, accessibility fallbacks, refocusing, or submission. Target comparison must occur immediately before the paste request, including after shortcut modifiers are released.",
+   "tasks": [
+    "- [ ] Implement insert(expectedTarget, sessionId, text) for nonempty validated plain text, writing Unicode clipboard text and emitting only the Ctrl+V input sequence.",
+    "- [ ] Recheck foreground and focused-control handles before clipboard mutation and again immediately before sending input; refuse a changed target without refocusing it.",
+    "- [ ] Wait for Ctrl/Alt/Space from activation to be released, and allow main cancellation to terminate the pending helper attempt before any paste input; reject unsupported elevated targets rather than implementing a fallback.",
+    "- [ ] Emit paste_requested only after one successful input request; report target_changed or an existing failure outcome with no second automatic attempt."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A matching non-elevated Notepad target receives the Unicode fixture exactly once, including non-ASCII characters, after shortcut modifiers are released.",
+    "- [ ] Changed foreground/focused-control handles, a cancelled pending attempt, or an elevated target prevent paste input; no API forcibly refocuses a target.",
+    "- [ ] Captured input events contain only the Ctrl+V sequence and contain no Enter or submission action.",
+    "- [ ] A duplicate session ID or failed input request cannot generate another paste attempt."
+   ],
+   "verification": "On Windows run `bun run --cwd apps/desktop test:windows:paste-target`; expect exit 0 and PASS cases for Unicode insertion, modifier-release ordering, foreground/control change, cancellation while waiting, unsupported elevated target, duplicate ID, and failed input. The harness must record Ctrl+V count=1 for success and 0 for rejected cases, Enter count=0 in all cases, and no foreground-setting calls. In Notepad expect exactly `Jia Wei Ng — Manus 42` for the success fixture. Save the input-event log and resulting Notepad screenshot.",
+   "prd_refs": [
+    "F05",
+    "R5",
+    "R6",
+    "R11",
+    "section 8"
+   ],
+   "depends_on": [
+    "S5"
+   ]
+  },
+  {
+   "key": "S7",
+   "title": "Restore owned clipboard text conditionally and reject unsupported formats",
+   "type": "feature",
+   "priority": "P0",
+   "area": "native",
+   "context": "Clipboard paste is acceptable only if it preserves the user's unchanged text clipboard and never overwrites a newer copy. Restrict support to empty/plain-text clipboards, including system-derived text formats, rather than attempting rich-format preservation.",
+   "tasks": [
+    "- [ ] Before mutation, enumerate formats and accept only empty/plain-text contents; reject rich text, HTML, image, or private formats without altering them, and return clipboard_busy if the clipboard cannot be opened.",
+    "- [ ] Snapshot the supported contents, write the owned Unicode payload, and record the clipboard sequence and payload identity.",
+    "- [ ] After 700 ms, restore the snapshot only when both sequence and owned payload remain unchanged; restore an originally empty clipboard to empty. Apply the same conditional restoration on every exit after clipboard mutation, including cancellation, late target change, and failed input.",
+    "- [ ] Preserve a newer copy, perform no clipboard retry loop, and return a failure outcome if restoration cannot open the clipboard instead of overwriting blindly."
+   ],
+   "acceptance_criteria": [
+    "- [ ] An unchanged plain-text sentinel and an originally empty clipboard are restored after the 700 ms wait, including cancellation, late target change, and failed input after mutation.",
+    "- [ ] A sequence change or an owned-payload mismatch skips restoration and leaves the newer clipboard contents untouched.",
+    "- [ ] HTML/RTF, image, and private-format clipboards are rejected before mutation with unsupported; an unavailable clipboard returns clipboard_busy.",
+    "- [ ] A restoration-open failure makes no second open/restore attempt and is reported as an error; no newer clipboard value is overwritten."
+   ],
+   "verification": "On Windows run `bun run --cwd apps/desktop test:windows:clipboard-policy`; expect exit 0 and PASS for plain-text restore, empty restore, post-mutation cancel/target-change/input-failure restore, newer sequence, payload mismatch, HTML/RTF, bitmap, private format, initial busy, and restore busy. Assert the restoration timer is scheduled for 700 ms and native snapshots before/after have identical format IDs and data hashes for rejected clips. Assert newer-copy text is unchanged, initial-busy paste count is 0, and restore-busy open-attempt count has no retries. Save the clipboard hash/timing report.",
+   "prd_refs": [
+    "F05",
+    "R5",
+    "R11",
+    "R14",
+    "section 8"
+   ],
+   "depends_on": [
+    "S6"
+   ]
+  },
+  {
+   "key": "S8",
+   "title": "Pass the packaged Windows Notepad native-loop gate before cloud work",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Milestone 1 explicitly gates the pipeline on a packaged Windows native loop. A Linux run, Preview, or Wine is not acceptance evidence; use a test-only fixture entry rather than adding a user-facing insertion feature.",
+   "tasks": [
+    "- [ ] Add the Bun package:native-gate and fixture:native scripts to build/launch a Windows x64 Electron test artifact with its helper and a fixed plain-text fixture instead of provider calls.",
+    "- [ ] On Windows 11 x64, minimize to tray, set a clipboard sentinel, focus Notepad, activate the global shortcut, and prove overlay, Unicode paste, target focus, and restoration from the packaged artifact.",
+    "- [ ] Save requirement-linked screenshots, handle/input logs, clipboard result, artifact SHA-256, Windows version, and pass/fail outcomes; stop pipeline implementation until the gate passes."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The packaged native-gate artifact launches without a development renderer server and locates its included x64 helper.",
+    "- [ ] A single Ctrl+Alt+Space activation inserts the fixed fixture once into foreground Notepad; overlay display does not change the target and no Enter is emitted.",
+    "- [ ] Pasting the sentinel afterward in a separate evidence field yields its original text, and the record contains a SHA-256 hash plus Windows-native screenshots/logs.",
+    "- [ ] The recorded gate result is PASS before any pipeline milestone is accepted."
+   ],
+   "verification": "On Windows run `bun run --cwd apps/desktop package:native-gate` then `bun run --cwd apps/desktop fixture:native`; expect the packaged test artifact to launch with its included helper. Copy `CARET_NATIVE_SENTINEL`, focus empty Notepad, and press/release Ctrl+Alt+Space. Expect exactly the fixed fixture `Jia Wei Ng — Manus 42`, unchanged foreground/focus handles, one Ctrl+V and zero Enter events. After more than 700 ms, paste into a separate evidence field and expect `CARET_NATIVE_SENTINEL`. Save screenshots and logs to `evidence/windows/native-gate/` and run `bun run --cwd apps/desktop hash:artifact -- <artifact-path>`; expect a recorded 64-hex SHA-256. No Preview/Wine screenshot qualifies.",
+   "prd_refs": [
+    "F01",
+    "F05",
+    "F06",
+    "F07",
+    "R1",
+    "R2",
+    "R5",
+    "R6",
+    "R7",
+    "R11",
+    "R12",
+    "R15",
+    "Milestone 1"
+   ],
+   "depends_on": [
+    "S3",
+    "S4",
+    "S7"
+   ]
+  },
+  {
+   "key": "S9",
+   "title": "Implement the bounded session state machine and stale-response invalidation",
+   "type": "feature",
+   "priority": "P0",
+   "area": "pipeline",
+   "context": "One active session owns the captured target and all transient data. Cancellation and busy shortcut behavior must be deterministic before capture and providers are connected.",
+   "tasks": [
+    "- [ ] Add main-owned session IDs, target snapshot, states and transition guards; emit Starting immediately on an eligible activation and Listening only on capture-ready acknowledgment.",
+    "- [ ] Treat a second shortcut during Listening as stop, the 60-second cap as stop, and presses during Starting/Transcribing/Cleaning/insertion as busy without creating another session.",
+    "- [ ] Give each stage an abortable lifetime; invalidate IDs on Cancel/error/completion, close capture on termination, and reject callbacks from old IDs.",
+    "- [ ] Enforce 15-second transcription and 5-second cleanup deadlines with no retries; expose terminal status and readiness for a fresh session."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Eligible activation emits Starting before asynchronous work; Listening cannot occur before the matching capture-ready callback.",
+    "- [ ] At most one session exists; second Listening activation or exactly 60 seconds requests one stop, and busy presses create no session/request.",
+    "- [ ] Cancel and errors abort the active stage, request microphone shutdown, invalidate the ID, and make late callbacks incapable of advancing or inserting.",
+    "- [ ] Deadline expiry at 15 seconds for STT or 5 seconds for cleanup yields Error with no automatic retry; a fresh activation uses a new ID."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/session-machine.test.ts`; expect exit 0 with fake-clock PASS cases for immediate Starting, capture-gated Listening, toggle stop, 60-second cap, busy presses in every non-listening stage, Cancel, stale callbacks, 15/5-second deadlines, and fresh ID after termination. For every cancel/deadline case assert capture-stop requested, insertion count=0, and provider retry count=0. The native gate evidence from S8 must already be PASS.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F05",
+    "F06",
+    "R2",
+    "R3",
+    "R8",
+    "R14",
+    "section 7",
+    "Milestone 2"
+   ],
+   "depends_on": [
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S8"
+   ]
+  },
+  {
+   "key": "S10",
+   "title": "Capture bounded WebM audio and release the microphone on every exit",
+   "type": "feature",
+   "priority": "P0",
+   "area": "desktop",
+   "context": "Users can speak once Listening appears; no idle microphone or continuous listening is permitted. Capture remains in the renderer, but main controls the session and readiness.",
+   "tasks": [
+    "- [ ] Request the default microphone only for an activated session and record supported WebM; acknowledge Listening only after capture starts, and report denied permission or unavailable device as blocking errors.",
+    "- [ ] Collect bounded chunks in memory, stop at 60 seconds through the main state machine, and reject an aggregate above 10 MB before IPC submission.",
+    "- [ ] Detect silence/no usable audio and device-track termination without sending transcription; submit successful audio once with session ID and MIME.",
+    "- [ ] Stop every media track and release recorder/chunk references after stop, Cancel, permission failure, size failure, device loss, and renderer shutdown."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Idle startup never calls getUserMedia; activated capture uses the default microphone and Listening occurs only after the recorder starts.",
+    "- [ ] A stopped valid recording submits one WebM buffer no larger than 10 MB; the 60-second cap stops capture.",
+    "- [ ] Silence, permission denial, device loss, or oversize audio yields Error and zero provider submissions.",
+    "- [ ] All acquired tracks have readyState ended and recorder/chunk references are cleared on every exit, including Cancel and renderer shutdown."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/audio-capture.test.ts`; expect exit 0 and PASS for idle, ready ordering, default device, valid stop, cap, silence, denied permission, missing/lost device, oversize audio, Cancel, and shutdown with track-stop/ref-release assertions. On Windows run `bun run --cwd apps/desktop dev`, record then Cancel, and repeat after unplugging or disabling the chosen microphone. Expect the Windows microphone-use indicator to disappear and no insertion/provider request after each abort. Capture timestamped indicator screenshots and payload-free capture-stop events.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "R3",
+    "R14",
+    "section 7"
+   ],
+   "depends_on": [
+    "S2",
+    "S9"
+   ]
+  },
+  {
+   "key": "S11",
+   "title": "Send one abortable OpenRouter audio-input transcription request with phrase hints",
+   "type": "feature",
+   "priority": "P0",
+   "area": "pipeline",
+   "context": "The selected transcription path is one cloud file-STT provider, not local Whisper or streaming. Freeze a supported model after a real API smoke test and avoid adding a model selector or proxy. Provider is OpenRouter (key from .env OPENROUTER_API_KEY in development; entered once in setup for packaged use). Candidate audio-input model: google/gemini-3.5-flash-lite (catalog: audio input, text output, tools). The Responses API accepts wav/mp3 only; chat completions accepts other input_audio formats the provider supports. Freeze one model after the smoke test.",
+   "tasks": [
+    "- [ ] Add a main-process OpenRouter audio-input transcription adapter accepting the in-memory WebM recording, protected-key accessor, and configured phrase hints.",
+    "- [ ] Smoke-test one available file-transcription model with an authorized key, then freeze its ID and request format in code; do not persist the live request payload.",
+    "- [ ] Apply the session AbortSignal and 15-second deadline; make exactly one request and reject empty/invalid transcripts, HTTP failures, timeouts, and late responses."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A valid stopped session produces exactly one OpenRouter audio-input transcription call from main with activated audio and the supplied phrase hints.",
+    "- [ ] One smoke-tested model ID is fixed in code, and no renderer model/provider selector or backend proxy is added.",
+    "- [ ] Empty transcript, HTTP failure, abort, or 15-second deadline yields an error and no retry or cleanup invocation from this adapter.",
+    "- [ ] The smoke outcome records model ID, HTTP success/failure and duration without key, audio, or transcript content."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/stt-adapter.test.ts`; expect exit 0 and PASS for one request, hint serialization, frozen model, empty result, HTTP error, abort, deadline and stale response, with retry count=0. With an authorized key on the builder machine run `bun run --cwd apps/desktop smoke:stt`; expect exit 0, one successful file-STT response containing nonempty text, and a report with the frozen model ID/status/duration only. Inspect the report and request spy to confirm no clipboard, screenshots, or surrounding text was sent. If a usable key/API is unavailable, record BLOCKED rather than claiming the smoke passed.",
+   "prd_refs": [
+    "F03",
+    "R4",
+    "R9",
+    "R13",
+    "R14",
+    "section 7"
+   ],
+   "depends_on": [
+    "S9"
+   ]
+  },
+  {
+   "key": "S12",
+   "title": "Apply one neutral cleanup request and reject invalid or renumbered output",
+   "type": "feature",
+   "priority": "P0",
+   "area": "pipeline",
+   "context": "Cleanup removes fillers and false starts and adds punctuation/simple paragraphs without changing meaning. Embedded dictated instructions are data, not instructions to the model; invalid output must never reach insertion.",
+   "tasks": [
+    "- [ ] Add a main-process cleanup adapter and fixed neutral editing policy that preserves facts, negation, names, and numbers across applications while returning plain text in {text:string}.",
+    "- [ ] Smoke-test and freeze one compatible cleanup model; send transcript as untrusted dictation, use no tools, set store:false, and add no tone selector or per-app profile.",
+    "- [ ] Validate the response object, nonempty plain-text value, and unchanged numeric-token sequence; reject malformed JSON/types, empty output, non-plain formatting, and added/removed/changed numeric tokens.",
+    "- [ ] Apply one 5-second abortable request with no retry and no side effects for cancelled/stale sessions."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Cleanup makes one request to the frozen model with store:false, no tools, and the same neutral policy for Notepad and Chrome.",
+    "- [ ] Fixture output removes filler/false-start material and adds punctuation/paragraphs while retaining asserted names, facts, negation, and numbers.",
+    "- [ ] Malformed shape, empty text, non-plain formatting, or any changed numeric-token sequence is rejected before insertion.",
+    "- [ ] Abort, stale response, HTTP failure, or 5-second deadline yields an error with zero retries."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/cleanup-adapter.test.ts`; expect exit 0 and PASS for request store:false/no tools/frozen neutral policy, valid {text:string}, malformed/empty/non-plain outputs, added/removed/reordered/changed numeric tokens, timeout, abort, and stale response. Run `bun run --cwd apps/desktop smoke:cleanup` with an authorized key; expect one request, exit 0, and validated nonempty plain text preserving the fixture's Jia Wei Ng, Manus, negation, and numeric tokens. Record only model ID/status/duration plus manually recorded pass/fail assertions, not returned transcript content. An unavailable API key is BLOCKED, not PASS.",
+   "prd_refs": [
+    "F03",
+    "F04",
+    "R4",
+    "R10",
+    "R14",
+    "section 9"
+   ],
+   "depends_on": [
+    "S9"
+   ]
+  },
+  {
+   "key": "S13",
+   "title": "Connect capture, transcription, cleanup, and one guarded paste attempt",
+   "type": "feature",
+   "priority": "P0",
+   "area": "pipeline",
+   "context": "Integrate the implemented adapters into the cross-application dictation loop. The helper's paste_requested outcome is not proof that the target accepted the text, and no failed step may trigger an automatic attempt.",
+   "tasks": [
+    "- [ ] Snapshot the target at activation and wire capture stop to Transcribing, one STT result to Cleaning, and one validated cleanup result to helper insertion.",
+    "- [ ] Recheck session ID/state and current target before invoking insert; retain the helper's final target recheck and abort pending helper work on cancellation.",
+    "- [ ] Drive overlay statuses and tray Cancel from the live session; show Done/Paste requested only for paste_requested and show Error for silence, deadlines, invalid output, changed target, helper failure, or device loss.",
+    "- [ ] Record payload-free stop-to-paste-request timing, enforce insertion count <=1 per session, and return to fresh-activation readiness without retry."
+   ],
+   "acceptance_criteria": [
+    "- [ ] A successful session follows Starting, Listening, Transcribing, Cleaning, Done and makes exactly one STT, one cleanup, and one paste request.",
+    "- [ ] Cancelled/stale sessions and every upstream failure make zero insertion requests; helper failures never trigger another request.",
+    "- [ ] Changed target handles block insertion without refocusing; only paste_requested produces Done with Paste requested.",
+    "- [ ] A payload-free log records stop and paste-request timestamps and their elapsed milliseconds without asserting a provider-latency target."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/dictation-pipeline.test.ts`; expect exit 0 with PASS for the exact successful state/call sequence, every upstream failure, cancellation in each stage, changed target, late responses, duplicate audio/shortcut, helper failure, and a fresh session. Assert request counts STT=1/cleanup=1/insert=1 on success, insert=0 for pre-insert failures, and never insert>1. With provider test doubles run `bun run --cwd apps/desktop fixture:pipeline`; expect Done/Paste requested only after the native paste request and a stop-to-paste timing log without audio, text, or secrets.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R10",
+    "R12",
+    "R14",
+    "section 7"
+   ],
+   "depends_on": [
+    "S6",
+    "S7",
+    "S9",
+    "S10",
+    "S11",
+    "S12"
+   ]
+  },
+  {
+   "key": "S14",
+   "title": "Persist the protected provider key and disclose cloud processing in setup",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "The product uses the user's key from desktop main and must disclose external processing without claiming zero retention. Setup is the only required settings UI; no account or provider-selection screen is needed.",
+   "tasks": [
+    "- [ ] Add setup disclosure that activated audio and phrase hints go to OpenRouter for STT and transcripts go for cleanup; state that Caret does not persist audio/transcripts and do not make provider zero-retention claims.",
+    "- [ ] Persist version and encryptedKey under Electron userData using Windows-protected Electron secret storage, preserve the phrases field, and block saving/use if encryption is unavailable.",
+    "- [ ] Clear the submitted key from renderer input/state, decrypt only in main, and connect key readiness to tray/start gating with a visible setup error when absent/unusable.",
+    "- [ ] Style setup using Appendix A's black/white no-borders shadcn rules, light/dark inversion, filled controls and 2px offset shadow-ring keyboard focus instead of outlines."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Setup visibly names both cloud-processing stages and contains no zero-retention claim, account flow, or provider/model selector.",
+    "- [ ] Relaunch loads the saved key through protected storage; the userData configuration contains version/encryptedKey/phrases but not the raw test key.",
+    "- [ ] Missing key or unavailable decryption/encryption blocks recording and shows an error; the renderer cannot read the saved/decrypted key.",
+    "- [ ] Setup controls have zero border/outline widths, a visible prescribed focus shadow, supported palette/type/radius, body contrast >=7:1, and reduced-motion behavior."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/protected-settings.test.ts`; expect exit 0 and PASS for encrypt/save/load, schema/version, phrase preservation, missing/corrupt key, unavailable encryption, main-only access, and readiness gating. On Windows run `bun run --cwd apps/desktop dev`, enter a non-sensitive test key, save and relaunch; expect setup readiness and no raw key in the userData config when searched by the test harness. Capture disclosure and keyboard-focus screenshots in light/dark presentations, computed border/outline=0 and 2px offset shadow-ring, contrast report >=7:1, and reduced-motion transition=0. Evidence must not include the key.",
+   "prd_refs": [
+    "F01",
+    "F07",
+    "R1",
+    "R3",
+    "R14",
+    "section 9",
+    "Appendix A"
+   ],
+   "depends_on": [
+    "S2",
+    "S3",
+    "S9"
+   ]
+  },
+  {
+   "key": "S15",
+   "title": "Load local phrase configuration and pass it only as transcription hints",
+   "type": "feature",
+   "priority": "P0",
+   "area": "pipeline",
+   "context": "R13 is satisfied by a local phrase list, not a dictionary editor or guaranteed recognition. Preserve the same userData record used for the protected key and supply phrase hints only to STT.",
+   "tasks": [
+    "- [ ] Read and validate a phrases string list from the versioned userData configuration, defaulting an absent list to empty without touching encryptedKey.",
+    "- [ ] Provide a documented file-edit-and-relaunch configuration path, with sample phrases Jia Wei Ng and Manus, and surface malformed configuration as a setup error rather than sending unvalidated hints.",
+    "- [ ] Supply the loaded list to the STT adapter for each newly activated session; add no editor UI, per-app phrase profile, or spelling guarantee."
+   ],
+   "acceptance_criteria": [
+    "- [ ] An absent phrase list loads as empty; a valid saved list survives relaunch with encryptedKey unchanged.",
+    "- [ ] A configured Jia Wei Ng/Manus list reaches the next STT request as hints and is not sent to clipboard insertion or unrelated services.",
+    "- [ ] Malformed/non-string phrase configuration blocks that configuration from being used and produces a visible setup error.",
+    "- [ ] Configuration requires editing the local file and relaunching; there is no dictionary editor UI or guaranteed-spelling claim."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/phrases.test.ts`; expect exit 0 and PASS for absent list, valid round trip, encryptedKey preservation, malformed/non-string entries, and exact STT-hint propagation. On Windows quit Caret, edit only phrases in its userData JSON to [\"Jia Wei Ng\",\"Manus\"], and relaunch. Use `bun run --cwd apps/desktop fixture:phrases` to assert the next request contains those hints without writing live payloads to logs; expect PASS and unchanged encryptedKey hash. Save the hash comparison and phrase-configuration screenshot; confirm no dictionary editor exists.",
+   "prd_refs": [
+    "F03",
+    "F07",
+    "R13",
+    "section 9"
+   ],
+   "depends_on": [
+    "S11",
+    "S14"
+   ]
+  },
+  {
+   "key": "S16",
+   "title": "Remove transient content on termination and exclude sensitive data from logs",
+   "type": "feature",
+   "priority": "P0",
+   "area": "security",
+   "context": "The privacy requirement concerns Caret's storage and outbound boundary, not an unverifiable provider-retention promise. Audit the integrated paths, including scaffold logging addons, so only explicitly activated content leaves main.",
+   "tasks": [
+    "- [ ] Clear session references to audio, transcript, cleaned text, capture chunks, and helper request text after completion, cancellation, and every error; do not claim physical RAM zeroization.",
+    "- [ ] Disable or restrict inherited logging so payload bodies, headers containing secrets, provider errors containing content, and IPC/helper text never enter application logs.",
+    "- [ ] Ensure no application audio/transcript files, history, telemetry, or idle capture are created; restrict outbound provider payloads to activated audio/phrase hints for STT and transcript for cleanup.",
+    "- [ ] Add an in-process request/storage/log spy for synthetic canary tests without persisting the synthetic payloads in application output."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Terminal success, Cancel, and each failure clear all application-owned transient audio/transcript/cleaned-text references.",
+    "- [ ] Startup and idle operation acquire no microphone and issue no provider requests.",
+    "- [ ] Provider payload spies contain only the selected stage's activated content and required API fields, with no clipboard, screenshots, surrounding text, or extra integration calls.",
+    "- [ ] Synthetic audio/transcript/key canaries are absent from application logs and newly created application data files; only the protected settings persist."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/privacy.test.ts`; expect exit 0 and PASS for reference release on all terminal paths, idle zero capture/request counts, STT/cleanup payload allowlists, and redaction of canaries including provider-error bodies. Run `bun run --cwd apps/desktop audit:privacy` using non-sensitive synthetic inputs; expect a PASS report containing only counts/booleans, no raw canaries, zero audio/transcript files, and no canary matches in app logs/userData. Record the audited file list and boolean/count report; do not publish keys or live dictation.",
+   "prd_refs": [
+    "F02",
+    "F07",
+    "R14",
+    "section 7",
+    "Appendix B"
+   ],
+   "depends_on": [
+    "S10",
+    "S13",
+    "S14",
+    "S15"
+   ]
+  },
+  {
+   "key": "S17",
+   "title": "Prove recording and cancellation release invariants with Linux fixtures",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Linux can verify deterministic lifecycle behavior with fake media and providers, but not Windows microphone or injection behavior. Add cross-module fixtures beyond the component checks to prove stale/cancelled sessions cannot insert.",
+   "tasks": [
+    "- [ ] Build a Bun integration fixture with fake clock, media tracks, STT/cleanup promises, and helper client that exercises the real state machine, audio boundary, and pipeline.",
+    "- [ ] Cover cancel during capture/STT/cleanup/pre-paste modifier wait, old responses after a fresh session, duplicate submissions and busy activations, 60-second stop, silence, device loss, and 15/5-second deadlines.",
+    "- [ ] Assert track shutdown, released references, one-session/one-request limits, and no automatic retry; emit requirement-linked fixture outcomes without claiming Windows certification."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Every cancelled/stale/timed-out/pre-paste-aborted session has insertion count=0, all of its acquired tracks ended, and no retained content; a later valid session is counted separately.",
+    "- [ ] Duplicate audio and busy activations cannot increase session/STT/cleanup/insert counts beyond one per successful session.",
+    "- [ ] The 60-second cap produces one stop; silence and device loss produce Error with zero STT calls.",
+    "- [ ] The entire integration suite passes on Linux under bun test and identifies its evidence as mocked, not native Windows acceptance."
+   ],
+   "verification": "On Linux run `bun test apps/desktop/tests/integration/session-safety.test.ts`; expect exit 0 with PASS for cancel-capture, cancel-STT, cancel-cleanup, cancel-before-paste, stale-after-fresh-session, duplicate-audio, busy-toggle, cap-60s, silence, device-loss, STT-15s-timeout and cleanup-5s-timeout. Each named case must report the specified request/track/reference assertions. Save the test log to `evidence/linux/session-safety.txt` with R3/R5/R14/R15 mapping and a mocked-native disclaimer.",
+   "prd_refs": [
+    "F02",
+    "F05",
+    "F07",
+    "R3",
+    "R5",
+    "R14",
+    "R15",
+    "section 7"
+   ],
+   "depends_on": [
+    "S13",
+    "S16"
+   ]
+  },
+  {
+   "key": "S18",
+   "title": "Test neutral cleanup fidelity and embedded-instruction rejection",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "A schema check alone does not prove communication-ready editing or numeric rejection. Use explicit non-sensitive fixtures and a frozen-model smoke check to test the policy while keeping automated tests deterministic.",
+   "tasks": [
+    "- [ ] Add fixtures for filler removal, false starts, punctuation/simple paragraphs, Jia Wei Ng/Manus names, factual clauses, negation, and decimal/signed/percentage/numeric-token preservation.",
+    "- [ ] Add adversarial dictation that asks the editor to follow instructions, use tools, reveal secrets, change numbers, or emit markdown; assert the request treats it as untrusted dictation and invalid responses are rejected.",
+    "- [ ] Verify successful accepted fixtures use the same neutral policy for both application labels; extend the live cleanup smoke with predicate-based fidelity assertions instead of exact model wording."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Deterministic accepted fixtures are plain text with the specified filler/false-start removal, punctuation/paragraphs, and unchanged asserted names/facts/negation/numeric tokens.",
+    "- [ ] Added, removed, reordered, or changed numeric tokens and malformed/empty/markdown responses produce rejection with insertion count=0.",
+    "- [ ] Embedded commands do not alter the system policy, enable tools, reveal a secret, or cause a second request; application labels do not change the policy.",
+    "- [ ] The frozen-model live smoke records pass/fail predicates for fidelity and neutral plain text without persisting input/output."
+   ],
+   "verification": "Run `bun test apps/desktop/tests/integration/cleanup-fidelity.test.ts`; expect exit 0 and PASS for fillers, false-starts, paragraphs, names, facts, negation, signed/decimal/percentage tokens, each numeric rejection, embedded-instructions, invalid format, and shared-policy cases. Run `bun run --cwd apps/desktop smoke:cleanup -- --fidelity`; expect exit 0 with all named predicate assertions passing on the frozen model, one call per fixture, and no input/output in the report. Save requirement-linked boolean outcomes in `evidence/cleanup/`; unavailable live API access is BLOCKED, not PASS.",
+   "prd_refs": [
+    "F03",
+    "F04",
+    "R4",
+    "R10",
+    "R13",
+    "R14"
+   ],
+   "depends_on": [
+    "S12",
+    "S13"
+   ]
+  },
+  {
+   "key": "S19",
+   "title": "Test IPC and insertion rejection paths with Linux protocol fixtures",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Exercise main's trust boundary and helper-client behavior without pretending a mock certifies Win32. These tests provide the duplicate/stale, invalid-input, and helper-outcome evidence shown in the PRD demo.",
+   "tasks": [
+    "- [ ] Add a Linux-compatible helper-process fixture implementing the documented JSON outcomes and response failures, and route tests through the real main IPC and helper client.",
+    "- [ ] Cover untrusted senders, malformed operation/schema, wrong session/state, unsupported MIME, 10 MB boundary/oversize, duplicate/stale messages, changed target, and malformed/exited helper.",
+    "- [ ] Cover target_changed, clipboard_busy, unsupported, and paste_requested response mapping, verifying no fallback, retry, or unauthorized insert path."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Exact-limit WebM is accepted in the eligible session state; oversized/non-WebM/wrong-session inputs are rejected before helper/provider calls.",
+    "- [ ] Every invalid sender/schema/state, stale/duplicate submission, target change, and helper failure makes zero new unauthorized insertion attempts.",
+    "- [ ] Only paste_requested maps to Done/Paste requested; the other helper outcomes map to Error with retry/fallback count=0.",
+    "- [ ] The Bun suite runs on Linux and explicitly labels helper-native behavior as simulated."
+   ],
+   "verification": "On Linux run `bun test apps/desktop/tests/integration/ipc-insertion.test.ts`; expect exit 0 and PASS for sender/schema/session/state checks, WebM limit boundary, oversize/MIME rejection, duplicate/stale input, target change, helper malformed/exit, and all four outcome mappings. Assert helper insert count=0 for rejected requests and retry/fallback count=0 for every failure. Save `evidence/linux/ipc-insertion.txt` with F05/F07 and R5/R11/R14/R15 mappings plus the simulated-helper disclaimer.",
+   "prd_refs": [
+    "F05",
+    "F06",
+    "F07",
+    "R5",
+    "R11",
+    "R14",
+    "R15",
+    "section 9"
+   ],
+   "depends_on": [
+    "S2",
+    "S5",
+    "S13"
+   ]
+  },
+  {
+   "key": "S20",
+   "title": "Run native Windows clipboard regression tests with preservation evidence",
+   "type": "test",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Windows must prove the real clipboard format, sequencing, and restoration timing behavior. Convert the native policy checks into a repeatable suite against the packaged helper rather than accepting Linux mocks.",
+   "tasks": [
+    "- [ ] Add a Bun-driven Windows regression harness using the packaged helper and test-only native clipboard fixtures for empty/plain text, HTML/RTF, bitmap, private formats, and clipboard locking.",
+    "- [ ] Exercise restoration after the 700 ms wait, a newer copy during that interval, sequence changes even with identical text, and payload mismatch; record before/after hashes and format lists.",
+    "- [ ] Assert one paste at most, rejection before mutation for unsupported/initial-busy clips, and no overwrite or retry when restoration is unsafe; save requirement-linked native results."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Packaged-helper tests restore empty/plain text and reject HTML/RTF, bitmap, and private clips with byte-for-byte format/hash preservation.",
+    "- [ ] New-copy, changed-sequence/same-text, and changed-payload cases skip restoration and preserve the current clipboard.",
+    "- [ ] Initial clipboard busy produces no paste; restore busy produces no retry and is reported as an error without overwriting.",
+    "- [ ] A Windows-native report records the 700 ms wait, actual outcomes, hashes, one-attempt assertions, OS version, and R11/R15 mapping."
+   ],
+   "verification": "On Windows 11 x64 run `bun run --cwd apps/desktop test:windows:clipboard -- --packaged-helper`; expect exit 0 with PASS for empty-restore, text-sentinel-restore, HTML/RTF-reject, bitmap-reject, private-reject, initial-busy, restore-busy, newer-copy, sequence-changed-same-text, and payload-mismatch. Expect restoration scheduled after 700 ms, unchanged format/data hashes for rejected clips, preserved new-copy hash, paste count <=1, and no retries. Save report and payload-free timing/hash logs to `evidence/windows/clipboard/`; the harness must print the packaged helper path/hash used.",
+   "prd_refs": [
+    "F05",
+    "F07",
+    "R5",
+    "R11",
+    "R14",
+    "R15",
+    "section 7",
+    "section 8"
+   ],
+   "depends_on": [
+    "S7",
+    "S8"
+   ]
+  },
+  {
+   "key": "S21",
+   "title": "Verify Windows cancellation and target-switch safety without wrong-window pastes",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Window switching and microphone release require Windows evidence, not only fake-provider tests. Keep browser-field limitations explicit: identical native handles do not prove that an in-browser caret never moved.",
+   "tasks": [
+    "- [ ] Add a Windows safety fixture that runs the real Electron capture/helper with deterministic delayed provider responses and payload-free stage/count logging.",
+    "- [ ] Cancel while recording and while STT/cleanup is pending; switch from the captured Notepad target to Chrome during processing and change between distinct focused native controls where available.",
+    "- [ ] Test cancellation while shortcut modifiers delay paste, busy repeated shortcuts, microphone loss, and a fresh session after an abort; record microphone shutdown and zero post-abort/wrong-window paste evidence.",
+    "- [ ] Save before/after target-content screenshots, foreground/focused-control logs, stage/request counters, and the native-handle limitation statement."
+   ],
+   "acceptance_criteria": [
+    "- [ ] Cancellation during recording/STT/cleanup or before paste releases microphone tracks and produces no later insertion when delayed callbacks resolve.",
+    "- [ ] A switch to a different foreground window or distinct focused-control handle yields target_changed/Error and zero paste in either target.",
+    "- [ ] Busy shortcut presses cannot create parallel sessions or duplicate insertion; microphone loss yields Error and no insertion, and a fresh activation uses a new session.",
+    "- [ ] Every case records zero wrong-window pastes; abort/target-change/device-loss cases preserve target contents, while only intentional valid sessions may change their retained target. Evidence does not claim universal browser-field detection."
+   ],
+   "verification": "On Windows run `bun run --cwd apps/desktop fixture:windows-safety` and follow its labeled cases: cancel-recording, cancel-STT, cancel-cleanup, cancel-modifier-wait, switch-window, switch-distinct-control, busy-toggle, device-loss, and fresh-after-abort. For cancellation/target/device-loss cases, wait until the harness resolves late provider callbacks; expect unchanged target text, insert count=0, ended tracks, and the microphone-use indicator cleared. For busy-toggle expect one session and at most one insertion; for fresh-after-abort expect a new ID and success only in the retained target. Capture before/after screenshots and handle/count logs in `evidence/windows/session-safety/`, including zero wrong-window pastes and the shared-browser-handle limitation.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F05",
+    "F07",
+    "R2",
+    "R3",
+    "R5",
+    "R6",
+    "R14",
+    "R15",
+    "section 7",
+    "section 10"
+   ],
+   "depends_on": [
+    "S13",
+    "S16"
+   ]
+  },
+  {
+   "key": "S22",
+   "title": "Document the selected alternatives and Linux-to-Windows verification runbook",
+   "type": "docs",
+   "priority": "P0",
+   "area": "infra",
+   "context": "R7-R11 require documented choices, and R15 requires explaining Windows-builder versus Linux-sandbox development/testing. Keep documentation limited to required setup, decisions, privacy/limitations, and the demo/evidence runbook.",
+   "tasks": [
+    "- [ ] Document Electron over Tauri, toggle over push-to-talk, cloud STT over local Whisper, neutral prose without profiles, and Windows clipboard paste over simulated typing/accessibility; identify macOS alternatives as not shipped.",
+    "- [ ] Document independent scaffold/Bun commands, dormant artifacts, Windows 11 x64/microphone/API-key prerequisites, protected userData setup, file-based phrases, and the frozen model IDs discovered by smoke tests.",
+    "- [ ] State cloud disclosure, no Caret audio/transcript persistence, no provider zero-retention guarantee, unsupported elevated/password/rich-clipboard targets, no forced refocus, shared-browser-handle limitation, and Done=Paste requested.",
+    "- [ ] Add exact Linux/Windows commands, native-gate sequencing, requirement-to-evidence links, and the five timed demo segments with Appendix A hover/focus/contrast checks."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The runbook names the chosen R7-R11 alternatives and their non-shipped alternatives without promising extra platforms or fallback behavior.",
+    "- [ ] A builder can locate exact Bun commands, Windows-only native prerequisites, key/phrase instructions, frozen model IDs, and all required evidence locations.",
+    "- [ ] Privacy and target/clipboard limitations match the PRD, and Linux/Preview/Wine results are explicitly excluded from native Windows certification.",
+    "- [ ] The demo section contains all five time ranges, associated R-IDs, sentinel/cancel/window-switch checks, and no-border hover/focus/contrast evidence steps."
+   ],
+   "verification": "Read `apps/desktop/README.md` and `apps/desktop/docs/verification.md`; manually check the R7-R11 decision table, setup/key/phrase steps, discovered model IDs, supported/unsupported target list, cloud/no-persistence disclosure, and Linux/native evidence distinction. Follow each listed Bun command against its implemented script/test path and expect no missing command/path. Verify demo ranges are 0:00-0:35, 0:35-1:40, 1:40-2:35, 2:35-3:40, and 3:40-4:30 with the PRD's R-ID mappings. Record a signed-off checklist in `evidence/docs-review.txt`; no product behavior is accepted from documentation alone.",
+   "prd_refs": [
+    "F07",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R13",
+    "R14",
+    "R15",
+    "section 11",
+    "Appendix A",
+    "Appendix B"
+   ],
+   "depends_on": [
+    "S11",
+    "S12",
+    "S14",
+    "S15",
+    "S17",
+    "S19",
+    "S20",
+    "S21"
+   ]
+  },
+  {
+   "key": "S23",
+   "title": "Package the portable Windows release and pass both application smoke checks",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "The release gate is a portable Windows x64 app with live dictation in both demo applications, not a development fixture. Use the real protected key and frozen providers and retain only requirement-linked non-sensitive acceptance evidence.",
+   "tasks": [
+    "- [ ] Add/finalize the Bun package:win script for the portable release with bundled renderer/helper and no signing/updater, development server, test-only fixture entry, or dormant scaffold services.",
+    "- [ ] Run all desktop Bun tests and build/typecheck, then launch the portable artifact on Windows 11 x64, configure protected key/phrases/disclosure, and perform real microphone dictation in Chrome email compose and Notepad.",
+    "- [ ] Check cleanup/meaning, focus, no Send/Enter, overlay state sequence, plain-text restoration, and actual stop-to-paste timings without a latency guarantee.",
+    "- [ ] Check setup/overlay light and dark presentations for Appendix A palette, zero borders/outlines, focus/hover visibility, body contrast >=7:1, and reduced motion; hash the accepted artifact and save requirement-linked evidence."
+   ],
+   "acceptance_criteria": [
+    "- [ ] The portable x64 artifact launches without installation, a dev renderer server, or dormant services and includes the matching native helper; test-only fixture entry points are absent from release startup.",
+    "- [ ] All desktop Bun tests/typecheck/build pass; release evidence links the passing Linux fixtures and Windows native/safety results to this artifact version.",
+    "- [ ] Live dictated text in both Notepad and Chrome retains Jia Wei Ng, Manus, tomorrow, and before three PM, omits the filler Um, and separates the review and draft-request clauses into two sentences ending in punctuation; focus is unchanged and the draft is not submitted.",
+    "- [ ] Each live session makes one STT, one cleanup, and one paste request; the unchanged clipboard sentinel restores in both applications and stop-to-paste milliseconds are recorded.",
+    "- [ ] Required setup/overlay visual and keyboard accessibility checks pass in light/dark and reduced-motion presentations, and screenshots/logs plus an artifact SHA-256 are saved."
+   ],
+   "verification": "From caret run `bun test apps/desktop/tests`, `bun run --cwd apps/desktop typecheck`, and `bun run --cwd apps/desktop build`; expect exit 0 for all. On Windows run `bun run --cwd apps/desktop package:win`, launch the produced portable artifact directly without dev services, and record its hash with `bun run --cwd apps/desktop hash:artifact -- <artifact-path>`. With phrases configured and a non-sensitive authorized key, copy `CARET_RELEASE_SENTINEL`, focus Chrome email compose, toggle recording and say `Um, Jia Wei Ng will review Manus tomorrow. Please send the draft before three PM.`, then toggle stop. Expect two punctuated sentences retaining Jia Wei Ng, Manus, tomorrow, and before three PM, omitting Um, with unchanged focus, draft unsent, and Done/Paste requested. After >700 ms paste in a separate evidence field; expect the sentinel. Repeat identically in Notepad. Save target screenshots, one-call counters, handle and stop-to-paste timing logs, sentinel proof, and light/dark computed-style/focus/contrast/reduced-motion checks to `evidence/windows/release/`; live provider or Windows access missing is BLOCKED, not PASS.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "section 7",
+    "Milestone 4",
+    "Appendix A"
+   ],
+   "depends_on": [
+    "S13",
+    "S14",
+    "S15",
+    "S16",
+    "S17",
+    "S18",
+    "S19",
+    "S20",
+    "S21"
+   ]
+  },
+  {
+   "key": "S24",
+   "title": "Rehearse the 4:30 PRD demo and capture requirement-linked pass evidence",
+   "type": "verification",
+   "priority": "P1",
+   "area": "tests",
+   "context": "This is demo-only rehearsal of behaviors already accepted by P0 issues, not a feature or polish pass. The final issue must execute the PRD's timed script against the accepted portable build and preserve binary outcomes before judging.",
+   "tasks": [
+    "- [ ] Prepare the accepted portable artifact/hash, protected key, default microphone, Chrome email compose, Notepad, local phrases and plain-text sentinel; open the requirement-linked Linux/Windows results.",
+    "- [ ] Rehearse the exact five PRD time segments: setup/decisions, Chrome dictation, Notepad/restoration, cancellation/window switch, and fixture/safety outcomes.",
+    "- [ ] Capture a timestamped screen recording or timed screenshot sequence plus a requirement checklist, including microphone release, no insertion after cancel/target switch, no submission, sentinel preservation and UI hover/focus evidence.",
+    "- [ ] Mark any missed timing segment or failed behavioral/evidence assertion FAIL; fix only an existing scoped issue and repeat rehearsal without adding demo-only features."
+   ],
+   "acceptance_criteria": [
+    "- [ ] One recorded rehearsal completes all five required segments within 4 minutes 30 seconds against the same artifact hash accepted in S23.",
+    "- [ ] The Chrome and Notepad segments show the prescribed speech cleaned without factual change, unchanged focus, no submission, and successful plain-text sentinel restoration.",
+    "- [ ] Cancel and window-switch segments show released microphone tracks and zero subsequent/wrong-window insertions; the final segment displays PASS evidence for duplicate/stale requests, deadlines, cleanup validation, unsupported clipboard, and newer-copy preservation.",
+    "- [ ] The requirement checklist covers R1-R15, the selected alternatives, local phrases, cloud disclosure, Linux-versus-Windows distinction, and visible no-border hover/focus/contrast checks with evidence links."
+   ],
+   "verification": "Launch the S23 portable artifact on Windows and record a stopwatch-linked rehearsal. At 0:00-0:35 show tray, shortcut, disclosure, phrase file and R7-R9/R11 decisions; at 0:35-1:40 dictate the PRD sentence in Chrome and show cleaned facts/focus/no Send; at 1:40-2:35 repeat in Notepad and paste the original sentinel afterward; at 2:35-3:40 cancel one recording and switch windows during another request, then show microphone release and no insertion; at 3:40-4:30 show the passing Linux/Windows safety/validation reports. Expect all segments completed by 4:30, the accepted artifact SHA-256 unchanged, every acceptance assertion marked PASS, and evidence covering R1-R15 including Appendix A hover/focus/contrast. Save the timed recording or screenshot sequence, checklist and artifact hash in `evidence/demo/`; missing/failed evidence means FAIL, not a verbal claim of success.",
+   "prd_refs": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "section 11",
+    "Appendix A"
+   ],
+   "depends_on": [
+    "S22",
+    "S23"
+   ]
+  },
+  {
+   "key": "VX",
+   "title": "Final gate: full-coverage computer-use verification with video and screenshots",
+   "type": "verification",
+   "priority": "P0",
+   "area": "tests",
+   "context": "Tests alone do not prove the product works. This gate proves every element of the finished product by driving it the way a user does. Environment: a real Windows 11 desktop (Manus Windows computer or the user's PC); the Linux sandbox cannot host this gate. Surface to cover: setup window (cloud disclosure, key entry, microphone/shortcut readiness, phrases config), tray menu (Setup, Cancel, Quit), the Ctrl+Alt+Space toggle, every overlay state (Starting, Listening, Transcribing, Cleaning, Done, Error), paste into Notepad and into the Chrome compose box, and every error path (no key, microphone denied, shortcut conflict, 60-second cap, STT/cleanup timeout, focus changed before paste, clipboard restore). Method: OS-level computer use (mouse, keyboard, real microphone or a virtual audio device playing a fixed WAV), recorded as one continuous screen video, plus screenshots of every element and state.",
+   "tasks": [
+    "Build the element inventory `evidence/inventory.md`: one row per user-reachable element, state, command or tool, derived from the built product (routes, components, CLI help, MCP tool list) and from the PRD; no row may be omitted because it is hard to reach.",
+    "Run the full automated suites from a clean clone (`bun install --frozen-lockfile`, lint, typecheck, unit, integration, e2e) and save the sanitized logs under evidence/tests/.",
+    "Perform a computer-use walkthrough that touches every inventory row while screen recording continuously (ffmpeg x11grab/gdigrab or the platform recorder); say or overlay the row id when each element is exercised.",
+    "Take at least one screenshot per inventory row (success state, and error state where one exists) named `evidence/screens/<row-id>.png`, and fill the coverage matrix in `evidence/coverage.md`: row id, video timestamp, screenshot file, covering test name, result.",
+    "Run `bun run verify:coverage` (create it here): it fails if any inventory row lacks a screenshot file, a timestamp inside the video duration, or a result, and prints ffprobe duration/resolution of the video. Upload the video as a release asset and record its URL and sha256 in evidence/manifest.json.",
+    "Have an agent that did not build the product re-run the suites and replay the walkthrough from a clean clone, and attach its own screenshots and verdict."
+   ],
+   "acceptance_criteria": [
+    "All automated suites pass from a clean clone with exit code 0; sanitized logs are committed.",
+    "evidence/inventory.md covers every user-reachable element, state, command or tool in the shipped product, with no unexplained omissions.",
+    "A continuous screen recording shows every inventory row being exercised through real interaction, with a timestamp per row in evidence/coverage.md.",
+    "Every inventory row has a screenshot file, and `bun run verify:coverage` exits 0.",
+    "An independent verifier's rerun matches the builder's results; any divergence is listed and resolved, not hidden."
+   ],
+   "verification": "From a clean clone run `bun install --frozen-lockfile && bun run lint && bun run typecheck && bun test` plus the e2e command listed in the README; expect exit 0 for each. Run `bun run verify:coverage`; expect exit 0 and output `rows=<N> screenshots=<N> timestamps=<N> missing=0` and ffprobe duration > 0. Open the video and spot-check at least five random rows by seeking to their timestamps and confirming the element on screen matches the row. Open the independent verifier's report and confirm every row shows PASS. Any missing row, screenshot, timestamp, failed test or unexplained divergence fails the gate.",
+   "prd_refs": [
+    "All release requirements"
+   ],
+   "depends_on": [
+    "S24"
+   ]
+  }
+ ]
 }

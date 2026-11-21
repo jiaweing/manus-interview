@@ -13,7 +13,7 @@ Explain six purposes without presenting animation as implementation evidence. Ch
 - [ ] **R1:** Cover the six named products in one coherent 60-second hero.
 - [ ] **R2:** Produce visuals purely through JavaScript; no recordings, editors, external images, or generated video.
 - [ ] **R3:** Choose Remotion and explain rejected rendering alternatives.
-- [ ] **R4:** Author with Claude Opus 5.5; confirm its exact selectable model ID.
+- [ ] **R4:** Author with Claude Opus 5.5 via OpenRouter model ID `anthropic/claude-opus-5.5` (verified in the catalog).
 - [ ] **R5:** Define cartoon 2.5D layers, palette, typography, and one simple mascot.
 - [ ] **R6:** Illustrate clean black-and-white, borderless product interfaces.
 - [ ] **R7:** Specify OpenRouter music, validated boundaries, caching, and JavaScript fallback.
@@ -77,13 +77,15 @@ Reject Canvas for extra typography/preview infrastructure, GSAP/Lottie for mutab
 
 **Cartoon style:** flat fills, rounded geometry, overlapping foreground/background shapes, one offset silhouette, and soft shadows create 2.5D depth. Use Paper `#FFF7E8`, Ink `#20212B`, and restrained Sun `#FFD166`/Mint `#6DD6BC` accents outside interfaces. Pip is one SVG capsule with eyes and a mouth; use static poses and simple group translations, not articulated rigging. Use one bundled font and frame-interpolated entrances; captions stay fixed.
 
-**Authoring:** Claude Opus 5.5’s model ID remains unverified. Request scene-sized JavaScript patches against locked records; review stills/tests. No runtime model dependency.
+**Authoring:** Claude Opus 5.5 is `anthropic/claude-opus-5.5` on OpenRouter (verified 2026-11-21). Request scene-sized JavaScript patches against locked records; review stills/tests. No runtime model dependency.
 
 ## 9. Data model / protocol / API surface
 
 `timeline.js` owns BPM, bars, fixtures, and scene objects: `{id, product, startBar, bars, status, claim, prdRef, evidenceRef, captions}`. Captions contain `{fromFrame, toFrame, text}`. Status defaults to `concept`; `prototype` needs supporting evidence. Intro/outro omit product status.
 
 `bun run render:hero` validates records, selects cached/fallback audio, and renders only `hero-16x9.mp4`. `bun run preview:stills` checks specified frames. `bun run music:generate` explicitly requests fresh audio; renders never do so.
+
+**Music candidates (catalog-verified 2026-11-21):** `google/lyria-3-clip-preview`, `google/lyria-3-pro-preview` (audio out via chat completions with `modalities:["text","audio"]`, streaming required). Smoke-test before relying on either.
 
 **Music contract:** read `OPENROUTER_API_KEY` server-side; never commit/log it. Validate one music model, documented request/response shape, access, and rights. Availability, duration/BPM control, and generation success remain unverified; invent no fields. Limit requests to 120 seconds and one retry. Cache bytes, decoded PCM, prompt/model metadata, and hash. Reject drifting/unusable audio.
 

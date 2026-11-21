@@ -57,7 +57,7 @@ All are MVP; no stretch backlog.
 
 - **F01:** Single-instance tray app, key setup, fixed global toggle shortcut, readiness and registration checks. R1–R3, R7–R8.
 - **F02:** Bounded recording, cancellation, silence handling, microphone shutdown on every exit. R3, R14.
-- **F03:** One OpenAI file-STT request with phrase hints, then one cleanup request. Freeze one model per step after API smoke testing; no selector. R4, R9, R13.
+- **F03:** One OpenRouter audio-input transcription request (key from `.env` `OPENROUTER_API_KEY`) with phrase hints, then one OpenRouter cleanup request. Freeze one model per step after API smoke testing; no selector. R4, R9, R13.
 - **F04:** Remove fillers/false starts; add punctuation/simple paragraphs. Preserve facts, negation, names, numbers; return plain text with one neutral policy. R4, R10.
 - **F05:** Target recheck, clipboard-paste/conditional restore, duplicate-session rejection; no Enter or submission action. R5–R6, R11.
 - **F06:** Non-focusable overlay: Starting, Listening, Transcribing, Cleaning, Done, Error. Done means “Paste requested,” not confirmed acceptance. R12.

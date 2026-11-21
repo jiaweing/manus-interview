@@ -21,7 +21,7 @@ bun create better-t-stack@latest <name> \
 | `--yes` combined with stack flags | Rejected by the CLI (do not use `--yes`) |
 | Non-interactive run | **Blocks**: the `ultracite`, `wxt`, `skills` and `mcp` addons ask questions, so a TTY is required |
 | WXT addon output | `apps/extension` with React template and `popup`, `background`, `content` entrypoints. **No side panel entrypoint**, so Sidekick adds `entrypoints/sidepanel/` and the `sidePanel` permission by hand |
-| `ai` example | Hono `/ai` route using Vercel AI SDK with Google Gemini (`gemini-2.5-flash`) by default |
+| `ai` example | Hono `/ai` route using Vercel AI SDK. Scaffold default is Google Gemini; **replace it with OpenRouter** (`OPENROUTER_API_KEY`, `OPENROUTER_MODEL` in `.env`) |
 | Install step and a full end-to-end boot of a scaffold | **Not verified** (dry-run and partial generation only; dependency install and `bun run dev` were not exercised) |
 
 Answers given at the prompts during the verification run: Ultracite linter = Biome; editors, agent files and hooks = none; WXT template = React; skills scope = Project (the remaining `skills` and `mcp` prompts were not reached).
@@ -46,3 +46,10 @@ Using the same scaffold does not mean wiring every part into every product. Unus
 - TetherTerm needs a PTY under Bun. Bun 1.4.5 exposes `Bun.Terminal`; a spike must confirm it, with node-pty under Node as the fallback.
 - Glassroom's privacy claims conflict with a default logging addon (evlog). Payload, URL and body logging must be off.
 - Caret's Electron app and the Remotion video are not Better-T-Stack targets.
+
+## Decisions of 2026-11-21
+
+- All app AI goes through OpenRouter; the key lives in each product's `.env` (`OPENROUTER_API_KEY`, never committed; commit `.env.example`).
+- Verified catalog IDs: `anthropic/claude-opus-5.5` (authoring), `anthropic/claude-sonnet-5.5` (Sidekick default candidate), `google/gemini-3.5-flash-lite` (Caret audio-input candidate), `google/lyria-3-clip-preview` / `google/lyria-3-pro-preview` (music candidates). Freeze each after a smoke test.
+- Everything is built from scratch: no Manus webdev, Studio game or video builder.
+- Completion requires tests, a computer-use walkthrough recorded on video that touches every element, and screenshots of every element (final issue `VX` per product).

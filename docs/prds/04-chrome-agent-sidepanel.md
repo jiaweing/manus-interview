@@ -73,14 +73,14 @@ Exclude cookies, storage, passwords, hidden DOM, and existing sensitive values f
 
 ## 8. Proposed architecture and tech stack (include an ASCII or mermaid diagram, key technical decisions with rationale, and rejected alternatives)
 
-Use Better-T-Stack with **Bun**, TypeScript, React, **WXT**, Zod, `bun test`, and **Hono**. Choose the scaffold’s **Google Gemini** integration only; fix one model server-side, without a provider picker.
+Use Better-T-Stack with **Bun**, TypeScript, React, **WXT**, Zod, `bun test`, and **Hono**. Use **OpenRouter** only (`OPENROUTER_API_KEY` and `OPENROUTER_MODEL` in `.env`, default candidate `anthropic/claude-sonnet-5.5`); fix one model server-side, without a provider picker.
 
 ```text
 React Side Panel: loop, policy, timeline, Stop
     | chrome.scripting / chrome.tabs
     v
 Packaged content script <-> page DOM
-Side Panel -- HTTPS + static token --> Hono --> Gemini
+Side Panel -- HTTPS + static token --> Hono --> OpenRouter
 MV3 worker: toolbar/panel setup only
 ```
 
@@ -114,7 +114,7 @@ Sites/controls may change: preflight both tasks, verify each action, and stop on
 
 Treat page text as untrusted data: delimit observations, reject instructions changing the user’s goal or requesting secrets, and enforce checks outside the model. These simple rules do not guarantee prompt-injection immunity.
 
-Questions: Is unpacked installation acceptable? Can reachable HTTPS hosting and a Gemini budget/token be supplied? Defaults: unpacked and the two named tasks. Resolve hosting first.
+Questions: Is unpacked installation acceptable? Can reachable HTTPS hosting and an OpenRouter key/budget be supplied? Defaults: unpacked and the two named tasks. Resolve hosting first.
 
 ## 11. Success metrics and a demo script (exactly how a judge would verify each requirement in under 5 minutes)
 
@@ -151,4 +151,4 @@ No borders, outlines, or dividers. Separate controls with whitespace/grey surfac
 
 Run `scaffold/04-sidekick.sh` outside this repo for independent `sidekick/`: **one scaffold per project**, never a mega scaffold. Preserve Better-T-Stack + Bun: `bun install`, `bun run`, `bunx`, `bun test`.
 
-Use `apps/extension` WXT/React; add `entrypoints/sidepanel/` and permission. Use `apps/server` Hono with static-token authentication and Gemini only. Remove unused Better Auth, MongoDB, web pages, Polar, and native-uniwind wiring from the runnable MVP. This appendix governs stack conflicts.
+Use `apps/extension` WXT/React; add `entrypoints/sidepanel/` and permission. Use `apps/server` Hono with static-token authentication and OpenRouter only. Remove unused Better Auth, MongoDB, web pages, Polar, and native-uniwind wiring from the runnable MVP. This appendix governs stack conflicts.
