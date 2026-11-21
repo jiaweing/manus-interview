@@ -19,6 +19,7 @@
     "dev:server": "bun run --cwd apps/server dev",
     "fix": "ultracite fix",
     "test": "bun test",
+    "test:https": "bun test --path-ignore-patterns=nothing apps/server/tests/https.smoke.test.ts",
     "typecheck": "bun run --cwd apps/server typecheck && bun run --cwd apps/extension typecheck",
     "verify:secrets": "bun scripts/check-secrets.ts"
   },

@@ -56,3 +56,8 @@ The smoke test requires `SIDEKICK_PROXY_URL` to be reachable HTTPS and `SIDEKICK
 The #78 builder verification used an **EPHEMERAL sandbox forwarding URL** for local port 8787. This proves temporary authenticated HTTPS routing only, **not a durable deployment**. The durable-hosting gate remains **UNMET** until the user supplies a permanent HTTPS host, ingress/logging configuration, and private token. The sandbox may hibernate or stop forwarding; do not use its URL as a production service. See `evidence/tests/78-verification.md` for sanitized results and the temporary public origin. Real API check: **not run: no key**.
 
 Full setup, test and demo instructions are added by issue #98.
+
+## Tests
+- `bun test` (or `bun run test`): the automated suite. It excludes the HTTPS hosting gate.
+- `bun run test:https`: the HTTPS hosting gate (issue #78). Requires `SIDEKICK_PROXY_URL` (a reachable HTTPS origin) and `SIDEKICK_DEMO_TOKEN`; it FAILS by design when either is absent. It is excluded from `bun test` through `bunfig.toml` so the rest of the suite can be judged on its own, but the gate is still required for the final handover.
+- The manifest test inspects `apps/extension/.output/chrome-mv3`; run `bun run build:extension` (with `WXT_SIDEKICK_PROXY_URL=https://...`) first if that directory is stale.
