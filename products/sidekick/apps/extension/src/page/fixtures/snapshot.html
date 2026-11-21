@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Snapshot fixture</title>
+		<style>
+		.css-hidden {
+			display: none;
+		}
+		.transparent {
+			opacity: 0;
+		}
+		.invisible {
+			visibility: hidden;
+		}
+		</style>
+	</head>
+	<body>
+		<h1 id="heading">Ordinary page</h1>
+		<p>Rendered evidence for observation.</p>
+		<a href="/reference" id="link">Read reference</a>
+		<label for="name" id="name-label">Customer name</label>
+		<input id="name" value="existing-value-not-for-snapshot">
+		<label id="wrapped-label"
+			>Contact email <input id="email" type="email"></label
+		>
+		<span id="notes-name">Delivery notes</span>
+		<textarea
+			aria-labelledby="notes-name"
+			id="notes"
+		>existing-textarea-value-not-for-snapshot</textarea>
+		<select aria-label="Pizza size" id="size">
+			<option>Small</option>
+			<option>Large</option>
+		</select>
+		<input aria-label="Remember choice" id="checkbox" type="checkbox">
+		<input aria-label="Morning" id="radio" type="radio">
+		<input id="search" placeholder="Search article" type="search">
+		<button id="button" type="button">Save draft</button>
+		<input id="submit" type="submit" value="Send example">
+		<!-- biome-ignore lint/a11y/useSemanticElements: Explicit ARIA roles are intentionally exercised by this third-party DOM fixture. -->
+		<div aria-label="Expand details" id="custom" role="button" tabindex="0">
+			Open
+		</div>
+		<!-- biome-ignore lint/a11y/useSemanticElements: An ordinary contenteditable is intentionally exercised. -->
+		<div
+			aria-label="Editable note"
+			contenteditable="true"
+			id="editable"
+			role="textbox"
+			tabindex="0"
+		></div>
+		<button hidden id="hidden" type="button">Hidden control</button>
+		<div hidden>
+			<button id="hidden-ancestor" type="button">
+				Hidden ancestor control
+			</button>
+		</div>
+		<button class="css-hidden" id="css-hidden" type="button">
+			CSS hidden control
+		</button>
+		<button class="transparent" id="transparent" type="button">
+			Transparent control
+		</button>
+		<button class="invisible" id="invisible" type="button">
+			Invisible control
+		</button>
+		<!-- biome-ignore lint/a11y/noAriaHiddenOnFocusable: This fixture intentionally tests exclusion of an unsafe third-party aria-hidden control. -->
+		<button aria-hidden="true" id="aria-hidden" type="button">
+			Aria hidden control
+		</button>
+		<button disabled id="disabled" type="button">Disabled control</button>
+		<fieldset disabled>
+			<input aria-label="Disabled fieldset control" id="disabled-fieldset">
+		</fieldset>
+		<div aria-disabled="true">
+			<button id="aria-disabled" type="button">Aria disabled control</button>
+		</div>
+		<div inert><button id="inert" type="button">Inert control</button></div>
+		<input id="hidden-input" type="hidden" value="hidden-input-value">
+		<iframe
+			id="frame"
+			srcdoc="<button id='frame-button'>Frame control</button>"
+			title="Unsupported frame"
+		></iframe>
+		<canvas id="canvas"
+			><button id="canvas-button" type="button">Canvas control</button></canvas
+		>
+		<object
+			data="about:blank"
+			id="pdf"
+			title="Unsupported PDF"
+			type="application/pdf"
+			><button id="pdf-button" type="button">
+				PDF fallback control
+			</button></object
+		>
+		<div id="shadow-host"></div>
+		<script>
+		"use strict";
+		document
+			.getElementById("shadow-host")
+			.attachShadow({ mode: "open" }).innerHTML =
+			'<button id="shadow-button">Shadow control</button>';
+		</script>
+	</body>
+</html>

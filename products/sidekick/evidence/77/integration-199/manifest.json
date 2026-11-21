@@ -21,13 +21,7 @@
     "https://en.wikipedia.org/*",
     "https://httpbin.org/*"
   ],
-  "permissions": [
-    "sidePanel",
-    "activeTab",
-    "scripting",
-    "tabs",
-    "storage"
-  ],
+  "permissions": ["sidePanel", "activeTab", "scripting", "tabs", "storage"],
   "background": {
     "service_worker": "background.js"
   },
