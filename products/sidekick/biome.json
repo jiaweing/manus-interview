@@ -9,9 +9,10 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
       "!**/.next",
       "!**/dist",
+      "!**/.output",
+      "!**/.wxt",
       "!**/.turbo",
       "!**/.nx",
       "!**/dev-dist",
@@ -43,7 +44,7 @@
         "useExhaustiveDependencies": "info"
       },
       "nursery": {
-        "useTailwindSortedClasses": {
+        "useSortedClasses": {
           "level": "warn",
           "fix": "safe"
         }

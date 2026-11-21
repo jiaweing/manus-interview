@@ -1,0 +1,41 @@
+{
+  "extensionId": "lppgoeipaphlbajgheoabiadmanoofab",
+  "panelState": {
+    "options": {
+      "enabled": true,
+      "path": "sidepanel.html"
+    },
+    "behavior": {
+      "openPanelOnActionClick": true
+    },
+    "permissions": {
+      "origins": ["http://localhost:8787/*"],
+      "permissions": ["activeTab", "storage", "tabs", "scripting", "sidePanel"]
+    }
+  },
+  "errors": {
+    "id": "lppgoeipaphlbajgheoabiadmanoofab",
+    "name": "Sidekick",
+    "state": "ENABLED",
+    "runtimeErrors": [],
+    "manifestErrors": []
+  },
+  "finalErrors": {
+    "runtimeErrors": [],
+    "manifestErrors": []
+  },
+  "injection": {
+    "status": "denied: origin access not granted",
+    "note": "Chrome 156 sidePanel toolbar opening did not confer activeTab access; the visible panel must explicitly request optional origin permission."
+  },
+  "contexts": [
+    {
+      "contextType": "BACKGROUND"
+    },
+    {
+      "contextType": "SIDE_PANEL",
+      "documentUrl": "chrome-extension://lppgoeipaphlbajgheoabiadmanoofab/sidepanel.html"
+    }
+  ],
+  "panelActuallyOpened": true
+}

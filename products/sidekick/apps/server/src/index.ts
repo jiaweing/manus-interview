@@ -5,6 +5,6 @@ const app = new Hono();
 app.get("/", (c) => c.text("OK"));
 
 export default {
-port: Number(process.env.PORT ?? 8787),
-fetch: app.fetch,
+	fetch: app.fetch,
+	port: Number(process.env.PORT ?? 8787),
 };

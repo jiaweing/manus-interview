@@ -1,0 +1,8 @@
+Extension ID: lppgoeipaphlbajgheoabiadmanoofab
+Panel API and granted permissions: {"options":{"enabled":true,"path":"sidepanel.html"},"behavior":{"openPanelOnActionClick":true},"permissions":{"origins":["http://localhost:8787/*"],"permissions":["activeTab","storage","tabs","scripting","sidePanel"]}}
+Extension errors: {"id":"lppgoeipaphlbajgheoabiadmanoofab","name":"Sidekick","state":"ENABLED","runtimeErrors":[],"manifestErrors":[]}
+Ready for real xdotool toolbar interaction; DISPLAY=:99
+Runtime contexts after real toolbar click: [{"contextType":"BACKGROUND"},{"contextType":"SIDE_PANEL","documentUrl":"chrome-extension://lppgoeipaphlbajgheoabiadmanoofab/sidepanel.html"}]
+REAL TOOLBAR OPENED SIDE PANEL: true
+Scoped permission denial: {"status":"denied: origin access not granted","note":"Chrome 156 sidePanel toolbar opening did not confer activeTab access; the visible panel must explicitly request optional origin permission."}
+Final extension errors: {"runtimeErrors":[],"manifestErrors":[]}

@@ -1,0 +1,6 @@
+Extension ID: lppgoeipaphlbajgheoabiadmanoofab
+Panel API and granted permissions: {"options":{"enabled":true,"path":"sidepanel.html"},"behavior":{"openPanelOnActionClick":true},"permissions":{"origins":["http://localhost:8787/*"],"permissions":["activeTab","storage","tabs","scripting","sidePanel"]}}
+Extension errors: {"id":"lppgoeipaphlbajgheoabiadmanoofab","name":"Sidekick","state":"ENABLED","runtimeErrors":[],"manifestErrors":[]}
+Ready for real xdotool toolbar interaction; DISPLAY=:99
+Runtime contexts after real toolbar click: [{"contextType":"BACKGROUND"},{"contextType":"SIDE_PANEL","documentUrl":"chrome-extension://lppgoeipaphlbajgheoabiadmanoofab/sidepanel.html"}]
+REAL TOOLBAR OPENED SIDE PANEL: true
