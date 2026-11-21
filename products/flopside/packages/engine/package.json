@@ -4,9 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    "./*": "./*.ts"
   },
-  "main": "index.ts",
   "scripts": {
     "check-types": "tsc --noEmit"
   },
