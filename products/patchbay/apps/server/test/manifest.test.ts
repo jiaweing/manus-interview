@@ -106,6 +106,14 @@ async function rejects(
 	await unchanged();
 }
 
+async function rejectsThroughAllPaths(manifest: PluginManifest) {
+	await rejects(() => validateManifest(manifest), "INVALID_MANIFEST");
+	const source = stringify(manifest);
+	await rejects(() => parseManifest(source), "INVALID_MANIFEST");
+	await writeFile(join(root, "patchbay-plugin.toml"), source);
+	await rejects(() => validateLocalPackage(root), "INVALID_MANIFEST");
+}
+
 beforeEach(async () => {
 	temporary = await mkdtemp(join(tmpdir(), "patchbay-manifest-"));
 	root = join(temporary, "package");
@@ -225,10 +233,13 @@ describe("declarative manifest acceptance", () => {
 		["version", "1.0.0+build.53"],
 		["min_host_version", "0.1.0+host.53"],
 		["version", "1.0.0-beta.1+build.53"],
+		["version", "1.0.0+001"],
+		["min_host_version", "0.1.0+001"],
 	] as const) {
-		test(`accepts ${field} build metadata: ${version} through TOML and local-package validation`, async () => {
+		test(`accepts ${field} build metadata: ${version} through raw/TOML/package validation`, async () => {
 			const manifest = toolManifest();
 			manifest[field] = version;
+			expect(validateManifest(manifest)[field]).toBe(version);
 			await writeManifest(manifest);
 			const source = await readFile(join(root, "patchbay-plugin.toml"), "utf8");
 			expect(parseManifest(source)[field]).toBe(version);
@@ -655,14 +666,48 @@ describe("stable rejection of malformed declarations", () => {
 			"1.0.0+",
 			"1.0.0+build..53",
 			" 1.0.0",
+			"1.0.0+ ",
+			"1.0.0-+a",
+			"1.0.0 ",
+			"1.0.0\t",
+			"1.0.0\n",
+			"1.0.0\r",
+			"1.0.0\u0000",
+			"\u0661.0.0",
+			"1.\uff10.0",
+			"1.0.0+\u0661",
+			"1.0.0-beta.\u0661",
 		]) {
 			test(`rejects invalid ${field}: ${JSON.stringify(version)}`, async () => {
 				const manifest = toolManifest();
 				manifest[field] = version;
-				await rejects(() => validateManifest(manifest), "INVALID_MANIFEST");
-				await writeManifest(manifest);
-				await rejects(() => validateLocalPackage(root), "INVALID_MANIFEST");
+				await rejectsThroughAllPaths(manifest);
 			});
+		}
+		for (const whitespace of [
+			" ",
+			"\t",
+			"\n",
+			"\r",
+			"\r\n",
+			"\u0000",
+			"\u2028",
+			"\u2029",
+			"\u00a0",
+		]) {
+			const canonical =
+				field === "version" ? "1.0.0+build.53" : "0.1.0+host.53";
+			for (const version of [
+				`${canonical}${whitespace}`,
+				`${whitespace}${canonical}`,
+				`${canonical}${whitespace}1.0.0`,
+			]) {
+				test(`rejects whitespace/control ${field}: ${JSON.stringify(version)} through raw/TOML/package paths`, async () => {
+					const manifest = toolManifest();
+					manifest[field] = version;
+					await rejectsThroughAllPaths(manifest);
+				});
+			}
 		}
 	}
 
@@ -688,6 +733,145 @@ describe("stable rejection of malformed declarations", () => {
 			() => validateLocalPackage(root, { platform: "win32" }),
 			"INCOMPATIBLE_PLATFORM"
 		);
+	});
+});
+
+describe("declaration string whitespace boundaries", () => {
+	const fields: [string, (m: PluginManifest, whitespace: string) => void][] = [
+		[
+			"id",
+			(m, suffix) => {
+				m.id += suffix;
+			},
+		],
+		[
+			"name",
+			(m, suffix) => {
+				m.name += suffix;
+			},
+		],
+		[
+			"tool name",
+			(m, suffix) => {
+				firstTool(m).name += suffix;
+			},
+		],
+		[
+			"tool description",
+			(m, suffix) => {
+				firstTool(m).description += suffix;
+			},
+		],
+		[
+			"rpc_method",
+			(m, suffix) => {
+				firstTool(m).rpc_method += suffix;
+			},
+		],
+		[
+			"permissions",
+			(m, suffix) => {
+				m.permissions = [`workspace:read${suffix}`];
+			},
+		],
+		[
+			"required_permissions",
+			(m, suffix) => {
+				firstTool(m).required_permissions = [`workspace:read${suffix}`];
+			},
+		],
+		[
+			"provider name",
+			(m, suffix) => {
+				m.providers = [{ ...firstTool(m), name: `llm@1${suffix}` }];
+			},
+		],
+		[
+			"provider description",
+			(m, suffix) => {
+				m.providers = [
+					{ ...firstTool(m), description: `Inference${suffix}`, name: "llm@1" },
+				];
+			},
+		],
+		[
+			"provider rpc_method",
+			(m, suffix) => {
+				m.providers = [
+					{
+						...firstTool(m),
+						name: "llm@1",
+						rpc_method: `services/call${suffix}`,
+					},
+				];
+			},
+		],
+		[
+			"provider required_permissions",
+			(m, suffix) => {
+				m.providers = [
+					{
+						...firstTool(m),
+						name: "llm@1",
+						required_permissions: [`workspace:read${suffix}`],
+					},
+				];
+			},
+		],
+		[
+			"platform",
+			(m, suffix) => {
+				m.platforms = [`linux${suffix}`];
+			},
+		],
+		[
+			"extra platform alongside Linux",
+			(m, suffix) => {
+				m.platforms.push(`darwin${suffix}`);
+			},
+		],
+	];
+	for (const [field, change] of fields) {
+		for (const whitespace of [
+			" ",
+			"\t",
+			"\n",
+			"\r",
+			"\r\n",
+			"\u2028",
+			"\u2029",
+			"\u00a0",
+		]) {
+			test(`rejects trailing whitespace in ${field}: ${JSON.stringify(whitespace)} through raw/TOML/package paths`, async () => {
+				const manifest = toolManifest();
+				change(manifest, whitespace);
+				await rejectsThroughAllPaths(manifest);
+			});
+		}
+	}
+
+	test("rejects leading whitespace in display declarations and platforms", async () => {
+		const manifest = toolManifest();
+		manifest.name = " Test Tool";
+		await rejectsThroughAllPaths(manifest);
+		manifest.name = "Test Tool";
+		firstTool(manifest).description = "\nSearch workspace text";
+		await rejectsThroughAllPaths(manifest);
+		firstTool(manifest).description = "Search workspace text";
+		manifest.platforms.push(" darwin");
+		await rejectsThroughAllPaths(manifest);
+	});
+
+	test("preserves display names with internal spaces and literal runtime argument whitespace", async () => {
+		const manifest = toolManifest();
+		manifest.platforms.push("darwin");
+		manifest.runtime.argv.push("literal argument ", " quoted argument ");
+		expect(validateManifest(manifest)).toEqual(manifest);
+		const source = stringify(manifest);
+		expect(parseManifest(source)).toEqual(manifest);
+		await writeFile(join(root, "patchbay-plugin.toml"), source);
+		expect((await validateLocalPackage(root)).manifest).toEqual(manifest);
+		await unchanged();
 	});
 });
 

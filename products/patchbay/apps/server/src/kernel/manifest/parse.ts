@@ -15,6 +15,11 @@ export const HOST_VERSION = "0.1.0";
 export const MANIFEST_VERSION = 1;
 export const MANIFEST_FILENAME = "patchbay-plugin.toml";
 
+// SemVer 2.0.0's recommended numbered-group expression: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+// No multiline flag; compare the full match as well to forbid any end-anchor leniency.
+const canonicalVersion =
+	/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
+
 const validateShape = new Ajv({ strict: true }).compile<PluginManifest>(
 	manifestSchema
 );
@@ -136,9 +141,7 @@ export function compilePluginSchema(
 }
 
 function isCanonicalVersion(version: string): boolean {
-	// valid checks the entire SemVer string but omits build metadata from its result.
-	const normalized = valid(version);
-	return normalized !== null && normalized === version.split("+", 1)[0];
+	return canonicalVersion.exec(version)?.[0] === version;
 }
 
 function validateCompatibility(

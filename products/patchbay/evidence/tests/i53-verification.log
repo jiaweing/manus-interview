@@ -1190,3 +1190,1221 @@ $ git diff --check
 EXIT CODE: 0
 
 AGGREGATE EXIT CODE: 0
+
+
+=== Issue 53 round-3 builder fix: 2026-11-21 ===
+Worktree: /home/ubuntu/wt/i53-manifest
+Branch: patchbay/i53-manifest
+Rebased existing head before this fixing commit: e7ef8bf722a4562a7c512e60b19fe4cf89646ee6
+Verified base origin/main: 944f0e68291bebbb30b97f93cfb2f5c5d080e12c
+Official SemVer expression source: https://semver.org/ (recommended numbered groups).
+Uses the entire unmodified raw string with the official ^...$ expression, no multiline flag, and full match equality; no manifest syntax normalization.
+Regressions cover all 8 reported build-metadata/space-tab-LF-CR failures in both fields through raw, TOML, and local-package validation. Additional cases cover NUL, CRLF, U+2028/U+2029, NBSP, Unicode digits, leading/trailing whitespace, empty/malformed build/prerelease identifiers, and valid leading-zero build metadata.
+Other-field audit: existing ID, capability-name, RPC-method, and permission token regexes correctly reject trailing whitespace in Bun/Ajv; added regressions. Fixed surrounding whitespace in display names/descriptions and malformed additional platform identifiers alongside Linux. Literal runtime argument spaces remain unchanged; existing argv control rules retained.
+Development-only first checks found an acceptance fixture used forbidden tab argv and one unsorted object key; corrected the fixture to literal spaces and applied safe key ordering. Preliminary logs retained outside source. Final gates below are fresh after the last rebase, all exit 0.
+Only verifier import paths changed in copies; robustness.ts's unchanged hard-coded output file was copied into this evidence directory and the original verifier JSON restored.
+robustness.ts: PASS reversible comparison; only /home/ubuntu/wt/verify-53b/products/ imports replaced with /home/ubuntu/wt/i53-manifest/products/
+semver-whitespace-repro.ts: PASS reversible comparison; only /home/ubuntu/wt/verify-53b/products/ imports replaced with /home/ubuntu/wt/i53-manifest/products/
+adversarial.ts: PASS reversible comparison; only /home/ubuntu/wt/verify-53/products/ imports replaced with /home/ubuntu/wt/i53-manifest/products/
+repro.ts: PASS reversible comparison; only /home/ubuntu/wt/verify-53/products/ imports replaced with /home/ubuntu/wt/i53-manifest/products/
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1409 installs across 1555 packages (no changes) [2.77s]
+EXIT CODE: 0
+
+$ bun test apps/server/test/manifest.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [71.82ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [26.71ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [27.81ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [27.31ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [12.94ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [53.43ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+build.53 through raw/TOML/package validation [67.02ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+host.53 through raw/TOML/package validation [64.66ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0-beta.1+build.53 through raw/TOML/package validation [59.85ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+001 through raw/TOML/package validation [55.97ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+001 through raw/TOML/package validation [57.47ms]
+(pass) declarative manifest acceptance > minimum-host comparison ignores build metadata but respects release/prerelease precedence [41.79ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [2.70ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [1.80ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [1.76ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [1.49ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.01ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [1.41ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [1.49ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [1.44ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [1.54ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.50ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [1.79ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [23.07ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [18.40ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [2.23ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [1.04ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [1.67ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [1.81ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [1.74ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [21.60ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [35.33ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.69ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [21.56ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [19.81ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [39.56ms]
+(pass) stable rejection of malformed declarations > non-productive root schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [57.74ms]
+(pass) stable rejection of malformed declarations > non-productive indirect schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [1518.07ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [19.53ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [23.21ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [37.92ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [51.51ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [42.13ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [18.90ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [1.94ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [1.65ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.84ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.75ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.45ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.33ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [1.87ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [1.81ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.59ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.47ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.42ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.44ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [1.43ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [1.92ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [1.82ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.53ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "01.0.0" [2.56ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-01" [2.26ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "v1.0.0" [1.88ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0" [5.68ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "" [2.22ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+" [1.92ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+build..53" [2.10ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: " 1.0.0" [2.09ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+ " [2.04ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-+a" [1.85ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0 " [2.00ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\t" [2.55ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\n" [2.47ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\r" [2.04ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\u0000" [1.94ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "١.0.0" [2.07ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.０.0" [2.03ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+١" [1.79ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-beta.١" [1.82ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [2.39ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [2.40ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.70ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t" through raw/TOML/package paths [1.56ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\t1.0.0+build.53" through raw/TOML/package paths [2.89ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t1.0.0" through raw/TOML/package paths [1.94ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n" through raw/TOML/package paths [1.78ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\n1.0.0+build.53" through raw/TOML/package paths [1.65ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n1.0.0" through raw/TOML/package paths [1.79ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r" through raw/TOML/package paths [1.68ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r1.0.0+build.53" through raw/TOML/package paths [1.50ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r1.0.0" through raw/TOML/package paths [1.43ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n" through raw/TOML/package paths [1.52ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r\n1.0.0+build.53" through raw/TOML/package paths [1.74ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n1.0.0" through raw/TOML/package paths [1.83ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u0000" through raw/TOML/package paths [1.63ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\u00001.0.0+build.53" through raw/TOML/package paths [1.48ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u00001.0.0" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.82ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.74ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [2.07ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.62ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.52ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.58ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.58ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.45ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "01.0.0" [1.45ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-01" [1.50ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "v1.0.0" [1.45ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0" [1.72ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "" [1.46ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+" [1.71ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+build..53" [1.87ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: " 1.0.0" [1.70ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+ " [1.62ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-+a" [1.57ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0 " [2.15ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\t" [8.42ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\n" [2.32ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\r" [2.03ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\u0000" [1.95ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "١.0.0" [1.65ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.０.0" [1.69ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+١" [1.84ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-beta.١" [1.75ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.55ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.43ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\t0.1.0+host.53" through raw/TOML/package paths [1.52ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t1.0.0" through raw/TOML/package paths [1.70ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n" through raw/TOML/package paths [1.67ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\n0.1.0+host.53" through raw/TOML/package paths [1.47ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n1.0.0" through raw/TOML/package paths [1.43ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r" through raw/TOML/package paths [1.72ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r0.1.0+host.53" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r1.0.0" through raw/TOML/package paths [1.42ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n" through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r\n0.1.0+host.53" through raw/TOML/package paths [1.68ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n1.0.0" through raw/TOML/package paths [1.56ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u0000" through raw/TOML/package paths [1.85ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\u00000.1.0+host.53" through raw/TOML/package paths [1.78ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u00001.0.0" through raw/TOML/package paths [1.91ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [2.20ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.70ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.63ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.91ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.67ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.96ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.62ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.52ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.90ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.52ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [2.17ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\t" through raw/TOML/package paths [1.66ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\n" through raw/TOML/package paths [1.64ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r" through raw/TOML/package paths [1.52ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r\n" through raw/TOML/package paths [1.60ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.29ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\t" through raw/TOML/package paths [1.35ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\n" through raw/TOML/package paths [1.20ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r" through raw/TOML/package paths [1.25ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r\n" through raw/TOML/package paths [1.24ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.26ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.19ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.25ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.37ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\t" through raw/TOML/package paths [1.43ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\n" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r" through raw/TOML/package paths [1.39ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r\n" through raw/TOML/package paths [1.32ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.29ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.43ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.62ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\t" through raw/TOML/package paths [1.72ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\n" through raw/TOML/package paths [1.94ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r" through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r\n" through raw/TOML/package paths [2.08ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.37ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.72ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.74ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\t" through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\n" through raw/TOML/package paths [1.69ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r" through raw/TOML/package paths [2.26ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r\n" through raw/TOML/package paths [2.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.90ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.58ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.92ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [2.08ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\t" through raw/TOML/package paths [1.90ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\n" through raw/TOML/package paths [2.06ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r" through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r\n" through raw/TOML/package paths [1.91ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [2.16ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.89ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.90ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [2.10ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\t" through raw/TOML/package paths [1.82ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\n" through raw/TOML/package paths [2.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r" through raw/TOML/package paths [2.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r\n" through raw/TOML/package paths [2.14ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [2.40ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [3.07ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [2.21ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [2.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\t" through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\n" through raw/TOML/package paths [2.04ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r" through raw/TOML/package paths [2.06ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r\n" through raw/TOML/package paths [1.78ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [2.07ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.82ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [2.31ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\t" through raw/TOML/package paths [2.16ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\n" through raw/TOML/package paths [1.98ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r" through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r\n" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.34ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.66ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.79ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\t" through raw/TOML/package paths [1.57ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\n" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r" through raw/TOML/package paths [1.35ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r\n" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [2.07ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [2.11ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [2.21ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [2.19ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\t" through raw/TOML/package paths [2.20ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\n" through raw/TOML/package paths [2.21ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r" through raw/TOML/package paths [2.10ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r\n" through raw/TOML/package paths [1.62ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [2.26ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.93ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.95ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.82ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\t" through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\n" through raw/TOML/package paths [1.83ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r" through raw/TOML/package paths [2.04ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r\n" through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.65ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [2.05ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.89ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.93ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\t" through raw/TOML/package paths [1.87ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\n" through raw/TOML/package paths [1.69ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r" through raw/TOML/package paths [1.64ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r\n" through raw/TOML/package paths [1.76ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.92ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.94ms]
+(pass) declaration string whitespace boundaries > rejects leading whitespace in display declarations and platforms [3.20ms]
+(pass) declaration string whitespace boundaries > preserves display names with internal spaces and literal runtime argument whitespace [65.74ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [2.38ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.33ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.28ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.32ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.38ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.75ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [2.25ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [28.75ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [48.57ms]
+(pass) schema and declaration edge cases > compiled validator converts invocation-time recursion errors into redacted INVALID_SCHEMA [27.60ms]
+(pass) schema and declaration edge cases > terminating recursive schemas validate nested data through compiled and TOML/package paths [32.28ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [53.37ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.54ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [11.59ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [49.02ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.38ms]
+(pass) unavailable host executable fails without running package code or modifying registry [19.00ms]
+
+ 279 pass
+ 0 fail
+ 5847 expect() calls
+Ran 279 tests across 1 file. [3.42s]
+EXIT CODE: 0
+
+$ bun run lint
+$ biome check apps/server/src/cli.ts apps/server/src/cli apps/server/src/kernel apps/server/test
+Checked 14 files in 516ms. No fixes applied.
+EXIT CODE: 0
+
+$ bun run typecheck
+$ tsc --noEmit -p apps/server/tsconfig.cli.json
+EXIT CODE: 0
+
+$ bun test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [1.02ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [38.98ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [77.02ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [41.54ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [39.01ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [41.33ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [38.89ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [43.91ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [3.94ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [3.87ms]
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [75.49ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [47.14ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [46.05ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [26.80ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [14.11ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [54.94ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+build.53 through raw/TOML/package validation [78.49ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+host.53 through raw/TOML/package validation [94.81ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0-beta.1+build.53 through raw/TOML/package validation [81.75ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+001 through raw/TOML/package validation [78.32ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+001 through raw/TOML/package validation [71.90ms]
+(pass) declarative manifest acceptance > minimum-host comparison ignores build metadata but respects release/prerelease precedence [61.29ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [3.70ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [2.66ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [2.57ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.11ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.27ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [2.14ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [2.00ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [1.82ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [1.82ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.74ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [2.02ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [27.87ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [33.94ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [3.24ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [1.09ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [1.61ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [1.56ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [1.70ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [23.39ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [37.60ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.58ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [24.09ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [21.42ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [35.75ms]
+(pass) stable rejection of malformed declarations > non-productive root schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [59.59ms]
+(pass) stable rejection of malformed declarations > non-productive indirect schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [1621.84ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [23.90ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [20.48ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [36.24ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [42.67ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [35.41ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [24.58ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [2.32ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [4.86ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.78ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.80ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.93ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.75ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.52ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [1.45ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [1.41ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.47ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.46ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.45ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.44ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [1.35ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [1.74ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [1.71ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.64ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "01.0.0" [2.05ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-01" [1.64ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "v1.0.0" [1.54ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0" [1.45ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "" [1.38ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+" [1.56ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+build..53" [1.55ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: " 1.0.0" [1.48ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+ " [1.49ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-+a" [1.50ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0 " [1.54ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\t" [1.51ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\n" [1.45ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\r" [1.48ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\u0000" [1.56ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "١.0.0" [1.65ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.０.0" [1.82ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+١" [1.58ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-beta.١" [1.46ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.71ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.41ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\t1.0.0+build.53" through raw/TOML/package paths [1.31ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t1.0.0" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n" through raw/TOML/package paths [1.57ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\n1.0.0+build.53" through raw/TOML/package paths [1.36ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n1.0.0" through raw/TOML/package paths [1.35ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r1.0.0+build.53" through raw/TOML/package paths [1.47ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r1.0.0" through raw/TOML/package paths [1.55ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n" through raw/TOML/package paths [1.61ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r\n1.0.0+build.53" through raw/TOML/package paths [1.56ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n1.0.0" through raw/TOML/package paths [1.59ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u0000" through raw/TOML/package paths [1.71ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\u00001.0.0+build.53" through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u00001.0.0" through raw/TOML/package paths [1.45ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.63ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.39ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.63ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.30ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.42ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.65ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.52ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.40ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "01.0.0" [1.33ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-01" [1.33ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "v1.0.0" [8.41ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0" [1.66ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "" [1.38ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+" [1.33ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+build..53" [1.44ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: " 1.0.0" [1.33ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+ " [1.48ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-+a" [1.26ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0 " [1.34ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\t" [1.39ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\n" [1.43ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\r" [1.80ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\u0000" [1.35ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "١.0.0" [1.58ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.０.0" [1.33ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+١" [1.58ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-beta.١" [1.64ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.79ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t" through raw/TOML/package paths [1.58ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\t0.1.0+host.53" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t1.0.0" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n" through raw/TOML/package paths [1.35ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\n0.1.0+host.53" through raw/TOML/package paths [1.35ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n1.0.0" through raw/TOML/package paths [1.48ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r" through raw/TOML/package paths [1.29ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r0.1.0+host.53" through raw/TOML/package paths [1.39ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r1.0.0" through raw/TOML/package paths [1.23ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n" through raw/TOML/package paths [1.26ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r\n0.1.0+host.53" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n1.0.0" through raw/TOML/package paths [1.36ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u0000" through raw/TOML/package paths [1.26ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\u00000.1.0+host.53" through raw/TOML/package paths [1.41ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u00001.0.0" through raw/TOML/package paths [1.48ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.38ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.30ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.44ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.33ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.48ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.32ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.28ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.29ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.33ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.65ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.45ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\t" through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\n" through raw/TOML/package paths [1.63ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r" through raw/TOML/package paths [1.28ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r\n" through raw/TOML/package paths [1.20ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.17ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.16ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.29ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\t" through raw/TOML/package paths [1.27ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\n" through raw/TOML/package paths [1.08ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r" through raw/TOML/package paths [1.16ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r\n" through raw/TOML/package paths [1.14ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.33ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.55ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.77ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\t" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\n" through raw/TOML/package paths [1.54ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r" through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r\n" through raw/TOML/package paths [1.32ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.58ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.30ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.33ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.56ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\t" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\n" through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r" through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r\n" through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.28ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.83ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\t" through raw/TOML/package paths [1.90ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\n" through raw/TOML/package paths [1.69ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r" through raw/TOML/package paths [1.33ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r\n" through raw/TOML/package paths [1.36ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\t" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\n" through raw/TOML/package paths [1.21ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r" through raw/TOML/package paths [1.27ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r\n" through raw/TOML/package paths [1.32ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.28ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.92ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.68ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\t" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\n" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r" through raw/TOML/package paths [1.30ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r\n" through raw/TOML/package paths [1.39ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.18ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.13ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.22ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.55ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\t" through raw/TOML/package paths [1.27ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\n" through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r" through raw/TOML/package paths [1.76ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r\n" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.80ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\t" through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\n" through raw/TOML/package paths [1.30ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r" through raw/TOML/package paths [1.35ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r\n" through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.78ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.76ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.54ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.68ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\t" through raw/TOML/package paths [1.37ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\n" through raw/TOML/package paths [1.43ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r" through raw/TOML/package paths [1.39ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r\n" through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.43ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.28ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.19ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\t" through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\n" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r" through raw/TOML/package paths [1.26ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r\n" through raw/TOML/package paths [1.61ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.35ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.66ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\t" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\n" through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r" through raw/TOML/package paths [1.46ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r\n" through raw/TOML/package paths [1.57ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.62ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.54ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.62ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\t" through raw/TOML/package paths [1.58ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\n" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r" through raw/TOML/package paths [1.57ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r\n" through raw/TOML/package paths [1.81ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [2.11ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.83ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.81ms]
+(pass) declaration string whitespace boundaries > rejects leading whitespace in display declarations and platforms [3.15ms]
+(pass) declaration string whitespace boundaries > preserves display names with internal spaces and literal runtime argument whitespace [73.59ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [2.34ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.15ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.14ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.01ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.15ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.26ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [1.73ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [20.57ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [45.21ms]
+(pass) schema and declaration edge cases > compiled validator converts invocation-time recursion errors into redacted INVALID_SCHEMA [22.65ms]
+(pass) schema and declaration edge cases > terminating recursive schemas validate nested data through compiled and TOML/package paths [34.86ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [43.25ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.74ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [9.99ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [41.48ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.89ms]
+(pass) unavailable host executable fails without running package code or modifying registry [18.38ms]
+
+ 289 pass
+ 0 fail
+ 5891 expect() calls
+Ran 289 tests across 2 files. [3.97s]
+EXIT CODE: 0
+
+$ bun run test
+$ bun test apps/server/test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [0.94ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [42.22ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [81.87ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [40.05ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [43.78ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [38.20ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [43.43ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [41.26ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [4.90ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [5.47ms]
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [75.09ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [28.97ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [30.40ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [25.49ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [13.09ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [51.92ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+build.53 through raw/TOML/package validation [68.87ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+host.53 through raw/TOML/package validation [73.41ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0-beta.1+build.53 through raw/TOML/package validation [68.80ms]
+(pass) declarative manifest acceptance > accepts version build metadata: 1.0.0+001 through raw/TOML/package validation [64.53ms]
+(pass) declarative manifest acceptance > accepts min_host_version build metadata: 0.1.0+001 through raw/TOML/package validation [65.84ms]
+(pass) declarative manifest acceptance > minimum-host comparison ignores build metadata but respects release/prerelease precedence [44.63ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [2.77ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [2.96ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [2.32ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.16ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.28ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [2.22ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [1.99ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [1.85ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [2.19ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.86ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [2.37ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [19.18ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [19.19ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [2.88ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [1.29ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [2.11ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [2.05ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [2.23ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [24.18ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [33.04ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.77ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [19.70ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [25.49ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [32.59ms]
+(pass) stable rejection of malformed declarations > non-productive root schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [55.42ms]
+(pass) stable rejection of malformed declarations > non-productive indirect schema recursion: INVALID_SCHEMA; marker absent and registry unchanged [1691.24ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [20.16ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [19.62ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [40.18ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [33.16ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [48.95ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [21.63ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [4.77ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [1.73ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.41ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.49ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.82ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.81ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.71ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [2.02ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [2.05ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.89ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.82ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.68ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.68ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [1.53ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [2.17ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [2.08ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.86ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "01.0.0" [2.48ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-01" [1.93ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "v1.0.0" [2.07ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0" [1.97ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "" [2.01ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+" [2.30ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+build..53" [2.43ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: " 1.0.0" [1.97ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+ " [2.28ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-+a" [1.97ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0 " [1.79ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\t" [1.76ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\n" [1.95ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\r" [2.12ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0\u0000" [2.14ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "١.0.0" [2.28ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.０.0" [2.35ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0+١" [2.19ms]
+(pass) stable rejection of malformed declarations > rejects invalid version: "1.0.0-beta.١" [2.30ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [2.65ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [2.17ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [2.57ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t" through raw/TOML/package paths [2.21ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\t1.0.0+build.53" through raw/TOML/package paths [2.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\t1.0.0" through raw/TOML/package paths [2.20ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n" through raw/TOML/package paths [2.03ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\n1.0.0+build.53" through raw/TOML/package paths [2.08ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\n1.0.0" through raw/TOML/package paths [1.86ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r" through raw/TOML/package paths [2.00ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r1.0.0+build.53" through raw/TOML/package paths [1.88ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r1.0.0" through raw/TOML/package paths [1.96ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n" through raw/TOML/package paths [8.93ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\r\n1.0.0+build.53" through raw/TOML/package paths [2.18ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\r\n1.0.0" through raw/TOML/package paths [1.96ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u0000" through raw/TOML/package paths [1.82ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "\u00001.0.0+build.53" through raw/TOML/package paths [1.98ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53\u00001.0.0" through raw/TOML/package paths [1.72ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.94ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.75ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.97ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [1.75ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.81ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [1.93ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 " through raw/TOML/package paths [2.14ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: " 1.0.0+build.53" through raw/TOML/package paths [1.99ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control version: "1.0.0+build.53 1.0.0" through raw/TOML/package paths [2.01ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "01.0.0" [1.92ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-01" [1.96ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "v1.0.0" [2.00ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0" [2.12ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "" [1.90ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+" [1.90ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+build..53" [1.57ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: " 1.0.0" [1.51ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+ " [1.89ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-+a" [1.62ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0 " [1.67ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\t" [1.76ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\n" [1.74ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\r" [1.73ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0\u0000" [1.70ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "١.0.0" [1.95ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.０.0" [2.01ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0+١" [1.52ms]
+(pass) stable rejection of malformed declarations > rejects invalid min_host_version: "1.0.0-beta.١" [1.75ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.78ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [1.84ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [2.31ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t" through raw/TOML/package paths [1.78ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\t0.1.0+host.53" through raw/TOML/package paths [1.80ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\t1.0.0" through raw/TOML/package paths [1.81ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n" through raw/TOML/package paths [1.85ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\n0.1.0+host.53" through raw/TOML/package paths [1.76ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\n1.0.0" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r" through raw/TOML/package paths [1.57ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r0.1.0+host.53" through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r1.0.0" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n" through raw/TOML/package paths [1.73ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\r\n0.1.0+host.53" through raw/TOML/package paths [1.71ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\r\n1.0.0" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u0000" through raw/TOML/package paths [1.57ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "\u00000.1.0+host.53" through raw/TOML/package paths [1.66ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53\u00001.0.0" through raw/TOML/package paths [1.51ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.60ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [2.01ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.80ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [1.80ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [2.14ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [2.30ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 " through raw/TOML/package paths [2.10ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: " 0.1.0+host.53" through raw/TOML/package paths [2.18ms]
+(pass) stable rejection of malformed declarations > rejects whitespace/control min_host_version: "0.1.0+host.53 1.0.0" through raw/TOML/package paths [1.88ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.89ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.65ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.52ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\t" through raw/TOML/package paths [1.35ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\n" through raw/TOML/package paths [1.37ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r" through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: "\r\n" through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in id: " " through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\t" through raw/TOML/package paths [1.42ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\n" through raw/TOML/package paths [1.52ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r" through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: "\r\n" through raw/TOML/package paths [1.64ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.69ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in name: " " through raw/TOML/package paths [1.59ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.67ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\t" through raw/TOML/package paths [1.82ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\n" through raw/TOML/package paths [1.69ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: "\r\n" through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.34ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool name: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.56ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\t" through raw/TOML/package paths [1.50ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\n" through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r" through raw/TOML/package paths [1.55ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: "\r\n" through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in tool description: " " through raw/TOML/package paths [1.56ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.66ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\t" through raw/TOML/package paths [1.67ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\n" through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r" through raw/TOML/package paths [1.86ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: "\r\n" through raw/TOML/package paths [1.67ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.79ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in rpc_method: " " through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\t" through raw/TOML/package paths [1.57ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\n" through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r" through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: "\r\n" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.50ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in permissions: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.76ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\t" through raw/TOML/package paths [1.45ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\n" through raw/TOML/package paths [1.41ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r" through raw/TOML/package paths [1.58ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: "\r\n" through raw/TOML/package paths [1.67ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.52ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in required_permissions: " " through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [2.11ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\t" through raw/TOML/package paths [1.68ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\n" through raw/TOML/package paths [1.66ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r" through raw/TOML/package paths [1.50ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: "\r\n" through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.44ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider name: " " through raw/TOML/package paths [1.38ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.65ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\t" through raw/TOML/package paths [1.55ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\n" through raw/TOML/package paths [1.57ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r" through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: "\r\n" through raw/TOML/package paths [1.52ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.88ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.63ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider description: " " through raw/TOML/package paths [1.77ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [2.21ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\t" through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\n" through raw/TOML/package paths [1.82ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r" through raw/TOML/package paths [1.95ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: "\r\n" through raw/TOML/package paths [2.05ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [2.10ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.71ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider rpc_method: " " through raw/TOML/package paths [1.83ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.90ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\t" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\n" through raw/TOML/package paths [1.30ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: "\r\n" through raw/TOML/package paths [1.73ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in provider required_permissions: " " through raw/TOML/package paths [1.83ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.91ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\t" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\n" through raw/TOML/package paths [1.53ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r" through raw/TOML/package paths [1.49ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: "\r\n" through raw/TOML/package paths [1.27ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.42ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in platform: " " through raw/TOML/package paths [1.62ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.81ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\t" through raw/TOML/package paths [1.70ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\n" through raw/TOML/package paths [1.42ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r" through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: "\r\n" through raw/TOML/package paths [1.47ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.48ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.51ms]
+(pass) declaration string whitespace boundaries > rejects trailing whitespace in extra platform alongside Linux: " " through raw/TOML/package paths [1.36ms]
+(pass) declaration string whitespace boundaries > rejects leading whitespace in display declarations and platforms [2.72ms]
+(pass) declaration string whitespace boundaries > preserves display names with internal spaces and literal runtime argument whitespace [75.87ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [2.77ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.76ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.66ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.56ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.58ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.67ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [2.36ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [24.28ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [54.33ms]
+(pass) schema and declaration edge cases > compiled validator converts invocation-time recursion errors into redacted INVALID_SCHEMA [42.73ms]
+(pass) schema and declaration edge cases > terminating recursive schemas validate nested data through compiled and TOML/package paths [42.27ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [46.70ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.22ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [11.47ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [52.11ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.83ms]
+(pass) unavailable host executable fails without running package code or modifying registry [20.79ms]
+
+ 289 pass
+ 0 fail
+ 5891 expect() calls
+Ran 289 tests across 2 files. [4.02s]
+EXIT CODE: 0
+
+$ timeout 180s bun run /home/ubuntu/work/i53-round3-evidence/robustness.ts
+PASS $defs direct self-cycle [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs direct self-cycle [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs direct self-cycle [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs direct self-cycle [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs three-node non-productive cycle [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs three-node non-productive cycle [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs three-node non-productive cycle [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS $defs three-node non-productive cycle [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS definitions three-node non-productive cycle [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS definitions three-node non-productive cycle [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS definitions three-node non-productive cycle [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS definitions three-node non-productive cycle [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS mixed $defs/definitions mutually recursive cycle [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS mixed $defs/definitions mutually recursive cycle [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS mixed $defs/definitions mutually recursive cycle [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS mixed $defs/definitions mutually recursive cycle [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS escaped JSON Pointer cycle names [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS escaped JSON Pointer cycle names [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS escaped JSON Pointer cycle names [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS escaped JSON Pointer cycle names [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive allOf self-reference [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive allOf self-reference [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive allOf self-reference [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive allOf self-reference [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive anyOf self-reference [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive anyOf self-reference [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive anyOf self-reference [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS non-productive anyOf self-reference [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS cycle during embedded default check [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS cycle during embedded default check [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS cycle during embedded default check [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS cycle during embedded default check [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS unresolved local $defs reference [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS unresolved local $defs reference [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS unresolved local $defs reference [TOML]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS unresolved local $defs reference [package]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS productive mutual refs with terminating data [compiled]: expected=TRUE; actual=TRUE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS productive mutual refs with terminating data [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS productive mutual refs with terminating data [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS productive mutual refs with terminating data [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS productive mutual refs reject nested bad default [compiled]: expected=FALSE; actual=FALSE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS productive mutual refs reject nested bad default [raw]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS productive mutual refs reject nested bad default [TOML]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS productive mutual refs reject nested bad default [package]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level valid nested schema and defaults [compiled]: expected=TRUE; actual=TRUE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 128-level valid nested schema and defaults [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 128-level valid nested schema and defaults [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 128-level valid nested schema and defaults [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 128-level schema rejects deepest invalid default [compiled]: expected=FALSE; actual=FALSE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 128-level schema rejects deepest invalid default [raw]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level schema rejects deepest invalid default [TOML]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level schema rejects deepest invalid default [package]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level invalid embedded default [compiled]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level invalid embedded default [raw]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level invalid embedded default [TOML]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 128-level invalid embedded default [package]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 256-level productive recursive defaults [compiled]: expected=TRUE; actual=TRUE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 256-level productive recursive defaults [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 256-level productive recursive defaults [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 256-level productive recursive defaults [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 256-level productive recursion bad default [compiled]: expected=FALSE; actual=FALSE; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS 256-level productive recursion bad default [raw]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 256-level productive recursion bad default [TOML]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 256-level productive recursion bad default [package]: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS 8000-level schema overflow has stable boundary [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS 8000-level schema overflow has stable boundary [raw]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS cyclic runtime data has stable compiled boundary [compiled]: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS invalid version "1.0.0+" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "01.0.0" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "01.0.0" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "01.0.0" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "01.0.0" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "01.0.0" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "01.0.0" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.00.0" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.00.0" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.00.0" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.00.0" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.00.0" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.00.0" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.00" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.00" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.00" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.00" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.00" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.00" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build..53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build..53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build..53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build..53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build..53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build..53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build_53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build_53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build_53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build_53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build_53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build_53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build+53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build+53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build+53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build+53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build+53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build+53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-01+build.000" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-01+build.000" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-01+build.000" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-01+build.000" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-01+build.000" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-01+build.000" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "v1.0.0+build.53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "v1.0.0+build.53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "v1.0.0+build.53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "v1.0.0+build.53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "v1.0.0+build.53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "v1.0.0+build.53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+é" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+é" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+é" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+é" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+é" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+é" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.53 " [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.53 " [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.53 " [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.53 " [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.53 " [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.53 " [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-+build" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-+build" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0-+build" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-+build" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-+build" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0-+build" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.\n53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.\n53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid version "1.0.0+build.\n53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.\n53" [raw]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.\n53" [TOML]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid min_host_version "1.0.0+build.\n53" [package]: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The plugin manifest is malformed or has unknown fields.
+PASS valid package SemVer 1.0.0+000 [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+000 [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+000 [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build.00053 [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build.00053 [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build.00053 [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+0.00.000 [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+0.00.000 [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+0.00.000 [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0-beta.1+build.000 [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0-beta.1+build.000 [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0-beta.1+build.000 [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build-53.X [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build-53.X [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS valid package SemVer 1.0.0+build-53.X [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host equality ignores different build metadata [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host equality ignores different build metadata [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host equality ignores different build metadata [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host older core cannot be rescued by build metadata [raw]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS host older core cannot be rescued by build metadata [TOML]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS host older core cannot be rescued by build metadata [package]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS host newer core accepted regardless of build metadata [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host newer core accepted regardless of build metadata [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS host newer core accepted regardless of build metadata [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS prerelease host is older than same-core stable minimum [raw]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS prerelease host is older than same-core stable minimum [TOML]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS prerelease host is older than same-core stable minimum [package]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS stable host satisfies same-core prerelease minimum [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS stable host satisfies same-core prerelease minimum [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS stable host satisfies same-core prerelease minimum [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS numeric prerelease ordering beta.2 is below beta.10 [raw]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS numeric prerelease ordering beta.2 is below beta.10 [TOML]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS numeric prerelease ordering beta.2 is below beta.10 [package]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS numeric prerelease ordering beta.10 satisfies beta.2 [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS numeric prerelease ordering beta.10 satisfies beta.2 [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS numeric prerelease ordering beta.10 satisfies beta.2 [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS equal prerelease ignores build metadata [raw]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS equal prerelease ignores build metadata [TOML]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS equal prerelease ignores build metadata [package]: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true; stable_redacted=true
+PASS invalid host empty build returns stable incompatibility [raw]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS invalid host empty build returns stable incompatibility [TOML]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS invalid host empty build returns stable incompatibility [package]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS invalid host leading zero returns stable incompatibility [raw]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS invalid host leading zero returns stable incompatibility [TOML]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+PASS invalid host leading zero returns stable incompatibility [package]: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; stable_redacted=true; message=The package requires a newer compatible host.
+SUMMARY 59 independent scenarios; 190 pass; 0 fail; 190/190 marker/registry/prototype invariants pass
+REGISTRY_SHA256 before=58417e287b23e8c2ea1cb9b3843f8df4ec5e6393438443509a17dcd1784c3078 after=58417e287b23e8c2ea1cb9b3843f8df4ec5e6393438443509a17dcd1784c3078
+EXIT CODE: 0
+
+$ bun run /home/ubuntu/work/i53-round3-evidence/semver-whitespace-repro.ts
+PASS version="1.0.0+build.53": expected=ACCEPT; actual=ACCEPT; returned="1.0.0+build.53"
+PASS min_host_version="0.1.0+host.53": expected=ACCEPT; actual=ACCEPT; returned="0.1.0+host.53"
+PASS version="1.0.0 ": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS min_host_version="0.1.0 ": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS version="1.0.0+build.53 ": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS min_host_version="0.1.0+host.53 ": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS version="1.0.0+build.53\t": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS min_host_version="0.1.0+host.53\t": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS version="1.0.0+build.53\n": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS min_host_version="0.1.0+host.53\n": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS version="1.0.0+build.53\r": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+PASS min_host_version="0.1.0+host.53\r": expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; message=The plugin manifest is malformed or has unknown fields.
+DIAGNOSTIC {"input":"1.0.0+build.53 ","valid":"1.0.0","raw":"1.0.0+build.53 ","build":["build","53"],"canonicalCheck":true}
+DIAGNOSTIC {"input":"0.1.0+host.53\t","valid":"0.1.0","raw":"0.1.0+host.53\t","build":["host","53"],"canonicalCheck":true}
+SUMMARY 12 pass; 0 fail
+EXIT CODE: 0
+
+$ timeout 60s bun run /home/ubuntu/work/i53-round3-evidence/adversarial.ts
+PASS valid minimal Linux tool: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+PASS valid generic llm@1 provider: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+PASS valid local executable; shell punctuation remains literal: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+PASS installed duplicate plugin ID: expected=DUPLICATE_PLUGIN_ID; actual=DUPLICATE_PLUGIN_ID; marker_absent=true; registry_unchanged=true; message=The plugin ID is already installed.
+PASS duplicate exact tool: expected=INVALID_DECLARATION; actual=INVALID_DECLARATION; marker_absent=true; registry_unchanged=true; message=Capability declarations must be unambiguous and use declared permissions.
+PASS ambiguous tool/provider name: expected=INVALID_DECLARATION; actual=INVALID_DECLARATION; marker_absent=true; registry_unchanged=true; message=Capability declarations must be unambiguous and use declared permissions.
+PASS duplicate provider ID with different method: expected=INVALID_DECLARATION; actual=INVALID_DECLARATION; marker_absent=true; registry_unchanged=true; message=Capability declarations must be unambiguous and use declared permissions.
+PASS undeclared required permission: expected=INVALID_DECLARATION; actual=INVALID_DECLARATION; marker_absent=true; registry_unchanged=true; message=Capability declarations must be unambiguous and use declared permissions.
+PASS duplicate declared permission: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS argv as command shell string: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS argv with non-string: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS argv shell invocation: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv interpreter eval: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv entry traversal: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv normalized in-root traversal: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv absolute entry: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv absolute executable: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv Windows traversal: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS argv tab control: expected=INVALID_ARGV; actual=INVALID_ARGV; marker_absent=true; registry_unchanged=true; message=Runtime argv must use a shell-free executable and local entry.
+PASS root traversal even if normalized inside: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS root alias symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS escaping relative unreferenced symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS escaping absolute unreferenced symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS escaping two-hop entry symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS escaping prefix-sibling directory symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS dangling internal relative symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS dangling absolute symlink: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS internal relative symlink accepted: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+PASS internal absolute symlink accepted (target stays in root): expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+PASS unreferenced symlink loop: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS FIFO special file: expected=INVALID_PACKAGE_PATH; actual=INVALID_PACKAGE_PATH; marker_absent=true; registry_unchanged=true; message=The package and its file paths must remain inside an existing local directory.
+PASS malformed package semver leading zero: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS malformed min-host semver range: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS unsupported manifest version: expected=UNSUPPORTED_MANIFEST_VERSION; actual=UNSUPPORTED_MANIFEST_VERSION; marker_absent=true; registry_unchanged=true; message=The manifest version is not supported.
+PASS incompatible min-host version: expected=INCOMPATIBLE_HOST_VERSION; actual=INCOMPATIBLE_HOST_VERSION; marker_absent=true; registry_unchanged=true; message=The package requires a newer compatible host.
+PASS wrong declared platform: expected=INCOMPATIBLE_PLATFORM; actual=INCOMPATIBLE_PLATFORM; marker_absent=true; registry_unchanged=true; message=The package must support the Linux host.
+PASS wrong actual host platform: expected=INCOMPATIBLE_PLATFORM; actual=INCOMPATIBLE_PLATFORM; marker_absent=true; registry_unchanged=true; message=The package must support the Linux host.
+PASS unknown top-level hooks: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS unknown runtime field: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS unknown config field: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS unknown tool field: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS invalid input schema keyword: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS remote nested schema reference: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS unknown config default: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS invalid scalar default: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS invalid embedded anyOf default: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS malformed TOML error is stable/redacted: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS duplicate TOML IDs: expected=INVALID_MANIFEST; actual=INVALID_MANIFEST; marker_absent=true; registry_unchanged=true; message=The plugin manifest is malformed or has unknown fields.
+PASS prototype-pollution default rejected: expected=INVALID_DEFAULTS; actual=INVALID_DEFAULTS; marker_absent=true; registry_unchanged=true; message=Configuration or schema defaults do not satisfy their schemas.
+PASS self-referential config schema returns stable error: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS indirect self-referential config schema returns stable error: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; marker_absent=true; registry_unchanged=true; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS valid semver build metadata: expected=ACCEPT; actual=ACCEPT; marker_absent=true; registry_unchanged=true
+SUMMARY 52 pass; 0 fail; 52/52 marker/registry/prototype invariants pass
+REGISTRY_SHA256 before=7f10b5d11c5d5957b03c5cd4b16773d6e9257ef0a1ed801e80b03d427884e168 after=7f10b5d11c5d5957b03c5cd4b16773d6e9257ef0a1ed801e80b03d427884e168
+FIXTURE_ROOT /tmp/independent-verify53-sT9new
+EXIT CODE: 0
+
+$ timeout 60s bun run /home/ubuntu/work/i53-round3-evidence/repro.ts
+PASS baseline: expected=ACCEPT; actual=ACCEPT
+PASS self-ref config: expected=INVALID_SCHEMA; actual=INVALID_SCHEMA; message=Schemas must be valid synchronous JSON Schema draft-07 objects with local references.
+PASS package build metadata: expected=ACCEPT; actual=ACCEPT
+PASS min-host build metadata: expected=ACCEPT; actual=ACCEPT
+PASS prerelease build metadata: expected=ACCEPT; actual=ACCEPT
+REPRO: 0 failing cases
+EXIT CODE: 0
+
+$ git diff --check
+EXIT CODE: 0
+
+AGGREGATE EXIT CODE: 0
