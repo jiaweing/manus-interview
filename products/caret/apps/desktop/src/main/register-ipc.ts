@@ -1,10 +1,13 @@
 import { ipcMain, type WebContents } from "electron";
-import { IPC_REQUEST_CHANNEL, IPC_STATUS_CHANNEL } from "../shared/ipc-contract";
 import {
+  IPC_REQUEST_CHANNEL,
+  IPC_STATUS_CHANNEL,
+} from "../shared/ipc-contract";
+import {
+  type BoundaryServices,
   createIpcBoundary,
   isBundledUrl,
   publicStatus,
-  type BoundaryServices,
 } from "./ipc-boundary";
 
 // Main-owned integration point. Key persistence and session lifecycle are later issues.
@@ -13,12 +16,12 @@ export function registerCaretIpc(
   rendererUrl: string,
   services: BoundaryServices = {
     getActiveSession: () => null,
-    getStatus: () => ({ state: "idle", sessionId: null }),
-  },
+    getStatus: () => ({ sessionId: null, state: "idle" }),
+  }
 ): { publishStatus(): void; dispose(): void } {
   const trusted = () => ({
-    sender: contents,
     mainFrame: contents.mainFrame,
+    sender: contents,
     url: rendererUrl,
   });
   const handle = createIpcBoundary(trusted, services);
@@ -31,14 +34,18 @@ export function registerCaretIpc(
     return result;
   });
   return {
-    publishStatus() {
-      if (subscribed && !contents.isDestroyed() && isBundledUrl(contents.mainFrame.url, rendererUrl)) {
-        contents.send(IPC_STATUS_CHANNEL, publicStatus(services.getStatus()));
-      }
-    },
     dispose() {
       subscribed = false;
       ipcMain.removeHandler(IPC_REQUEST_CHANNEL);
+    },
+    publishStatus() {
+      if (
+        subscribed &&
+        !contents.isDestroyed() &&
+        isBundledUrl(contents.mainFrame.url, rendererUrl)
+      ) {
+        contents.send(IPC_STATUS_CHANNEL, publicStatus(services.getStatus()));
+      }
     },
   };
 }

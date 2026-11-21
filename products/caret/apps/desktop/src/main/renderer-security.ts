@@ -12,15 +12,19 @@ interface PreventableEvent {
 
 interface GuardedContents {
   on(
-    event: "will-navigate" | "will-frame-navigate" | "will-redirect" | "will-attach-webview",
-    listener: (event: PreventableEvent) => void,
+    event:
+      | "will-navigate"
+      | "will-frame-navigate"
+      | "will-redirect"
+      | "will-attach-webview",
+    listener: (event: PreventableEvent) => void
   ): unknown;
   setWindowOpenHandler(handler: () => { action: "deny" }): void;
 }
 
 export function guardRenderer(
   contents: GuardedContents,
-  log: (message: string) => void = console.info,
+  log: (message: string) => void = console.info
 ): void {
   const blockNavigation = (event: PreventableEvent) => {
     event.preventDefault();
