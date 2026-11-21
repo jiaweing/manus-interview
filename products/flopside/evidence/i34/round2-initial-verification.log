@@ -1,0 +1,27 @@
+bun run fix
+exit code: 0
+
+bun install --frozen-lockfile
+exit code: 0
+
+bun test packages/engine/lifecycle.test.ts packages/engine/deadline.test.ts
+exit code: 0
+
+bun test packages/engine/composition.test.ts
+exit code: 0
+
+bun run lint
+exit code: 0
+
+bun run typecheck
+exit code: 2
+
+bun run test
+exit code: 0
+
+bun run build
+exit code: 0
+
+git diff --exit-code -- packages/engine
+exit code: 0
+
