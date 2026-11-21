@@ -1,0 +1,99 @@
+{
+  "frameCount": 240,
+  "renderErrors": 0,
+  "concurrency": 2,
+  "cpuCount": 6,
+  "loadAvg": [
+    0.74,
+    1.56,
+    1.07
+  ],
+  "startedAt": "2026-11-21T14:31:12.534Z",
+  "wallTimeSeconds": 84.481455438,
+  "finishedAt": "2026-11-21T14:32:37.015Z",
+  "secondsPerFrame": 0.352006064325,
+  "projectedFullFilm1800FramesSeconds": 633.610915785,
+  "projectedFullFilm1800FramesMinutes": 10.56018192975,
+  "toolchain": {
+    "ok": true,
+    "bun": "1.4.5",
+    "chromium": {
+      "executable": "/usr/bin/chromium",
+      "version": "156.0.8078.73"
+    },
+    "remotion": {
+      "remotion": "4.0.545",
+      "@remotion/cli": "4.0.545",
+      "@remotion/bundler": "4.0.545",
+      "@remotion/renderer": "4.0.545"
+    },
+    "react": "19.2.0",
+    "font": {
+      "family": "Inter",
+      "file": "public/fonts/inter-latin-700-normal.woff2",
+      "license": "SIL Open Font License 1.1",
+      "licenseFile": "public/fonts/LICENSE-Inter.txt",
+      "package": "@fontsource/inter@5.2.8",
+      "sha256": "6f56409fd3d64bb85f7d070bce20749db2d66b6d63cec586cc22d1c761be2491"
+    },
+    "failures": []
+  },
+  "outputs": {
+    "stills": [
+      "qa/benchmark/frame-030.png",
+      "qa/benchmark/frame-150.png",
+      "qa/benchmark/frame-239.png"
+    ],
+    "browserLog": "qa/benchmark/browser-log.json",
+    "temporaryMedia": {
+      "codec": "h264",
+      "location": "os.tmpdir()/s7-benchmark-*/benchmark-c*.mp4",
+      "deleted": true
+    }
+  },
+  "runs": [
+    {
+      "frameCount": 240,
+      "renderErrors": 0,
+      "concurrency": 2,
+      "cpuCount": 6,
+      "loadAvg": [
+        0.74,
+        1.56,
+        1.07
+      ],
+      "startedAt": "2026-11-21T14:31:12.534Z",
+      "wallTimeSeconds": 84.481455438,
+      "finishedAt": "2026-11-21T14:32:37.015Z",
+      "secondsPerFrame": 0.352006064325,
+      "projectedFullFilm1800FramesSeconds": 633.610915785,
+      "projectedFullFilm1800FramesMinutes": 10.56018192975
+    },
+    {
+      "frameCount": 240,
+      "renderErrors": 0,
+      "concurrency": 4,
+      "cpuCount": 6,
+      "loadAvg": [
+        5.45,
+        2.84,
+        1.56
+      ],
+      "startedAt": "2026-11-21T14:32:37.016Z",
+      "wallTimeSeconds": 78.81600857599999,
+      "finishedAt": "2026-11-21T14:33:55.832Z",
+      "secondsPerFrame": 0.32840003573333326,
+      "projectedFullFilm1800FramesSeconds": 591.1200643199999,
+      "projectedFullFilm1800FramesMinutes": 9.852001071999998
+    }
+  ],
+  "decisionBasis": "concurrency-2 baseline; comparison does not replace the conservative estimate",
+  "timingScope": "renderMedia wall time including all frames and H.264 encode; bundle/select/stills excluded",
+  "benchmarkStartedAt": "2026-11-21T14:30:33.708Z",
+  "benchmarkFinishedAt": "2026-11-21T14:34:01.202Z",
+  "pipelineSeconds": {
+    "bundle": 37.288913873000006,
+    "selectComposition": 1.3736342060000024,
+    "stills": 5.362211244000005
+  }
+}

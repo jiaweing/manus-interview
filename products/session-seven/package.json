@@ -43,7 +43,8 @@
     "verify:toolchain": "bun apps/video/scripts/verify-toolchain.js",
     "validate:timeline": "bun apps/video/scripts/validate-timeline.js",
     "music:generate": "bun apps/video/scripts/music-generate.js",
-    "authoring:verify-model": "bun apps/video/scripts/authoring-verify-model.js"
+    "authoring:verify-model": "bun apps/video/scripts/authoring-verify-model.js",
+    "benchmark:scene": "bun apps/video/scripts/benchmark-scene.js"
   },
   "dependencies": {
     "zod": "catalog:"
