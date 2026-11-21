@@ -1,0 +1,14 @@
+{
+  "bun": "1.4.5",
+  "remotion": "4.0.545",
+  "react": "19.2.0",
+  "chromium": { "executable": "/usr/bin/chromium", "version": "156.0.8078.73" },
+  "font": {
+    "family": "Inter",
+    "file": "public/fonts/inter-latin-700-normal.woff2",
+    "license": "SIL Open Font License 1.1",
+    "licenseFile": "public/fonts/LICENSE-Inter.txt",
+    "package": "@fontsource/inter@5.2.8"
+  },
+  "ffmpeg": "native codecs for encode/mux only"
+}

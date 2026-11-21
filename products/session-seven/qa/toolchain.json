@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "bun": "1.4.5",
+  "chromium": {
+    "executable": "/usr/bin/chromium",
+    "version": "156.0.8078.73"
+  },
+  "remotion": {
+    "remotion": "4.0.545",
+    "@remotion/cli": "4.0.545",
+    "@remotion/bundler": "4.0.545",
+    "@remotion/renderer": "4.0.545"
+  },
+  "react": "19.2.0",
+  "font": {
+    "family": "Inter",
+    "file": "public/fonts/inter-latin-700-normal.woff2",
+    "license": "SIL Open Font License 1.1",
+    "licenseFile": "public/fonts/LICENSE-Inter.txt",
+    "package": "@fontsource/inter@5.2.8",
+    "sha256": "6f56409fd3d64bb85f7d070bce20749db2d66b6d63cec586cc22d1c761be2491"
+  },
+  "failures": []
+}

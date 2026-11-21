@@ -1,0 +1,61 @@
+{
+  "name": "session-seven",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "zod": "^4.6.7",
+      "@types/bun": "^1.4.4",
+      "varlock": "1.25.0",
+      "better-auth": "1.7.22",
+      "evlog": "^2.35.1",
+      "ai": "^7.0.170",
+      "lucide-react": "^1.72.0",
+      "next-themes": "^0.4.6",
+      "sonner": "^2.0.8",
+      "@tanstack/react-form": "^1.33.5",
+      "@polar-sh/better-auth": "^2.1.4",
+      "@polar-sh/sdk": "^1.1.0",
+      "@ai-sdk/react": "^4.0.174",
+      "@tailwindcss/postcss": "^4.3.5",
+      "@types/node": "^26.6.6",
+      "@types/react-dom": "^19.3.0",
+      "tailwindcss": "^4.3.5",
+      "@better-auth/expo": "1.7.22"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:native": "turbo run dev -F native --",
+    "dev:web": "turbo run dev -F web --",
+    "dev:server": "turbo run dev -F server --",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "video:studio": "bun run --cwd apps/video studio",
+    "verify:toolchain": "bun apps/video/scripts/verify-toolchain.js"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@session-seven/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "turbo": "^2.11.11",
+    "typescript": "^6.0.3",
+    "ultracite": "8.0.0",
+    "varlock": "catalog:"
+  },
+  "overrides": {
+    "@next/env": "npm:@varlock/nextjs-integration@2.0.1"
+  },
+  "packageManager": "bun@1.4.5"
+}
