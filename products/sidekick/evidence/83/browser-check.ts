@@ -14,7 +14,7 @@ const product = resolve(import.meta.dir, "../..");
 const temporary = await mkdtemp(resolve(tmpdir(), "sidekick-83-"));
 const extension = resolve(temporary, "extension");
 await cp(resolve(product, "apps/extension/.output/chrome-mv3"), extension, { recursive: true });
-const html = `<!doctype html><title>Sidekick #83 dispatch fixture</title><h1>Recorded-target dispatch</h1><p>Local dummy buttons; no outbound submission.</p><div id="controls"><button id="first" type="button">First</button><button id="second" type="button">Second</button></div><p>Mutation count: <output id="count">0</output></p><script>window.mutations=0;for(const button of document.querySelectorAll('button'))button.addEventListener('click',()=>{document.querySelector('#count').textContent=String(++window.mutations)});</script>`;
+const html = `<!doctype html><title>Sidekick #83 dispatch fixture</title><h1>Recorded-target dispatch</h1><p>Local dummy buttons; no outbound submission.</p><div id="controls"><style>.new-label{display:none}</style><button id="first" type="button"><span class="old-label">First</span><span class="new-label">Delete all data</span></button><button id="second" type="button">Second</button></div><p>Mutation count: <output id="count">0</output></p><script>window.mutations=0;for(const button of document.querySelectorAll('button'))button.addEventListener('click',()=>{document.querySelector('#count').textContent=String(++window.mutations)});</script>`;
 const server = Bun.serve({ hostname: "localhost", port: 0, fetch: () => new Response(html, { headers: { "content-type": "text/html" } }) });
 const url = `http://localhost:${server.port}/fixture`;
 const manifestPath = resolve(extension, "manifest.json");
@@ -76,6 +76,22 @@ try {
 	assert(built.success, JSON.stringify(built.logs));
 	await writeFile(resolve(extension, "content-scripts/content.js"), await built.outputs[0].text());
 	const f = await launch("trusted-executor-profile");
+	const cssQueued = await prepare(f.panel, f.tabId, "css-label-change");
+	const before = await f.page.locator("#first").innerText();
+	const rawBefore = await f.page.locator("#first").evaluate(element => element.outerHTML);
+	await f.page.locator("style").evaluate(element => { element.textContent = ".old-label{display:none}.new-label{display:inline}"; });
+	const after = await f.page.locator("#first").innerText();
+	assert.equal(before, "First");
+	assert.equal(after, "Delete all data");
+	assert.equal(await f.page.locator("#first").evaluate(element => element.outerHTML), rawBefore);
+	const cssOutcome = await message(f.panel, f.tabId, { type: "sidekick:dispatch", action: cssQueued });
+	const cssMutations = await f.page.locator("#count").textContent();
+	results.cssChangedVisibleIdentity = { before, after, outcome: cssOutcome, mutations: cssMutations, rawTargetUnchanged: true };
+	assert.deepEqual(cssOutcome, { status: "stale-target", reason: "target-changed", reobserveRequired: true });
+	assert.equal(cssMutations, "0");
+	await f.page.screenshot({ path: resolve(import.meta.dir, "css-label-change.png") });
+	console.log("PASS real Chromium CSS-only label First -> Delete all data: stale-target / target-changed, zero mutations; raw target unchanged");
+
 	for (const scenario of ["removed", "replaced", "reordered", "hidden", "disabled", "snapshot", "malformed", "unknown-index"] as const) {
 		await f.page.reload();
 		const queued = await prepare(f.panel, f.tabId, `action-${scenario}`);

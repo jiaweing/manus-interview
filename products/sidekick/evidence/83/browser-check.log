@@ -1,4 +1,5 @@
 PASS production packaged script: isolated listener, valid envelope routing, removed-target rejection, zero mutations
+PASS real Chromium CSS-only label First -> Delete all data: stale-target / target-changed, zero mutations; raw target unchanged
 PASS real Chromium removed: zero mutations; explicit re-observation
 PASS real Chromium replaced: zero mutations; explicit re-observation
 PASS real Chromium reordered: zero mutations; explicit re-observation

@@ -217,6 +217,28 @@ function nameFor(element: Element): string {
 	);
 }
 
+/** Shared, position-independent semantics; text/visibility stay local to preflight. */
+export function renderedSemantics(element: Element) {
+	const descriptor: Omit<SnapshotElement, "index"> = {
+		enabled: isEnabled(element),
+		name: nameFor(element),
+		role: roleFor(element) ?? "",
+	};
+	if (element.localName === "input") {
+		descriptor.inputType = (
+			element.getAttribute("type") ?? "text"
+		).toLowerCase();
+	}
+	if (element.localName === "a") {
+		descriptor.href = (element as HTMLAnchorElement).href;
+	}
+	return {
+		descriptor,
+		text: normalize(renderedText(element)),
+		visible: isRendered(element),
+	};
+}
+
 interface DocumentState {
 	documentToken: string;
 	root: Element;
@@ -262,26 +284,18 @@ export function createSnapshotObserver(document: Document) {
 			current.targets = new Map();
 			const elements: SnapshotElement[] = [];
 			for (const element of document.querySelectorAll(candidates)) {
-				const role = roleFor(element);
-				if (!(role && isRendered(element) && isEnabled(element))) {
+				const semantics = renderedSemantics(element);
+				if (
+					!(
+						semantics.descriptor.role &&
+						semantics.visible &&
+						semantics.descriptor.enabled
+					)
+				) {
 					continue;
 				}
 				const index = elements.length + 1;
-				const descriptor: SnapshotElement = {
-					enabled: true,
-					index,
-					name: nameFor(element),
-					role,
-				};
-				if (element.localName === "input") {
-					descriptor.inputType = (
-						element.getAttribute("type") ?? "text"
-					).toLowerCase();
-				}
-				if (element.localName === "a") {
-					descriptor.href = (element as HTMLAnchorElement).href;
-				}
-				elements.push(descriptor);
+				elements.push({ ...semantics.descriptor, index });
 				current.targets.set(index, element);
 			}
 			return {

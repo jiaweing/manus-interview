@@ -11,11 +11,12 @@ import {
 } from "./dispatch";
 import { createSnapshotObserver } from "./snapshot";
 
-function fixture(executor?: PageActionExecutor) {
+function fixture(
+	executor?: PageActionExecutor,
+	html = '<!doctype html><title>Dispatch fixture</title><body><button id="first" type="button">First</button><button id="second" type="button">Second</button><label for="name">Name</label><input id="name" name="name"><a id="link" href="/reference">Reference</a></body>'
+) {
 	const window = new Window({ url: "https://example.test/form" });
-	window.document.write(
-		'<!doctype html><title>Dispatch fixture</title><body><button id="first" type="button">First</button><button id="second" type="button">Second</button><label for="name">Name</label><input id="name" name="name"><a id="link" href="/reference">Reference</a></body>'
-	);
+	window.document.write(html);
 	window.HTMLElement.prototype.getClientRects = () =>
 		[{ height: 20, width: 100 }] as ReturnType<
 			Window["HTMLElement"]["prototype"]["getClientRects"]
@@ -172,6 +173,82 @@ describe("recorded-element dispatch preflight", () => {
 			const f = fixture();
 			change(f.document);
 			expectStale(f, f.action, "target-changed");
+		});
+	}
+
+	const labelSpans =
+		'<span class="old-label">First</span><span class="new-label">Delete all data</span>';
+	for (const [name, markup, tool, expectedName] of [
+		[
+			"descendant label",
+			`<button id="first" type="button">${labelSpans}</button>`,
+			"click",
+			"Delete all data",
+		],
+		[
+			"native label",
+			`<label for="first">${labelSpans}</label><input id="first">`,
+			"fill",
+			"Delete all data",
+		],
+		[
+			"ARIA-referenced label",
+			`<span id="caption">${labelSpans}</span><button id="first" aria-labelledby="caption"></button>`,
+			"click",
+			"Delete all data",
+		],
+		[
+			"visible text with unchanged accessible name",
+			`<button id="first" aria-label="First">${labelSpans}</button>`,
+			"click",
+			"First",
+		],
+	] as const) {
+		test(`CSS-only ${name} changes reject the recorded target with zero mutations`, () => {
+			const f = fixture(
+				undefined,
+				`<!doctype html><head><style>.new-label{display:none}</style></head><body>${markup}</body>`
+			);
+			const target = f.document.getElementById("first");
+			const descriptor = f.snapshot.elements.find(
+				(element) =>
+					f.observer.resolveElement(
+						f.snapshot.snapshotId,
+						f.snapshot.documentToken,
+						element.index
+					) === target
+			);
+			expect(descriptor?.name).toBe("First");
+			expect(f.snapshot.text).not.toContain("Delete all data");
+			const body = f.document.body.innerHTML;
+			const style = f.document.querySelector("style");
+			if (style) {
+				style.textContent =
+					".old-label{display:none}.new-label{display:inline}";
+			}
+			// Target attributes, raw text, labels and structural position did not change.
+			expect(f.document.body.innerHTML).toBe(body);
+			const observe = spyOn(f.observer, "observe");
+			expectStale(
+				f,
+				{
+					...f.action,
+					args:
+						tool === "fill"
+							? { index: descriptor?.index, value: "dummy" }
+							: { index: descriptor?.index },
+					tool,
+				},
+				"target-changed"
+			);
+			expect(observe).not.toHaveBeenCalled();
+			observe.mockRestore();
+			const fresh = f.dispatcher.observe(42);
+			expect(
+				fresh.elements.find((element) => element.index === descriptor?.index)
+					?.name
+			).toBe(expectedName);
+			expect(fresh.text).toContain("Delete all data");
 		});
 	}
 

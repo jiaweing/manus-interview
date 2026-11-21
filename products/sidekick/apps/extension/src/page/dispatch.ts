@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { type Action, actionSchema } from "../../../../packages/protocol/src";
 import {
-	isEnabled,
-	isRendered,
+	renderedSemantics,
 	type Snapshot,
 	type SnapshotObserver,
 } from "./snapshot";
@@ -85,23 +84,9 @@ interface RecordedTarget {
 	previous: Element | null;
 }
 
-const whitespace = /\s+/;
-
 // Local-only identity; never serialize it into a provider payload or result.
 function identity(element: Element): string {
 	const document = element.ownerDocument;
-	const labels =
-		"labels" in element
-			? Array.from(
-					(element.labels as NodeListOf<HTMLLabelElement> | null) ?? []
-				).map((label) => [label.textContent, isRendered(label)])
-			: [];
-	const references = (element.getAttribute("aria-labelledby") ?? "")
-		.split(whitespace)
-		.map((id) => {
-			const label = document.getElementById(id);
-			return label ? [label.textContent, isRendered(label)] : null;
-		});
 	const form =
 		"form" in element
 			? (element.form as HTMLFormElement | null)
@@ -114,10 +99,8 @@ function identity(element: Element): string {
 			attribute.name,
 			attribute.value,
 		]).sort(),
-		element.textContent,
-		labels,
-		references,
-		element.localName === "a" ? (element as HTMLAnchorElement).href : null,
+		// The exact snapshot role/name/state/destination plus rendered (not raw) text.
+		renderedSemantics(element),
 		form?.action,
 		form?.method,
 		form?.target,
@@ -131,8 +114,6 @@ function retainsIdentity(
 	return (
 		!!target &&
 		target === recorded.element &&
-		isRendered(target) &&
-		isEnabled(target) &&
 		identity(target) === recorded.identity &&
 		target.parentElement === recorded.parent &&
 		target.previousElementSibling === recorded.previous &&
