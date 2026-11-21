@@ -470,10 +470,10 @@ describe("unbiased server shuffle", () => {
 		expectPermutation(startMatch(roster(2)).private.deck);
 	});
 
-	test("every engine TypeScript source is free of non-cryptographic randomness", () => {
+	test("every production engine source is free of non-cryptographic randomness", () => {
 		const directory = fileURLToPath(new URL(".", import.meta.url));
-		for (const file of readdirSync(directory).filter((name) =>
-			name.endsWith(".ts")
+		for (const file of readdirSync(directory).filter(
+			(name) => name.endsWith(".ts") && !name.endsWith(".test.ts")
 		)) {
 			expect(readFileSync(`${directory}/${file}`, "utf8")).not.toMatch(
 				NON_CRYPTO_RANDOM
