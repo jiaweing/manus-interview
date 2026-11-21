@@ -61,3 +61,10 @@ Manus can build web apps, games and slides itself, and it has a video-generation
 2. Run `scaffold/NN-*.sh` for the products being built (each in its own folder and repo), with a TTY.
 3. For each product, follow the PRD's Section 12 milestones, MVP cut line first.
 4. Build order suggestion: 05 TetherTerm and 03 Patchbay (their output is also useful tooling), then 04, 06, 01, 02, and 07 last because it needs faithful mock-ups of the others. Work is tracked in GitHub Issues and the project board (see README).
+
+## GitHub issues (created)
+
+- 7 epics and 167 atomic sub-issues (174 total), see [issues-index.md](issues-index.md). Each epic has a milestone, and each child has `priority:`, `type:`, `product:` and `area:` labels, acceptance criteria, an explicit verification section and blocked-by links.
+- Priorities: 169 P0 and 5 P1. The PRDs were trimmed to main requirements only, so almost everything is P0. Re-rank before sprint planning if you want a real P1 tier.
+- Verification commands in the issues are planned checks. None has been run, because no product code exists yet.
+- **GitHub Project (Projects v2) was NOT created.** The sandbox tokens are GitHub App user tokens and GitHub returns FORBIDDEN for `createProjectV2`. Run `GH_TOKEN=<PAT with project scope> python3 scripts/setup_project.py` (untested) to create the board and add all issues with Priority, Product and Type fields. Alternatively create the project in the UI and use "Add items" filtered by `repo:jiaweing/manus-interview`.

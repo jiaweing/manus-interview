@@ -1,0 +1,564 @@
+{
+  "product": "glassroom",
+  "epic_title": "Glassroom: memory-only P2P encrypted chat",
+  "epic_summary": "Ship a two-person, no-login browser chat using authenticated encrypted WSS signaling and application-encrypted WebRTC text delivery. Both participants must compare and confirm session fingerprints before sending, and delivery requires an encrypted peer acknowledgement. The MVP is complete when F01–F07, the direct-WebRTC network preflight, and the release tests pass, with actual-ingress evidence and explicit threat boundaries. Exclude TURN integration, WSS message fallback, groups, accounts, files, persistence, ratcheting, resumption, and all other stated non-goals; this is a demo build, not an audited secure messenger.",
+  "epic_done_when": [
+    "Two desktop Chromium profiles on the demo network create/join without login, reject a third participant, mutually verify fingerprints, and exchange acknowledged text in both directions over an ordered reliable WebRTC data channel.",
+    "Automated tests pass for authenticated signaling, transcript confirmation, verification gating, directional nonces/counters, tamper/replay rejection, wrong-secret failure, fresh-session keys, the 4 KiB UTF-8 limit, and backpressure.",
+    "Leave, refresh, or transport loss terminates the room and clears transcript, drafts, keys, membership, and inspector state; storage checks find no application persistence or old-key reconnection.",
+    "Production headers enforce the PRD CSP and privacy policies; HTML is rendered as text, dependencies are local, and application logs contain no bodies, URLs, or payloads.",
+    "The development-only inspector shows actual current-room signaling ciphertext/metadata, contains no chat marker, and records no additional signaling ingress frame when a verified chat message and acknowledgement are exchanged.",
+    "The threat table states endpoint, IP/metadata, hosting, TURN, link-leakage, and forward-secrecy limits, and the 4-minute-30-second walkthrough completes with captured release evidence."
+  ],
+  "areas": ["infra", "crypto", "transport", "client", "security", "tests"],
+  "issues": [
+    {
+      "key": "S1",
+      "title": "Scaffold the independent Bun project and boot one HTTPS/WSS origin",
+      "type": "setup",
+      "priority": "P0",
+      "area": "infra",
+      "context": "Appendix B requires the supplied Better-T-Stack command in an independent project. The recorded scaffold validation did not establish that installation or boot succeeds, so establish a reproducible Next/Hono baseline before product code.",
+      "tasks": [
+        "- [ ] Run /home/ubuntu/manus-interview/scaffold/06-glassroom.sh from a workspace outside manus-interview, using its interactive prompts, to create the independent glassroom directory and Git repository.",
+        "- [ ] Activate only Next.js and Hono/Bun for this product; keep auth, MongoDB, Polar, native, WXT, and generated AI/example routes dormant and disconnected from startup.",
+        "- [ ] Add Bun-only root scripts dev:https, build, and start:https, serving the web client and /signal WebSocket upgrade on https://localhost:3443 for local verification; production uses one configured HTTPS origin.",
+        "- [ ] Configure Playwright's chromium project and boot.spec.ts, and commit the Bun lockfile; the bootstrap /signal endpoint must not accept or relay chat payloads."
+      ],
+      "acceptance_criteria": [
+        "- [ ] The generated Git root is the glassroom directory outside manus-interview, and a Bun lockfile is present.",
+        "- [ ] bun install and bun run build exit 0 without database, authentication, payment, or external AI credentials.",
+        "- [ ] dev:https serves a secure-context Next page and a same-origin WSS upgrade at /signal; no second public origin is required.",
+        "- [ ] Both boot tests pass without activating any dormant scaffold integration."
+      ],
+      "verification": "From the generated glassroom root run bun install, bun run build, and bun run dev:https. In another terminal run bunx playwright test tests/e2e/boot.spec.ts --project=chromium; expect both named cases, 'secure client boot' and 'same-origin signal upgrade', to pass. Run bun -e 'const p = Bun.spawnSync([\"git\", \"rev-parse\", \"--show-toplevel\"]); if (p.exitCode !== 0 || p.stdout.toString().trim() !== process.cwd()) process.exit(1)' from that root; expect exit 0. Capture the boot-test report and terminal output showing installation/build success.",
+      "prd_refs": ["F01", "F02", "F06", "R4", "R5", "R14", "R16"],
+      "depends_on": []
+    },
+    {
+      "key": "S2",
+      "title": "Gate the demo network with a two-profile direct-WebRTC preflight",
+      "type": "verification",
+      "priority": "P0",
+      "area": "tests",
+      "context": "The PRD explicitly blocks delivery if direct WebRTC fails on the intended network. This is a connectivity probe, not permission to implement a relay or plaintext fallback.",
+      "tasks": [
+        "- [ ] Add tests/e2e/preflight.spec.ts using two independent persistent desktop Chromium profile directories and browser WebRTC APIs.",
+        "- [ ] Exchange probe SDP/ICE only through the test runner, without adding a shipped test-control UI or chat route; configure no TURN server.",
+        "- [ ] Open an ordered reliable data channel, exchange a probe in both directions, and fail the probe after ten seconds if negotiation does not finish.",
+        "- [ ] Record the tested origin, network, Chromium version, timestamp, and pass/fail; treat failure as a delivery blocker."
+      ],
+      "acceptance_criteria": [
+        "- [ ] The probe uses two separate desktop profile directories, no TURN configuration, and a channel with ordered=true and no partial-reliability limits.",
+        "- [ ] Each profile receives the other profile's probe through the WebRTC data channel within the ten-second negotiation bound.",
+        "- [ ] Blocking direct connectivity produces a failing preflight with no fallback connection attempt."
+      ],
+      "verification": "With bun run dev:https running on the intended demo network, run bunx playwright test tests/e2e/preflight.spec.ts --project=chromium. Expect 'two-profile direct channel' to pass and its report to record both received probe strings and the negotiated channel settings. Run the test's blocked-connectivity case; expect the explicit failure state within ten seconds and zero relay/fallback attempts. Save the Playwright report and network/version record as the preflight evidence.",
+      "prd_refs": ["F02", "R1", "R5", "R8", "R12"],
+      "depends_on": ["S1"]
+    },
+    {
+      "key": "S3",
+      "title": "Implement invitation-derived authenticated signaling encryption",
+      "type": "feature",
+      "priority": "P0",
+      "area": "crypto",
+      "context": "Signaling must be encrypted and authenticated by the invitation secret rather than relying on WSS. This module handles signaling key derivation and frame authentication, not UI or server routing.",
+      "tasks": [
+        "- [ ] Implement browser WebCrypto HKDF-SHA-256 with the 256-bit invitation secret and room-ID salt, deriving distinct creator-to-joiner and joiner-to-creator signaling keys.",
+        "- [ ] Encrypt/decrypt signaling with AES-GCM, directional counter nonces, and authenticated version/room/role fields; define validated envelope encoding with Zod.",
+        "- [ ] Track outgoing and accepted incoming counters per direction; reject stale counters and counter exhaustion without wrapping, and advance receive state only after authentication.",
+        "- [ ] Return non-sensitive failure codes without including secrets, plaintext, keys, or raw payloads in errors."
+      ],
+      "acceptance_criteria": [
+        "- [ ] An envelope decrypts only with the matching secret, room, role/direction, version, and authentication tag.",
+        "- [ ] The two directions derive different keys, and no successful send in one session reuses its direction's counter/nonce.",
+        "- [ ] Replayed counters, exhausted counters, invalid encodings, and failed authentication return rejection without releasing plaintext or advancing accepted receive state."
+      ],
+      "verification": "Run bun test tests/unit/signaling-crypto.test.ts. Add and pass named cases 'same-secret round trip', 'directional key separation', 'wrong secret', 'AAD mismatch', 'ciphertext tamper', 'replay rejected', 'failed authentication preserves counter', and 'counter exhaustion closes'. Each negative case must assert no plaintext result and no sensitive value in the returned error.",
+      "prd_refs": ["F02", "F03", "F06", "R3", "R6", "R9", "R10", "R11"],
+      "depends_on": ["S1"]
+    },
+    {
+      "key": "S4",
+      "title": "Derive fresh ECDH session keys and a confirmed shared fingerprint",
+      "type": "feature",
+      "priority": "P0",
+      "area": "crypto",
+      "context": "The session handshake must bind both participants and room context before human verification. An invitation authenticates link possession, not identity; the shared 128-bit fingerprint remains mandatory.",
+      "tasks": [
+        "- [ ] Generate fresh ephemeral P-256 ECDH keys and participant nonces in browser memory for each new room session.",
+        "- [ ] Canonically encode the creator-first transcript including room ID, both roles, public keys, and participant nonces, then hash it.",
+        "- [ ] Derive purpose-separated directional AES-256-GCM session keys and HMAC transcript-confirmation material from ECDH and the transcript hash.",
+        "- [ ] Require valid confirmation from both sides before declaring the handshake authenticated; derive the common grouped 128-bit fingerprint from shared session-secret material."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Both roles produce the same transcript hash and grouped 128-bit fingerprint from the same handshake, with distinct directional session keys.",
+        "- [ ] Changing a bound room, role, public key, or nonce causes transcript-confirmation failure.",
+        "- [ ] Two fresh sessions generate different public keys, nonces, session identifiers, and session-key material.",
+        "- [ ] Private keys and shared secrets remain client-memory values and are absent from handshake envelopes."
+      ],
+      "verification": "Run bun test tests/unit/handshake-crypto.test.ts. Expect named cases 'creator-first canonical transcript', 'matching fingerprint', 'directional and purpose separation', 'room binding', 'role binding', 'public-key binding', 'nonce binding', 'invalid HMAC', 'fresh session material', and 'no private material in envelopes' to pass. Tests may compare internal key material, but their output must not print keys or secrets.",
+      "prd_refs": ["F03", "F05", "R6", "R9", "R10", "R17"],
+      "depends_on": ["S1"]
+    },
+    {
+      "key": "S5",
+      "title": "Implement authenticated data envelopes with directional sequence rejection",
+      "type": "feature",
+      "priority": "P0",
+      "area": "crypto",
+      "context": "WebRTC transport encryption is not the application's authentication layer. All messages, acknowledgements, verification, and end controls need one authenticated envelope codec.",
+      "tasks": [
+        "- [ ] Define Zod-validated outer envelopes containing session ID, sequence, and ciphertext, and encrypted body variants for message, acknowledgement, verification, and end.",
+        "- [ ] Use directional AES-256-GCM keys, zero32 || uint64(sequence) IVs, and authenticated session/direction/sequence fields.",
+        "- [ ] Serialize envelope encryption to reserve unique outgoing sequences; reject old incoming sequences, malformed/oversized envelopes, session mismatch, tampering, and exhaustion without releasing unauthenticated bodies.",
+        "- [ ] Keep all sequence/key state in the session object; expose disposal without key/nonce resumption."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Only the three specified outer fields are visible; message, acknowledgement, verification, and end contents are inside authenticated ciphertext.",
+        "- [ ] Concurrent encrypt requests allocate distinct increasing sequences with the specified 96-bit IV construction.",
+        "- [ ] Session/direction/sequence changes, tampering, stale counters, malformed or over-cap frames, and exhaustion are rejected before body dispatch.",
+        "- [ ] A failed authentication does not consume an accepted incoming sequence."
+      ],
+      "verification": "Run bun test tests/unit/data-envelope.test.ts. Expect named cases 'four encrypted body variants', 'concurrent unique sequences', 'specified IV bytes', 'direction separation', 'authenticated envelope fields', 'tamper rejected', 'duplicate rejected', 'failed authentication preserves receive sequence', 'malformed and over-cap rejection', and 'counter exhaustion' to pass. The over-cap case must send the declared maximum plus one byte and observe no body-dispatch callback.",
+      "prd_refs": ["F03", "F04", "F05", "R2", "R3", "R6", "R9", "R10"],
+      "depends_on": ["S4"]
+    },
+    {
+      "key": "S6",
+      "title": "Prove the cross-module crypto release invariants with regression tests",
+      "type": "test",
+      "priority": "P0",
+      "area": "tests",
+      "context": "The milestone requires authentication, nonce, tamper, and fingerprint tests before transport integration. Add a focused cross-module suite proving that the pieces cannot bypass each other's trust gates.",
+      "tasks": [
+        "- [ ] Add tests/unit/crypto-release.test.ts that drives both role implementations through invitation-authenticated handshake and session-envelope exchange.",
+        "- [ ] Exercise wrong-secret handshake rejection, substituted transcript data, directional nonce uniqueness across encrypted body types, and fresh-room key separation.",
+        "- [ ] Assert that unauthenticated signaling or failed transcript confirmation exposes neither a usable session nor a fingerprint-ready state.",
+        "- [ ] Check that the resulting fingerprints match only for the matching confirmed transcript, without printing sensitive values."
+      ],
+      "acceptance_criteria": [
+        "- [ ] A matching-secret, matching-transcript exchange produces mutually confirmed session objects and equal fingerprints.",
+        "- [ ] Wrong-secret and altered-transcript exchanges never reach fingerprint-ready state or expose usable session objects.",
+        "- [ ] Every captured key-identity/nonce pair is unique within its sending direction, including mixed control/message traffic, and a fresh room uses different key identities."
+      ],
+      "verification": "Run bun test tests/unit/signaling-crypto.test.ts tests/unit/handshake-crypto.test.ts tests/unit/data-envelope.test.ts tests/unit/crypto-release.test.ts. Expect all suites to pass, including the new cases 'confirmed two-role session', 'wrong secret never authenticates', 'substitution never authenticates', 'mixed-body nonce uniqueness', and 'fresh-room key separation'. Save the redacted test summary for the release walkthrough.",
+      "prd_refs": ["F03", "F04", "R3", "R6", "R9", "R10"],
+      "depends_on": ["S3", "S4", "S5"]
+    },
+    {
+      "key": "S7",
+      "title": "Enforce two-person admission and ciphertext-only server forwarding",
+      "type": "feature",
+      "priority": "P0",
+      "area": "transport",
+      "context": "Hono is a dumb, memory-only signaling server with no chat route. Admission and validated forwarding must precede client signaling integration.",
+      "tasks": [
+        "- [ ] Implement WS /signal join and encrypted-forward envelopes with version/room/role/operation/length validation and a declared finite frame-size cap.",
+        "- [ ] Allow a creator to open a random-ID room and one joiner to occupy its second slot; reject duplicate roles, nonexistent-room joiners, and every third participant without displacing admitted peers.",
+        "- [ ] Bind forwarding to the socket's admitted room and role; route only encrypted signaling to the other participant and never decrypt or accept application message bodies.",
+        "- [ ] Keep membership solely in memory; when an admitted participant terminates, notify/close the peer and delete the room map entry. Do not log incoming payloads."
+      ],
+      "acceptance_criteria": [
+        "- [ ] A room contains at most one creator and one joiner; a third or duplicate-role socket is rejected while the original pair remains admitted.",
+        "- [ ] Invalid versions, schemas, role/room spoofing, and frames exceeding the declared cap are rejected without forwarding.",
+        "- [ ] The server forwards ciphertext unchanged and exposes no message endpoint, decryption operation, or persistence integration.",
+        "- [ ] Closing either admitted socket removes the room and ends the remaining participant's membership."
+      ],
+      "verification": "Run bun test tests/unit/signal-server.test.ts. Expect named cases 'creator plus one joiner', 'third participant rejected', 'duplicate role rejected', 'join nonexistent room rejected', 'socket room-role binding', 'schema and over-cap rejection', 'ciphertext forwarded unchanged', and 'termination deletes room' to pass. Each rejected-frame case must assert zero peer-forward calls, and teardown must assert the room map no longer contains the ID.",
+      "prd_refs": ["F01", "F02", "F05", "R1", "R4", "R5", "R8", "R14"],
+      "depends_on": ["S1"]
+    },
+    {
+      "key": "S8",
+      "title": "Create and consume fragment invitations entirely in the client",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "The invitation must contain a random room ID and secret without sending that secret to Next server components or HTTP. Users deliberately copy the link; missing or invalid secrets fail before opening WSS.",
+      "tasks": [
+        "- [ ] Add client-only create/join state for a cryptographically random 128-bit room ID and 256-bit secret, forming /r/{id}#s={secret}.",
+        "- [ ] Provide an explicit copy-invitation action; do not copy automatically or create an account flow.",
+        "- [ ] Parse and validate the room/secret locally and immediately remove the fragment with history replacement before opening /signal.",
+        "- [ ] Show text states for missing/invalid invitation, waiting peer, and room-full errors; do not put secrets in server props, requests, URLs sent to logging, or storage."
+      ],
+      "acceptance_criteria": [
+        "- [ ] New invitations decode to exactly 128 room-ID bits and 256 secret bits, and copying occurs only after the user's action.",
+        "- [ ] A valid invitation leaves a fragment-free address bar before the first WSS connection opens; HTTP and WS envelopes contain no invitation secret.",
+        "- [ ] Missing or invalid secrets display a local error and cause zero /signal connection attempts.",
+        "- [ ] Creating and joining require no login, and a rejected third participant sees a room-full label."
+      ],
+      "verification": "Run bunx playwright test tests/e2e/invitations.spec.ts --project=chromium with dev:https running. Expect 'random invitation lengths', 'deliberate copy only', 'strip before signal', 'missing secret stays local', 'invalid secret stays local', and 'no-login third-person rejection' to pass. Capture a screenshot of the fragment-free joined URL and the rejected third profile, plus a redacted request log asserting no secret appears in HTTP URLs or WebSocket envelopes.",
+      "prd_refs": ["F01", "F05", "R1", "R4", "R11", "R15"],
+      "depends_on": ["S7"]
+    },
+    {
+      "key": "S9",
+      "title": "Exchange the authenticated handshake over encrypted WSS signaling",
+      "type": "feature",
+      "priority": "P0",
+      "area": "transport",
+      "context": "Connect the crypto modules to admitted peer sockets without exposing handshake contents to the server. Session negotiation must not proceed on wrong-secret, unsupported-crypto, or transcript-authentication failure.",
+      "tasks": [
+        "- [ ] Connect the client signaling codec to admitted /signal sockets and send peer public keys, participant nonces, and transcript confirmations only inside encrypted-forward envelopes.",
+        "- [ ] Bind each role to the canonical handshake and require mutual HMAC confirmation before providing an authenticated session to WebRTC/session consumers.",
+        "- [ ] Handle wrong-secret, malformed peer frames, authentication failure, and missing WebCrypto as terminal labeled errors; disable chat and require a fresh room.",
+        "- [ ] Ensure the server observes only validated envelope metadata/ciphertext and never receives private/session keys or plaintext handshake fields."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Matching invitation holders reach mutually transcript-confirmed client session state through ciphertext-only signaling.",
+        "- [ ] Wrong-secret, altered transcript, malformed handshake, or unsupported WebCrypto never reaches authenticated-session state or enables chat.",
+        "- [ ] All signaling-forward bodies observed at the server are ciphertext; public-key/nonces/confirmation values are not plaintext server fields.",
+        "- [ ] Terminal handshake failure exposes only a redacted label and a fresh-room action, not reconnect/resume."
+      ],
+      "verification": "Run bun test tests/unit/signaling-session.test.ts. Expect 'confirmed encrypted handshake', 'wrong-secret terminal failure', 'altered-transcript terminal failure', 'malformed handshake rejected', 'unsupported crypto disables chat', and 'server sees encrypted handshake only' to pass. The success case must inspect captured actual forwarded envelopes and assert absence of decrypted public-key, nonce, and HMAC fields; negative cases must assert no authenticated-session callback.",
+      "prd_refs": ["F02", "F03", "F06", "R3", "R6", "R9", "R10"],
+      "depends_on": ["S6", "S8"]
+    },
+    {
+      "key": "S10",
+      "title": "Establish the ordered reliable WebRTC channel without fallback",
+      "type": "feature",
+      "priority": "P0",
+      "area": "transport",
+      "context": "The creator offers and joiner answers through encrypted signaling. Negotiation failure is explicit after ten seconds and cannot downgrade chat onto the signaling server.",
+      "tasks": [
+        "- [ ] Implement creator-offer/joiner-answer SDP and ICE exchange through the encrypted signaling codec, with no configured TURN relay.",
+        "- [ ] Open exactly one ordered reliable data channel for encrypted application envelopes, with neither maxRetransmits nor maxPacketLifeTime configured.",
+        "- [ ] Abort unsuccessful negotiation after ten seconds; handle unsupported WebRTC and failed connection states with disabled chat and a fresh-room requirement.",
+        "- [ ] Expose channel-ready/loss events to session consumers and never provide a WSS message transport or plaintext downgrade."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Two matching admitted peers open the channel with ordered=true and both partial-reliability limits unset.",
+        "- [ ] SDP and ICE are observed at /signal only inside ciphertext, and application data uses the WebRTC channel rather than a server route.",
+        "- [ ] Negotiation blocked past ten seconds or missing WebRTC produces a terminal connection-error label with sending disabled.",
+        "- [ ] Failure creates no fallback connection, TURN allocation, or old-session retry."
+      ],
+      "verification": "Run bun test tests/unit/webrtc-session.test.ts and bunx playwright test tests/e2e/channel.spec.ts --project=chromium. Expect unit cases 'creator offers joiner answers', 'ordered reliable channel', 'ten-second abort', 'unsupported WebRTC', and 'no fallback' to pass, plus browser case 'two-profile encrypted negotiation' to pass on the preflight network. Save the channel-settings report and a failure-state screenshot; redacted /signal capture must contain no plaintext SDP or ICE.",
+      "prd_refs": ["F01", "F02", "F03", "R1", "R5", "R8", "R12"],
+      "depends_on": ["S2", "S9"]
+    },
+    {
+      "key": "S11",
+      "title": "Lock sending until both participants confirm the shared fingerprint",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "A connected encrypted channel alone is not verified identity. Both participants must compare the grouped fingerprint over a trusted external channel and exchange encrypted confirmations.",
+      "tasks": [
+        "- [ ] Display the grouped 128-bit fingerprint and instructions to compare it out-of-band; state that invitation possession is not identity verification.",
+        "- [ ] Send and receive verification confirmations as encrypted data-channel controls after authenticated transcript completion.",
+        "- [ ] Keep both the UI send action and underlying message-send API locked until local and remote confirmation are true.",
+        "- [ ] Provide a fingerprint-mismatch action that sends an encrypted end control when possible and terminates the room rather than overriding the gate."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Both peers display the same grouped 128-bit fingerprint after a valid handshake.",
+        "- [ ] Zero or one participant confirming leaves both peers' message-send APIs locked; both confirming unlocks both peers.",
+        "- [ ] Confirmation controls appear only as ciphertext on the data channel, never as signaling or plaintext controls.",
+        "- [ ] Choosing mismatch terminates the room and cannot be followed by a send in that session."
+      ],
+      "verification": "Run bun test tests/unit/verification-gate.test.ts. Expect 'neither confirmed', 'local only', 'remote only', 'mutual confirmation unlocks', 'encrypted verification control', and 'mismatch terminates' to pass; locked cases must assert zero data-message send calls. Run bunx playwright test tests/e2e/verification.spec.ts --project=chromium; expect matching displayed fingerprints, a locked send button after the first confirmation, unlocked buttons only after the second, and a terminated-state screenshot after mismatch.",
+      "prd_refs": ["F03", "F04", "R3", "R6", "R9"],
+      "depends_on": ["S10"]
+    },
+    {
+      "key": "S12",
+      "title": "Send size-limited encrypted text and mark delivery only on peer acknowledgement",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "Outgoing text is capped at 4 KiB of UTF-8, not 4,096 JavaScript characters. A local send or open transport must never be labeled delivered before an authenticated peer acknowledgement.",
+      "tasks": [
+        "- [ ] Add an in-memory draft and outgoing pending-message state; validate UTF-8 byte length with TextEncoder and allow at most 4,096 bytes.",
+        "- [ ] Send message bodies only through the mutually verified encrypted channel, serializing sends and checking the channel's declared bufferedAmount backpressure threshold.",
+        "- [ ] Disable/reject sending while verification is locked, the channel is closed, or bufferedAmount exceeds the threshold; leave the unsent draft in memory until teardown.",
+        "- [ ] Mark a pending message delivered only after an authenticated acknowledgement references that sent message; ignore unknown or duplicate acknowledgements without inventing delivery."
+      ],
+      "acceptance_criteria": [
+        "- [ ] A 4,096-byte UTF-8 message can be encrypted and sent; a 4,097-byte message, including multibyte text, is rejected before channel send.",
+        "- [ ] Concurrent user sends use serialized unique envelope sequences, and no message is sent while locked, disconnected, or above the declared backpressure threshold.",
+        "- [ ] A sent message remains pending until its authenticated peer acknowledgement arrives; unknown, duplicate, or unauthenticated acknowledgements cannot newly mark another message delivered.",
+        "- [ ] There is no offline queue, acknowledgement timer, signaling fallback, or persistent draft."
+      ],
+      "verification": "Run bun test tests/unit/outgoing-messages.test.ts. Expect named cases '4096 UTF-8 bytes accepted', '4097 UTF-8 bytes rejected', 'multibyte limit', 'serialized sends', 'verification lock', 'closed channel', 'backpressure threshold plus one', 'pending before ACK', 'authenticated matching ACK', and 'unknown duplicate tampered ACK' to pass. Rejection cases must assert zero channel-send calls; only the authenticated matching ACK case may transition its pending item to delivered.",
+      "prd_refs": ["F04", "F05", "R2", "R3", "R15"],
+      "depends_on": ["S11"]
+    },
+    {
+      "key": "S13",
+      "title": "Render authenticated incoming text and return encrypted acknowledgements",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "Incoming content must pass authentication, replay, schema, and byte-limit checks before being shown. The receiver renders text rather than HTML and sends acknowledgements only for accepted messages.",
+      "tasks": [
+        "- [ ] Dispatch received data-channel envelopes through the authenticated codec and mutual-verification gate before accepting message bodies.",
+        "- [ ] Validate message schema and the 4,096-byte UTF-8 cap on receive; append accepted text to the memory-only transcript through text rendering, never HTML insertion.",
+        "- [ ] Return an encrypted acknowledgement referencing each accepted message via the serialized envelope sender.",
+        "- [ ] Reject tampered, replayed, pre-verification, malformed, or oversized messages without transcript append or acknowledgement; surface a redacted terminal protocol error where the session policy requires termination."
+      ],
+      "acceptance_criteria": [
+        "- [ ] One valid verified message creates exactly one transcript item and one encrypted peer acknowledgement.",
+        "- [ ] Tampered, duplicated, pre-verification, malformed, and oversized messages create zero transcript items and zero acknowledgements.",
+        "- [ ] An HTML payload is displayed literally, creates no injected elements, and executes no script or event handler.",
+        "- [ ] Acknowledgement plaintext is absent from signaling and data-channel outer envelopes."
+      ],
+      "verification": "Run bun test tests/unit/incoming-messages.test.ts; expect 'accepted text ACK', 'tampered no render no ACK', 'duplicate no render no ACK', 'pre-verification no render no ACK', 'invalid schema no render no ACK', and 'oversized no render no ACK' to pass. Run bunx playwright test tests/e2e/text-rendering.spec.ts --project=chromium; send <img src=x onerror=window.__glassroomInjected=1><script>window.__glassroomInjected=2</script> and expect the literal string visible, zero message-descendant img/script nodes, and window.__glassroomInjected undefined. Capture the literal-text screenshot and assertions.",
+      "prd_refs": ["F04", "F06", "R2", "R3", "R16"],
+      "depends_on": ["S12"]
+    },
+    {
+      "key": "S14",
+      "title": "Terminate sessions and discard all local state on leave or transport loss",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "The product has no history, storage, resumption, or offline queue. Leaving, refreshing, mismatch, and loss of either required transport end the session and discard unsent content with an explicit warning.",
+      "tasks": [
+        "- [ ] Centralize session teardown for explicit leave, mismatch/end control, WSS/data-channel loss, negotiation/authentication failure, and page refresh/unload.",
+        "- [ ] Send an encrypted end control on explicit leave when possible, then close sockets/peer connections and cancel negotiation timers/listeners.",
+        "- [ ] Clear transcript, draft, pending messages, invitation secret, ephemeral/session keys, counters, verification, membership references, and registered inspector state; do not claim guaranteed JavaScript memory erasure.",
+        "- [ ] Show a discarded-session/unsent-text warning after terminal events when the page remains open; refresh must load an empty, unjoined state and recovery must create a fresh room."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Every terminal trigger reaches the same ended state with empty transcript/draft/pending items, absent key/session references, closed transports, and canceled negotiation work.",
+        "- [ ] The remaining peer is terminated when either admitted participant leaves or loses a transport.",
+        "- [ ] An unsent draft is discarded with a visible warning on a terminal event; refresh displays no old messages, draft, verification, or membership.",
+        "- [ ] No teardown path schedules reconnection, reuses old keys, stores state, or restores the old room from the fragment-free URL."
+      ],
+      "verification": "Run bun test tests/unit/session-teardown.test.ts. Expect cases 'leave', 'peer end', 'fingerprint mismatch', 'WSS loss', 'data-channel loss', 'negotiation/authentication failure', and 'page teardown' to pass with the full cleared-state assertion and zero reconnect calls. With two verified browsers, enter an unsent draft, close the other participant's transport, and capture the discard-warning screenshot. Refresh the remaining page and capture its empty unjoined state; expect no transcript/draft or automatic /signal attempt.",
+      "prd_refs": ["F01", "F05", "R3", "R14", "R15", "R17"],
+      "depends_on": ["S13"]
+    },
+    {
+      "key": "S15",
+      "title": "Apply the borderless monochrome UI and keyboard-accessible security states",
+      "type": "feature",
+      "priority": "P0",
+      "area": "client",
+      "context": "Appendix A is a user directive, not optional polish. Apply it only to the existing create/join, verification, messaging, error, and leave controls, with accessible status communication.",
+      "tasks": [
+        "- [ ] Style existing shadcn/Tailwind/Radix controls with black, white, and neutral greys; remove borders, outlines, and dividers and use spacing/grey surfaces and 10px control radii.",
+        "- [ ] Bundle Geist or Inter locally with 14px type and 400/600 weights; use no animation or separate dark-mode build.",
+        "- [ ] Implement keyboard operation, distinct hover/fill states, and the specified 2px offset #18181B shadow-ring focus indicator without an outline border.",
+        "- [ ] Add visible text labels and live status announcements for connection, verification, delivery, room-full, errors, and discarded sessions; do not request camera/microphone access."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Every existing control/panel/card/table has border-width 0, no outline/divider, neutral-only fills, and the specified typography/radius where applicable.",
+        "- [ ] Body text has measured contrast of at least 7:1, and keyboard focus is visible as the specified offset shadow-ring.",
+        "- [ ] Create/copy/join/confirm/mismatch/send/leave actions are keyboard reachable and operable; status changes are announced and also visibly labeled.",
+        "- [ ] The browser makes no remote font/resource request or camera/microphone permission request, and the UI contains no animation."
+      ],
+      "verification": "Run bunx playwright test tests/e2e/accessibility-style.spec.ts --project=chromium; expect 'borderless neutral styles', 'local typography and contrast', 'keyboard-only chat flow', 'focus shadow ring', 'visible and live security states', and 'no media permission or animation' to pass. Capture focused-control screenshots and the test's computed-style/contrast report. Manually Tab through the flow and confirm every listed action is reachable and usable without a mouse.",
+      "prd_refs": ["F01", "F03", "F04", "F06", "R2", "R3", "R16"],
+      "depends_on": ["S14"]
+    },
+    {
+      "key": "S16",
+      "title": "Expose bounded actual current-room ingress in a development-only inspector",
+      "type": "feature",
+      "priority": "P0",
+      "area": "security",
+      "context": "R19 requires truthful server visibility: actual encrypted signaling and absent chat traffic. The inspector must not fabricate chat ciphertext, persist payloads, or become a global dashboard/test-control interface.",
+      "tasks": [
+        "- [ ] Capture actual /signal ingress at the Hono server into a declared bounded in-memory buffer scoped to the admitted current room, including visible metadata, ciphertext, and ingress-frame count.",
+        "- [ ] Provide the current-room development UI with these server-observed entries; bind access to current admitted membership rather than exposing arbitrary-room or global snapshots.",
+        "- [ ] Label ciphertext as signaling and list room/role/operation/length metadata; state that chat bypasses this server and never synthesize a server message frame.",
+        "- [ ] Disable inspector UI and data access in production, add no test-control UI, and clear server/client inspector state on room termination."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Each inspector entry matches an actual server ingress event for the current admitted room, and retained entries never exceed the declared bound.",
+        "- [ ] The inspector labels signaling ciphertext and metadata, contains no fabricated chat entry, and cannot read another room's buffer.",
+        "- [ ] Production renders no inspector and rejects its data-access path; room teardown deletes the retained buffer and client snapshot.",
+        "- [ ] Inspector capture is memory-only and writes no payload/body/URL log or persistence record."
+      ],
+      "verification": "Run bun test tests/unit/ingress-inspector.test.ts. Expect 'actual ingress equivalence', 'bounded buffer', 'current-room isolation', 'no synthetic chat entries', 'production disabled', and 'teardown clears snapshots' to pass. In development, create/join and capture a screenshot showing actual encrypted signaling and labeled metadata alongside the redacted test comparison of capture event IDs to server-observed IDs. In start:https production mode, expect no inspector UI and a denied/not-found inspector data response.",
+      "prd_refs": ["F05", "F07", "R3", "R7", "R13", "R14", "R19"],
+      "depends_on": ["S15"]
+    },
+    {
+      "key": "S17",
+      "title": "Enforce production CSP and no-store same-origin privacy headers",
+      "type": "feature",
+      "priority": "P0",
+      "area": "security",
+      "context": "Delivered malicious code can defeat E2EE, so production must enforce the specified CSP and local-resource boundary. Next framework script nonces must coexist with the deny-by-default policy without shipping development exceptions.",
+      "tasks": [
+        "- [ ] Add production CSP with default-src 'none', local script/style assets and framework-required nonces, exact-origin connection sources including its WSS endpoint, and object/frame/base denial.",
+        "- [ ] Remove script unsafe-inline/unsafe-eval and any development-only CSP allowance from production; emit matching per-request framework nonces.",
+        "- [ ] Apply Cache-Control: no-store and Referrer-Policy: no-referrer to application responses; do not add CDN scripts, third-party resources, service workers, or crash reporting.",
+        "- [ ] Add tests for emitted headers, nonce application, blocked external/inline script execution, and local application boot."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Production responses contain no-store and no-referrer, and a CSP denying default resources, objects, framing, and base URLs.",
+        "- [ ] Production scripts/styles use only allowed local assets/nonces; script policy contains neither unsafe-inline nor unsafe-eval and connection policy has no wildcard or external origin.",
+        "- [ ] The production client boots and connects to its same-origin WSS endpoint without an enforced-CSP violation from required application resources.",
+        "- [ ] Unnonced inline scripts and external scripts/connections are blocked; dependencies/fonts are local and no service worker is registered."
+      ],
+      "verification": "Run bun run build and bun run start:https, then bunx playwright test tests/e2e/production-headers.spec.ts --project=chromium. Expect 'required privacy headers', 'deny-by-default CSP', 'framework nonce boot', 'same-origin WSS allowed', 'inline external script blocked', 'external connection blocked', and 'no service worker or remote assets' to pass. Save exact response headers, the CSP-block console messages from injected test attempts, and a production-boot screenshot; headers must contain no script unsafe-inline/unsafe-eval or wildcard connection source.",
+      "prd_refs": ["F06", "R3", "R6", "R16"],
+      "depends_on": ["S15"]
+    },
+    {
+      "key": "S18",
+      "title": "Disable scaffold payload logging and redact application failures",
+      "type": "feature",
+      "priority": "P0",
+      "area": "security",
+      "context": "The evlog addon conflicts with the PRD's leakage boundary unless overridden. This change covers application logging and error output, not provider-controlled access metadata or the explicit memory-only inspector.",
+      "tasks": [
+        "- [ ] Disable evlog/request instrumentation that logs bodies, full URLs, WS frames, payloads, or sensitive request/error data in both development and production.",
+        "- [ ] Restrict operational errors to fixed non-sensitive codes/labels; prevent exception serialization of invitation secrets, handshake material, SDP, text, or ciphertext.",
+        "- [ ] Add a captured-output test fixture exercising create/join, encrypted forwarding, invalid invitations, malformed frames, message delivery, and teardown with recognizable sentinel values.",
+        "- [ ] Confirm no analytics or crash-reporting client/server SDK is activated from the scaffold."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Captured application stdout/stderr and client application error output contain none of the fixture's URL, secret, SDP, ciphertext, or chat sentinels.",
+        "- [ ] Malformed-frame and authentication failures expose only fixed redacted labels, not serialized payloads or exception contents.",
+        "- [ ] evlog body/URL/payload instrumentation, analytics, and crash reporting are inactive in development and production."
+      ],
+      "verification": "Run bun test tests/unit/privacy-logging.test.ts. Expect 'development output redacted', 'production output redacted', 'malformed and auth errors redacted', and 'no analytics crash hooks' to pass after exercising the listed fixture flows. Save a redacted log capture containing only fixed event/error codes and the test assertions that every sentinel is absent; do not publish the fixture secret values in the evidence.",
+      "prd_refs": ["F05", "F06", "R3", "R13", "R14", "R16"],
+      "depends_on": ["S16"]
+    },
+    {
+      "key": "S19",
+      "title": "Publish the threat-model table and verifiable security boundaries",
+      "type": "docs",
+      "priority": "P0",
+      "area": "security",
+      "context": "The brief requires an honest threat table and explanations, not an absolute-security claim. Make the required boundaries readable in the existing application for the judge walkthrough.",
+      "tasks": [
+        "- [ ] Add a readable security/threat table covering sender, transit, intermediary services, receiver, and application delivery, with each mitigation, verification reference, and residual limit.",
+        "- [ ] Explain application E2EE versus HTTPS/WSS/WebRTC transport encryption, optional unimplemented TURN receiving encrypted packets, and direct-peer IP plus room/IP/timing/size/hosting metadata exposure.",
+        "- [ ] Explain fragment/page-code/extension/clipboard leakage, fingerprint verification when a link leaks, malicious delivered code and endpoint compromise, and copies/screenshots outside application control.",
+        "- [ ] State memory-only/no-history policy, no guaranteed JavaScript erasure, session-level forward-secrecy intent without ratchet/recovery, unsupported restrictive networks, no audit, and locally bundled assets making CDN SRI inapplicable."
+      ],
+      "acceptance_criteria": [
+        "- [ ] The rendered table has all five PRD boundaries, each with a mitigation, a concrete test/evidence reference, and an explicit residual limit.",
+        "- [ ] Visible text distinguishes transport encryption from application authentication, explains ciphertext/metadata at a hypothetical TURN relay, and states TURN is neither configured nor tested.",
+        "- [ ] Visible text includes endpoint-compromise, leaked-link, metadata/IP, provider-retention, screenshot/clipboard, JavaScript-erasure, and session-forward-secrecy limitations without an absolute-security claim.",
+        "- [ ] The document states no persistence, no fallback on restrictive networks, not audited, and no CDN/SRI dependency."
+      ],
+      "verification": "Run bunx playwright test tests/e2e/threat-boundaries.spec.ts --project=chromium; expect 'five-boundary table', 'transport versus application encryption', 'TURN explanation without integration', 'endpoint metadata and forward-secrecy limits', and 'persistence audit and SRI statements' to pass by asserting the specified rendered text and test references. Capture the complete table and boundary paragraphs as screenshots for the walkthrough; check each row against PRD section 10 and each explanation against R7, R12, R13, R17, and R18.",
+      "prd_refs": ["F07", "R3", "R6", "R7", "R9", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18"],
+      "depends_on": ["S16"]
+    },
+    {
+      "key": "S20",
+      "title": "Test admission abuse and server termination against real Bun sockets",
+      "type": "test",
+      "priority": "P0",
+      "area": "tests",
+      "context": "Server unit callbacks alone do not prove admission and frame limits on the actual Hono/Bun WebSocket boundary. Add a focused real-socket release suite without a test-control UI.",
+      "tasks": [
+        "- [ ] Add tests/integration/signal-admission.test.ts launching the actual Hono/Bun handler with isolated in-memory room state.",
+        "- [ ] Exercise creator/joiner admission, third/duplicate-role rejection, malformed JSON/schema, room/role spoofing, and a frame one byte beyond the declared cap.",
+        "- [ ] Check that rejected attempts do not evict the admitted pair or forward data, and that accepted ciphertext forwarding preserves exact bytes.",
+        "- [ ] Disconnect each role in separate cases and verify peer termination, deleted membership, deleted inspector state, and rejection of a joiner using the ended room."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Actual Bun WebSockets admit only the creator and one joiner, with zero admitted-peer displacement from rejected attempts.",
+        "- [ ] Malformed, oversized, spoofed, and third-participant frames cause zero forwards to the admitted peer.",
+        "- [ ] Valid ciphertext is forwarded byte-for-byte, and disconnecting either role closes the peer and deletes room/inspector state.",
+        "- [ ] A joiner cannot revive an ended room; the server offers no chat route or message relay."
+      ],
+      "verification": "Run bun test tests/integration/signal-admission.test.ts. Expect 'two real sockets admitted', 'third and duplicate rejection', 'malformed and oversized rejection', 'room-role spoof rejection', 'byte-exact ciphertext forwarding', 'creator disconnect deletion', 'joiner disconnect deletion', and 'ended room cannot be rejoined' to pass. The report must assert forward-count zero for rejected traffic and absent room/inspector map entries after teardown.",
+      "prd_refs": ["F01", "F02", "F05", "F07", "R1", "R5", "R8", "R14"],
+      "depends_on": ["S16"]
+    },
+    {
+      "key": "S21",
+      "title": "Automate the two-profile verified messaging release flow",
+      "type": "test",
+      "priority": "P0",
+      "area": "tests",
+      "context": "The release gate includes real-browser create/join, fingerprint lock, bidirectional delivery, wrong-secret failure, and fresh sessions. Drive the shipped UI with separate desktop Chromium profiles rather than exposing test controls.",
+      "tasks": [
+        "- [ ] Add tests/e2e/chat-release.spec.ts using independent persistent Chromium profile directories and the application create/copy/join/confirm/send controls.",
+        "- [ ] Verify no-login create/join and third-person rejection; attempt send before confirmation and after only one participant confirms.",
+        "- [ ] Confirm both fingerprints, send distinct text in each direction, and assert one receiver item and acknowledged sender delivery per message.",
+        "- [ ] Run a wrong-secret invitation case and a leave/new-room case checking fresh handshake public keys/nonces/session identifiers from browser-side assertions, without shipping a test-control UI or logging secrets."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Two profiles connect without login and a third is rejected; pre-confirmation and unilateral-confirmation attempts send no chat envelope.",
+        "- [ ] Matching displayed fingerprints plus mutual confirmation unlock both peers, and each bidirectional message yields exactly one rendered receive item and delivered sender item.",
+        "- [ ] A wrong-secret peer never enables chat or receives plaintext and shows a terminal redacted failure.",
+        "- [ ] A newly created room after leave uses different ephemeral public keys, participant nonces, and session identifier; the old session remains ended."
+      ],
+      "verification": "With dev:https running on the preflight network, run bunx playwright test tests/e2e/chat-release.spec.ts --project=chromium. Expect 'no-login two profiles and third rejection', 'mutual verification is mandatory', 'bidirectional acknowledged delivery', 'wrong-secret terminal failure', and 'fresh room fresh session' to pass. Save the report and screenshots of the unilateral lock, matching fingerprints, bidirectional delivered transcript, and wrong-secret error; report comparisons as booleans rather than printing session-secret material.",
+      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "R1", "R2", "R4", "R6", "R9", "R10", "R11"],
+      "depends_on": ["S15"]
+    },
+    {
+      "key": "S22",
+      "title": "Automate storage, teardown, and production privacy release checks",
+      "type": "test",
+      "priority": "P0",
+      "area": "tests",
+      "context": "The release must prove empty application storage and clearing on leave/refresh, not merely state a policy. Combine those browser assertions with the existing literal-text and production-header checks into a reproducible privacy gate.",
+      "tasks": [
+        "- [ ] Add tests/e2e/privacy-release.spec.ts checking localStorage, sessionStorage, IndexedDB, Cache Storage/service-worker registrations, and application persistence writes before, during, and after chat.",
+        "- [ ] In separate flows exercise explicit leave, refresh, WSS loss, and data-channel loss with a transcript plus unsent draft; assert both participants end and no old state resumes.",
+        "- [ ] Verify observable browser session cleanup and empty reload state without claiming physical key-memory erasure; use browser-side test assertions for dropped application references.",
+        "- [ ] Re-run literal HTML rendering and production header/CSP tests against the release build; retain redacted storage snapshots and warning/empty-state evidence."
+      ],
+      "acceptance_criteria": [
+        "- [ ] All inspected application storage is empty throughout chat, with no application storage-write call, IndexedDB database, Cache Storage entry, or service-worker registration.",
+        "- [ ] Leave, refresh, and either transport loss discard transcript/draft/pending messages/key references and end peer membership without automatic reconnection.",
+        "- [ ] Terminal events with a remaining page show a discard warning; reload shows an empty unjoined page and no previous transcript/draft.",
+        "- [ ] Literal HTML remains inert, and production CSP/no-store/no-referrer assertions pass on the built application."
+      ],
+      "verification": "Run bun run build and bun run start:https, then bunx playwright test tests/e2e/privacy-release.spec.ts tests/e2e/text-rendering.spec.ts tests/e2e/production-headers.spec.ts --project=chromium. Expect privacy cases 'empty storage through chat', 'leave clears both peers', 'refresh clears and does not resume', 'WSS loss discards draft', and 'data-channel loss discards draft' plus all existing text/header cases to pass. Save empty-storage snapshots, cleared-reference boolean assertions, and screenshots of the discard warning and empty reload state.",
+      "prd_refs": ["F05", "F06", "R3", "R14", "R15", "R16", "R17"],
+      "depends_on": ["S17", "S21"]
+    },
+    {
+      "key": "S23",
+      "title": "Prove that acknowledged chat adds no actual server ingress frame",
+      "type": "test",
+      "priority": "P0",
+      "area": "tests",
+      "context": "R19 is satisfied by real signaling ciphertext plus proof that chat bypasses the server, not by fabricated server-side chat ciphertext. Make the marker/count demonstration repeatable and also test inspector production exclusion.",
+      "tasks": [
+        "- [ ] Add tests/e2e/ingress-proof.spec.ts that obtains the admitted room's actual inspector data after encrypted signaling, mutual verification, and completion of ICE activity.",
+        "- [ ] Record the actual total ingress-frame count and captured ciphertext/metadata, then send a unique chat marker and wait for its encrypted peer acknowledgement.",
+        "- [ ] Assert the marker is absent from actual ingress content and the total ingress-frame count has not changed; compare total count rather than retained-buffer length.",
+        "- [ ] Check room teardown clears the inspector and production has neither its UI nor an accessible data source; save only build-scoped evidence and no test-control UI."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Development inspector evidence contains actual encrypted signaling with metadata and no plaintext handshake or chat marker.",
+        "- [ ] After ICE/signaling settle, a marker message is received and acknowledged while actual server ingress-frame count remains exactly equal to its recorded baseline.",
+        "- [ ] The proof uses a monotonic total ingress count, not bounded-buffer length, and compares only the current admitted room.",
+        "- [ ] Teardown clears inspector state, and production renders no inspector and denies its data access."
+      ],
+      "verification": "With bun run dev:https running, run bunx playwright test tests/e2e/ingress-proof.spec.ts --project=chromium --grep 'marker absent and ingress count unchanged|teardown clears ingress'; expect both selected cases to pass. Save a screenshot showing labeled real signaling ciphertext plus before/after counts and a report stating markerAbsent=true, beforeCount=afterCount, receiverSawMarker=true, senderDelivered=true. Stop the development process, run bun run build and bun run start:https, then run bunx playwright test tests/e2e/ingress-proof.spec.ts --project=chromium --grep 'production inspector absent'; expect that case to pass with no inspector DOM and denied/not-found data access. Do not describe a nonexistent server chat frame as ciphertext.",
+      "prd_refs": ["F02", "F04", "F05", "F07", "R3", "R5", "R8", "R13", "R14", "R19"],
+      "depends_on": ["S16", "S21"]
+    },
+    {
+      "key": "S24",
+      "title": "Rehearse the 4-minute-30-second judge walkthrough with release evidence",
+      "type": "verification",
+      "priority": "P1",
+      "area": "tests",
+      "context": "The final issue is the PRD demo-script rehearsal, not another feature. Use this build's passing release evidence and the tested network; a failed preflight or release assertion blocks the rehearsal from passing.",
+      "tasks": [
+        "- [ ] Run all Bun unit/integration tests, both development and production browser release checks, and the direct-WebRTC preflight on the intended demo network; retain redacted results.",
+        "- [ ] Follow the PRD's five timed segments: 0:00–0:45 create/join/fragment/no-login/third rejection; 0:45–1:40 fingerprints/bidirectional delivery/WebCrypto and E2EE explanation; 1:40–2:35 actual ingress/marker/TURN metadata explanation; 2:35–3:35 literal HTML/CSP/storage/teardown; 3:35–4:30 threat table/tests/limits.",
+        "- [ ] Prepare the required evidence from the implemented tests, using development for the actual-ingress inspector and a production build for CSP/header proof; disclose the mode distinction.",
+        "- [ ] Capture a timestamped screen recording or equivalent timed screenshot/log sequence and a pass/fail checklist referencing every walkthrough R-ID; say 'not audited; endpoint compromise remains'."
+      ],
+      "acceptance_criteria": [
+        "- [ ] Preflight, all Bun unit/integration tests, and the development/production release browser checks pass on the recorded build and network.",
+        "- [ ] The recorded walkthrough completes within 4 minutes 30 seconds and includes every action/explanation in the five PRD time segments.",
+        "- [ ] Evidence shows third-person rejection, mutual verification, bidirectional acknowledged delivery, unchanged real ingress count with absent marker, inert HTML, production headers, empty storage, and leave/refresh clearing.",
+        "- [ ] The walkthrough explicitly identifies untested TURN, metadata and endpoint limits, no audit, and build-scoped evidence, with no absolute-security claim or fabricated server chat frame."
+      ],
+      "verification": "From the product root run bun test tests/unit tests/integration. With bun run dev:https active run bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/invitations.spec.ts tests/e2e/channel.spec.ts tests/e2e/verification.spec.ts tests/e2e/chat-release.spec.ts tests/e2e/ingress-proof.spec.ts tests/e2e/accessibility-style.spec.ts tests/e2e/threat-boundaries.spec.ts --project=chromium --grep-invert 'production inspector absent'. Stop the development process, run bun run build and bun run start:https, then run bunx playwright test tests/e2e/privacy-release.spec.ts tests/e2e/text-rendering.spec.ts tests/e2e/production-headers.spec.ts --project=chromium and bunx playwright test tests/e2e/ingress-proof.spec.ts --project=chromium --grep 'production inspector absent'. Expect every selected test to pass, including negative tests asserting blocked/failure states. Perform the five timed manual segments exactly as PRD section 11 specifies; capture the recording or timed screenshots/logs and a checklist for R1–R19. Pass only if total duration is at most 4:30, all required observations are captured, and the closing statement includes 'not audited; endpoint compromise remains'.",
+      "prd_refs": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R17", "R18", "R19"],
+      "depends_on": ["S18", "S19", "S20", "S22", "S23"]
+    }
+  ]
+}

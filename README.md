@@ -8,3 +8,7 @@ Scoping and discovery for seven interview products (problem 7, "bring your own i
 - [scaffold/](scaffold): one scaffold script per product (each is its own project)
 - [docs/research/](docs/research): research notes
 - [docs/parked/](docs/parked): problem 7, parked
+
+## Issues
+
+See [docs/issues-index.md](docs/issues-index.md) for the 7 epics and 167 atomic sub-issues. Tooling is in `scripts/` (`create_issues.py`, `setup_project.py`).
