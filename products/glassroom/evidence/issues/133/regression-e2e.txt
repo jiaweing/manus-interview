@@ -1,0 +1,17 @@
+$ PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133 CHROMIUM_PATH=/usr/bin/chromium PW_NO_WEBSERVER=1 bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts --project=chromium --reporter=list
+exit: 0
+  "scenario": "blocked-connectivity",
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-oDDDRe",
+    "/tmp/glassroom-preflight-b-depJBD"
+  ],
+  "status": "failed",
+  "testedOrigin": "https://localhost:4133",
+  "timestamp": "2026-11-21T14:54:30.860Z"
+}
+  ✓  5 [chromium] › tests/e2e/preflight.spec.ts:458:1 › blocked-connectivity fails without relay or fallback (12.5s)
+  ✓  6 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and participant-close teardown (1.4s)
+  ✓  7 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and room-role-spoof teardown (1.4s)
+  ✓  8 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and over-cap teardown (1.3s)
+
+  8 passed (24.3s)

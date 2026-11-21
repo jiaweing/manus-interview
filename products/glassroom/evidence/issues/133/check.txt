@@ -1,0 +1,4 @@
+$ bun run check
+exit: 0
+$ ultracite check
+Checked 57 files in 318ms. No fixes applied.

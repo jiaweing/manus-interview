@@ -1,0 +1,9 @@
+$ PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133 bun run dev:https
+Owned process group terminated after verification.
+$ bun run scripts/https.ts dev
+glassroom listening on https://localhost:4133
+▲ Next.js 16.4.6 (Turbopack)
+- Local:         http://127.0.0.1:5133
+- Network:       http://127.0.0.1:5133
+✓ Ready in 445ms
+✓ Running next.config.ts took 44ms
