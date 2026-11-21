@@ -28,9 +28,11 @@ This thread ended at scoping and discovery. No product code has been written. Ev
 ## Decisions the user made in this thread
 
 0. Scope: only the main brief requirements, nothing else (all PRDs trimmed accordingly). Problem 7 (bring your own idea) is parked in `docs/parked/` and not built, scaffolded, or shown in the video.
+0. Scope: only the main brief requirements, nothing else (all PRDs trimmed accordingly). Problem 7 (bring your own idea) is parked in `docs/parked/` and is not built, scaffolded, or shown in the video.
 1. UI: clean minimal black and white, shadcn style, no borders.
 2. Game: simple 2.5D poker (replaced the original heist concept).
-2. Promo video: purely JavaScript code, authored with Claude Opus 5.5, cartoon 2.5D flat art style, music generated through OpenRouter.
+2. Game: simple 2.5D poker (replaced the original heist concept).
+3. Promo video: purely JavaScript code, authored with Claude Opus 5.5, cartoon 2.5D flat art style, music generated through OpenRouter.
 3. Problem 3: take inspiration from Pi, DeepSeek Harness and Herdr plugin systems.
 4. Chrome extension: WXT.
 5. Stack: the given Better-T-Stack command for every product, each as its own scaffold, with Bun.

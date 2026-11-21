@@ -32,7 +32,7 @@ Using the same scaffold does not mean wiring every part into every product. Unus
 
 | Product | Used in MVP | Hand-added | Dormant |
 | --- | --- | --- | --- |
-| 01 Caret | Next (minimal), Hono (not required by the trimmed PRD) | Electron `apps/desktop`, Win32 helper | Everything else |
+| 01 Caret | Electron app only; the Next/Hono parts of the scaffold are not required by the trimmed PRD | Electron `apps/desktop`, Win32 helper | Everything else |
 | 02 Flopside | Next (lobby + 2.5D table client), Hono + Bun WebSockets (authoritative poker server) | Poker engine, redaction | Mongo, auth, Polar, wxt, native |
 | 03 Patchbay | Bun CLI and kernel in `apps/server` | Plugin kernel, two plugins, conformance fixture | Next (UI cut), Mongo, auth, Polar, wxt, native |
 | 04 Sidekick | WXT (`apps/extension`), Hono proxy with static token | `entrypoints/sidepanel/` | Next, Mongo, Better Auth, Polar, native |
