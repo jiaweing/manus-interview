@@ -14,7 +14,7 @@
 
 Issue: [#163](https://github.com/jiaweing/manus-interview/issues/163) — Bound the opt-in OpenRouter music smoke test behind validated access and rights.
 
-PR: pending creation from `session-seven/163-music-adapter` (will contain `Closes #163`).
+PR: [#192](https://github.com/jiaweing/manus-interview/pull/192), branch `session-seven/163-music-adapter`; contains `Closes #163`.
 
 Author kind: authored by Manus swarm agent b163/builder, not by anthropic/claude-opus-5.5 (access blocked: no OPENROUTER_API_KEY).
 
