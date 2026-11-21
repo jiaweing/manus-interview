@@ -7,8 +7,9 @@ import {
 	JSONRPCMessageSchema,
 	LATEST_PROTOCOL_VERSION,
 } from "@modelcontextprotocol/sdk/types.js";
-import { Hono } from "hono";
+import { loadConfig } from "../src/config";
 import { startHttpServer } from "../src/http";
+import { createGuardedHttpApp } from "../src/http-guard";
 import { createMcpHttpApp } from "../src/mcp/http-app";
 import { launcherFixture } from "./fixtures/launcher";
 
@@ -210,14 +211,17 @@ test("HTTP entrypoint initializes and discovers with the official Streamable HTT
 		const port = Number(stderr.output().match(httpAddressPattern)?.[1]);
 		expect(port).toBeGreaterThan(0);
 		const endpoint = new URL(`http://127.0.0.1:${port}/mcp`);
-		const transport = new StreamableHTTPClientTransport(endpoint);
+		const headers = { Authorization: `Bearer ${fixture.token}` };
+		const transport = new StreamableHTTPClientTransport(endpoint, {
+			requestInit: { headers },
+		});
 		await withTimeout(client.connect(transport));
 		await assertDiscovery(client);
 		expect(transport.sessionId).toBeUndefined();
 		expect(errors).toEqual([]);
 		const extraRoutes = await Promise.all(
 			["/", "/healthz", "/ai", "/api/auth/session"].map((path) =>
-				fetch(new URL(path, endpoint))
+				fetch(new URL(path, endpoint), { headers })
 			)
 		);
 		for (const response of extraRoutes) {
@@ -248,7 +252,13 @@ test("HTTP listener binds only loopback and isolates concurrent clients without 
 		await Promise.all(
 			clients.map(async (client) => {
 				await withTimeout(
-					client.connect(new StreamableHTTPClientTransport(endpoint))
+					client.connect(
+						new StreamableHTTPClientTransport(endpoint, {
+							requestInit: {
+								headers: { Authorization: `Bearer ${fixture.token}` },
+							},
+						})
+					)
 				);
 				await assertDiscovery(client);
 			})
@@ -263,16 +273,24 @@ test("HTTP listener binds only loopback and isolates concurrent clients without 
 }, 15_000);
 
 test("Hono middleware installed before mounting /mcp runs before the transport", async () => {
-	const app = new Hono();
+	const config = await loadConfig("http", fixture.env);
+	const app = createGuardedHttpApp(config, fixture.env, () => config.port);
 	let seen = 0;
-	app.use("/mcp", async (context, next) => {
+	let completed = 0;
+	app.use("/mcp", async (_context, next) => {
 		seen += 1;
 		await next();
-		context.header("x-middleware-order", "before-mcp");
+		completed += 1;
 	});
 	createMcpHttpApp(app);
-	const response = await app.request("/mcp", { method: "PUT" });
+	const response = await app.request("/mcp", {
+		headers: {
+			Authorization: `Bearer ${fixture.token}`,
+			Host: `127.0.0.1:${config.port}`,
+		},
+		method: "PUT",
+	});
 	expect(seen).toBe(1);
 	expect(response.status).toBe(405);
-	expect(response.headers.get("x-middleware-order")).toBe("before-mcp");
+	expect(completed).toBe(1);
 });
