@@ -7,3 +7,4 @@
 | 3 | #30 dealing/order | #216 | https://github.com/jiaweing/manus-interview/issues/30#issuecomment-7064246896 | verified at 6b9a02a; reviewer blocker (RNG scan hit test comments) fixed in a test-only follow-up commit with all gates re-run, merged | 2026-11-21 |
 | 4 | #36 rooms | #222 | https://github.com/jiaweing/manus-interview/issues/36#issuecomment-7064493778 | verified, merged | 2026-11-21 |
 | 4 | #31 betting | #221 | round 1 FAIL https://github.com/jiaweing/manus-interview/issues/31#issuecomment-7064532996 (covered short blind defect); round 2 PASS https://github.com/jiaweing/manus-interview/issues/31#issuecomment-7064735549 | verified, merged | 2026-11-21 |
+| 5 | #32 settlement | #245 | https://github.com/jiaweing/manus-interview/issues/32#issuecomment-7064988236 | verified, merged | 2026-11-21 |
