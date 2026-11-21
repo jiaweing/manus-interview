@@ -100,6 +100,7 @@ async function rejects(
 	const error = caught as ManifestValidationError;
 	expect(error.code).toBe(code);
 	expect(error.message).toBe(new ManifestValidationError(code).message);
+	expect(error.cause).toBeUndefined();
 	expect(error.message).not.toContain(temporary);
 	expect(error.message).not.toContain("DO_NOT_ECHO_CONFIG");
 	await unchanged();
@@ -218,6 +219,43 @@ describe("declarative manifest acceptance", () => {
 		expect(validateManifest(manifest, { hostVersion: "0.2.0" }).id).toBe(
 			manifest.id
 		);
+	});
+
+	for (const [field, version] of [
+		["version", "1.0.0+build.53"],
+		["min_host_version", "0.1.0+host.53"],
+		["version", "1.0.0-beta.1+build.53"],
+	] as const) {
+		test(`accepts ${field} build metadata: ${version} through TOML and local-package validation`, async () => {
+			const manifest = toolManifest();
+			manifest[field] = version;
+			await writeManifest(manifest);
+			const source = await readFile(join(root, "patchbay-plugin.toml"), "utf8");
+			expect(parseManifest(source)[field]).toBe(version);
+			expect((await validateLocalPackage(root)).manifest[field]).toBe(version);
+			await unchanged();
+		});
+	}
+
+	test("minimum-host comparison ignores build metadata but respects release/prerelease precedence", async () => {
+		const manifest = toolManifest();
+		manifest.min_host_version = "0.1.0+host.53";
+		await writeManifest(manifest);
+		expect(
+			(await validateLocalPackage(root, { hostVersion: "0.1.0+host.1" }))
+				.manifest.min_host_version
+		).toBe(manifest.min_host_version);
+		await rejects(
+			() => validateLocalPackage(root, { hostVersion: "0.1.0-beta.1+host.99" }),
+			"INCOMPATIBLE_HOST_VERSION"
+		);
+		manifest.min_host_version = "0.1.0-beta.1+host.53";
+		await writeManifest(manifest);
+		expect(
+			(await validateLocalPackage(root, { hostVersion: "0.1.0+host.1" }))
+				.manifest.min_host_version
+		).toBe(manifest.min_host_version);
+		await unchanged();
 	});
 });
 
@@ -398,6 +436,26 @@ const rejectedDeclarations: [
 		"INVALID_SCHEMA",
 		(m) => {
 			m.config.schema = { $ref: "#/definitions/missing", type: "object" };
+		},
+	],
+	[
+		"non-productive root schema recursion",
+		"INVALID_SCHEMA",
+		(m) => {
+			m.config.schema = { $ref: "#", type: "object" };
+			m.config.defaults = {};
+		},
+	],
+	[
+		"non-productive indirect schema recursion",
+		"INVALID_SCHEMA",
+		(m) => {
+			m.config.schema = {
+				$ref: "#/definitions/cycle",
+				definitions: { cycle: { $ref: "#/definitions/cycle" } },
+				type: "object",
+			};
+			m.config.defaults = {};
 		},
 	],
 	[
@@ -587,6 +645,27 @@ describe("stable rejection of malformed declarations", () => {
 		});
 	}
 
+	for (const field of ["version", "min_host_version"] as const) {
+		for (const version of [
+			"01.0.0",
+			"1.0.0-01",
+			"v1.0.0",
+			"1.0",
+			"",
+			"1.0.0+",
+			"1.0.0+build..53",
+			" 1.0.0",
+		]) {
+			test(`rejects invalid ${field}: ${JSON.stringify(version)}`, async () => {
+				const manifest = toolManifest();
+				manifest[field] = version;
+				await rejects(() => validateManifest(manifest), "INVALID_MANIFEST");
+				await writeManifest(manifest);
+				await rejects(() => validateLocalPackage(root), "INVALID_MANIFEST");
+			});
+		}
+	}
+
 	test("malformed TOML yields a redacted stable parser error", async () => {
 		await writeFile(
 			join(root, "patchbay-plugin.toml"),
@@ -683,6 +762,44 @@ describe("local package boundaries", () => {
 });
 
 describe("schema and declaration edge cases", () => {
+	test("compiled validator converts invocation-time recursion errors into redacted INVALID_SCHEMA", async () => {
+		const validator = compilePluginSchema({ $ref: "#", type: "object" });
+		await rejects(
+			() => validator({ secret: "DO_NOT_ECHO_CONFIG" }),
+			"INVALID_SCHEMA"
+		);
+		await rejects(() => validator({}), "INVALID_SCHEMA");
+	});
+
+	test("terminating recursive schemas validate nested data through compiled and TOML/package paths", async () => {
+		const schema = {
+			additionalProperties: false,
+			properties: {
+				children: { items: { $ref: "#" }, type: "array" },
+				label: { type: "string" },
+			},
+			type: "object",
+		};
+		const defaults = {
+			children: [{ children: [], label: "leaf" }, {}],
+			label: "root",
+		};
+		const validator = compilePluginSchema(schema);
+		expect(validator({})).toBe(true);
+		expect(validator(defaults)).toBe(true);
+		expect(validator({ children: [{ label: 5 }] })).toBe(false);
+		expect(validator({ children: ["invalid node"] })).toBe(false);
+		const manifest = toolManifest();
+		manifest.config.schema = schema;
+		manifest.config.defaults = defaults;
+		firstTool(manifest).input_schema = schema;
+		await writeManifest(manifest);
+		expect((await validateLocalPackage(root)).manifest.config.defaults).toEqual(
+			defaults
+		);
+		await unchanged();
+	});
+
 	test("standard URI formats validate config defaults", async () => {
 		const manifest = toolManifest();
 		manifest.config.schema = {

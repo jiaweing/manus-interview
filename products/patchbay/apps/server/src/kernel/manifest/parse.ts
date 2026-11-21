@@ -117,7 +117,15 @@ export function compilePluginSchema(
 				}
 			}
 		}
-		return (value: unknown) => validator(value) === true;
+		return (value: unknown) => {
+			try {
+				return validator(value) === true;
+			} catch {
+				// Non-productive references can compile but overflow when invoked; productive recursion remains supported.
+				// biome-ignore lint/style/useErrorCause: Validator causes can expose schema/config values; discard them deliberately.
+				throw new ManifestValidationError("INVALID_SCHEMA");
+			}
+		};
 	} catch (error) {
 		if (error instanceof ManifestValidationError) {
 			throw error;
@@ -125,6 +133,12 @@ export function compilePluginSchema(
 		// biome-ignore lint/style/useErrorCause: Ajv causes can expose schema/config values; discard them deliberately.
 		throw new ManifestValidationError("INVALID_SCHEMA");
 	}
+}
+
+function isCanonicalVersion(version: string): boolean {
+	// valid checks the entire SemVer string but omits build metadata from its result.
+	const normalized = valid(version);
+	return normalized !== null && normalized === version.split("+", 1)[0];
 }
 
 function validateCompatibility(
@@ -136,8 +150,8 @@ function validateCompatibility(
 	}
 	if (
 		!(
-			valid(manifest.version) === manifest.version &&
-			valid(manifest.min_host_version) === manifest.min_host_version
+			isCanonicalVersion(manifest.version) &&
+			isCanonicalVersion(manifest.min_host_version)
 		)
 	) {
 		throw new ManifestValidationError("INVALID_MANIFEST");
