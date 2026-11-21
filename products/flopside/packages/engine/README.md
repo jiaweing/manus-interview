@@ -1,4 +1,4 @@
-# Dealing, state and betting (#30–#31)
+# Dealing, state, betting and settlement (#30–#32)
 
 Import modules by subpath (`@flopside/engine/dealing`, `/state`, `/shuffle`, `/cards`); there is no barrel. This package is authoritative server rules code, not client state or a transport reducer.
 
@@ -15,7 +15,7 @@ No revisions, tokens, room metadata, connectivity, RNG functions or timestamps a
 - `advanceStreet(state): MatchState` deals flop/turn/river, resets street contributions and betting-round metadata, preserves total hand contributions/stacks/fold/all-in flags/hole cards, and selects the first eligible postflop actor. River cannot advance; #32 must settle it. It can be called repeatedly for a runout even with `actor: null`.
 - `nextActor(state, afterIndex = actor ?? dealerIndex): number | null` scans clockwise **after** the anchor, skipping inactive, folded, all-in, and zero-stack seats. It returns null when none can act; with one eligible seat it may return that same seat after wrapping. **It is order, not betting-round completion.** Use the betting module to close rounds and run out when betting cannot continue.
 
-The betting module below composes these lower-level transitions. Side pots, settlement, deadlines, match termination and rematch remain separate issues. Dealing tests simulate fold/all-in/settlement by editing plain fixture state, not by introducing a production command shortcut.
+The betting and settlement modules below compose these lower-level transitions. Deadlines, match termination and rematch remain separate issues. Dealing tests simulate fold/all-in/settlement by editing plain fixture state, not by introducing a production command shortcut.
 
 All transitions leave their input state untouched. Returned states can share unchanged private arrays with previous states; callers must treat reducer states as immutable rather than mutate those arrays. Deck-source cards are cloned at the hand boundary so the caller's fixture cannot mutate an active deck.
 
@@ -41,8 +41,50 @@ Public state adds `currentBet`, `lastFullRaiseIncrement` (10 initially and each 
 
 `currentBet` retains the nominal preflop bring-in of 10 even when the BB posts a short all-in. While at least two non-folded, non-all-in seats have chips, calls still complete that bring-in and those seats retain their unacted options. Betting closure and actor selection use the **actual maximum street contribution among live (in-hand, non-folded) seats**: an already-acted seat that covers it is skipped. With only one funded contender, only its actual outstanding amount matters, not the nominal bring-in or an unacted flag. Heads-up BB 1 or 3 against SB 5 therefore runs out immediately with no actor; BB 7 against SB 5 offers a call of exactly 2. The same rule applies after folds or short calls leave one funded contender in a 3–4-seat hand. `legalActions` offers nothing for a covered sole contender even before normalization, and `applyAction` rejects rather than allowing a phantom fold/check/call. An all-in call is offered only when the remaining stack does not exceed the real outstanding amount; unmatched posted excess remains unsettled for #32.
 
-For #32: `handStatus !== "playing"` and `actor === null` mean ready to settle. `folded` means exactly one non-folded contender; no board runout/reveal is done. `showdown` means a five-card board (all-in runouts automatically deal to river). **Every chip remains in `stack` or `handContribution`, including unmatched excess; this module never refunds, awards pots, reveals cards, or starts another hand.** Street advancement clears only street contributions, not hand totals. Settle/refund before starting the next hand.
+For #32: `handStatus === "folded" || handStatus === "showdown"`, with `actor === null`, means ready to settle; `settled` cannot be settled again. `folded` means exactly one non-folded contender; no board runout/reveal is done. `showdown` means a five-card board (all-in runouts automatically deal to river). **Every chip remains in `stack` or `handContribution`, including unmatched excess; the betting module never refunds, awards pots, reveals cards, or starts another hand.** Street advancement clears only street contributions, not hand totals. Settle/refund before starting the next hand.
 
 For #33/#34: timeouts can call the same `applyAction` fold transition with the current actor; deadlines/clock injection and match lifecycle are not stored or implemented here. For #37: the new betting fields and legal-action descriptors contain no private cards, but the full state remains server-owned; project the private split separately. For #43: consume the descriptor list and total-to bounds directly, and send `action` plus `totalTo` only for wagers (or exact all-in).
 
 Run `bun test packages/engine/betting.test.ts`. Deterministic tests cover total-to accounting, rejection purity, full and cumulative short raises, heads-up/3/4-seat complete rounds, BB option, skipping seats, fold endings and all-in runouts, including BB 1/3 already covered by SB 5, the actual BB 7 call difference, and multiway short-blind transitions. Seeded tests inject entropy/decks and play 4,500 random-stack hands across 2–4 seats, mixing broad starting stacks, short blinds with funded opponents, and all-short tables. An independent actual-wager oracle checks that a sole funded actor truly owes chips and that its call/all-in descriptors never include nominal excess. Coverage assertions require short-blind hands and covered all-in runouts in every seat count. The tests also enumerate every integer wager represented by each descriptor, reject adjacent illegal wagers, deep-freeze inputs, assert chip conservation and bound turn counts. These tests are not settlement or transport/privacy integration tests.
+
+## Settlement API (#32)
+
+Import `settleHand(state: MatchState): MatchState` from `@flopside/engine/settlement`. Result interfaces (`HandSettlement`, `SettledPot`, `SeatSettlement`, `ChipPayout`) are exported from `@flopside/engine/state`. The transition is pure and requires `handStatus === "folded" || handStatus === "showdown"`, with `actor: null`. **`settled` is not ready for a second settlement**. It throws for unfinished/already-settled hands, inconsistent contender/status data, incomplete contested boards or invalid chip accounting; rejection never mutates input. It does not normalize unfinished hands automatically. `applyAction` already calls `progressBetting`; call `progressBetting(startNextHand(...))` at new-hand boundaries to handle blind-only all-ins. There is no duplicate runout API.
+
+First, a unique highest contributor receives their contribution above the second-highest contribution as an unmatched refund. **All contributors, including folded seats, count toward that comparison.** Equal maxima have no refund. Then increasing positive contribution tiers construct main/side pots over all contributors, retaining folded chips but excluding folded/inactive seats from eligibility. Each pot is awarded using the evaluator among its eligible seats; a singleton eligible seat wins automatically. A fold-ended hand has exactly one contender and never evaluates any hole cards or draws additional board cards. At contested showdown every non-folded `inHand` seat belongs to the showdown set, not only winners or the highest-contribution seats.
+
+**Odd-chip rule:** for each pot separately, divide its amount into integer equal shares. Award the remainder one chip at a time to tied winners starting immediately left of the dealer and continuing clockwise over the stable seat indices (wrap at the roster end, skip non-winners). `winnerSeatIndices` and `payouts` use this same order; contributors, eligible seats and showdown seats use ascending seat-index order. Suits never break poker ties.
+
+`public.handStatus` now also supports `"settled"`. `public.settlement` is `null` when a hand starts and contains this plain-JSON accounting object after settlement:
+
+```ts
+{
+  reason: "folded" | "showdown",
+  showdownSeatIndices: number[], // empty on a fold win; all contenders at showdown
+  refunds: { seatIndex: number, amount: number }[], // at most one unmatched refund
+  pots: {
+    amount: number,
+    contributionLevel: number, // inclusive tier after refund, main pot first
+    contributorSeatIndices: number[],
+    eligibleSeatIndices: number[],
+    winnerSeatIndices: number[], // clockwise odd-chip order
+    payouts: { seatIndex: number, amount: number }[]
+  }[],
+  seats: { // one record per stable seat index, including folded/inactive seats
+    seatIndex: number,
+    contribution: number, // original total hand contribution before refund
+    refund: number,
+    payout: number, // gross pot awards, excluding refunds
+    netPayout: number, // payout + refund - contribution; can be negative
+    finalStack: number // stack immediately before settlement + payout + refund
+  }[],
+  totalPot: number, // sum of pots after refund
+  totalChips: number // sum(stack + handContribution) before == sum(stack) after
+}
+```
+
+Pots/refunds in this result are **historical awards, not chips still held in escrow**; never add their amounts to settled stacks when counting chips. All seat hand/street contributions and `currentBet` become zero, actor stays null and raise rights are disabled. Stacks contain all chips after settlement. Runtime checks enforce per-pot payout sums, refund-plus-pot accounting and total chip conservation with nonnegative safe-integer stacks/chip totals. `folded`, `allIn`, board and private cards remain historical data for this hand until `startNextHand` resets them.
+
+For **#33**, timeout folds use `applyAction`, then settle only if that leaves `folded`/`showdown`. For **#34**, inspect the settled stacks/result for match completion; if play continues, use `progressBetting(startNextHand(settledState, deckSource))`. `startNextHand` resets `settlement: null`, rotates the dealer and preserves total chips. Settlement itself does not decide match winners or start a new hand. For **#37**, this result contains no hole cards, evaluated ranks or best-five subsets: publish only the private hole cards whose seat indices are in `showdownSeatIndices` (plus the viewer's own cards as otherwise allowed). A fold-ended hand's set is empty, so no foreign hole cards become public. The complete `{ public, private }` state remains server-owned and must still pass through viewer-specific projection.
+
+Run `bun test packages/engine/settlement.test.ts`. Regressions cover the 50/100/150 refund and 150/100 pots, folded chips/ineligibility, multi-tier all-ins, ties/board-play, three-way remainder 1/2 and heads-up odd chips, sole-contender no-card wins, uncalled fold refunds, all-in/blind-only runout, lifecycle reset and invalid boundaries. Every successful fixture checks total chips, exact payouts, eligible winners, final stacks and an independent pot oracle. Seeded injected-PRNG play executes 6,000 hands across 2–4 seats via `startMatch`, random `legalActions`/`applyAction`, `settleHand`, and chained `startNextHand` transitions with unequal stacks. It independently constructs pots by depositing chips at each integer contribution layer, checks deterministic winners/remainder ordering, deep-freezes inputs, and asserts conservation/nonnegative stacks at every transition. This is engine coverage, not transport privacy or browser integration verification.

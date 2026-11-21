@@ -1,0 +1,57 @@
+Command: bun test packages/engine/settlement.test.ts
+bun test v1.4.5 (a7733435c)
+
+packages/engine/settlement.test.ts:
+(pass) settlement: refunds and side pots > 50/100/150 refunds 50 BEFORE constructing 150/100 pots [6.44ms]
+(pass) settlement: refunds and side pots > equal highest contributions are called: no refund [1.32ms]
+(pass) settlement: refunds and side pots > four seats, three distinct all-in levels and a singleton side-pot winner [1.38ms]
+(pass) settlement: refunds and side pots > folded contributions remain in BOTH main and side pots [0.98ms]
+(pass) settlement: refunds and side pots > folded player with the best hand cannot win [0.78ms]
+(pass) settlement: refunds and side pots > folded private cards are never evaluated [0.69ms]
+(pass) settlement: refunds and side pots > unmatched top folded contributor is refunded against ALL contributors [0.66ms]
+(pass) settlement: refunds and side pots > inactive zero-contribution seats are not contenders or eligible [0.86ms]
+(pass) settlement: refunds and side pots > showdown includes a non-folded zero contributor even if never pot eligible [0.61ms]
+(pass) settlement: ties and deterministic odd chips > board plays: all four seats share the main pot [1.10ms]
+(pass) settlement: ties and deterministic odd chips > board plays across multiple pots with a refund and changing tie sets [0.98ms]
+(pass) settlement: ties and deterministic odd chips > three-way split: 1 remainder chip(s), folded money in the main pot [0.78ms]
+(pass) settlement: ties and deterministic odd chips > three-way split: 2 remainder chip(s), folded money in the main pot [0.58ms]
+(pass) settlement: ties and deterministic odd chips > heads-up tied pot with odd folded chip: dealer 0 controls remainder [0.54ms]
+(pass) settlement: ties and deterministic odd chips > heads-up tied pot with odd folded chip: dealer 1 controls remainder [0.45ms]
+(pass) settlement: ties and deterministic odd chips > heads-up tied pot with odd folded chip: dealer 2 controls remainder [0.39ms]
+(pass) settlement: ties and deterministic odd chips > heads-up board split is exact when no odd chip exists [0.51ms]
+(pass) settlement: ties and deterministic odd chips > tied hole-card hands split main and side pots; short stack can only win main [0.77ms]
+(pass) settlement: completion, no exposure and lifecycle > sole contender wins without board runout, cards, or evaluation [0.67ms]
+(pass) settlement: completion, no exposure and lifecycle > sole contender preserves an existing flop without revealing cards [0.54ms]
+(pass) settlement: completion, no exposure and lifecycle > uncalled raise after fold returns the excess before awarding the pot [1.22ms]
+(pass) settlement: completion, no exposure and lifecycle > folding the small blind refunds the big blind's uncalled excess [0.45ms]
+(pass) settlement: completion, no exposure and lifecycle > all-in runout reaches five cards before contested settlement [1.18ms]
+(pass) settlement: completion, no exposure and lifecycle > blind-only all-ins normalize once, run out and refund unmatched blind chips [0.62ms]
+(pass) settlement: completion, no exposure and lifecycle > ordinary check/call betting closes the river before settlement [2.09ms]
+(pass) settlement: completion, no exposure and lifecycle > startNextHand preserves final chips and resets settlement metadata [0.74ms]
+(pass) settlement: completion, no exposure and lifecycle > empty pot accounting still conserves chips and declares showdown contenders [0.52ms]
+(pass) settlement rejects invalid boundaries without mutation > unfinished hand [0.44ms]
+(pass) settlement rejects invalid boundaries without mutation > actor still present [0.34ms]
+(pass) settlement rejects invalid boundaries without mutation > partial showdown board [0.34ms]
+(pass) settlement rejects invalid boundaries without mutation > fold status with multiple contenders [0.32ms]
+(pass) settlement rejects invalid boundaries without mutation > showdown with one contender [0.24ms]
+(pass) settlement rejects invalid boundaries without mutation > no contenders [0.26ms]
+(pass) settlement rejects invalid boundaries without mutation > negative contribution [0.27ms]
+(pass) settlement rejects invalid boundaries without mutation > fractional contribution [0.29ms]
+(pass) settlement rejects invalid boundaries without mutation > unsafe total chips [0.41ms]
+(pass) settlement rejects invalid boundaries without mutation > invalid dealer [0.39ms]
+(pass) settlement rejects invalid boundaries without mutation > missing contender hole cards [0.30ms]
+(pass) settlement rejects invalid boundaries without mutation > pot without an eligible contender [0.35ms]
+(pass) settlement rejects invalid boundaries without mutation > already settled hand [0.42ms]
+settlement seed=32002 hands=2000 turns=6395 showdowns=915 foldWins=1085 refunds=976 sidePotHands=0 chainedHands=1167
+(pass) seeded end-to-end settlement property play > 2 seats: 2000 random legal hands, independent pot oracle and lifecycle chains [928.76ms]
+settlement seed=32003 hands=2000 turns=10234 showdowns=1759 foldWins=241 refunds=449 sidePotHands=808 chainedHands=497
+(pass) seeded end-to-end settlement property play > 3 seats: 2000 random legal hands, independent pot oracle and lifecycle chains [1289.78ms]
+settlement seed=32004 hands=2000 turns=13681 showdowns=1923 foldWins=77 refunds=202 sidePotHands=671 chainedHands=213
+(pass) seeded end-to-end settlement property play > 4 seats: 2000 random legal hands, independent pot oracle and lifecycle chains [1730.23ms]
+
+ 43 pass
+ 0 fail
+ 102 expect() calls
+Ran 43 tests across 1 file. [4.01s]
+
+Exit code: 0

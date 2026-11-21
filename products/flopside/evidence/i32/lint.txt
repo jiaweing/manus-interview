@@ -1,0 +1,5 @@
+Command: bun run lint
+$ biome check .
+Checked 45 files in 221ms. No fixes applied.
+
+Exit code: 0
