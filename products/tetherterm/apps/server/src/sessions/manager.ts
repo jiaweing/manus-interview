@@ -4,13 +4,13 @@ import type { Environment, ServerConfig } from "../config";
 import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
-import { SessionRetention } from "./retention";
 import {
 	dimensionsSchema,
 	type ResizeSessionRequest,
 	type ResizeSessionResult,
 	resizeSession,
 } from "./resize";
+import { SessionRetention } from "./retention";
 import {
 	type PtyHandle,
 	type Session,
