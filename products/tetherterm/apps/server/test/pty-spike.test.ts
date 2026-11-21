@@ -40,15 +40,22 @@ async function exited(child: ReturnType<typeof Bun.spawn>) {
 }
 
 async function procFields(pid: number) {
+	const stat = await readFile(`/proc/${pid}/stat`, "utf8");
+	return stat
+		.slice(stat.lastIndexOf(")") + 2)
+		.trim()
+		.split(" ");
+}
+
+async function hasTerminated(pid: number) {
 	try {
-		const stat = await readFile(`/proc/${pid}/stat`, "utf8");
-		return stat
-			.slice(stat.lastIndexOf(")") + 2)
-			.trim()
-			.split(" ");
+		return (await procFields(pid))[0] === "Z";
 	} catch (error) {
-		if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-			return null;
+		const { code } = error as NodeJS.ErrnoException;
+		// After signaling, Linux can reap the process between opening and reading
+		// stat. ESRCH proves disappearance here, but must fail live-state checks.
+		if (code === "ENOENT" || code === "ESRCH") {
+			return true;
 		}
 		throw error;
 	}
@@ -142,6 +149,18 @@ print("PARENT=%s %s" % (os.getpgid(os.getppid()), os.getsid(os.getppid())))
 const bashArgs = (script: string) => ["--noprofile", "--norc", "-c", script];
 const pythonArgs = (script: string) => ["-u", "-c", script];
 
+// No timed exit: the reported PID stays alive in read until the test releases
+// it, then exec preserves that PID as a sleep that only exits when signaled.
+const sleepGrandchild = String.raw`
+bash --noprofile --norc -c '
+printf "GRANDCHILD=%s\n" "$$"
+IFS= read -r release < /dev/tty
+test "$release" = release-grandchild || exit 97
+exec sleep infinity
+' &
+wait
+`;
+
 test("bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7", async () => {
 	const probe = spawnProbe(
 		"bash",
@@ -157,7 +176,7 @@ printf 'RESIZED_SIZE='; stty size
 # Keep this harness alive to report sleep's SIGINT; exec children reset traps.
 trap ':' INT
 printf 'SLEEP_READY\\n'
-sleep 30
+sleep infinity
 printf 'INTERRUPTED=%s\\n' "$?"
 exit 7
 `)
@@ -177,30 +196,33 @@ exit 7
 		await probe.waitFor("RESIZED_SIZE=43 132");
 		await probe.waitFor("SLEEP_READY");
 		// Check the foreground command actually started before sending CTRL_C.
-		await poll("foreground sleep 30 running in the PTY group", async () => {
-			const children = await readFile(
-				`/proc/${pid}/task/${pid}/children`,
-				"utf8"
-			);
-			const matches = await Promise.all(
-				children
-					.trim()
-					.split(whitespacePattern)
-					.filter(Boolean)
-					.map(async (descendant) => {
-						const fields = await procFields(Number(descendant));
-						if (!fields || fields[0] === "Z" || Number(fields[2]) !== pid) {
-							return false;
-						}
-						const command = await readFile(
-							`/proc/${descendant}/cmdline`,
-							"utf8"
-						);
-						return command === "sleep\u000030\u0000";
-					})
-			);
-			return matches.some(Boolean);
-		});
+		await poll(
+			"foreground sleep infinity running in the PTY group",
+			async () => {
+				const children = await readFile(
+					`/proc/${pid}/task/${pid}/children`,
+					"utf8"
+				);
+				const matches = await Promise.all(
+					children
+						.trim()
+						.split(whitespacePattern)
+						.filter(Boolean)
+						.map(async (descendant) => {
+							const fields = await procFields(Number(descendant));
+							if (fields[0] === "Z" || Number(fields[2]) !== pid) {
+								return false;
+							}
+							const command = await readFile(
+								`/proc/${descendant}/cmdline`,
+								"utf8"
+							);
+							return command === "sleep\u0000infinity\u0000";
+						})
+				);
+				return matches.some(Boolean);
+			}
+		);
 		probe.terminal.write(new Uint8Array([3]));
 		await probe.waitFor("INTERRUPTED=130");
 		expect(await exited(probe.child)).toBe(7);
@@ -260,10 +282,10 @@ for (const executable of ["bash", "python3"]) {
 		test(`${executable}: ${signal} to isolated group terminates child and sleep grandchild, not Bun`, async () => {
 			const script =
 				executable === "bash"
-					? `${bashIdentity}\nsleep 60 &\nprintf 'GRANDCHILD=%s\\nREADY\\n' "$!"\nwait\n`
+					? `${bashIdentity}\nprintf 'READY\\n'\n${sleepGrandchild}`
 					: `${pythonIdentity}
 import subprocess
-child = subprocess.Popen(["bash", "-c", "sleep 60 & echo GRANDCHILD=$!; wait"])
+child = subprocess.Popen(["bash", "--noprofile", "--norc", "-c", ${JSON.stringify(sleepGrandchild)}])
 print("READY")
 child.wait()
 `;
@@ -277,20 +299,30 @@ child.wait()
 					grandchildPattern.test(probe.output())
 				);
 				const grandchild = Number(probe.output().match(grandchildPattern)?.[1]);
+				// The grandchild cannot exit its input gate before these live reads.
 				const before = await procFields(grandchild);
 				expect(before).not.toBeNull();
 				expect(Number(before?.[2])).toBe(pid);
 				expect(Number(before?.[3])).toBe(pid);
 				expect(before?.[0]).not.toBe("Z");
+				expect(probe.child.exitCode).toBeNull();
+				probe.terminal.write("release-grandchild\n");
+				await poll(
+					"released grandchild execed sleep in the PTY group",
+					async () => {
+						const command = await readFile(
+							`/proc/${grandchild}/cmdline`,
+							"utf8"
+						);
+						return command === "sleep\u0000infinity\u0000";
+					}
+				);
 				process.kill(-pid, signal);
 				await exited(probe.child);
 				expect(probe.child.signalCode).toBe(signal);
 				await poll(
 					"grandchild terminated (gone or zombie awaiting init reap)",
-					async () => {
-						const fields = await procFields(grandchild);
-						return fields === null || fields[0] === "Z";
-					}
+					() => hasTerminated(grandchild)
 				);
 				expect(process.kill(process.pid, 0)).toBe(true);
 				console.log(
