@@ -1,0 +1,2 @@
+# Raw PTY and formatter diagnostics are evidence, not source formatting.
+evidence/tests/*.log -whitespace

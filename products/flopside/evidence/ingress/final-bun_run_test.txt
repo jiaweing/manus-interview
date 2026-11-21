@@ -1,0 +1,15 @@
+(pass) credential-free scaffold > generated integration routes are not mounted [0.79ms]
+
+apps/server/src/ingress.test.ts:
+(pass) native ingress (temporary transport-only) > ordinary HTTP cannot substitute for a WebSocket [0.67ms]
+(pass) native ingress (temporary transport-only) > upgrade rejects missing or foreign Origin before reaching Bun [0.77ms]
+Flopside ingress {"bootMarker":"aa169dc1-742e-4d51-8657-1b8c7abd75da","connections":1}
+Flopside ingress {"bootMarker":"aa169dc1-742e-4d51-8657-1b8c7abd75da","connections":2}
+Flopside ingress {"bootMarker":"aa169dc1-742e-4d51-8657-1b8c7abd75da","connections":1}
+Flopside ingress {"bootMarker":"aa169dc1-742e-4d51-8657-1b8c7abd75da","connections":0}
+(pass) native ingress (temporary transport-only) > same process broadcasts 1 → 2 → 1 with only a public boot marker/count [5.21ms]
+
+ 6 pass
+ 0 fail
+ 15 expect() calls
+Ran 6 tests across 2 files. [77.00ms]

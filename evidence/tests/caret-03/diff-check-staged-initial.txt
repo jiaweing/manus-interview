@@ -1,0 +1,14 @@
+evidence/tests/caret-03/ipc-script.txt:91: trailing whitespace.
+[32m+[m[32m(pass) audio session, main state, MIME and size > reject non-allowed MIME[m[41m [m
+evidence/tests/caret-03/lint-initial.txt:4: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/caret-03/lint-initial.txt:11: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/caret-03/lint-initial.txt:13: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/caret-03/lint-initial.txt:146: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/caret-03/lint-initial.txt:151: trailing whitespace.
+[32m+[m[41m  [m
+
+EXIT_CODE=2

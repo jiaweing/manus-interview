@@ -9,7 +9,6 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
       "!**/.next",
       "!**/dist",
       "!**/.turbo",
@@ -27,7 +26,9 @@
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
       "!**/.source",
-      "!**/convex/_generated"
+      "!**/convex/_generated",
+      "!**/.wxt",
+      "!**/.output"
     ]
   },
   "formatter": {
@@ -43,7 +44,7 @@
         "useExhaustiveDependencies": "info"
       },
       "nursery": {
-        "useTailwindSortedClasses": {
+        "useSortedClasses": {
           "level": "warn",
           "fix": "safe"
         }
@@ -63,6 +64,7 @@
     }
   },
   "javascript": {
+    "globals": ["browser", "defineBackground", "defineContentScript"],
     "formatter": {
       "quoteStyle": "double"
     }

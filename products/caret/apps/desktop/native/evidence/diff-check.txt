@@ -1,0 +1,3 @@
+COMMAND: git diff --cached --check
+HOST: linux x64
+EXIT_CODE: 0

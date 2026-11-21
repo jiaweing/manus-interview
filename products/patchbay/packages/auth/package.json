@@ -1,0 +1,23 @@
+{
+  "name": "@patchbay/auth",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@better-auth/expo": "catalog:",
+    "@patchbay/db": "workspace:*",
+    "@polar-sh/better-auth": "catalog:",
+    "@polar-sh/sdk": "catalog:",
+    "better-auth": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@patchbay/config": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}

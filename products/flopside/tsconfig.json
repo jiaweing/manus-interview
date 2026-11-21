@@ -1,5 +1,10 @@
 {
   "extends": "@flopside/config/tsconfig.base.json",
   "compilerOptions": { "noEmit": true },
-  "include": ["scripts/**/*.ts", "tests/**/*.ts"]
+  "include": [
+    "start.ts",
+    "playwright.config.ts",
+    "scripts/**/*.ts",
+    "tests/**/*.ts"
+  ]
 }

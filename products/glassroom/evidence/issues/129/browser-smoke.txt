@@ -1,0 +1,22 @@
+Command: bun run evidence/issues/129/browser-smoke.ts
+Working directory: products/glassroom
+PUBLIC_PORT=4129 NEXT_INTERNAL_PORT=5129
+
+PASS secureContext
+PASS mutualConfirmation
+PASS matchingFingerprint
+PASS grouped128BitFingerprint
+PASS matchingTranscript
+PASS directionalDecrypt
+PASS nonExtractableKeys
+PASS freshPublicKey
+PASS freshNonce
+PASS noSerializedPrivateMaterial
+PASS noWebStorage
+PASS noIndexedDB
+PASS noServiceWorker
+PASS teardown
+PASS noCookiesOrPersistedOrigins
+15 isolated Chromium checks passed; no keys or secrets logged.
+
+Exit code: 0

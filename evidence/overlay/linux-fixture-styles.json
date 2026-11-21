@@ -1,0 +1,1656 @@
+{
+  "platform": "linux",
+  "samples": [
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Preparing microphone",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Starting",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Starting",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Speak now",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "rect"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Listening",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Listening",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Converting speech to text",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Transcribing",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Transcribing",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Refining your words",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Cleaning",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Cleaning",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Paste requested",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Done",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Done",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "theme": "light",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Unable to complete dictation",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Error",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Error",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Preparing microphone",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Starting",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Starting",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Speak now",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "rect"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Listening",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Listening",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Converting speech to text",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Transcribing",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Transcribing",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Refining your words",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Cleaning",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Cleaning",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Paste requested",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Done",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Done",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 16.55006143679092,
+      "labelContrast": 20.119467064985724
+    },
+    {
+      "theme": "dark",
+      "animationDuration": "0s",
+      "bodyColor": "rgb(24, 24, 27)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Unable to complete dictation",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(244, 244, 245)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(24, 24, 27)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(255, 255, 255)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(0, 0, 0)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Error",
+      "labelColor": "rgb(0, 0, 0)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Error",
+      "surface": "rgb(255, 255, 255)",
+      "transitionDuration": "0.15s, 0.15s",
+      "transitionProperty": "opacity, transform",
+      "transitionTimingFunction": "ease-out, ease-out",
+      "bodyContrast": 17.71676507806213,
+      "labelContrast": 21
+    },
+    {
+      "reducedMotion": true,
+      "animationDuration": "0s",
+      "bodyColor": "rgb(228, 228, 231)",
+      "bodyWeight": "400",
+      "clipped": false,
+      "description": "Preparing microphone",
+      "elements": [
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgb(24, 24, 27)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "svg"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "path"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "DIV"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgba(0, 0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(228, 228, 231)",
+          "outline": "0px",
+          "tag": "SPAN"
+        },
+        {
+          "background": "rgb(0, 0, 0)",
+          "borders": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "color": "rgb(250, 250, 250)",
+          "outline": "0px",
+          "tag": "SECTION"
+        }
+      ],
+      "font": "Inter, sans-serif",
+      "fontLoaded": true,
+      "label": "Starting",
+      "labelColor": "rgb(250, 250, 250)",
+      "labelWeight": "600",
+      "radius": "10px",
+      "size": "14px",
+      "state": "Starting",
+      "surface": "rgb(0, 0, 0)",
+      "transitionDuration": "0s",
+      "transitionProperty": "none",
+      "transitionTimingFunction": "ease"
+    }
+  ],
+  "windowConfig": {
+    "alwaysOnTop": true,
+    "contextIsolation": true,
+    "focusable": false,
+    "nodeIntegration": false,
+    "resizable": false,
+    "sandbox": true,
+    "visibleInitially": false
+  }
+}

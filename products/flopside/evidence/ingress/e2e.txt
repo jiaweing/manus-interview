@@ -1,0 +1,12 @@
+[WebServer] Flopside server listening at http://127.0.0.1:3280/ (production: static Next + WS, instances=1)
+
+Running 1 test using 1 worker
+
+[WebServer] Flopside ingress {"bootMarker":"dd92a27a-e3aa-4a42-8606-61e909786735","connections":1}
+[WebServer] Flopside ingress {"bootMarker":"dd92a27a-e3aa-4a42-8606-61e909786735","connections":2}
+[WebServer] Flopside ingress {"bootMarker":"dd92a27a-e3aa-4a42-8606-61e909786735","connections":1}
+[WebServer] Flopside ingress {"bootMarker":"dd92a27a-e3aa-4a42-8606-61e909786735","connections":0}
+  ✓  1 [chromium] › apps/web/tests/ingress.spec.ts:42:1 › two production contexts receive 101 and share one boot marker with count 2 (534ms)
+
+  1 passed (1.5s)
+exit=0

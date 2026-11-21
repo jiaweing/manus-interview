@@ -1,0 +1,15 @@
+✓ Generating static pages using 5 workers (4/4) in 484ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+└ ○ /_not-found
+
+
+○  (Static)  prerendered as static content
+
+$ bun build ./src/index.ts --target bun --outdir dist
+Bundled 51 modules in 8ms
+
+  index.js  66.48 KB  (entry point)
+
