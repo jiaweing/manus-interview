@@ -1,0 +1,7 @@
+COMMAND: bun install --frozen-lockfile
+BASE_COMMIT=d038172d0e12f10e58c429d0a0adae8e585983d5
+bun install v1.4.5 (a7733435c)
+
+Checked 1408 installs across 1555 packages (no changes) [1.80s]
+
+EXIT_CODE=0

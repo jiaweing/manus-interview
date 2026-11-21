@@ -1,0 +1,79 @@
+Production shuffle source (no live deck captured)
+Path: products/flopside/packages/engine/shuffle.ts
+     1	import { webcrypto } from "node:crypto";
+     2	import { type Card, fullDeck } from "./cards";
+     3
+     4	const UINT32_RANGE = 2 ** 32;
+     5	export type Uint32Source = () => number;
+     6	/** Fixtures can be passed by the caller only; there is no environment switch. */
+     7	export type DeckSource = () => readonly Card[];
+     8
+     9	/** node:crypto keeps the production entropy source server-only. */
+    10	export function cryptoUint32(): number {
+    11		const sample = new Uint32Array(1);
+    12		webcrypto.getRandomValues(sample);
+    13		return sample[0] as number;
+    14	}
+    15
+    16	/** Uniform integer in [0, bound); reject the incomplete modulo bucket. */
+    17	export function boundedIndex(
+    18		bound: number,
+    19		source: Uint32Source = cryptoUint32
+    20	): number {
+    21		if (!Number.isInteger(bound) || bound < 1 || bound > UINT32_RANGE) {
+    22			throw new RangeError("Bound must be an integer in [1, 2^32]");
+    23		}
+    24		const limit = UINT32_RANGE - (UINT32_RANGE % bound);
+    25		for (;;) {
+    26			const sample = source();
+    27			if (!Number.isInteger(sample) || sample < 0 || sample >= UINT32_RANGE) {
+    28				throw new RangeError("Entropy source must return a uint32");
+    29			}
+    30			if (sample < limit) {
+    31				return sample % bound;
+    32			}
+    33		}
+    34	}
+    35
+    36	/** Fisher–Yates on a copy; injected entropy is useful for focused unit tests. */
+    37	export function shuffleDeck(
+    38		deck: readonly Card[],
+    39		source: Uint32Source = cryptoUint32
+    40	): Card[] {
+    41		const result = [...deck];
+    42		for (let index = result.length - 1; index > 0; index -= 1) {
+    43			const other = boundedIndex(index + 1, source);
+    44			const currentCard = result[index] as Card;
+    45			result[index] = result[other] as Card;
+    46			result[other] = currentCard;
+    47		}
+    48		return result;
+    49	}
+    50
+    51	/** Default server deck source; no test fixture/configuration lookup occurs. */
+    52	export function productionDeck(): Card[] {
+    53		return shuffleDeck(fullDeck());
+    54	}
+
+Dealing production defaults:
+2:import { type DeckSource, productionDeck } from "./shuffle";
+46:function checkedDeck(source: DeckSource): Card[] {
+100:	const deck = checkedDeck(source);
+141:	deckSource: DeckSource = productionDeck
+171:	deckSource: DeckSource = productionDeck
+
+Forbidden entropy/config/time source scan:
+PASS: no forbidden matches
+
+No-burn implementation:
+102:	let nextCardIndex = 0;
+103:	// No burns. Deal one card at a time, clockwise left of dealer, twice.
+108:			holeCards[seatIndex]?.push(deck[nextCardIndex] as Card);
+109:			nextCardIndex += 1;
+121:		private: { deck, holeCards, nextCardIndex },
+202:	const start = state.private.nextCardIndex;
+208:		private: { ...state.private, nextCardIndex: start + count },
+
+Deterministic-deck gate obligation:
+28:A deterministic `DeckSource = () => readonly Card[]` is injectable **only as a function parameter** to start functions; every supplied deck is checked for a valid complete 52-card permutation. Entropy injection into `boundedIndex`/`shuffleDeck` is likewise a function parameter for isolated shuffle tests, never configuration. **#36+ must gate any deterministic deck wiring in a labeled test deployment behind a test flag, verify the flag is off in the production build, and never accept fixture/deck selection from a client.** This package does not implement that room/deployment gate.
+SOURCE_INSPECTION_EXIT=0

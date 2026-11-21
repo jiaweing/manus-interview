@@ -1,0 +1,10 @@
+bun install --frozen-lockfile => 0
+bun test packages/engine/dealing.test.ts packages/engine/evaluator.test.ts => 0
+ 83 pass
+ 0 fail
+bun run lint => 0
+bun run typecheck => 0
+bun run test => 0
+ 89 pass
+ 0 fail
+bun run build => 0

@@ -1,0 +1,61 @@
+COMMAND: bun run test
+BASE_COMMIT=d038172d0e12f10e58c429d0a0adae8e585983d5
+$ bun test --path-ignore-patterns 'apps/web/tests/**'
+bun test v1.4.5 (a7733435c)
+
+packages/engine/dealing.test.ts:
+(pass) dealing and clockwise action order > 2 seats: 200 chips, 5/10 blinds, and first actors [2.05ms]
+(pass) dealing and clockwise action order > 2 seats: every preflop and postflop turn is clockwise [0.23ms]
+(pass) dealing and clockwise action order > 2 seats: board 0/3/4/5, no burns, and unique cards [0.69ms]
+(pass) dealing and clockwise action order > 2 seats: dealer rotates and new-hand fields reset [0.75ms]
+(pass) dealing and clockwise action order > 3 seats: 200 chips, 5/10 blinds, and first actors [0.16ms]
+(pass) dealing and clockwise action order > 3 seats: every preflop and postflop turn is clockwise [0.08ms]
+(pass) dealing and clockwise action order > 3 seats: board 0/3/4/5, no burns, and unique cards [0.27ms]
+(pass) dealing and clockwise action order > 3 seats: dealer rotates and new-hand fields reset [0.35ms]
+(pass) dealing and clockwise action order > 4 seats: 200 chips, 5/10 blinds, and first actors [0.19ms]
+(pass) dealing and clockwise action order > 4 seats: every preflop and postflop turn is clockwise [0.10ms]
+(pass) dealing and clockwise action order > 4 seats: board 0/3/4/5, no burns, and unique cards [0.25ms]
+(pass) dealing and clockwise action order > 4 seats: dealer rotates and new-hand fields reset [0.41ms]
+(pass) dealing and clockwise action order > heads-up deals round-robin left of dealer, and dealer acts last postflop [0.24ms]
+(pass) dealing and clockwise action order > folded and all-in seats are skipped without mutating state [0.20ms]
+(pass) dealing and clockwise action order > no eligible actor is null; all-in hands can still run out [0.16ms]
+(pass) dealing and clockwise action order > a single eligible actor is circular; round completion belongs to betting [0.09ms]
+(pass) dealing and clockwise action order > dealer rotation skips busted seats and switches to heads-up order [0.19ms]
+(pass) dealing and clockwise action order > three funded seats in a four-seat roster use multi-seat order across gaps [0.14ms]
+(pass) dealing and clockwise action order > a heads-up short small blind leaves the big blind as the first eligible actor [0.13ms]
+(pass) dealing and clockwise action order > 2 seats: short small/big blinds post only their stacks [0.23ms]
+(pass) dealing and clockwise action order > 3 seats: short small/big blinds post only their stacks [0.12ms]
+(pass) dealing and clockwise action order > 4 seats: short small/big blinds post only their stacks [0.08ms]
+(pass) dealing and clockwise action order > exact blind stacks also become all-in [0.14ms]
+(pass) dealing and clockwise action order > each new street resets new contributions but preserves stacks, totals, flags and holes [0.15ms]
+(pass) dealing and clockwise action order > state is plain JSON and fixtures are copied, not retained as runtime config [0.25ms]
+(pass) dealing and clockwise action order > match/hand/deck preconditions reject invalid inputs [0.62ms]
+(pass) unbiased server shuffle > rejection sampling discards the incomplete high bucket, including its boundary [0.16ms]
+(pass) unbiased server shuffle > bounded-index endpoints and power-of-two bounds are exact [0.06ms]
+(pass) unbiased server shuffle > bounded indices have a chi-square sanity check with deterministic uint32 entropy [8.13ms]
+(pass) unbiased server shuffle > bounded-index source contract and invalid bounds fail closed [0.23ms]
+(pass) unbiased server shuffle > Fisher–Yates uses each descending bound, operates on a copy, and yields a permutation [0.24ms]
+(pass) unbiased server shuffle > all six three-card permutations are reachable with the expected bounds [0.11ms]
+(pass) unbiased server shuffle > default production entropy produces complete deck permutations [2.10ms]
+(pass) unbiased server shuffle > every engine TypeScript source is free of non-cryptographic randomness [0.60ms]
+
+apps/server/src/app.test.ts:
+(pass) credential-free scaffold > Hono root returns 200 without service initialization [1.88ms]
+(pass) credential-free scaffold > Bun native WebSocket adapter is available [0.02ms]
+(pass) credential-free scaffold > generated integration routes are not mounted [1.14ms]
+
+apps/server/src/ingress.test.ts:
+(pass) native ingress (temporary transport-only) > ordinary HTTP cannot substitute for a WebSocket [0.55ms]
+(pass) native ingress (temporary transport-only) > upgrade rejects missing or foreign Origin before reaching Bun [0.56ms]
+Flopside ingress {"bootMarker":"e3126f0b-ff2f-4735-984d-026d4949dcc3","connections":1}
+Flopside ingress {"bootMarker":"e3126f0b-ff2f-4735-984d-026d4949dcc3","connections":2}
+Flopside ingress {"bootMarker":"e3126f0b-ff2f-4735-984d-026d4949dcc3","connections":1}
+Flopside ingress {"bootMarker":"e3126f0b-ff2f-4735-984d-026d4949dcc3","connections":0}
+(pass) native ingress (temporary transport-only) > same process broadcasts 1 → 2 → 1 with only a public boot marker/count [6.99ms]
+
+ 40 pass
+ 0 fail
+ 578 expect() calls
+Ran 40 tests across 3 files. [68.00ms]
+
+EXIT_CODE=0

@@ -1,0 +1,12 @@
+bun install v1.4.5 (a7733435c)
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ playwright@1.65.1
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1330 packages installed [2.16s]
