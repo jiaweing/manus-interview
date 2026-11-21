@@ -40,7 +40,8 @@
     "check": "ultracite check",
     "fix": "ultracite fix",
     "video:studio": "bun run --cwd apps/video studio",
-    "verify:toolchain": "bun apps/video/scripts/verify-toolchain.js"
+    "verify:toolchain": "bun apps/video/scripts/verify-toolchain.js",
+    "validate:timeline": "bun apps/video/scripts/validate-timeline.js"
   },
   "dependencies": {
     "zod": "catalog:"
