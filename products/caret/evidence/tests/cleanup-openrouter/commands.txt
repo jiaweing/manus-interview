@@ -1,0 +1,18 @@
+bun install --frozen-lockfile -> 0
+bun run lint -> 0
+bun run --cwd apps/desktop typecheck -> 0
+bun run --cwd apps/desktop typecheck:overlay -> 0
+bun run --cwd apps/desktop typecheck:helper -> 0
+bun run --cwd apps/desktop build -> 0
+bun run --cwd apps/desktop build:helper -> 0
+bun run --cwd apps/desktop test:ipc-boundary -> 0
+bun run --cwd apps/desktop test:tray-hotkey -> 0
+bun run --cwd apps/desktop test:overlay -> 0
+bun run --cwd apps/desktop test:helper-protocol -> 0
+bun test apps/desktop/tests/cleanup-adapter.test.ts -> 0
+bun run --cwd apps/desktop test:cleanup -> 0
+bun run --cwd apps/desktop smoke:cleanup -> 2
+cd apps/desktop && bunx tsc --ignoreConfig --noEmit --skipLibCheck --strict --target ES2022 --module ESNext --moduleResolution bundler --types bun,node tests/cleanup-adapter.test.ts scripts/smoke-cleanup.ts -> 0
+bun run --cwd apps/desktop verify:helper-secrets -> 0
+bun run --cwd apps/desktop verify:overlay-secrets -> 0
+bun run --cwd apps/desktop verify:tray-secrets -> 0

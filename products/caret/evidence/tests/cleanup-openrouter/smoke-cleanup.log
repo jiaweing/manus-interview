@@ -1,0 +1,2 @@
+$ bun scripts/smoke-cleanup.ts
+NOT RUN: no key
