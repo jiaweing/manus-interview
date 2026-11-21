@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "source": "js-fallback",
+  "path": "audio/fallback.wav",
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "hashes": {
+    "fallback": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0"
+  },
+  "reason": "no accepted provider cache",
+  "networkRequests": 0,
+  "sampleFormat": {
+    "sampleRate": 48000,
+    "channels": 2,
+    "bitsPerSample": 16,
+    "samplesPerChannel": 2880000,
+    "durationSeconds": 60
+  },
+  "timingReview": {
+    "method": "160-sample stereo energy-flux; strongest-rise 10% foot",
+    "measuredDownbeats": 30,
+    "maxAbsDriftFrames": 0.1,
+    "toleranceFrames": 1
+  },
+  "providerStatus": "No accepted provider cache; offline fallback; provider access not checked here"
+}

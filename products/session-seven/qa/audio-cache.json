@@ -1,0 +1,289 @@
+{
+  "status": "pass",
+  "source": "js-fallback",
+  "path": "audio/fallback.wav",
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "hashes": {
+    "fallback": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0"
+  },
+  "reason": "no accepted provider cache",
+  "networkRequests": 0,
+  "manifestHashMatches": true,
+  "hashesMatch": true,
+  "frozenSource": "js-fallback",
+  "sampleValidation": {
+    "sampleRate": 48000,
+    "channels": 2,
+    "bitsPerSample": 16,
+    "samplesPerChannel": 2880000,
+    "durationSeconds": 60,
+    "pass": true
+  },
+  "measurements": {
+    "sampleRate": 48000,
+    "channels": 2,
+    "bitsPerSample": 16,
+    "samplesPerChannel": 2880000,
+    "durationSeconds": 60,
+    "rms": 0.0740625852621091,
+    "peak": 0.5338134765625,
+    "dc": 0.0004408911493089464,
+    "variance": 0.005485072150701641,
+    "clippedFraction": 0,
+    "energyRange": 0.13858543202804866,
+    "timing": {
+      "method": "160-sample stereo energy-flux; strongest-rise 10% foot",
+      "samplesPerFrame": 1600,
+      "samplesPerBar": 96000,
+      "toleranceFrames": 1,
+      "resolutionFrames": 0.1,
+      "searchRadiusFrames": 5,
+      "downbeats": [
+        {
+          "expectedSample": 0,
+          "expectedFrame": 0,
+          "detectedSample": 160,
+          "driftSamples": 160,
+          "driftFrames": 0.1,
+          "energyFlux": 0.023311025390285074
+        },
+        {
+          "expectedSample": 96000,
+          "expectedFrame": 60,
+          "detectedSample": 96000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.027007809275528406
+        },
+        {
+          "expectedSample": 192000,
+          "expectedFrame": 120,
+          "detectedSample": 192000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04400526483368594
+        },
+        {
+          "expectedSample": 288000,
+          "expectedFrame": 180,
+          "detectedSample": 288000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03905173056555216
+        },
+        {
+          "expectedSample": 384000,
+          "expectedFrame": 240,
+          "detectedSample": 384000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03569242387020492
+        },
+        {
+          "expectedSample": 480000,
+          "expectedFrame": 300,
+          "detectedSample": 480000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04219070786930388
+        },
+        {
+          "expectedSample": 576000,
+          "expectedFrame": 360,
+          "detectedSample": 576000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.043988851511676294
+        },
+        {
+          "expectedSample": 672000,
+          "expectedFrame": 420,
+          "detectedSample": 672000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03901338583818868
+        },
+        {
+          "expectedSample": 768000,
+          "expectedFrame": 480,
+          "detectedSample": 768000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03567195964278652
+        },
+        {
+          "expectedSample": 864000,
+          "expectedFrame": 540,
+          "detectedSample": 864000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04217061560193543
+        },
+        {
+          "expectedSample": 960000,
+          "expectedFrame": 600,
+          "detectedSample": 960000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.044001712148019616
+        },
+        {
+          "expectedSample": 1056000,
+          "expectedFrame": 660,
+          "detectedSample": 1056000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03902256927831331
+        },
+        {
+          "expectedSample": 1152000,
+          "expectedFrame": 720,
+          "detectedSample": 1152000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03565188590291657
+        },
+        {
+          "expectedSample": 1248000,
+          "expectedFrame": 780,
+          "detectedSample": 1248000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04223711938539053
+        },
+        {
+          "expectedSample": 1344000,
+          "expectedFrame": 840,
+          "detectedSample": 1344000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04398997458774831
+        },
+        {
+          "expectedSample": 1440000,
+          "expectedFrame": 900,
+          "detectedSample": 1440000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03901927232509482
+        },
+        {
+          "expectedSample": 1536000,
+          "expectedFrame": 960,
+          "detectedSample": 1536000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03565438928053481
+        },
+        {
+          "expectedSample": 1632000,
+          "expectedFrame": 1020,
+          "detectedSample": 1632000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04217916008783504
+        },
+        {
+          "expectedSample": 1728000,
+          "expectedFrame": 1080,
+          "detectedSample": 1728000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04398987734457478
+        },
+        {
+          "expectedSample": 1824000,
+          "expectedFrame": 1140,
+          "detectedSample": 1824000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03901625232247172
+        },
+        {
+          "expectedSample": 1920000,
+          "expectedFrame": 1200,
+          "detectedSample": 1920000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03564966753910995
+        },
+        {
+          "expectedSample": 2016000,
+          "expectedFrame": 1260,
+          "detectedSample": 2016000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04220326299255249
+        },
+        {
+          "expectedSample": 2112000,
+          "expectedFrame": 1320,
+          "detectedSample": 2112000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.04398747240193186
+        },
+        {
+          "expectedSample": 2208000,
+          "expectedFrame": 1380,
+          "detectedSample": 2208000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03904390220268397
+        },
+        {
+          "expectedSample": 2304000,
+          "expectedFrame": 1440,
+          "detectedSample": 2304000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.03565671233372997
+        },
+        {
+          "expectedSample": 2400000,
+          "expectedFrame": 1500,
+          "detectedSample": 2400000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.042238837757031425
+        },
+        {
+          "expectedSample": 2496000,
+          "expectedFrame": 1560,
+          "detectedSample": 2496000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.043999753239040734
+        },
+        {
+          "expectedSample": 2592000,
+          "expectedFrame": 1620,
+          "detectedSample": 2592000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.02357482367224295
+        },
+        {
+          "expectedSample": 2688000,
+          "expectedFrame": 1680,
+          "detectedSample": 2688000,
+          "driftSamples": 0,
+          "driftFrames": 0,
+          "energyFlux": 0.01107485954416916
+        },
+        {
+          "expectedSample": 2784000,
+          "expectedFrame": 1740,
+          "detectedSample": 2784160,
+          "driftSamples": 160,
+          "driftFrames": 0.1,
+          "energyFlux": 0.0009640786462114192
+        }
+      ],
+      "maxAbsDriftFrames": 0.1
+    }
+  },
+  "providerMeasurements": null,
+  "review": "JS fallback selected: no accepted provider cache; 30 measured downbeats within one video frame. No provider success claimed."
+}
