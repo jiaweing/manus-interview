@@ -12,6 +12,7 @@
     "helper:snapshot": "bun native/scripts/test.ts --snapshot",
     "test:helper-protocol": "bun native/scripts/test.ts",
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
+    "test:model-manager": "bun test tests/model-manager.test.ts",
     "test:overlay": "bun test tests/overlay-state.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
     "test:windows:clipboard-policy": "bun native/scripts/clipboard-policy.ts",

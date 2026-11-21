@@ -1,0 +1,42 @@
+bun install --frozen-lockfile -> exit 0
+bun run lint -> exit 0
+bun run --cwd apps/desktop typecheck -> exit 0
+bun run --cwd apps/desktop typecheck:overlay -> exit 2
+bun run --cwd apps/desktop typecheck:helper -> exit 0
+bun run --cwd apps/desktop build -> exit 0
+bun run --cwd apps/desktop build:helper -> exit 0
+bun run --cwd apps/desktop test:ipc-boundary -> exit 0
+bun run --cwd apps/desktop test:tray-hotkey -> exit 0
+bun run --cwd apps/desktop test:overlay -> exit 0
+bun run --cwd apps/desktop test:helper-protocol -> exit 0
+bun run --cwd apps/desktop test:model-manager -> exit 0
+bun test apps/desktop/tests/model-manager.test.ts -> exit 0
+bun run --cwd apps/desktop verify:helper-secrets -> exit 0
+bun run --cwd apps/desktop verify:overlay-secrets -> exit 0
+bun run --cwd apps/desktop verify:tray-secrets -> exit 0
+bun run --cwd apps/desktop verify:helper-secrets -> exit 0
+bun run --cwd apps/desktop verify:overlay-secrets -> exit 0
+bun run --cwd apps/desktop verify:tray-secrets -> exit 0
+bun run --cwd apps/desktop typecheck:overlay -> final exit 0
+bun run lint -> final exit 0
+bun run --cwd apps/desktop typecheck -> final exit 0
+bun run --cwd apps/desktop build -> final exit 0
+bun run --cwd apps/desktop test:model-manager -> final exit 0
+bun run --cwd apps/desktop test:ipc-boundary -> final exit 0
+bun run --cwd apps/desktop verify:helper-secrets -> final exit 0
+bun run --cwd apps/desktop verify:overlay-secrets -> final exit 0
+bun run --cwd apps/desktop verify:tray-secrets -> final exit 0
+bun run lint -> final exit 1
+bun run --cwd apps/desktop typecheck -> final exit 0
+bun run --cwd apps/desktop typecheck:overlay -> final exit 0
+bun run --cwd apps/desktop build -> final exit 0
+bun run --cwd apps/desktop test:ipc-boundary -> final exit 0
+bun run lint -> final exit 0
+bun run --cwd apps/desktop typecheck -> final exit 0
+bun run --cwd apps/desktop typecheck:overlay -> final exit 0
+bun run --cwd apps/desktop build -> final exit 0
+bun run --cwd apps/desktop test:ipc-boundary -> final exit 0
+bun run --cwd apps/desktop test:model-manager -> final exit 0
+bun run --cwd apps/desktop verify:helper-secrets -> final exit 0
+bun run --cwd apps/desktop verify:overlay-secrets -> final exit 0
+bun run --cwd apps/desktop verify:tray-secrets -> final exit 0

@@ -1,0 +1,159 @@
+$ bun native/scripts/test.ts
+PASS compiled protocol-fixtures
+PASS compiled paste-fixtures
+PASS compiled clipboard-policy-fixtures
+PASS compiled win32-resource-fixtures
+PASS invalid JSON/schema/operation: 79 fixtures; snapshot=0 insert=0 clipboard=0 input=0 (fake platform counters)
+PASS 2000 deterministic request mutations; rejected requests have zero adapter calls
+PASS valid snapshot and duplicate request (fixture handles, NOT Windows evidence)
+PASS duplicate session ID: rejected call delta insert=0 clipboard=0 input=0
+PASS UTF-8/escaped Unicode and text boundary
+PASS no usable target and failure consumes session ID
+PASS five typed outcomes (fixture only; no paste implementation)
+PASS bounded framing, resynchronization, and truncated EOF
+PASS bounded app-lifetime ID ledger, no eviction, fail closed
+PASS Unicode insertion: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS duplicate ID: delta Ctrl+V=0 Enter=0 foreground-setting=0 adapter-calls=0
+PASS modifier-release ordering (Ctrl/Alt/Space OR): Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS foreground change before clipboard: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS foreground change after wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS control change before clipboard: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS control change after wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS no usable target: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS cancellation before: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled, (fake platform; NOT Windows evidence)
+PASS cancellation wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS cancellation snapshot: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,cancelled,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS unsupported elevated/inaccessible target: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation, (fake platform; NOT Windows evidence)
+PASS bounded modifier timeout: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS clipboard failure no retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,open, (fake platform; NOT Windows evidence)
+PASS failed input; duplicate cannot retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,open,formats,read,cancelled,empty,clipboard,sequence,close,clock,cancelled,modifiers,elevation,snapshot,cancelled,input,wait,open,sequence,formats,read,empty,clipboard,close, (fake platform; NOT Windows evidence)
+PASS additional CJK and astral Unicode conversion
+PASS guarded paste suite: 19 cases (fake platform only)
+PASS plain-text restore / exactly 700 ms timer: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS empty restore: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at clipboard: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at wait: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at snapshot: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS late foreground-change restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS late control-change restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS modifier timeout restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS input exception restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS newer sequence preserved: opens=2 inputs=1 restore-waits=1 payload-hash=2357b81b7dd69680 (synthetic recording fixture; NOT Windows evidence)
+PASS newer sequence with identical payload preserved: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS owned payload mismatch with unchanged sequence preserved: opens=2 inputs=1 restore-waits=1 payload-hash=646afb8f558922d4 (synthetic recording fixture; NOT Windows evidence)
+PASS unchanged sequence with new unsupported format preserved: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS empty Unicode text restored as text, not empty clipboard: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49153 before/after-hash=aa1f28bbd925272
+PASS HTML: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49154 before/after-hash=aa1f28bbd925272
+PASS RTF: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=2 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS bitmap: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=8 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS DIB image: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=512 before/after-hash=aa1f28bbd925272
+PASS private format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49155 before/after-hash=aa1f28bbd925272
+PASS registered format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=3 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS unknown standard format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial busy: paste count 0, zero retries: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS restore busy: single attempt, failure outcome, zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS initial formats failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial read failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial empty failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed owned write restores snapshot from owned-empty: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS owned write exception restores original sentinel: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS owned write exception restores originally empty clipboard: opens=2 inputs=0 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS 700 ms timer exception still restores sentinel: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS timer exception preserves newer copy: opens=2 inputs=1 restore-waits=1 payload-hash=82119cc4eeab3db6 (synthetic recording fixture; NOT Windows evidence)
+PASS owned write exception preserves newer copy: opens=2 inputs=0 restore-waits=1 payload-hash=4fa9d51b32e43e21 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration open allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration formats allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration read allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration sequence allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration empty allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration clipboard allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS restoration close allocation exception / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS ownership close exception attempts conditional restore without close retry: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS restore formats failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore read failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore empty failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore clipboard failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS restore sequence failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore close failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS ownership sequence failure: opens=1 inputs=0 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS ownership close failure: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS hash comparison uses all UTF-16 bytes plus exact equality
+PASS clipboard policy suite: 59 cases (fake platform only)
+PASS read_plain_text text.assign exception unconditionally unlocks (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS unterminated read releases lock without freeing OS memory (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS initial snapshot allocation exception releases memory and clipboard locks (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS production restoration text allocation returns clipboard_restore_failed and unlocks (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS production restoration vector allocation returns clipboard_restore_failed (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS production owned write exception frees failed payload and restores sentinel (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS GlobalAlloc failure acquires no memory (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS GlobalLock failure frees owned write allocation (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS SetClipboardData failure unlocks and frees owned allocation (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS synthetic SetClipboardData exception unlocks and frees owned allocation (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS successful SetClipboardData transfers memory without freeing it (production source + Linux Win32 API shim; NOT Windows evidence)
+PASS Win32 resource suite: 11 cases (Linux API shim only)
+bun test v1.4.5 (a7733435c)
+
+native/tests/client.test.ts:
+(pass) helper main-process client > PASS pre-cancelled insert never writes and does not consume transport [39.30ms]
+(pass) helper main-process client > PASS AbortSignal closes input channel while insert is pending; no replay [1.86ms]
+(pass) helper main-process client > PASS main cancellation hook terminates all pending calls with no new request [1.11ms]
+(pass) helper main-process client > PASS settled insert removes abort listener and never replays successful input [28.29ms]
+(pass) helper main-process client > PASS valid snapshot and split response framing [74.84ms]
+(pass) helper main-process client > PASS typed insert outcome target_changed (fixture only) [29.03ms]
+(pass) helper main-process client > PASS typed insert outcome clipboard_busy (fixture only) [29.10ms]
+(pass) helper main-process client > PASS typed insert outcome clipboard_restore_failed (fixture only) [28.49ms]
+(pass) helper main-process client > PASS typed insert outcome unsupported (fixture only) [30.11ms]
+(pass) helper main-process client > PASS typed insert outcome paste_requested (fixture only) [28.08ms]
+(pass) helper main-process client > PASS malformed response: malformed; no retry [30.98ms]
+(pass) helper main-process client > PASS malformed response: wrong-id; no retry [33.59ms]
+(pass) helper main-process client > PASS malformed response: null-id; no retry [29.77ms]
+(pass) helper main-process client > PASS malformed response: extra; no retry [31.24ms]
+(pass) helper main-process client > PASS malformed response: wrong-type; no retry [29.75ms]
+(pass) helper main-process client > PASS malformed response: wrong-op; no retry [34.22ms]
+(pass) helper main-process client > PASS malformed response: duplicate-key; no retry [38.06ms]
+(pass) helper main-process client > PASS malformed response: invalid-utf8; no retry [33.22ms]
+(pass) helper main-process client > PASS malformed response: overlong; no retry [31.23ms]
+(pass) helper main-process client > PASS malformed response: truncated; no retry [31.45ms]
+(pass) helper main-process client > PASS helper exit: exit; no retry [32.08ms]
+(pass) helper main-process client > PASS pending insert malformed is terminal; never request another insertion [34.25ms]
+(pass) helper main-process client > PASS pending insert exit is terminal; never request another insertion [41.31ms]
+(pass) helper main-process client > PASS helper timeout is terminal and never replays insert [101.34ms]
+(pass) helper main-process client > PASS no usable target is a typed rejection, not an automatic insertion [30.01ms]
+(pass) helper main-process client > PASS invalid insert requests never write to the helper [43.13ms]
+(pass) helper main-process client > PASS escaped text exceeding wire line bound never writes [2.57ms]
+(pass) helper main-process client > PASS pending request limit is bounded [2.16ms]
+(pass) helper main-process client > PASS spawn failure and closure are terminal [3.90ms]
+(pass) helper main-process client > PASS portable C++ helper round trip and app-lifetime insert deduplication [8.18ms]
+(pass) strict helper response schema > PASS unknown fields, invalid handles, wrong types, outcomes and duplicate keys rejected [0.40ms]
+
+ 31 pass
+ 0 fail
+ 115 expect() calls
+Ran 31 tests across 1 file. [938.00ms]

@@ -1,3 +1,5 @@
+import type { ModelId, ModelStatus } from "./model-contract";
+
 export const IPC_REQUEST_CHANNEL = "caret:request";
 export const IPC_STATUS_CHANNEL = "caret:status";
 export const MAX_AUDIO_BYTES = 10_000_000;
@@ -39,12 +41,15 @@ export type BoundaryError =
   | "operation_failed";
 
 export type BoundaryResult =
-  | { ok: true; status?: CaretStatus }
+  | { ok: true; status?: CaretStatus; modelStatus?: ModelStatus }
   | { ok: false; error: BoundaryError };
 
 export interface CaretApi {
   cancel: (sessionId: string) => Promise<BoundaryResult>;
+  cancelModel: (modelId: ModelId) => Promise<BoundaryResult>;
+  modelStatus: (modelId: ModelId) => Promise<BoundaryResult>;
   setupKey: (key: string) => Promise<BoundaryResult>;
+  startModel: (modelId: ModelId) => Promise<BoundaryResult>;
   submitAudio: (submission: AudioSubmission) => Promise<BoundaryResult>;
   subscribeStatus: (listener: (status: CaretStatus) => void) => () => void;
 }
@@ -53,4 +58,8 @@ export type BoundaryRequest =
   | { operation: "setupKey"; payload: { key: string } }
   | { operation: "subscribeStatus"; payload: Record<string, never> }
   | { operation: "cancel"; payload: { sessionId: string } }
+  | {
+      operation: "modelStatus" | "startModel" | "cancelModel";
+      payload: { modelId: ModelId };
+    }
   | { operation: "submitAudio"; payload: AudioSubmission };

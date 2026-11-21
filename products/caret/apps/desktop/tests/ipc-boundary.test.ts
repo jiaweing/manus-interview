@@ -408,12 +408,15 @@ function transportFixture() {
   return { api: createCaretApi(transport), listeners, requests, resolve };
 }
 
-describe("preload exposes only four documented capabilities", () => {
+describe("preload exposes only documented capabilities", () => {
   test("no generic IPC/process/filesystem/helper channel", () => {
     const { api } = transportFixture();
     expect(Object.keys(api).sort()).toEqual([
       "cancel",
+      "cancelModel",
+      "modelStatus",
       "setupKey",
+      "startModel",
       "submitAudio",
       "subscribeStatus",
     ]);
@@ -436,20 +439,26 @@ describe("preload exposes only four documented capabilities", () => {
     const setup = f.api.setupKey("fixture-key");
     const cancel = f.api.cancel("session-1");
     const submit = f.api.submitAudio(audio().payload as AudioSubmission);
+    const model = f.api.modelStatus("whisper-small");
+    const start = f.api.startModel("whisper-medium");
+    const cancelModel = f.api.cancelModel("whisper-small");
     const unsubscribe = f.api.subscribeStatus(() => {
       /* Intentional no-op in this fixture. */
     });
     expect(f.requests.map(({ channel }) => channel)).toEqual(
-      new Array(4).fill(IPC_REQUEST_CHANNEL)
+      new Array(7).fill(IPC_REQUEST_CHANNEL)
     );
     expect(f.requests.map(({ request }) => request.operation)).toEqual([
       "setupKey",
       "cancel",
       "submitAudio",
+      "modelStatus",
+      "startModel",
+      "cancelModel",
       "subscribeStatus",
     ]);
     f.resolve({ ok: true });
-    await Promise.all([setup, cancel, submit]);
+    await Promise.all([setup, cancel, submit, model, start, cancelModel]);
     unsubscribe();
     expect(f.listeners.size).toBe(0);
   });
@@ -553,4 +562,96 @@ describe("renderer security configuration and navigation guards (Linux fixtures,
       "Caret: blocked new window",
     ]);
   });
+});
+
+describe("model capabilities use the same trusted ID-only boundary", () => {
+  for (const operation of [
+    "modelStatus",
+    "startModel",
+    "cancelModel",
+  ] as const) {
+    for (const modelId of ["whisper-small", "whisper-medium"] as const) {
+      test(`${operation} accepts pinned ID ${modelId} and strips private fields`, async () => {
+        const f = fixture();
+        f.services[operation] = async (id) => {
+          await Promise.resolve();
+          f.effects.push(id);
+          return {
+            modelId: id,
+            path: "private-path",
+            percent: 12.5,
+            state: "downloading",
+            url: "private-url",
+          };
+        };
+        expect(
+          await f.handle(f.event, { operation, payload: { modelId } })
+        ).toEqual({
+          modelStatus: { modelId, percent: 12.5, state: "downloading" },
+          ok: true,
+        });
+        expect(f.effects).toEqual([modelId]);
+      });
+    }
+    for (const payload of [
+      {},
+      { modelId: "unknown" },
+      { modelId: "../../escape" },
+      { modelId: 1 },
+      { modelId: "whisper-small", url: "https://evil.test" },
+      { catalog: [], modelId: "whisper-small" },
+      { modelId: "whisper-small", userData: "/tmp" },
+      { modelId: "whisper-small", sha256: "0".repeat(64) },
+    ]) {
+      test(`${operation} rejects extra/unknown payload ${JSON.stringify(payload)}`, async () => {
+        const f = fixture();
+        f.services[operation] = async () => {
+          await Promise.resolve();
+          f.effects.push("must-not-run");
+          return { modelId: "whisper-small", state: "ready" };
+        };
+        expect(await f.handle(f.event, { operation, payload })).toEqual({
+          error: "invalid_payload",
+          ok: false,
+        });
+        expect(f.effects).toEqual([]);
+      });
+    }
+    test(`${operation} rejects untrusted renderer and subframe before service`, async () => {
+      const f = fixture();
+      f.services[operation] = async () => {
+        await Promise.resolve();
+        f.effects.push("must-not-run");
+        return { modelId: "whisper-small", state: "ready" };
+      };
+      const request = { operation, payload: { modelId: "whisper-small" } };
+      expect(await f.handle({ ...f.event, sender: {} }, request)).toEqual({
+        error: "invalid_sender",
+        ok: false,
+      });
+      expect(
+        await f.handle(
+          { ...f.event, senderFrame: { url: rendererUrl } },
+          request
+        )
+      ).toEqual({ error: "invalid_sender", ok: false });
+      expect(f.effects).toEqual([]);
+    });
+    test(`${operation} fails closed without integration and never echoes exceptions`, async () => {
+      const f = fixture();
+      const request = { operation, payload: { modelId: "whisper-small" } };
+      expect(await f.handle(f.event, request)).toEqual({
+        error: "unavailable",
+        ok: false,
+      });
+      f.services[operation] = async () => {
+        await Promise.resolve();
+        throw new Error("private-url-and-disk-path");
+      };
+      expect(await f.handle(f.event, request)).toEqual({
+        error: "operation_failed",
+        ok: false,
+      });
+    });
+  }
 });

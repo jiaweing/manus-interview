@@ -7,6 +7,12 @@ import {
   type SessionState,
   WEBM_MIME_TYPES,
 } from "../shared/ipc-contract";
+import {
+  MODEL_IDS,
+  type ModelId,
+  type ModelStatus,
+  publicModelStatus,
+} from "../shared/model-contract";
 
 export interface ActiveSession {
   id: string;
@@ -20,10 +26,13 @@ export interface SenderContext {
 
 export interface BoundaryServices {
   cancel?: (sessionId: string) => void | Promise<void>;
+  cancelModel?: (id: ModelId) => Promise<ModelStatus>;
   // These getters and callbacks belong to main, never to the renderer.
   getActiveSession: () => ActiveSession | null;
   getStatus: () => CaretStatus;
+  modelStatus?: (id: ModelId) => Promise<ModelStatus>;
   setupKey?: (key: string) => void | Promise<void>;
+  startModel?: (id: ModelId) => Promise<ModelStatus>;
   submitAudio?: (submission: AudioSubmission) => void | Promise<void>;
 }
 
@@ -152,6 +161,18 @@ function validateOperation(
   services: BoundaryServices
 ): BoundaryError | null {
   switch (operation) {
+    case "modelStatus":
+    case "startModel":
+    case "cancelModel":
+      if (
+        !(
+          exactKeys(payload, ["modelId"]) &&
+          MODEL_IDS.some((id) => id === payload.modelId)
+        )
+      ) {
+        return "invalid_payload";
+      }
+      return services[operation] ? null : "unavailable";
     case "setupKey":
       return (
         validateSetupKey(payload) ?? (services.setupKey ? null : "unavailable")
@@ -186,9 +207,15 @@ export function createIpcBoundary(
     }
     const { operation, payload } = request;
     if (
-      !["setupKey", "subscribeStatus", "cancel", "submitAudio"].includes(
-        operation as string
-      )
+      ![
+        "setupKey",
+        "subscribeStatus",
+        "cancel",
+        "submitAudio",
+        "modelStatus",
+        "startModel",
+        "cancelModel",
+      ].includes(operation as string)
     ) {
       return reject("unknown_operation");
     }
@@ -204,6 +231,16 @@ export function createIpcBoundary(
       }
       // The synchronous validator checked availability; retain the services receiver.
       switch (operation) {
+        case "modelStatus":
+        case "startModel":
+        case "cancelModel": {
+          const status = await (
+            services[operation] as NonNullable<
+              BoundaryServices[typeof operation]
+            >
+          )(payload.modelId as ModelId);
+          return { modelStatus: publicModelStatus(status), ok: true };
+        }
         case "setupKey":
           await (
             services.setupKey as NonNullable<BoundaryServices["setupKey"]>
