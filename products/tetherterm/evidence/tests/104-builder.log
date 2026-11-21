@@ -1,0 +1,1242 @@
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.89s]
+EXIT_CODE=
+
+$ bunx ultracite fix apps/server/src/sessions apps/server/test/session-registry.test.ts apps/server/test/integration/session-registry.test.ts apps/server/test/fixtures/session-registry-process.ts
+apps/server/src/sessions/manager.ts:40:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+  
+    39 │ export interface SessionClock {
+  > 40 │ 	now(): number;
+       │ 	^^^^^^^^^^^^^^
+    41 │ }
+    42 │ 
+  
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+  
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+  
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+  
+  i Unsafe fix: Convert to property-style signature.
+  
+     38  38 │   
+     39  39 │   export interface SessionClock {
+     40     │ - → now():·number;
+         40 │ + → now:·()·=>·number;
+     41  41 │   }
+     42  42 │   
+  
+
+apps/server/src/sessions/manager.ts:88:7 lint/style/useDestructuring ━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    86 │ 		let session: Session | undefined;
+    87 │ 		let receivedBytes = 0;
+  > 88 │ 		let executable = request.executable;
+       │ 		    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    89 │ 		let cwd = request.cwd;
+    90 │ 		let pty: PtyHandle;
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/src/sessions/manager.ts:89:7 lint/style/useDestructuring ━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    87 │ 		let receivedBytes = 0;
+    88 │ 		let executable = request.executable;
+  > 89 │ 		let cwd = request.cwd;
+       │ 		    ^^^^^^^^^^^^^^^^^
+    90 │ 		let pty: PtyHandle;
+    91 │ 		try {
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/src/sessions/manager.ts:109:7 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    107 │ 					env: this.options.env,
+    108 │ 					spawn: (validated) => {
+  > 109 │ 						executable = validated.executable;
+        │ 						^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    110 │ 						cwd = validated.cwd;
+    111 │ 						return (this.options.spawn ?? spawnPty)(validated);
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Wrap the assignment in parentheses to use object destructuring: ({ prop } = object).
+  
+
+apps/server/src/sessions/manager.ts:110:7 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    108 │ 					spawn: (validated) => {
+    109 │ 						executable = validated.executable;
+  > 110 │ 						cwd = validated.cwd;
+        │ 						^^^^^^^^^^^^^^^^^^^
+    111 │ 						return (this.options.spawn ?? spawnPty)(validated);
+    112 │ 					},
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Wrap the assignment in parentheses to use object destructuring: ({ prop } = object).
+  
+
+apps/server/test/session-registry.test.ts:190:2 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━
+
+  × Forbidden non-null assertion.
+  
+    188 │ 	summary.state = "exited";
+    189 │ 	const listed = f.manager.list();
+  > 190 │ 	listed.sessions[0]!.dimensions.rows = 1;
+        │ 	^^^^^^^^^^^^^^^^^^^
+    191 │ 	listed.sessions.length = 0;
+    192 │ 	expect(f.manager.status(created.sessionId).dimensions).toEqual({
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    188 188 │     summary.state = "exited";
+    189 189 │     const listed = f.manager.list();
+    190     │ - → listed.sessions[0]!.dimensions.rows·=·1;
+        190 │ + → listed.sessions[0]?.dimensions.rows·=·1;
+    191 191 │     listed.sessions.length = 0;
+    192 192 │     expect(f.manager.status(created.sessionId).dimensions).toEqual({
+  
+
+apps/server/test/session-registry.test.ts:237:16 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━
+
+  × Forbidden non-null assertion.
+  
+    235 │ 		Array.from({ length: 4 }, () => f.manager.create(request(f.root)))
+    236 │ 	);
+  > 237 │ 	f.manager.get(results[0]!.sessionId).state = "terminating";
+        │ 	              ^^^^^^^^^^^
+    238 │ 	expect(f.manager.status(results[0]!.sessionId).state).toBe("terminating");
+    239 │ 	await expect(f.manager.create(request(f.root))).rejects.toMatchObject({
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    235 235 │       Array.from({ length: 4 }, () => f.manager.create(request(f.root)))
+    236 236 │     );
+    237     │ - → f.manager.get(results[0]!.sessionId).state·=·"terminating";
+        237 │ + → f.manager.get(results[0]?.sessionId).state·=·"terminating";
+    238 238 │     expect(f.manager.status(results[0]!.sessionId).state).toBe("terminating");
+    239 239 │     await expect(f.manager.create(request(f.root))).rejects.toMatchObject({
+  
+
+apps/server/test/session-registry.test.ts:238:26 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━
+
+  × Forbidden non-null assertion.
+  
+    236 │ 	);
+    237 │ 	f.manager.get(results[0]!.sessionId).state = "terminating";
+  > 238 │ 	expect(f.manager.status(results[0]!.sessionId).state).toBe("terminating");
+        │ 	                        ^^^^^^^^^^^
+    239 │ 	await expect(f.manager.create(request(f.root))).rejects.toMatchObject({
+    240 │ 		code: "LIMIT",
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    236 236 │     );
+    237 237 │     f.manager.get(results[0]!.sessionId).state = "terminating";
+    238     │ - → expect(f.manager.status(results[0]!.sessionId).state).toBe("terminating");
+        238 │ + → expect(f.manager.status(results[0]?.sessionId).state).toBe("terminating");
+    239 239 │     await expect(f.manager.create(request(f.root))).rejects.toMatchObject({
+    240 240 │       code: "LIMIT",
+  
+
+apps/server/test/session-registry.test.ts:260:9 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━
+
+  × Forbidden non-null assertion.
+  
+    258 │ 	}
+    259 │ 	expect(performance.now() - start).toBeLessThan(1000);
+  > 260 │ 	expect(f.ptys[0]!.child.exitCode).toBeNull();
+        │ 	       ^^^^^^^^^^
+    261 │ });
+    262 │ 
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    258 258 │     }
+    259 259 │     expect(performance.now() - start).toBeLessThan(1000);
+    260     │ - → expect(f.ptys[0]!.child.exitCode).toBeNull();
+        260 │ + → expect(f.ptys[0]?.child.exitCode).toBeNull();
+    261 261 │   });
+    262 262 │   
+  
+
+apps/server/test/session-registry.test.ts:386:32 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━
+
+  × Forbidden non-null assertion.
+  
+    384 │ 		Array.from({ length: 4 }, () => f.manager.create(request(f.root)))
+    385 │ 	);
+  > 386 │ 	const session = f.manager.get(results[0]!.sessionId);
+        │ 	                              ^^^^^^^^^^^
+    387 │ 	session.pty.child.kill("SIGTERM");
+    388 │ 	await bounded(session.pty.child.exited);
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    384 384 │       Array.from({ length: 4 }, () => f.manager.create(request(f.root)))
+    385 385 │     );
+    386     │ - → const·session·=·f.manager.get(results[0]!.sessionId);
+        386 │ + → const·session·=·f.manager.get(results[0]?.sessionId);
+    387 387 │     session.pty.child.kill("SIGTERM");
+    388 388 │     await bounded(session.pty.child.exited);
+  
+
+Skipped 18 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 5 files in 152ms. Fixed 4 files.
+Found 10 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+EXIT_CODE=1
+
+$ bun test apps/server/test/session-registry.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [13.02ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.46ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.54ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.41ms]
+(pass) terminating sessions still occupy the four live slots [2.20ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [5.65ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [1.88ms]
+(pass) a new server process cannot recognize the previous process's UUID [119.35ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.05ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.17ms]
+(pass) injected clock records finite default and explicit runtime deadlines [1.72ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [0.88ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.77ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.64ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.52ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.60ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.69ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.60ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.71ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.52ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [2.65ms]
+OWN_PID_PS checked=27742,27743,27744,27745,27746,27747,27748,27749,27750,27751,27752,27753,27754,27755,27756,27757,27758,27759,27775,27777,27790,27791,27792,27793,27794,27795,27796,27797,27798,27799,27800,27801,27802,27803,27804
+OWN_PID_PS: no recorded process remains
+
+ 21 pass
+ 0 fail
+ 695 expect() calls
+Ran 21 tests across 1 file. [235.00ms]
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+src/sessions/manager.ts(138,4): error TS2322: Type 'number | Signals | null' is not assignable to type 'Signals | null'.
+  Type 'number' is not assignable to type 'Signals | null'.
+test/session-registry.test.ts(19,7): error TS2502: 'fixtures' is referenced directly or indirectly in its own type annotation.
+test/session-registry.test.ts(35,16): error TS7023: 'fixture' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+test/session-registry.test.ts(106,33): error TS7006: Parameter 'item' implicitly has an 'any' type.
+test/session-registry.test.ts(174,31): error TS7031: Binding element 'cols' implicitly has an 'any' type.
+test/session-registry.test.ts(174,37): error TS7031: Binding element 'rows' implicitly has an 'any' type.
+test/session-registry.test.ts(209,26): error TS7031: Binding element 'child' implicitly has an 'any' type.
+test/session-registry.test.ts(227,26): error TS7031: Binding element 'child' implicitly has an 'any' type.
+test/session-registry.test.ts(396,39): error TS7031: Binding element 'state' implicitly has an 'any' type.
+EXIT_CODE=2
+
+$ bunx ultracite fix apps/server/src/sessions apps/server/test/session-registry.test.ts apps/server/test/integration/session-registry.test.ts apps/server/test/fixtures/session-registry-process.ts
+apps/server/test/session-registry.test.ts:131:3 suppressions/unused ━━━━━━━━━━━━
+
+  ! Suppression comment has no effect. Remove the suppression or make sure you are suppressing the correct rule.
+  
+    129 │ 			throw new Error("Quiet fixture failed its TTY checks");
+    130 │ 		}
+  > 131 │ 		// biome-ignore lint/performance/noAwaitInLoops: Deadline-bounded readiness polling must yield to the child and PTY event loop.
+        │ 		^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    132 │ 		await Bun.sleep(5);
+    133 │ 	}
+  
+
+apps/server/test/session-registry.test.ts:30:8 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use array destructuring instead of accessing array elements by index.
+  
+    29 │ function firstOf<T>(values: readonly T[]): T {
+  > 30 │ 	const first = values[0];
+       │ 	      ^^^^^^^^^^^^^^^^^
+    31 │ 	if (first === undefined) {
+    32 │ 		throw new Error("Expected a fixture entry");
+  
+  i Array destructuring is more readable and expressive than accessing individual elements by index.
+  
+  i Replace the array index access with array destructuring syntax.
+  
+
+apps/server/test/session-registry.test.ts:69:8 lint/suspicious/noUnnecessaryConditions ━━━━━━━━━━
+
+  × This condition is always falsy.
+  
+    67 │ 		spawn(options) {
+    68 │ 			control.spawnCalls += 1;
+  > 69 │ 			if (control.failSpawn) {
+       │ 			    ^^^^^^^^^^^^^^^^^
+    70 │ 				throw new Error("Synthetic spawn failure");
+    71 │ 			}
+  
+  i The value's type can never be truthy, so this check is redundant.
+  
+
+Checked 5 files in 119ms. No fixes applied.
+Found 2 errors.
+Found 1 warning.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+EXIT_CODE=1
+
+$ bunx ultracite fix apps/server/src/sessions apps/server/test/session-registry.test.ts apps/server/test/integration/session-registry.test.ts apps/server/test/fixtures/session-registry-process.ts
+Checked 5 files in 121ms. Fixed 1 file.
+EXIT_CODE=0
+
+$ bun test apps/server/test/session-registry.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [10.40ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.39ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.46ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.17ms]
+(pass) terminating sessions still occupy the four live slots [1.86ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [7.81ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [1.64ms]
+(pass) a new server process cannot recognize the previous process's UUID [120.91ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.29ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.04ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.00ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.03ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.61ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.61ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.54ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.46ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.46ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.51ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.63ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.45ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [2.99ms]
+OWN_PID_PS checked=28846,28847,28848,28849,28850,28851,28852,28853,28854,28855,28856,28857,28858,28859,28860,28861,28862,28863,28875,28876,28888,28889,28890,28891,28892,28893,28894,28895,28896,28897,28898,28899,28900,28901,28902
+OWN_PID_PS: no recorded process remains
+
+ 21 pass
+ 0 fail
+ 695 expect() calls
+Ran 21 tests across 1 file. [228.00ms]
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+test/session-registry.test.ts(193,3): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: SessionSummary): void', gave the following error.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 2, '(expected: NoInfer<SessionSummary>): void', gave the following error.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+EXIT_CODE=2
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.64s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/session-registry.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [10.83ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.94ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [3.60ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.20ms]
+(pass) terminating sessions still occupy the four live slots [3.09ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.47ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.93ms]
+(pass) a new server process cannot recognize the previous process's UUID [165.63ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.91ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.88ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.15ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [2.73ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [1.49ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.85ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.58ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.63ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.54ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.17ms]
+OWN_PID_PS checked=29062,29063,29064,29065,29066,29067,29068,29069,29070,29071,29072,29073,29074,29075,29076,29077,29078,29079,29091,29092,29109,29110,29111,29112,29113,29114,29115,29116,29117,29118,29119,29120,29121,29122,29123
+OWN_PID_PS: no recorded process remains
+
+ 21 pass
+ 0 fail
+ 695 expect() calls
+Ran 21 tests across 1 file. [287.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.10ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.21ms]
+(pass) spawn failure closes its terminal and propagates the error [0.87ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.55ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.31ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.24ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.39ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.39ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.09ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.47ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.52ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.37ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.33ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.22ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.15ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.15ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.97ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.15ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.05ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.68ms]
+
+ 45 pass
+ 0 fail
+ 204 expect() calls
+Ran 45 tests across 2 files. [82.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=29153 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.59ms]
+python3 PID=PGID=SID=TPGID=29160 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.73ms]
+bash GROUP=29162 GRANDCHILD=29165 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.25ms]
+bash GROUP=29166 GRANDCHILD=29169 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.30ms]
+python3 GROUP=29170 GRANDCHILD=29173 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.06ms]
+python3 GROUP=29174 GRANDCHILD=29176 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.27ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [169.78ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [157.67ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [177.41ms]
+TetherTerm MCP listening on http://127.0.0.1:42435/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [31.74ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.77ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.53ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.44ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [3.74ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.35ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [4.45ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.19ms]
+(pass) terminating sessions still occupy the four live slots [2.00ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.99ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.15ms]
+(pass) a new server process cannot recognize the previous process's UUID [138.45ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [6.09ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [3.07ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.50ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.37ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.89ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.69ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.62ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.63ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [3.34ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.85ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [1.30ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.89ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.40ms]
+OWN_PID_PS checked=29247,29248,29249,29250,29251,29252,29253,29254,29255,29256,29257,29258,29259,29260,29261,29262,29263,29264,29276,29277,29289,29290,29291,29292,29293,29294,29295,29296,29297,29298,29299,29300,29301,29302,29303
+OWN_PID_PS: no recorded process remains
+
+ 34 pass
+ 0 fail
+ 832 expect() calls
+Ran 34 tests across 5 files. [1151.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=43839 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [85.76ms]
+(pass) server startup fails clearly when setsid is absent on PATH [72.75ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [63.12ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [70.19ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [56.25ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [66.07ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [53.20ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [55.88ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [61.79ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [58.75ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [60.65ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [55.94ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [51.71ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [127.86ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [127.97ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [132.48ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [138.07ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [155.52ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [128.67ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [130.33ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [134.33ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [149.04ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [129.18ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [131.12ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [121.61ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [125.02ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [142.36ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [133.47ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [127.06ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [129.45ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [132.10ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [73.21ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.30s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+apps/server/test/session-registry.test.ts:193:15 lint/suspicious/noUnnecessaryConditions ━━━━━━━━━━
+
+  × Unnecessary nullish coalescing.
+  
+    191 │ 		cwd: f.root,
+    192 │ 		dimensions: { cols: 80, rows: 24 },
+  > 193 │ 		executable: f.config.approvedExecutables.bash ?? "",
+        │ 		            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    194 │ 		exitCode: null,
+    195 │ 		id: first.sessionId,
+  
+  i Drop ?? and the fallback expression.
+  
+    191 │ 		cwd: f.root,
+    192 │ 		dimensions: { cols: 80, rows: 24 },
+  > 193 │ 		executable: f.config.approvedExecutables.bash ?? "",
+        │ 		                                              ^^
+    194 │ 		exitCode: null,
+    195 │ 		id: first.sessionId,
+  
+  i The left-hand side is guaranteed to be non-nullish, so the fallback is unreachable.
+  
+
+Checked 37 files in 133ms. No fixes applied.
+Found 1 error.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "check" exited with code 1
+EXIT_CODE=1
+
+$ bunx ultracite fix apps/server/src/sessions apps/server/test/session-registry.test.ts apps/server/test/integration/session-registry.test.ts apps/server/test/fixtures/session-registry-process.ts
+Checked 5 files in 118ms. Fixed 1 file.
+EXIT_CODE=0
+
+$ bun test apps/server/test/session-registry.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [11.10ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.63ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [3.09ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.74ms]
+(pass) terminating sessions still occupy the four live slots [2.39ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [9.71ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.29ms]
+(pass) a new server process cannot recognize the previous process's UUID [121.61ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.16ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [5.87ms]
+(pass) injected clock records finite default and explicit runtime deadlines [1.83ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [0.96ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.79ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.75ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.63ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.68ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.66ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.67ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.79ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.16ms]
+OWN_PID_PS checked=29823,29824,29825,29826,29827,29828,29829,29830,29831,29832,29833,29834,29835,29836,29837,29838,29839,29840,29852,29853,29865,29866,29867,29868,29869,29870,29871,29872,29873,29874,29875,29876,29877,29878,29879
+OWN_PID_PS: no recorded process remains
+
+ 21 pass
+ 0 fail
+ 696 expect() calls
+Ran 21 tests across 1 file. [238.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [2.96ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.99ms]
+(pass) spawn failure closes its terminal and propagates the error [0.86ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [3.01ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.24ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.20ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.38ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.08ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.08ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.23ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.28ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.39ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.09ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.43ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.50ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.31ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.35ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.15ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.39ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.14ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.03ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.51ms]
+
+ 45 pass
+ 0 fail
+ 204 expect() calls
+Ran 45 tests across 2 files. [76.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=29909 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.19ms]
+python3 PID=PGID=SID=TPGID=29916 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [61.88ms]
+bash GROUP=29918 GRANDCHILD=29921 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.20ms]
+bash GROUP=29922 GRANDCHILD=29925 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.32ms]
+python3 GROUP=29926 GRANDCHILD=29929 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.86ms]
+python3 GROUP=29930 GRANDCHILD=29932 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.02ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [164.98ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [158.84ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [170.36ms]
+TetherTerm MCP listening on http://127.0.0.1:44039/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [33.54ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.00ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.49ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.51ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [5.80ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.44ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.29ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.70ms]
+(pass) terminating sessions still occupy the four live slots [2.47ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [7.76ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.13ms]
+(pass) a new server process cannot recognize the previous process's UUID [127.47ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [4.67ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [3.58ms]
+(pass) injected clock records finite default and explicit runtime deadlines [4.68ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.16ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.85ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.60ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.54ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.47ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.65ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.60ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [5.65ms]
+OWN_PID_PS checked=30003,30004,30005,30006,30007,30008,30009,30010,30011,30012,30013,30014,30015,30016,30017,30018,30019,30020,30032,30033,30045,30046,30047,30048,30049,30050,30051,30052,30053,30054,30055,30056,30057,30058,30059
+OWN_PID_PS: no recorded process remains
+
+ 34 pass
+ 0 fail
+ 833 expect() calls
+Ran 34 tests across 5 files. [1083.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=34747 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [82.00ms]
+(pass) server startup fails clearly when setsid is absent on PATH [59.60ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [56.92ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [52.66ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [55.29ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [53.69ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [49.70ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [56.48ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [56.14ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [52.06ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [53.35ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [55.31ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [53.64ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [125.50ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [128.77ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [144.62ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [139.70ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [128.52ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [131.33ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [138.35ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [130.14ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [130.34ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [131.78ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [125.32ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [120.68ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [121.27ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [123.02ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [121.53ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [121.73ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [135.34ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [121.18ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [58.42ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.13s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 37 files in 131ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ python3 /home/ubuntu/104-builder-pid-check.py
+$ ps -o pid=,stat=,comm= -p 27742,27743,27744,27745,27746,27747,27748,27749,27750,27751,27752,27753,27754,27755,27756,27757,27758,27759,27775,27777,27790,27791,27792,27793,27794,27795,27796,27797,27798,27799,27800,27801,27802,27803,27804,28846,28847,28848,28849,28850,28851,28852,28853,28854,28855,28856,28857,28858,28859,28860,28861,28862,28863,28875,28876,28888,28889,28890,28891,28892,28893,28894,28895,28896,28897,28898,28899,28900,28901,28902,29062,29063,29064,29065,29066,29067,29068,29069,29070,29071,29072,29073,29074,29075,29076,29077,29078,29079,29091,29092,29109,29110,29111,29112,29113,29114,29115,29116,29117,29118,29119,29120,29121,29122,29123,29153,29160,29162,29165,29166,29169,29170,29173,29174,29176,29247,29248,29249,29250,29251,29252,29253,29254,29255,29256,29257,29258,29259,29260,29261,29262,29263,29264,29276,29277,29289,29290,29291,29292,29293,29294,29295,29296,29297,29298,29299,29300,29301,29302,29303,29823,29824,29825,29826,29827,29828,29829,29830,29831,29832,29833,29834,29835,29836,29837,29838,29839,29840,29852,29853,29865,29866,29867,29868,29869,29870,29871,29872,29873,29874,29875,29876,29877,29878,29879,29909,29916,29918,29921,29922,29925,29926,29929,29930,29932,30003,30004,30005,30006,30007,30008,30009,30010,30011,30012,30013,30014,30015,30016,30017,30018,30019,30020,30032,30033,30045,30046,30047,30048,30049,30050,30051,30052,30053,30054,30055,30056,30057,30058,30059
+PS_EXIT_CODE=1 OWN_PID_COUNT=230
+No recorded owned processes remain
+OWN_PID_CHECK=PASS (no live supported children)
+PRE_REBASE_TEST_TOTAL=111
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ git fetch origin && git rebase origin/main
+From https://github.com/jiaweing/manus-interview
+ + 3fcea33...71ec97e session-seven/155-primitives -> origin/session-seven/155-primitives  (forced update)
+Rebasing (1/1)[KSuccessfully rebased and updated refs/heads/tetherterm/104-sessions.
+EXIT_CODE=0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.46s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/session-registry.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [10.14ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.55ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.73ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.29ms]
+(pass) terminating sessions still occupy the four live slots [2.09ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [7.86ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [1.94ms]
+(pass) a new server process cannot recognize the previous process's UUID [142.09ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [4.08ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.27ms]
+(pass) injected clock records finite default and explicit runtime deadlines [1.85ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.00ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.80ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.73ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.58ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.54ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.47ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.47ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.56ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.48ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.22ms]
+OWN_PID_PS checked=31516,31517,31518,31519,31520,31521,31522,31523,31524,31525,31526,31527,31528,31529,31530,31531,31532,31533,31546,31547,31563,31564,31565,31566,31567,31568,31569,31570,31571,31572,31573,31574,31575,31576,31577
+OWN_PID_PS: no recorded process remains
+
+ 21 pass
+ 0 fail
+ 696 expect() calls
+Ran 21 tests across 1 file. [252.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.09ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.08ms]
+(pass) spawn failure closes its terminal and propagates the error [0.80ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.50ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.24ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.14ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.34ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.09ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.30ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.06ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.35ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.44ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.35ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.36ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.42ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.17ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.04ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.48ms]
+
+ 45 pass
+ 0 fail
+ 204 expect() calls
+Ran 45 tests across 2 files. [78.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=31607 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.52ms]
+python3 PID=PGID=SID=TPGID=31614 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [64.31ms]
+bash GROUP=31616 GRANDCHILD=31619 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [21.98ms]
+bash GROUP=31620 GRANDCHILD=31623 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.25ms]
+python3 GROUP=31624 GRANDCHILD=31626 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.52ms]
+python3 GROUP=31628 GRANDCHILD=31630 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.43ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [167.34ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [156.07ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [191.72ms]
+TetherTerm MCP listening on http://127.0.0.1:35655/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [34.05ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.87ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [8.66ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.62ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [5.38ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.53ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.69ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.02ms]
+(pass) terminating sessions still occupy the four live slots [3.30ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [7.96ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [1.98ms]
+(pass) a new server process cannot recognize the previous process's UUID [120.36ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.86ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [6.82ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.29ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.21ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.77ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.79ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.68ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.69ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.71ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.74ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.64ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.59ms]
+OWN_PID_PS checked=31701,31702,31703,31704,31705,31706,31707,31708,31709,31710,31711,31712,31713,31714,31715,31716,31717,31718,31730,31731,31743,31744,31745,31746,31747,31748,31749,31750,31751,31752,31753,31754,31755,31756,31757
+OWN_PID_PS: no recorded process remains
+
+ 34 pass
+ 0 fail
+ 833 expect() calls
+Ran 34 tests across 5 files. [1138.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=46527 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [69.07ms]
+(pass) server startup fails clearly when setsid is absent on PATH [62.50ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [52.71ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [53.94ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [59.08ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [52.20ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [52.66ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [54.13ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [54.05ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [56.82ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [56.96ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [54.19ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [58.15ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [122.40ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [126.91ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [128.76ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [131.01ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [124.50ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [128.22ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [155.59ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [132.39ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [129.82ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [129.65ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [127.05ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [135.64ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [141.51ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [128.60ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [126.34ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [118.10ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [139.48ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [121.82ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [67.07ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.17s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 37 files in 154ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ python3 /home/ubuntu/104-builder-pid-check.py
+$ ps -o pid=,stat=,comm= -p 27742,27743,27744,27745,27746,27747,27748,27749,27750,27751,27752,27753,27754,27755,27756,27757,27758,27759,27775,27777,27790,27791,27792,27793,27794,27795,27796,27797,27798,27799,27800,27801,27802,27803,27804,28846,28847,28848,28849,28850,28851,28852,28853,28854,28855,28856,28857,28858,28859,28860,28861,28862,28863,28875,28876,28888,28889,28890,28891,28892,28893,28894,28895,28896,28897,28898,28899,28900,28901,28902,29062,29063,29064,29065,29066,29067,29068,29069,29070,29071,29072,29073,29074,29075,29076,29077,29078,29079,29091,29092,29109,29110,29111,29112,29113,29114,29115,29116,29117,29118,29119,29120,29121,29122,29123,29153,29160,29162,29165,29166,29169,29170,29173,29174,29176,29247,29248,29249,29250,29251,29252,29253,29254,29255,29256,29257,29258,29259,29260,29261,29262,29263,29264,29276,29277,29289,29290,29291,29292,29293,29294,29295,29296,29297,29298,29299,29300,29301,29302,29303,29823,29824,29825,29826,29827,29828,29829,29830,29831,29832,29833,29834,29835,29836,29837,29838,29839,29840,29852,29853,29865,29866,29867,29868,29869,29870,29871,29872,29873,29874,29875,29876,29877,29878,29879,29909,29916,29918,29921,29922,29925,29926,29929,29930,29932,30003,30004,30005,30006,30007,30008,30009,30010,30011,30012,30013,30014,30015,30016,30017,30018,30019,30020,30032,30033,30045,30046,30047,30048,30049,30050,30051,30052,30053,30054,30055,30056,30057,30058,30059,31516,31517,31518,31519,31520,31521,31522,31523,31524,31525,31526,31527,31528,31529,31530,31531,31532,31533,31546,31547,31563,31564,31565,31566,31567,31568,31569,31570,31571,31572,31573,31574,31575,31576,31577,31607,31614,31616,31619,31620,31623,31624,31626,31628,31630,31701,31702,31703,31704,31705,31706,31707,31708,31709,31710,31711,31712,31713,31714,31715,31716,31717,31718,31730,31731,31743,31744,31745,31746,31747,31748,31749,31750,31751,31752,31753,31754,31755,31756,31757
+PS_EXIT_CODE=1 OWN_PID_COUNT=310
+No recorded owned processes remain
+OWN_PID_CHECK=PASS (no live supported children)
+PRE_REBASE_TEST_TOTAL=111
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+Evidence notes:
+- Initial interactive setup wrappers returned 127 and 2 after GitHub CLI terminal color probes interfered with shell input. The first logged frozen-install entry has an incomplete EXIT_CODE line from that wrapper; subsequent saved-script frozen installations completed with exit 0.
+- Interim formatting/lint exit 1 and strict-typecheck exit 2 diagnostics are preserved above. They were corrected without disabling assertions or acceptance criteria.
+- Post-rebase final verification: frozen install 0; issue-named registry suite 0 (21 pass, 0 fail, 696 assertions); root test 0 (unit 45, integration 34, e2e 32, total 111 pass, 0 fail); check 0; check-types 0; diff whitespace check 0.
+- Post-rebase PID-only inspection checked 310 recorded owned PIDs. ps exit 1 means no matching recorded process remained; inspection helper exit 0. No broad process lookup or kill was used.
+- Scope intentionally excludes HTTP/MCP adapters, ring/read/write/resize, retention expiry and runtime enforcement/kill. Finite deadlines and minimal actual-exit status/capacity bookkeeping are attachment points for the next lifecycle issues.
