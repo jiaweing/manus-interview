@@ -1,0 +1,23 @@
+
+>>> bun run fix
+exit=0 | bun run fix
+
+>>> bun install --frozen-lockfile
+exit=0 | bun install --frozen-lockfile
+
+>>> bun test packages/engine/lifecycle.test.ts
+exit=0 | bun test packages/engine/lifecycle.test.ts
+
+>>> bun run lint
+exit=0 | bun run lint
+
+>>> bun run typecheck
+exit=0 | bun run typecheck
+
+>>> bun run test
+exit=0 | bun run test
+
+>>> bun run build
+exit=0 | bun run build
+
+All required gates passed.

@@ -1,0 +1,59 @@
+bun test v1.4.5 (a7733435c)
+
+packages/engine/deadline.test.ts:
+(pass) authoritative injected-clock deadlines > 11999ms is early; exactly 12000ms folds once and settles heads-up [4.61ms]
+(pass) authoritative injected-clock deadlines > multiway late expiry starts the next actor at expiry time plus 12000 [0.32ms]
+(pass) authoritative injected-clock deadlines > disconnection/resume and public view/JSON cloning cannot extend a deadline [0.71ms]
+(pass) authoritative injected-clock deadlines > timeout during preflop BB option folds rather than the legal check [0.39ms]
+(pass) authoritative injected-clock deadlines > postflop check-available actor also auto-folds [0.57ms]
+(pass) authoritative injected-clock deadlines > stale callback after accepted action cannot fold the next or repeated actor [0.61ms]
+(pass) authoritative injected-clock deadlines > each identity component fences obsolete timers, including prior hands [0.68ms]
+(pass) authoritative injected-clock deadlines > idempotent normalization and illegal actions preserve the turn object [0.27ms]
+(pass) authoritative injected-clock deadlines > all-in, inactive and folded seats never receive a deadline [1.31ms]
+(pass) authoritative injected-clock deadlines > blind-only all-in boundary runs out and settles without phantom deadlines [0.45ms]
+(pass) authoritative injected-clock deadlines > legacy initial assignment and explicit street wrappers time the new actor [0.23ms]
+(pass) authoritative injected-clock deadlines > injected clocks reject invalid or unrepresentable millisecond values [0.30ms]
+(pass) seeded 2-seat timeouts-only: 1000 hands conserve and terminate [223.04ms]
+(pass) seeded 2-seat random-actions/timeouts: 1000 hands conserve and terminate [318.72ms]
+(pass) seeded 3-seat timeouts-only: 1000 hands conserve and terminate [344.15ms]
+(pass) seeded 3-seat random-actions/timeouts: 1000 hands conserve and terminate [531.80ms]
+(pass) seeded 4-seat timeouts-only: 1000 hands conserve and terminate [473.33ms]
+(pass) seeded 4-seat random-actions/timeouts: 1000 hands conserve and terminate [713.31ms]
+
+packages/engine/lifecycle.test.ts:
+(pass) post-settlement match lifecycle > all-in zero stacks do not finish until settlement determines the bust winner [1.78ms]
+(pass) post-settlement match lifecycle > live betting and folded ready-to-settle states are lifecycle identity no-ops [0.57ms]
+(pass) post-settlement match lifecycle > hands 1–9 continue with rotated dealer; exactly the tenth settled hand finishes [10.79ms]
+(pass) post-settlement match lifecycle > normal tied highest stacks share victory, not all seats [0.54ms]
+(pass) post-settlement match lifecycle > a bust on hand ten takes precedence and tied leaders still share victory [0.38ms]
+(pass) post-settlement match lifecycle > new-hand composition normalizes blind-only all-ins rather than leaving a phantom actor [0.42ms]
+(pass) post-settlement match lifecycle > finished result is stored once and repeated transitions/expiry cannot overwrite it [0.76ms]
+(pass) post-settlement match lifecycle > malformed settled boundaries reject without mutation [1.50ms]
+(pass) deferred seat expiry > expiry uses connected tied leaders, excluding a richer disconnected seat [0.48ms]
+(pass) deferred seat expiry > no connected participants means abandoned, with no winners but all final stacks [0.22ms]
+(pass) deferred seat expiry > pending expiry does not alter public state, legal actions, cards, or settlement [0.79ms]
+(pass) deferred seat expiry > expiry chooses leaders after payout, not when the request was made [0.22ms]
+(pass) deferred seat expiry > latest boundary connectivity overrides the request snapshot; expiry beats bust and ten hands [0.24ms]
+(pass) deferred seat expiry > repeated pending requests refresh the connected-seat snapshot without mutation [0.26ms]
+(pass) host-controlled same-room rematch > non-host: repeated rejection preserves byte-equal result and exact state identity [0.90ms]
+(pass) host-controlled same-room rematch > host with zero connected seats: repeated rejection preserves byte-equal result and exact state identity [0.64ms]
+(pass) host-controlled same-room rematch > host with one connected seat: repeated rejection preserves byte-equal result and exact state identity [0.76ms]
+(pass) host-controlled same-room rematch > empty seat IDs are invalid: repeated rejection preserves byte-equal result and exact state identity [0.68ms]
+(pass) host-controlled same-room rematch > five connected seats exceed capacity: repeated rejection preserves byte-equal result and exact state identity [0.67ms]
+(pass) host-controlled same-room rematch > disconnected host: repeated rejection preserves byte-equal result and exact state identity [0.61ms]
+(pass) host-controlled same-room rematch > live or merely settled unfinished matches cannot rematch [0.38ms]
+(pass) host-controlled same-room rematch > connected lobby reservations enter the new match in authoritative room-seat order [0.42ms]
+(pass) host-controlled same-room rematch > successful rematch resets connected seats, stacks before blinds, dealer, counters, cards, results and IDs [0.79ms]
+(pass) host-controlled same-room rematch > invalid or reused generated identifiers throw without changing the final result [0.57ms]
+(pass) host-controlled same-room rematch > rematch clears pending expiry even after abandonment [0.29ms]
+lifecycle seed=34002 matches=240 hands=1107 busts=171 limits=49 expiries=12 abandoned=8 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 2 seats: 240 complete random legal matches, <=10 hands and repeated rematches [546.57ms]
+lifecycle seed=34003 matches=240 hands=692 busts=206 limits=14 expiries=18 abandoned=2 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 3 seats: 240 complete random legal matches, <=10 hands and repeated rematches [493.94ms]
+lifecycle seed=34004 matches=240 hands=509 busts=217 limits=3 expiries=17 abandoned=3 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 4 seats: 240 complete random legal matches, <=10 hands and repeated rematches [482.15ms]
+
+ 46 pass
+ 0 fail
+ 454 expect() calls
+Ran 46 tests across 2 files. [4.19s]

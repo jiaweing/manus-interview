@@ -1,0 +1,31 @@
+$ bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && bun run --cwd packages/engine check-types && tsc --noEmit -p tsconfig.json
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+composition.test.ts(191,4): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: MatchResult | null | undefined): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.
+  Overload 2 of 2, '(expected: NoInfer<MatchResult | null | undefined>): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.
+composition.test.ts(277,4): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: MatchResult | null | undefined): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.
+  Overload 2 of 2, '(expected: NoInfer<MatchResult | null | undefined>): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.
+composition.test.ts(290,4): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: MatchResult | null | undefined): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.
+  Overload 2 of 2, '(expected: NoInfer<MatchResult | null | undefined>): void', gave the following error.
+    Argument of type '{ finalStacks: { seatId: string; stack: number; }[]; terminationReason: string; winnerSeatIds: string[]; }' is not assignable to parameter of type 'MatchResult'.
+      Types of property 'terminationReason' are incompatible.
+        Type 'string' is not assignable to type 'TerminationReason'.

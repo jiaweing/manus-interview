@@ -110,7 +110,10 @@ function finishTransition(
 	);
 }
 
-/** Normalize blind-only all-ins, settle if complete, otherwise time the actor. */
+/**
+ * Non-lifecycle-managed use only: normalize/settle a hand and time its actor.
+ * Managed rooms use lifecycle's startLifecycleMatchAt for match/hand IDs.
+ */
 export function startMatchAt(
 	seats: readonly SeatInput[],
 	nowMs: number,
@@ -124,7 +127,11 @@ export function startMatchAt(
 	);
 }
 
-/** Caller settles the preceding hand and decides lifecycle completion first. */
+/**
+ * Non-lifecycle-managed use only; caller settles the preceding hand first.
+ * This drops managed IDs. Managed rooms must use lifecycle's advanceMatchAt,
+ * never substitute this wrapper or call it after lifecycle has already dealt.
+ */
 export function startNextHandAt(
 	state: MatchState,
 	nowMs: number,

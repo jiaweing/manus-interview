@@ -1,0 +1,19 @@
+bun test v1.4.5 (a7733435c)
+
+packages/engine/composition.test.ts:
+(pass) timed lifecycle composition drain > 400-chip [397,3] boundary never strands its blind-only next hand [6.24ms]
+(pass) timed lifecycle composition drain > tied blind-only runouts drain exactly once per hand through hand ten [3.00ms]
+(pass) timed lifecycle composition drain > timeout settlement composes into exactly one new hand with preserved match ID [1.53ms]
+(pass) timed lifecycle composition drain > pending expiry preserves deadlines until settlement and uses latest connected IDs [0.84ms]
+(pass) timed lifecycle composition drain > rematch gets distinct IDs and a fresh live deadline without a second deal [0.94ms]
+timed lifecycle seed=34202 matches=120 hands=782 actions=1460 timeouts=471 rematches=120
+(pass) seeded full timed matches > 2 seats: 120 matches driven only by timed APIs and an advancing fake clock [398.98ms]
+timed lifecycle seed=34203 matches=120 hands=483 actions=1914 timeouts=585 rematches=120
+(pass) seeded full timed matches > 3 seats: 120 matches driven only by timed APIs and an advancing fake clock [456.11ms]
+timed lifecycle seed=34204 matches=120 hands=410 actions=2209 timeouts=764 rematches=120
+(pass) seeded full timed matches > 4 seats: 120 matches driven only by timed APIs and an advancing fake clock [521.71ms]
+
+ 8 pass
+ 0 fail
+ 46 expect() calls
+Ran 8 tests across 1 file. [1407.00ms]

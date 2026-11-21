@@ -1,0 +1,13 @@
+Round 2 tested revision
+ddd978e24d45012adad06687595077bffebc5d1c test(flopside): type timed composition fixtures against match results
+origin/main: 506ef6522a272f9ea2d7dd4a9c2573ca5815543a
+source tree: 9ed5cc2ba08d93643674e15314ee5b55ba9e7458
+
+Source hashes before final gates:
+da02ac349dbd47da49e2f743b7a7192b541326108484e3db390542357f646f49  packages/engine/lifecycle.ts
+3f2c01e0f93d84268fac39ab9bb31d8dee75f521e3f929404ae80b4e28d77c1b  packages/engine/deadline.ts
+f74e4a7a49642615db4b493ed185676933f1235ecf95d6000ebafc2e471194ea  packages/engine/state.ts
+74257291c2a45fcc5f299efbc25a6bca69141b1b1e3ec1a5eda92712b806a3ca  packages/engine/README.md
+7b96869aea888d55759c445cc9b229c623106f95965b66de5a11637317369880  packages/engine/composition.test.ts
+83d2f964f10c220e54090e10c483f1f281f597a32e082636093779bbc4320d1e  packages/engine/lifecycle.test.ts
+0c867b9fc2e1c6aa12f4ff357dea831b0364df0532a4c69acc20af8e9f715433  packages/engine/deadline.test.ts

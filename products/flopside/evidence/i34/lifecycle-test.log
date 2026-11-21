@@ -1,0 +1,39 @@
+bun test v1.4.5 (a7733435c)
+
+packages/engine/lifecycle.test.ts:
+(pass) post-settlement match lifecycle > all-in zero stacks do not finish until settlement determines the bust winner [4.21ms]
+(pass) post-settlement match lifecycle > live betting and folded ready-to-settle states are lifecycle identity no-ops [0.95ms]
+(pass) post-settlement match lifecycle > hands 1–9 continue with rotated dealer; exactly the tenth settled hand finishes [15.06ms]
+(pass) post-settlement match lifecycle > normal tied highest stacks share victory, not all seats [0.77ms]
+(pass) post-settlement match lifecycle > a bust on hand ten takes precedence and tied leaders still share victory [0.44ms]
+(pass) post-settlement match lifecycle > new-hand composition normalizes blind-only all-ins rather than leaving a phantom actor [0.52ms]
+(pass) post-settlement match lifecycle > finished result is stored once and repeated transitions/expiry cannot overwrite it [0.88ms]
+(pass) post-settlement match lifecycle > malformed settled boundaries reject without mutation [1.73ms]
+(pass) deferred seat expiry > expiry uses connected tied leaders, excluding a richer disconnected seat [0.61ms]
+(pass) deferred seat expiry > no connected participants means abandoned, with no winners but all final stacks [0.38ms]
+(pass) deferred seat expiry > pending expiry does not alter public state, legal actions, cards, or settlement [1.10ms]
+(pass) deferred seat expiry > expiry chooses leaders after payout, not when the request was made [0.38ms]
+(pass) deferred seat expiry > latest boundary connectivity overrides the request snapshot; expiry beats bust and ten hands [0.36ms]
+(pass) deferred seat expiry > repeated pending requests refresh the connected-seat snapshot without mutation [0.31ms]
+(pass) host-controlled same-room rematch > non-host: repeated rejection preserves byte-equal result and exact state identity [0.99ms]
+(pass) host-controlled same-room rematch > host with zero connected seats: repeated rejection preserves byte-equal result and exact state identity [0.80ms]
+(pass) host-controlled same-room rematch > host with one connected seat: repeated rejection preserves byte-equal result and exact state identity [0.81ms]
+(pass) host-controlled same-room rematch > empty seat IDs are invalid: repeated rejection preserves byte-equal result and exact state identity [0.85ms]
+(pass) host-controlled same-room rematch > five connected seats exceed capacity: repeated rejection preserves byte-equal result and exact state identity [0.84ms]
+(pass) host-controlled same-room rematch > disconnected host: repeated rejection preserves byte-equal result and exact state identity [0.77ms]
+(pass) host-controlled same-room rematch > live or merely settled unfinished matches cannot rematch [0.47ms]
+(pass) host-controlled same-room rematch > connected lobby reservations enter the new match in authoritative room-seat order [0.53ms]
+(pass) host-controlled same-room rematch > successful rematch resets connected seats, stacks before blinds, dealer, counters, cards, results and IDs [0.95ms]
+(pass) host-controlled same-room rematch > invalid or reused generated identifiers throw without changing the final result [0.69ms]
+(pass) host-controlled same-room rematch > rematch clears pending expiry even after abandonment [0.43ms]
+lifecycle seed=34002 matches=240 hands=1107 busts=171 limits=49 expiries=12 abandoned=8 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 2 seats: 240 complete random legal matches, <=10 hands and repeated rematches [590.76ms]
+lifecycle seed=34003 matches=240 hands=692 busts=206 limits=14 expiries=18 abandoned=2 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 3 seats: 240 complete random legal matches, <=10 hands and repeated rematches [512.53ms]
+lifecycle seed=34004 matches=240 hands=509 busts=217 limits=3 expiries=17 abandoned=3 rematches=240
+(pass) seeded complete matches and rematch-after-finish property > 4 seats: 240 complete random legal matches, <=10 hands and repeated rematches [529.08ms]
+
+ 28 pass
+ 0 fail
+ 335 expect() calls
+Ran 28 tests across 1 file. [1.69s]
