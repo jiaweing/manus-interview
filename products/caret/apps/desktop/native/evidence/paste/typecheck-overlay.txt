@@ -1,0 +1,6 @@
+COMMAND: bun run --cwd apps/desktop typecheck:overlay
+HOST: Linux x64 (not Windows)
+
+$ tsc --noEmit -p tsconfig.overlay.json
+
+EXIT_CODE: 0

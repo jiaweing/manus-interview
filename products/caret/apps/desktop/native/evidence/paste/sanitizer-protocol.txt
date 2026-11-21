@@ -1,0 +1,17 @@
+COMMAND: g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer apps/desktop/native/protocol.cpp apps/desktop/native/tests/protocol_test.cpp -o apps/desktop/native/build/protocol-sanitized
+HOST: Linux x64
+
+
+BUILD_EXIT_CODE: 0
+COMMAND: apps/desktop/native/build/protocol-sanitized
+PASS invalid JSON/schema/operation: 79 fixtures; snapshot=0 insert=0 clipboard=0 input=0 (fake platform counters)
+PASS 2000 deterministic request mutations; rejected requests have zero adapter calls
+PASS valid snapshot and duplicate request (fixture handles, NOT Windows evidence)
+PASS duplicate session ID: rejected call delta insert=0 clipboard=0 input=0
+PASS UTF-8/escaped Unicode and text boundary
+PASS no usable target and failure consumes session ID
+PASS four typed outcomes (fixture only; no paste implementation)
+PASS bounded framing, resynchronization, and truncated EOF
+PASS bounded app-lifetime ID ledger, no eviction, fail closed
+
+EXIT_CODE: 0

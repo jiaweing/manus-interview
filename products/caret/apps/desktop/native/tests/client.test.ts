@@ -28,6 +28,60 @@ afterEach(() => {
 });
 
 describe("helper main-process client", () => {
+  test("PASS pre-cancelled insert never writes and does not consume transport", async () => {
+    const { client, writes } = fixture("valid");
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      client.insert(
+        target,
+        "cancel",
+        "Jia Wei Ng — Manus 42",
+        controller.signal
+      )
+    ).rejects.toThrow("cancelled");
+    expect(writes).toHaveBeenCalledTimes(0);
+    expect(await client.snapshot()).toEqual(target);
+  });
+  test("PASS AbortSignal closes input channel while insert is pending; no replay", async () => {
+    const { client, writes } = fixture("silent");
+    const controller = new AbortController();
+    const attempt = client.insert(
+      target,
+      "cancel",
+      "fixture",
+      controller.signal
+    );
+    controller.abort();
+    await expect(attempt).rejects.toThrow("cancelled");
+    await expect(client.insert(target, "cancel", "fixture")).rejects.toThrow(
+      "cancelled"
+    );
+    expect(writes).toHaveBeenCalledTimes(1);
+  });
+  test("PASS main cancellation hook terminates all pending calls with no new request", async () => {
+    const { client, writes } = fixture("silent");
+    const pending = Promise.allSettled([
+      client.snapshot(),
+      client.insert(target, "cancel", "fixture"),
+    ]);
+    client.cancelPendingInsert();
+    expect(
+      (await pending).every((result) => result.status === "rejected")
+    ).toBe(true);
+    await expect(client.snapshot()).rejects.toThrow("cancelled");
+    expect(writes).toHaveBeenCalledTimes(2);
+  });
+  test("PASS settled insert removes abort listener and never replays successful input", async () => {
+    const { client, writes } = fixture("outcome-paste_requested");
+    const controller = new AbortController();
+    expect(
+      await client.insert(target, "success", "fixture", controller.signal)
+    ).toBe("paste_requested");
+    controller.abort();
+    expect(await client.snapshot()).toEqual(target);
+    expect(writes).toHaveBeenCalledTimes(2);
+  });
   test("PASS valid snapshot and split response framing", async () => {
     async function expectSnapshot(mode: string): Promise<void> {
       const { client } = fixture(mode);

@@ -1,0 +1,75 @@
+COMMAND: bun run --cwd apps/desktop test:helper-protocol
+HOST: Linux x64 (not Windows)
+
+$ bun native/scripts/test.ts
+PASS compiled protocol-fixtures
+PASS compiled paste-fixtures
+PASS invalid JSON/schema/operation: 79 fixtures; snapshot=0 insert=0 clipboard=0 input=0 (fake platform counters)
+PASS 2000 deterministic request mutations; rejected requests have zero adapter calls
+PASS valid snapshot and duplicate request (fixture handles, NOT Windows evidence)
+PASS duplicate session ID: rejected call delta insert=0 clipboard=0 input=0
+PASS UTF-8/escaped Unicode and text boundary
+PASS no usable target and failure consumes session ID
+PASS four typed outcomes (fixture only; no paste implementation)
+PASS bounded framing, resynchronization, and truncated EOF
+PASS bounded app-lifetime ID ledger, no eviction, fail closed
+PASS Unicode insertion: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS duplicate ID: delta Ctrl+V=0 Enter=0 foreground-setting=0 adapter-calls=0
+PASS modifier-release ordering (Ctrl/Alt/Space OR): Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS foreground change before clipboard: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS foreground change after wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS control change before clipboard: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS control change after wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS no usable target: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot, (fake platform; NOT Windows evidence)
+PASS cancellation before: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled, (fake platform; NOT Windows evidence)
+PASS cancellation wait: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled, (fake platform; NOT Windows evidence)
+PASS cancellation snapshot: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,elevation,snapshot,cancelled, (fake platform; NOT Windows evidence)
+PASS unsupported elevated/inaccessible target: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation, (fake platform; NOT Windows evidence)
+PASS bounded modifier timeout: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock,wait,cancelled,modifiers,clock, (fake platform; NOT Windows evidence)
+PASS clipboard failure no retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=0 calls=cancelled,elevation,snapshot,cancelled,clipboard, (fake platform; NOT Windows evidence)
+PASS failed input; duplicate cannot retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=0 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS partial input; duplicate cannot retry: Ctrl+V=1 Enter=0 foreground-setting=0 input-requests=1 calls=cancelled,elevation,snapshot,cancelled,clipboard,clock,cancelled,modifiers,elevation,snapshot,cancelled,input, (fake platform; NOT Windows evidence)
+PASS additional CJK and astral Unicode conversion
+PASS guarded paste suite: 19 cases (fake platform only)
+bun test v1.4.5 (a7733435c)
+
+native/tests/client.test.ts:
+(pass) helper main-process client > PASS pre-cancelled insert never writes and does not consume transport [39.86ms]
+(pass) helper main-process client > PASS AbortSignal closes input channel while insert is pending; no replay [1.82ms]
+(pass) helper main-process client > PASS main cancellation hook terminates all pending calls with no new request [1.24ms]
+(pass) helper main-process client > PASS settled insert removes abort listener and never replays successful input [29.71ms]
+(pass) helper main-process client > PASS valid snapshot and split response framing [58.60ms]
+(pass) helper main-process client > PASS typed insert outcome target_changed (fixture only) [31.01ms]
+(pass) helper main-process client > PASS typed insert outcome clipboard_busy (fixture only) [27.63ms]
+(pass) helper main-process client > PASS typed insert outcome unsupported (fixture only) [28.51ms]
+(pass) helper main-process client > PASS typed insert outcome paste_requested (fixture only) [27.82ms]
+(pass) helper main-process client > PASS malformed response: malformed; no retry [38.64ms]
+(pass) helper main-process client > PASS malformed response: wrong-id; no retry [28.54ms]
+(pass) helper main-process client > PASS malformed response: null-id; no retry [30.69ms]
+(pass) helper main-process client > PASS malformed response: extra; no retry [29.82ms]
+(pass) helper main-process client > PASS malformed response: wrong-type; no retry [28.15ms]
+(pass) helper main-process client > PASS malformed response: wrong-op; no retry [29.33ms]
+(pass) helper main-process client > PASS malformed response: duplicate-key; no retry [28.20ms]
+(pass) helper main-process client > PASS malformed response: invalid-utf8; no retry [28.48ms]
+(pass) helper main-process client > PASS malformed response: overlong; no retry [27.55ms]
+(pass) helper main-process client > PASS malformed response: truncated; no retry [29.84ms]
+(pass) helper main-process client > PASS helper exit: exit; no retry [33.50ms]
+(pass) helper main-process client > PASS pending insert malformed is terminal; never request another insertion [30.97ms]
+(pass) helper main-process client > PASS pending insert exit is terminal; never request another insertion [31.70ms]
+(pass) helper main-process client > PASS helper timeout is terminal and never replays insert [101.60ms]
+(pass) helper main-process client > PASS no usable target is a typed rejection, not an automatic insertion [33.12ms]
+(pass) helper main-process client > PASS invalid insert requests never write to the helper [30.72ms]
+(pass) helper main-process client > PASS escaped text exceeding wire line bound never writes [2.24ms]
+(pass) helper main-process client > PASS pending request limit is bounded [1.80ms]
+(pass) helper main-process client > PASS spawn failure and closure are terminal [3.44ms]
+(pass) helper main-process client > PASS portable C++ helper round trip and app-lifetime insert deduplication [3.00ms]
+(pass) strict helper response schema > PASS unknown fields, invalid handles, wrong types, outcomes and duplicate keys rejected [0.39ms]
+
+ 30 pass
+ 0 fail
+ 112 expect() calls
+Ran 30 tests across 1 file. [835.00ms]
+
+EXIT_CODE: 0
