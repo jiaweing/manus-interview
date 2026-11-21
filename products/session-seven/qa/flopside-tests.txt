@@ -1,0 +1,25 @@
+$ bun test apps/video/tests/flopside.test.js
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/flopside.test.js:
+(pass) Flopside illustration > exports the assigned scene and uses SceneFrame without duplicated overlays [0.52ms]
+(pass) Flopside illustration > source and every frame contain no funds, payment, remote or mutable-render cues [389.94ms]
+(pass) Flopside illustration > two backed private hands exist until one simultaneous showdown at local 180 [154.68ms]
+(pass) Flopside illustration > play-chip placement begins exactly at local 120 and conserves the fixture chips [163.34ms]
+(pass) Flopside illustration > card faces are filled monochrome glyphs with at least 48px text [3.28ms]
+(pass) Flopside illustration > caption/name and Illustrated UI/Concept stay present for all 240 frames [5.12ms]
+(pass) Flopside illustration > fixtures are immutable and repeated/shuffled frame markup is deterministic [16.30ms]
+Flopside real still smoke: 10.009s
+PNG ../../../../../../tmp/s7-flopside-smoke-vngCS0/flopside/frame-0450.png frame=450
+PNG ../../../../../../tmp/s7-flopside-smoke-vngCS0/flopside/frame-0540.png frame=540
+PNG ../../../../../../tmp/s7-flopside-smoke-vngCS0/flopside/frame-0630.png frame=630
+TIMING bundle=3.706s renders=4.294s total=9.470s concurrency=1
+STILLS ok count=3
+(pass) Flopside illustration > real shared-preview smoke renders three native Flopside frames within 90s [10013.19ms]
+
+ 8 pass
+ 0 fail
+ 5648 expect() calls
+Ran 8 tests across 1 file. [11.15s]
+
+EXIT_CODE=0
