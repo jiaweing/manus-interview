@@ -14,7 +14,7 @@
     "ignoreUnknown": false,
     "includes": [
       "!**/.next",
-      "!**/evidence/playwright-report",
+      "!**/evidence",
       "!**/test-results",
       "!**/.certs",
       "!**/dist",
