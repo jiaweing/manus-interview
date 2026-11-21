@@ -1,0 +1,24 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/caret.test.js:
+(pass) Caret desktop dictation illustration > named component keeps the caret scene registry and shared frame [1.29ms]
+(pass) Caret desktop dictation illustration > shortcut is the PRD keyboard cue with three keycap chips [0.85ms]
+(pass) Caret desktop dictation illustration > listening has the mic, listening Pip pose and held thought fixture [1.07ms]
+(pass) Caret desktop dictation illustration > the single insertion action starts at local 120, absolute 300 [2.62ms]
+(pass) Caret desktop dictation illustration > meter is seeded and beat-stepped, caret is a slow static-frame blink [0.51ms]
+(pass) Caret desktop dictation illustration > no delivery controls, delivery states, broad control claims or unsafe fixture [0.58ms]
+(pass) Caret desktop dictation illustration > all motion is frame-derived and UI uses only shared neutral primitives [0.34ms]
+(pass) Caret desktop dictation illustration > exact caption, concept qualification and persistent labels cover all 240 frames [2.19ms]
+Caret real still smoke: 8.973s exit=0
+PNG ../../../../../../tmp/s7-caret-smoke-1SaFEy/caret/frame-0180.png frame=180
+PNG ../../../../../../tmp/s7-caret-smoke-1SaFEy/caret/frame-0210.png frame=210
+PNG ../../../../../../tmp/s7-caret-smoke-1SaFEy/caret/frame-0300.png frame=300
+TIMING bundle=3.575s renders=3.524s total=8.335s concurrency=1
+STILLS ok count=3
+
+(pass) Caret desktop dictation illustration > real 3-frame scoped PNG smoke within a 90-second deadline [8976.53ms]
+
+ 9 pass
+ 0 fail
+ 2282 expect() calls
+Ran 9 tests across 1 file. [9.33s]
