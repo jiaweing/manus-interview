@@ -1,0 +1,22 @@
+bun install v1.4.5 (a7733435c)
+
+WXT 0.21.5
+✖ Command failed after 240 ms
+
+
+ ERROR  SIDEKICK_PROXY_URL is required in production
+
+    at validateProxyUrl (/home/ubuntu/wt/integrate-199/products/sidekick/packages/config/src/proxy-url.ts:9:11)
+    at wxt.config.ts:10:55
+    at async Function.import (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/jiti@2.7.0/node_modules/jiti/dist/jiti.cjs:1:187718)
+    at async resolveConfig (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/c12@3.3.4+1377207450ecf81d/node_modules/c12/dist/index.mjs:318:20)
+    at async loadConfig (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/c12@3.3.4+1377207450ecf81d/node_modules/c12/dist/index.mjs:147:22)
+    at async resolveConfig (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/internal/resolve-config.mjs:29:49)
+    at async registerWxt (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/internal/wxt.mjs:23:17)
+    at async prepare (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/prepare.mjs:6:2)
+    at async /home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/cli/commands.mjs:57:2
+    at async CAC.<anonymous> (/home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/cli/cli-utils.mjs:22:10)
+    at async /home/ubuntu/wt/integrate-199/products/sidekick/node_modules/.bun/wxt@0.21.5+d860d3b4ef6410ea/node_modules/wxt/dist/cli/index.mjs:11:1
+
+
+error: postinstall script from "extension" exited with 1

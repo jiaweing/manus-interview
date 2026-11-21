@@ -1,0 +1,56 @@
+bun test v1.4.5 (a7733435c)
+
+apps/server/src/agent/security.test.ts:
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 0) [5.88ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 1) [0.70ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 2) [0.38ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 3) [0.47ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 4) [0.46ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 5) [0.48ms]
+(pass) bearer authentication independent of CORS > rejects malformed/missing/incorrect authorization (case 6) [0.32ms]
+(pass) bearer authentication independent of CORS > valid token reaches only minimally validated adapter calls, with or without Origin [1.65ms]
+(pass) bearer authentication independent of CORS > preflight never calls the adapter or authorizes a subsequent POST [0.61ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: empty [0.51ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400:   [0.40ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: { [0.39ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: null [0.29ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: [] [0.29ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {} [0.34ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":" "} [0.31ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":123,"messages":[],"snapshot":{}} [0.36ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":{},"snapshot":{}} [0.29ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":[],"snapshot":null} [0.26ms]
+(pass) minimal envelope validation before adapter dispatch > invalid envelope is 400: {"goal":"Read","messages":[],"snapshot":[]} [0.24ms]
+(pass) minimal envelope validation before adapter dispatch > non-JSON content type is rejected [0.41ms]
+(pass) minimal envelope validation before adapter dispatch > valid shell without adapter remains explicitly unimplemented [0.50ms]
+(pass) actual request byte limit > body beyond configured cap is 413 and never dispatches [0.51ms]
+(pass) actual request byte limit > oversized declared Content-Length is 413 [0.42ms]
+(pass) actual request byte limit > a lying small Content-Length cannot bypass actual-byte accounting [0.37ms]
+(pass) actual request byte limit > multi-chunk bodies are bounded without Content-Length [0.50ms]
+(pass) actual request byte limit > UTF-8 bytes, not JavaScript character count, determine cap [0.42ms]
+(pass) actual request byte limit > exact byte cap is accepted [0.42ms]
+(pass) bounded fixed-window token rate budget > 429 blocks adapter, ignores spoofed IP/Origin, and resets after configured window [1.17ms]
+(pass) bounded fixed-window token rate budget > unauthenticated requests do not exhaust the authenticated budget [0.52ms]
+(pass) bounded fixed-window token rate budget > invalid authorized requests consume budget and cannot flood the parser [0.41ms]
+(pass) environment and production HTTPS configuration > missing token fails closed without serializing environment [0.09ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: absent [0.04ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: http://proxy.example [0.01ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: http://localhost:8787
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: ftp://proxy.example
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: not-a-url [0.03ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://user:dummy-key@proxy.example
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/?token=dummy [0.01ms]
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/path
+(pass) environment and production HTTPS configuration > production rejects non-HTTPS or unsafe/missing origin: https://proxy.example/#token
+(pass) environment and production HTTPS configuration > production accepts a credential-free HTTPS public origin [0.06ms]
+(pass) environment and production HTTPS configuration > development HTTP is restricted to loopback [0.14ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_MAX_BODY_BYTES rejects zero, negative, fractional, unsafe and empty values [0.10ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_RATE_LIMIT_MAX_REQUESTS rejects zero, negative, fractional, unsafe and empty values [0.04ms]
+(pass) environment and production HTTPS configuration > SIDEKICK_RATE_LIMIT_WINDOW_MS rejects zero, negative, fractional, unsafe and empty values [0.06ms]
+(pass) environment and production HTTPS configuration > PORT rejects zero, negative, fractional, unsafe and empty values [0.07ms]
+(pass) captured logs never contain request/response bodies, tokens, provider keys, or sensitive sentinels [1.34ms]
+
+ 48 pass
+ 0 fail
+ 143 expect() calls
+Ran 48 tests across 1 file. [47.00ms]

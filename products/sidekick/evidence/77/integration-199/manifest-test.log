@@ -1,0 +1,18 @@
+bun test v1.4.5 (a7733435c)
+
+apps/extension/tests/manifest.test.ts:
+(pass) production Sidekick manifest > registers a resolvable MV3 side panel without a toolbar popup [0.15ms]
+(pass) production Sidekick manifest > grants exactly the five browser capabilities, never debugger or native messaging [0.11ms]
+(pass) production Sidekick manifest > requires only the configured proxy origin and leaves demo origins optional [0.17ms]
+(pass) production Sidekick manifest > packages the content script but does not auto-inject it or grant matches [0.33ms]
+(pass) production Sidekick manifest > keeps the MV3 worker limited to toolbar/panel setup [0.26ms]
+(pass) proxy origin configuration > defaults to local development and normalizes an HTTPS origin [0.06ms]
+(pass) proxy origin configuration > permits only loopback HTTP development URLs [0.18ms]
+(pass) proxy origin configuration > rejects wildcard, credential-bearing, non-HTTP(S), and malformed URLs [0.30ms]
+(pass) proxy origin configuration > uses the same public URL for the extension client and manifest [0.05ms]
+(pass) proxy origin configuration > production requires an explicit HTTPS origin, even for loopback [0.10ms]
+
+ 10 pass
+ 0 fail
+ 65 expect() calls
+Ran 10 tests across 1 file. [15.00ms]

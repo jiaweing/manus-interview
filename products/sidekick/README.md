@@ -6,6 +6,8 @@ Supervised Chrome side-panel agent (WXT + Hono proxy). Built from the Better-T-S
 - `apps/server`: Hono proxy on Bun.
 
 ```bash
+# Public origin only; never export a token/provider key with a WXT_ prefix.
+export WXT_SIDEKICK_PROXY_URL=https://proxy.example.com # use your HTTPS host
 bun install --frozen-lockfile
 cp .env.example .env
 # Edit the gitignored .env privately: SIDEKICK_DEMO_TOKEN must be nonempty.
@@ -21,7 +23,7 @@ The server explicitly loads `products/sidekick/.env`; automatic Bun environment 
 
 `SIDEKICK_PROXY_URL` is the public **origin**, without credentials, path, query, or fragment. Set `NODE_ENV=production` to require an explicit HTTPS origin, including for localhost. Development permits HTTP only on `localhost`, `127.0.0.1`, or `[::1]`. Bun binds locally on `PORT` (default 8787); the supplied host must terminate TLS, forward to Bun over a trusted internal connection, and prevent public access to the plain-HTTP backend. Merely setting the public URL does not create TLS hosting. No forwarded header is trusted to bypass configuration validation.
 
-For extension builds, put **only** `WXT_SIDEKICK_PROXY_URL=<same public origin>` in `apps/extension/.env`, or export that public variable when running WXT. The extension does not read the server's root `.env`. `apps/extension/src/proxy.ts` exports that public origin for the later turn client; manifest permissions and the client are owned by #77/#88. Never put a token/provider key in extension environment files. A production extension build also requires HTTPS when `NODE_ENV=production` is set.
+For extension builds, put **only** `WXT_SIDEKICK_PROXY_URL=<same public origin>` in `apps/extension/.env`, or export that public variable when running WXT. The extension does not read the server's root `.env`. Both the manifest's single required proxy host permission and `apps/extension/src/proxy.ts` use this same public origin and the shared validator in `packages/config/src/proxy-url.ts`; the later turn client is owned by #88. Never put a token/provider key in extension environment files. A production extension build also requires HTTPS when `NODE_ENV=production` is set. The five browser permissions are `sidePanel`, `activeTab`, `scripting`, `tabs`, and `storage`; Wikipedia and httpbin origins remain optional, user-granted permissions.
 
 `POST /v1/agent/turn` authenticates before parsing or adapter dispatch. CORS permits transport/preflight but never authorizes a POST. Bearer tokens are compared with Node's constant-time `timingSafeEqual` on fixed-length SHA-256 digests. The turn shell checks JSON content type and a nonempty string `goal`, array `messages`, and object `snapshot`. Full protocol validation/provider integration is #79. A valid envelope returns 501 until an adapter is injected; invalid/empty envelopes return 400 without a model call.
 

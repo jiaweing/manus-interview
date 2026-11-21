@@ -11,6 +11,8 @@
     "includes": [
       "!**/.next",
       "!**/dist",
+      "!**/.output",
+      "!**/.wxt",
       "!**/.turbo",
       "!**/.nx",
       "!**/dev-dist",

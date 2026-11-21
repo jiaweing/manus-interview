@@ -1,0 +1,154 @@
+$ ultracite check
+/home/ubuntu/manus-interview/products/sidekick/biome.json:46:9 deserialize ━━━━━━━━━━
+
+  × Found an unknown key `useTailwindSortedClasses`.
+
+    44 │       },
+    45 │       "nursery": {
+  > 46 │         "useTailwindSortedClasses": {
+       │         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    47 │           "level": "warn",
+    48 │           "fix": "safe"
+
+  i Known keys:
+
+  - recommended
+  - preset
+  - noAstroConflictingSetDirectives
+  - noAstroSetHtmlDirective
+  - noBaseToString
+  - noBunModules
+  - noComponentHookFactories
+  - noConditionalExpect
+  - noDrizzleDeleteWithoutWhere
+  - noDrizzleUpdateWithoutWhere
+  - noDuplicateFieldDefinitionNames
+  - noDuplicateSelectors
+  - noEmptyObjectKeys
+  - noExcessiveNestedCallbacks
+  - noExcessiveSelectorClasses
+  - noExtendNative
+  - noFloatingPromises
+  - noIdenticalTestTitle
+  - noImpliedEval
+  - noInlineStyles
+  - noInvalidFileInputAccept
+  - noInvalidPropertyInitValue
+  - noJsRestrictedProperties
+  - noJsonUnsafeValues
+  - noJsxLeakedDollar
+  - noJsxNamespace
+  - noLoopFunc
+  - noMeaninglessVoidOperator
+  - noMisleadingReturnType
+  - noMisplacedListElements
+  - noMisusedPromises
+  - noNegationInEqualityCheck
+  - noNonScalableViewport
+  - noObsoleteTags
+  - noPlaywrightElementHandle
+  - noPlaywrightEval
+  - noPlaywrightForceOption
+  - noPlaywrightMissingAwait
+  - noPlaywrightNetworkidle
+  - noPlaywrightPagePause
+  - noPlaywrightUselessAwait
+  - noPlaywrightWaitForNavigation
+  - noPlaywrightWaitForSelector
+  - noPlaywrightWaitForTimeout
+  - noReactNativeDeepImports
+  - noReactNativeLiteralColors
+  - noReactNativeRawText
+  - noReactObjectTypeAsDefaultProp
+  - noReactStringRefs
+  - noRestrictedDependencies
+  - noReturnInFinally
+  - noSelfImport
+  - noSvelteAtDebugTags
+  - noSvelteAtHtmlTags
+  - noSvelteExportLet
+  - noSvelteLegacyConst
+  - noSvelteUnnecessaryStateWrap
+  - noTailwindArbitraryValue
+  - noTailwindRawColors
+  - noThisOutsideOfClass
+  - noTopLevelLiterals
+  - noUndeclaredClasses
+  - noUndeclaredCustomProperties
+  - noUnmodifiedLoopCondition
+  - noUnnecessaryTemplateExpression
+  - noUnsafeIframeSandbox
+  - noUnsafePlusOperands
+  - noUnsafeTypeAssertion
+  - noUntrustedLicenses
+  - noUnusedClasses
+  - noUselessTypeConversion
+  - noVueDeprecatedScopedSlots
+  - noVueImportCompilerMacros
+  - noVueRefAsOperand
+  - noVueUndeclaredDirectives
+  - noVueVOnNumberValues
+  - noXorAsExponentiation
+  - useArraySome
+  - useAstroClientOnlyDirectiveValue
+  - useAwaitThenable
+  - useBaseline
+  - useBetterDomTraversing
+  - useConsistentFunctionStyle
+  - useConsistentObjectKeys
+  - useConsistentTestIt
+  - useControlLabel
+  - useDisposables
+  - useDomNodeTextContent
+  - useDomQuerySelector
+  - useExhaustiveSwitchCases
+  - useExpect
+  - useExplicitReturnType
+  - useExplicitType
+  - useFlatMathMinMax
+  - useIframeSandbox
+  - useImportsFirst
+  - useIncludes
+  - useLayeredStyles
+  - useLogicalProperties
+  - useMathMinMax
+  - useModernMathApis
+  - useNamedCaptureGroup
+  - useNamedLayer
+  - useNullishCoalescing
+  - usePlaywrightValidDescribeCallback
+  - usePromiseRejectErrors
+  - useQwikLoaderLocation
+  - useReactAsyncServerFunction
+  - useReactCompiler
+  - useReactFunctionComponentDefinition
+  - useReactNamingConvention
+  - useReactNativePlatformComponents
+  - useReduceTypeParameter
+  - useRegexpExec
+  - useRegexpTest
+  - useScopedStyles
+  - useSortedClasses
+  - useStrictBooleanExpressions
+  - useStringStartsEndsWith
+  - useSvelteKitRuneImports
+  - useSvelteRequireEachKey
+  - useTailwindShorthandClasses
+  - useTestHooksInOrder
+  - useTestHooksOnTop
+  - useThisInClassMethods
+  - useUnicodeRegex
+  - useValidTestTitle
+  - useVarsOnTop
+  - useVueBaseImport
+  - useVueConsistentDefinePropsDeclaration
+  - useVueNextTickPromise
+  - useVueValidVFor
+
+
+configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Biome exited because the configuration resulted in errors. Please fix them.
+
+
+error: script "check" exited with code 1
