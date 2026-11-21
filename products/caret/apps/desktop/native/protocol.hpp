@@ -17,7 +17,7 @@ struct Target {
   bool operator==(const Target&) const = default;
 };
 
-enum class Outcome { target_changed, clipboard_busy, unsupported, paste_requested };
+enum class Outcome { target_changed, clipboard_busy, clipboard_restore_failed, unsupported, paste_requested };
 
 // Only this adapter can touch the desktop. The protocol must validate/dedupe first.
 class Platform {

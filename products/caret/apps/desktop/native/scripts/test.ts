@@ -30,6 +30,7 @@ if (!snapshotOnly) {
   }
   run(resolve(build, `protocol-fixtures${suffix}`), []);
   run(resolve(build, `paste-fixtures${suffix}`), []);
+  run(resolve(build, `clipboard-policy-fixtures${suffix}`), []);
   run(process.execPath, ["test", "native/tests/client.test.ts"]);
 }
 

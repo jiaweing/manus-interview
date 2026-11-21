@@ -93,6 +93,7 @@ describe("helper main-process client", () => {
   for (const outcome of [
     "target_changed",
     "clipboard_busy",
+    "clipboard_restore_failed",
     "unsupported",
     "paste_requested",
   ] as InsertOutcome[]) {
@@ -256,6 +257,8 @@ describe("strict helper response schema", () => {
       "not json",
       '{"requestId":"r","ok":true}',
       '{"requestId":"r","ok":true,"outcome":"ok"}',
+      '{"requestId":"r","ok":true,"outcome":"clipboard_restore_failure"}',
+      '{"requestId":"r","ok":true,"outcome":"clipboard_restore_failed","extra":1}',
       '{"requestId":"r","ok":false,"error":"arbitrary"}',
       '{"requestId":"r","ok":true,"outcome":"unsupported","extra":1}',
       '{"requestId":"r","ok":true,"target":{"foreground":"0x0","focus":"0x123"}}',

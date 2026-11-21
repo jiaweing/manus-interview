@@ -74,11 +74,43 @@ Modifiers Win32Platform::modifiers() {
 }
 std::uint64_t Win32Platform::now_ms() { return GetTickCount64(); }
 void Win32Platform::wait_ms(unsigned duration) { Sleep(duration); }
-bool Win32Platform::write_unicode(const std::u16string& text) {
-  // ISSUE #8 SEAM: intentionally destructive one-way Unicode write only. The
-  // next issue owns supported-format checks, snapshot and conditional restore.
+bool Win32Platform::open_clipboard() {
+  return clipboard_owner_ && OpenClipboard(clipboard_owner_);
+}
+bool Win32Platform::clipboard_formats(std::vector<std::uint32_t>& formats) {
+  formats.clear();
+  UINT format = 0;
+  for (;;) {
+    SetLastError(ERROR_SUCCESS);
+    format = EnumClipboardFormats(format);
+    if (!format) return GetLastError() == ERROR_SUCCESS;
+    formats.push_back(format);
+  }
+}
+bool Win32Platform::read_plain_text(std::u16string& text) {
+  // Windows synthesizes Unicode from CF_TEXT/CF_OEMTEXT using CF_LOCALE.
+  // The shared policy has already rejected every non-text format.
   static_assert(sizeof(wchar_t) == sizeof(char16_t));
-  if (!clipboard_owner_) return false;
+  const HANDLE memory = GetClipboardData(CF_UNICODETEXT);
+  if (!memory) return false;
+  const auto units = GlobalSize(memory) / sizeof(char16_t);
+  const auto* data = static_cast<const char16_t*>(GlobalLock(memory));
+  if (!data) return false;
+  std::size_t length = 0;
+  while (length < units && data[length] != 0) ++length;
+  const bool terminated = length < units;
+  if (terminated) text.assign(data, length);
+  GlobalUnlock(memory);
+  return terminated;
+}
+bool Win32Platform::empty_clipboard() { return EmptyClipboard() != FALSE; }
+std::optional<std::uint32_t> Win32Platform::clipboard_sequence() {
+  const auto sequence = GetClipboardSequenceNumber();
+  return sequence ? std::optional<std::uint32_t>(sequence) : std::nullopt;
+}
+bool Win32Platform::close_clipboard() { return CloseClipboard() != FALSE; }
+bool Win32Platform::write_unicode(const std::u16string& text) {
+  static_assert(sizeof(wchar_t) == sizeof(char16_t));
   const auto bytes = (text.size() + 1) * sizeof(char16_t);
   HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE, bytes);
   if (!memory) return false;
@@ -86,9 +118,7 @@ bool Win32Platform::write_unicode(const std::u16string& text) {
   if (!destination) { GlobalFree(memory); return false; }
   std::memcpy(destination, text.c_str(), bytes);
   GlobalUnlock(memory);
-  if (!OpenClipboard(clipboard_owner_)) { GlobalFree(memory); return false; }
-  const bool written = EmptyClipboard() && SetClipboardData(CF_UNICODETEXT, memory);
-  CloseClipboard();
+  const bool written = SetClipboardData(CF_UNICODETEXT, memory) != nullptr;
   if (!written) GlobalFree(memory);  // Success transfers ownership to the OS.
   return written;
 }

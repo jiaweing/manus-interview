@@ -1,0 +1,4 @@
+COMMAND: bun run lint
+
+$ biome check apps/desktop
+Checked 43 files in 1829ms. No fixes applied.

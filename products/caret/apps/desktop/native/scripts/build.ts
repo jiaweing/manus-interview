@@ -35,7 +35,7 @@ function compile(sources: string[], name: string, win32 = false): void {
         `/Fe:${output}`,
         "/link",
         "/MACHINE:X64",
-        ...(win32 ? ["user32.lib", "advapi32.lib"] : []),
+        ...(win32 ? ["user32.lib", "advapi32.lib", "gdi32.lib"] : []),
       ]
     : [
         "-std=c++20",
@@ -50,7 +50,7 @@ function compile(sources: string[], name: string, win32 = false): void {
         ...sources.map((source) => resolve(native, source)),
         "-o",
         output,
-        ...(win32 ? ["-luser32", "-ladvapi32"] : []),
+        ...(win32 ? ["-luser32", "-ladvapi32", "-lgdi32"] : []),
       ];
   const result = spawnSync(compiler, args, {
     cwd: build,
@@ -76,10 +76,24 @@ compile(
   ["protocol.cpp", "paste.cpp", "tests/paste_test.cpp"],
   "paste-fixtures"
 );
+compile(
+  ["protocol.cpp", "paste.cpp", "tests/clipboard_policy_test.cpp"],
+  "clipboard-policy-fixtures"
+);
 if (!fixturesOnly) {
   compile(
     ["protocol.cpp", "paste.cpp", "win32_platform.cpp", "win32_main.cpp"],
     "caret-helper",
+    true
+  );
+  compile(
+    [
+      "protocol.cpp",
+      "paste.cpp",
+      "win32_platform.cpp",
+      "tests/clipboard_policy_windows.cpp",
+    ],
+    "clipboard-policy-windows",
     true
   );
   compile(["tests/record_target.cpp"], "record-target", true);

@@ -1,0 +1,4 @@
+COMMAND: bun run --cwd apps/desktop test:windows:helper-protocol
+
+$ bun native/scripts/test.ts --windows
+NOT RUN: needs Windows (real interactive desktop; Wine is not acceptance evidence)

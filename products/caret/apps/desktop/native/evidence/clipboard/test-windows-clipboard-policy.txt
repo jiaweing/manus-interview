@@ -1,0 +1,4 @@
+COMMAND: bun run --cwd apps/desktop test:windows:clipboard-policy
+
+$ bun native/scripts/clipboard-policy.ts
+NOT RUN: needs Windows (real interactive desktop; Wine is not acceptance evidence)
