@@ -2414,3 +2414,8 @@ AGGREGATE EXIT CODE: 0
  5899 expect() calls
 Ran 283 tests across 1 file. [4.03s]
 --- round 5 (lead fix): guard semver comparison; 301 pass ---
+--- round 6 (lead fix): guard Bun.which; 
+ 305 pass
+ 0 fail
+ 6087 expect() calls
+Ran 305 tests across 2 files. [4.37s]

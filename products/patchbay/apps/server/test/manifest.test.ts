@@ -1109,3 +1109,12 @@ test("unavailable host executable fails without running package code or modifyin
 	await writeManifest(manifest);
 	await rejects(() => validateLocalPackage(root), "INVALID_ARGV");
 });
+
+for (const length of [4095, 4096, 4097, 65_536]) {
+	test(`bare runtime executable of ${length} chars yields a stable INVALID_ARGV, never a native error`, async () => {
+		const manifest = toolManifest();
+		manifest.runtime.argv = ["a".repeat(length), "./worker.ts"];
+		await writeManifest(manifest);
+		await rejects(() => validateLocalPackage(root), "INVALID_ARGV");
+	});
+}

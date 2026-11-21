@@ -172,7 +172,14 @@ export async function resolveRuntimeArgv(
 	if (pathOperand(executable)) {
 		resolved[0] = await resolvePackageFile(root, executable);
 	} else {
-		const hostExecutable = Bun.which(executable);
+		let hostExecutable: string | null;
+		try {
+			hostExecutable = Bun.which(executable);
+		} catch {
+			// Bun.which throws native errors for over-long names; report the stable redacted error instead.
+			// biome-ignore lint/style/useErrorCause: Runtime causes can echo manifest values; discard them deliberately.
+			throw new ManifestValidationError("INVALID_ARGV");
+		}
 		if (!hostExecutable) {
 			throw new ManifestValidationError("INVALID_ARGV");
 		}
