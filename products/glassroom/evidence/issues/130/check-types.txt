@@ -1,0 +1,19 @@
+Command: bun run check-types
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:48:59.957648+00:00
+Exit code: 0
+
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+@glassroom/ui:check-types: cache miss, executing 8234baa51873f2a9
+server:check-types: cache miss, executing 2ee0473961e320b7
+server:check-types: $ tsc --noEmit
+@glassroom/ui:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing 4c1c7b76fc58cc5e
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    6.857s

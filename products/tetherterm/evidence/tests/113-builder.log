@@ -1,0 +1,1601 @@
+
+$ bunx ultracite fix apps/server/src/http-guard.ts apps/server/src/http.ts apps/server/src/index.ts apps/server/test/http-guard.test.ts apps/server/test/unit/http-guard.test.ts apps/server/test/integration/http-guard.test.ts apps/server/test/unit/bootstrap.test.ts apps/server/test/transport-boot.test.ts apps/server/test/e2e/boot.test.ts apps/server/test/e2e/config-startup.test.ts
+apps/server/test/integration/http-guard.test.ts:89:28 lint/style/noNestedTernary ━━━━━━━━━━
+
+  × Do not nest ternary expressions.
+  
+    87 │ 	);
+    88 │ 	expect(await response.text()).toBe(
+  > 89 │ 		method === "HEAD" ? "" : status === 401 ? "Unauthorized" : "Forbidden"
+       │ 		                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    90 │ 	);
+    91 │ }
+  
+  i Nesting ternary expressions can make code more difficult to understand.
+  
+  i Convert nested ternary expression into if-else statements or separate the conditions to make the logic easier to understand.
+  
+
+apps/server/test/unit/http-guard.test.ts:58:7 lint/style/noNestedTernary ━━━━━━━━━━
+
+  × Do not nest ternary expressions.
+  
+    56 │ 			init.method === "HEAD"
+    57 │ 				? ""
+  > 58 │ 				: status === 401
+       │ 				  ^^^^^^^^^^^^^^
+  > 59 │ 					? "Unauthorized"
+  > 60 │ 					: "Forbidden"
+       │ 					^^^^^^^^^^^^^
+    61 │ 		);
+    62 │ 		expect(text.includes(fixture.token)).toBe(false);
+  
+  i Nesting ternary expressions can make code more difficult to understand.
+  
+  i Convert nested ternary expression into if-else statements or separate the conditions to make the logic easier to understand.
+  
+
+Checked 10 files in 127ms. Fixed 6 files.
+Found 2 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+EXIT=1
+
+$ bun test apps/server/test/http-guard.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [10.56ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.58ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.34ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.39ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [1.11ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) malformed or incorrect Authorization: basic [0.35ms]
+(pass) malformed or incorrect Authorization: empty [0.12ms]
+(pass) malformed or incorrect Authorization: short [0.11ms]
+(pass) malformed or incorrect Authorization: long [0.11ms]
+(pass) malformed or incorrect Authorization: duplicate [0.08ms]
+(pass) malformed or incorrect Authorization: extra-field [0.08ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.13ms]
+(pass) unapproved Host absent denies a valid bearer [0.26ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [4.31ms]
+(pass) unapproved Host localhost denies a valid bearer [0.34ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.20ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.14ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.13ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.13ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.14ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.14ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.13ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.16ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.44ms]
+(pass) unapproved present Origin null denies a valid bearer [0.20ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.14ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.17ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.15ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.13ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.13ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.65ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.21ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.15ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.16ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.40ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.17ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.21ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.21ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.06ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.50ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.53ms]
+(pass) malformed JSON is denied before MCP body parsing [0.35ms]
+(pass) URL-only token credential never authenticates [0.32ms]
+(pass) URL-only access_token credential never authenticates [0.16ms]
+(pass) URL-only bearer credential never authenticates [0.16ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.57ms]
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [222.96ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [184.64ms]
+TetherTerm MCP listening on http://127.0.0.1:41939/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [10.93ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [152.37ms]
+
+ 116 pass
+ 0 fail
+ 1099 expect() calls
+Ran 116 tests across 1 file. [799.00ms]
+EXIT=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+src/http.ts(17,2): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/index.ts(36,3): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+test/unit/http-guard.test.ts(122,6): error TS2322: Type '{ Authorization: string | undefined; Host: string; }' is not assignable to type 'HeadersInit | undefined'.
+  Type '{ Authorization: string | undefined; Host: string; }' is not assignable to type 'undefined'.
+EXIT=2
+
+$ bun install --frozen-lockfile (repeat to record locked install)
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.49s]
+EXIT=0
+
+$ bunx ultracite fix apps/server/src/http-guard.ts apps/server/src/http.ts apps/server/src/index.ts apps/server/test/http-guard.test.ts apps/server/test/unit/http-guard.test.ts apps/server/test/integration/http-guard.test.ts apps/server/test/unit/bootstrap.test.ts apps/server/test/transport-boot.test.ts apps/server/test/e2e/boot.test.ts apps/server/test/e2e/config-startup.test.ts
+Checked 10 files in 144ms. Fixed 1 file.
+EXIT=0
+
+$ bun test apps/server/test/http-guard.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [4.51ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.51ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.26ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.36ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.06ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [1.81ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) malformed or incorrect Authorization: basic [0.47ms]
+(pass) malformed or incorrect Authorization: empty [0.16ms]
+(pass) malformed or incorrect Authorization: short [0.16ms]
+(pass) malformed or incorrect Authorization: long [0.12ms]
+(pass) malformed or incorrect Authorization: duplicate [0.14ms]
+(pass) malformed or incorrect Authorization: extra-field [0.10ms]
+(pass) malformed or incorrect Authorization: different-case-token [3.38ms]
+(pass) unapproved Host absent denies a valid bearer [0.62ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.16ms]
+(pass) unapproved Host localhost denies a valid bearer [0.13ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.09ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.08ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.13ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.10ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.11ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.26ms]
+(pass) unapproved present Origin null denies a valid bearer [0.12ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.11ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.10ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.08ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.49ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.14ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.14ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.11ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.15ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.20ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.14ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.09ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.05ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.75ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.65ms]
+(pass) malformed JSON is denied before MCP body parsing [0.36ms]
+(pass) URL-only token credential never authenticates [0.35ms]
+(pass) URL-only access_token credential never authenticates [0.16ms]
+(pass) URL-only bearer credential never authenticates [0.14ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.81ms]
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [238.71ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [208.69ms]
+TetherTerm MCP listening on http://127.0.0.1:43363/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [9.20ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [159.39ms]
+
+ 116 pass
+ 0 fail
+ 1099 expect() calls
+Ran 116 tests across 1 file. [842.00ms]
+EXIT=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [10.83ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.25ms]
+(pass) spawn failure closes its terminal and propagates the error [1.90ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.66ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.25ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.13ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.53ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.23ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.23ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.22ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.23ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.31ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.08ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.33ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.43ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.35ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.34ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [2.97ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.24ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.04ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.52ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.15ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.03ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.68ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.00ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.34ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) malformed or incorrect Authorization: basic [0.29ms]
+(pass) malformed or incorrect Authorization: empty [0.12ms]
+(pass) malformed or incorrect Authorization: short [0.09ms]
+(pass) malformed or incorrect Authorization: long [1.29ms]
+(pass) malformed or incorrect Authorization: duplicate [0.16ms]
+(pass) malformed or incorrect Authorization: extra-field [0.14ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.13ms]
+(pass) unapproved Host absent denies a valid bearer [0.30ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.15ms]
+(pass) unapproved Host localhost denies a valid bearer [0.12ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.13ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.13ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.14ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.11ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.13ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.11ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.12ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.12ms]
+(pass) unapproved present Origin empty denies a valid bearer [3.29ms]
+(pass) unapproved present Origin null denies a valid bearer [0.22ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.14ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.14ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.15ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.49ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.15ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.17ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.23ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.14ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.12ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [2.10ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.45ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.40ms]
+(pass) malformed JSON is denied before MCP body parsing [0.27ms]
+(pass) URL-only token credential never authenticates [0.27ms]
+(pass) URL-only access_token credential never authenticates [0.15ms]
+(pass) URL-only bearer credential never authenticates [0.10ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.60ms]
+
+ 157 pass
+ 0 fail
+ 947 expect() calls
+Ran 157 tests across 3 files. [187.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=28116 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.03ms]
+python3 PID=PGID=SID=TPGID=28123 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [72.15ms]
+bash GROUP=28125 GRANDCHILD=28128 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [23.18ms]
+bash GROUP=28129 GRANDCHILD=28132 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.69ms]
+python3 GROUP=28134 GRANDCHILD=28136 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.14ms]
+python3 GROUP=28137 GRANDCHILD=28139 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [33.40ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [169.24ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [181.81ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [184.12ms]
+TetherTerm MCP listening on http://127.0.0.1:41229/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [32.34ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.28ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.11ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.30ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [197.86ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [225.32ms]
+TetherTerm MCP listening on http://127.0.0.1:42143/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [5.93ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [152.67ms]
+
+ 17 pass
+ 0 fail
+ 493 expect() calls
+Ran 17 tests across 5 files. [1.55s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=44835 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [82.93ms]
+(pass) server startup fails clearly when setsid is absent on PATH [70.27ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [66.36ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [66.77ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [59.45ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [69.69ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [54.82ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [63.64ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [62.56ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [62.30ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [79.93ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [60.68ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [62.13ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [133.40ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [142.21ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [133.08ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [138.52ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [139.29ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [135.72ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [148.89ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [138.92ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [130.64ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [130.83ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [148.52ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [127.17ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [131.17ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [131.27ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [134.08ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [127.85ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [135.30ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [136.28ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [88.50ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.42s]
+EXIT=0
+
+$ bun run check
+$ ultracite check
+Checked 36 files in 124ms. No fixes applied.
+EXIT=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT=0
+
+$ bunx ultracite fix apps/server/src/http-guard.ts apps/server/test/unit/http-guard.test.ts apps/server/test/integration/http-guard.test.ts apps/server/test/transport-boot.test.ts
+apps/server/test/unit/http-guard.test.ts:291:4 suppressions/unused ━━━━━━━━━━━━━
+
+  ! Suppression comment has no effect. Remove the suppression or make sure you are suppressing the correct rule.
+  
+    289 │ 			const response = await app.request(path, { headers: approvedHeaders() });
+    290 │ 			expect(response.status).toBe(status);
+  > 291 │ 			// biome-ignore lint/performance/noAwaitInLoops: Consume this response before checking the next error boundary.
+        │ 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    292 │ 			expect(await response.text()).toBe("Request rejected");
+    293 │ 		}
+  
+
+Checked 4 files in 117ms. Fixed 2 files.
+Found 1 warning.
+EXIT=0
+
+$ bun test apps/server/test/http-guard.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [4.60ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.46ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.24ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.27ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [1.67ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.42ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [1.02ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) malformed or incorrect Authorization: basic [0.32ms]
+(pass) malformed or incorrect Authorization: empty [0.12ms]
+(pass) malformed or incorrect Authorization: short [0.12ms]
+(pass) malformed or incorrect Authorization: long [0.53ms]
+(pass) malformed or incorrect Authorization: duplicate [2.77ms]
+(pass) malformed or incorrect Authorization: extra-field [0.19ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.11ms]
+(pass) unapproved Host absent denies a valid bearer [0.34ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.17ms]
+(pass) unapproved Host localhost denies a valid bearer [0.17ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.14ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.09ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.07ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.25ms]
+(pass) unapproved present Origin null denies a valid bearer [0.14ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.10ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.07ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.07ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.07ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.45ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.18ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.13ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.11ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.19ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.14ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.11ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.09ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [2.19ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.56ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.47ms]
+(pass) malformed JSON is denied before MCP body parsing [0.26ms]
+(pass) URL-only token credential never authenticates [0.22ms]
+(pass) URL-only access_token credential never authenticates [0.10ms]
+(pass) URL-only bearer credential never authenticates [0.08ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.58ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.92ms]
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [201.83ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [190.80ms]
+TetherTerm MCP listening on http://127.0.0.1:36889/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [5.34ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [156.88ms]
+
+ 117 pass
+ 0 fail
+ 1107 expect() calls
+Ran 117 tests across 1 file. [730.00ms]
+EXIT=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [10.46ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.74ms]
+(pass) spawn failure closes its terminal and propagates the error [1.00ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.76ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.26ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.22ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.57ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.21ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.33ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.07ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.37ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.47ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.33ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.32ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.40ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.16ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.04ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [2.74ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [0.99ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.06ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.06ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) malformed or incorrect Authorization: basic [0.28ms]
+(pass) malformed or incorrect Authorization: empty [1.46ms]
+(pass) malformed or incorrect Authorization: short [0.13ms]
+(pass) malformed or incorrect Authorization: long [0.13ms]
+(pass) malformed or incorrect Authorization: duplicate [0.09ms]
+(pass) malformed or incorrect Authorization: extra-field [0.10ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.09ms]
+(pass) unapproved Host absent denies a valid bearer [0.26ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.12ms]
+(pass) unapproved Host localhost denies a valid bearer [0.17ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.13ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.09ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.11ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.10ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [2.43ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.18ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.10ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.31ms]
+(pass) unapproved present Origin null denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.09ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.46ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.16ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.12ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.15ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.10ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.10ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.62ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.46ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.36ms]
+(pass) malformed JSON is denied before MCP body parsing [0.28ms]
+(pass) URL-only token credential never authenticates [0.24ms]
+(pass) URL-only access_token credential never authenticates [0.10ms]
+(pass) URL-only bearer credential never authenticates [0.09ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.47ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.83ms]
+
+ 158 pass
+ 0 fail
+ 953 expect() calls
+Ran 158 tests across 3 files. [166.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=30675 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.99ms]
+python3 PID=PGID=SID=TPGID=30682 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.44ms]
+bash GROUP=30684 GRANDCHILD=30687 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.93ms]
+bash GROUP=30688 GRANDCHILD=30691 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.12ms]
+python3 GROUP=30692 GRANDCHILD=30695 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.14ms]
+python3 GROUP=30696 GRANDCHILD=30698 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.49ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [165.37ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [160.09ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [188.58ms]
+TetherTerm MCP listening on http://127.0.0.1:44397/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [32.99ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.96ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.99ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.56ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [192.75ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [198.33ms]
+TetherTerm MCP listening on http://127.0.0.1:45693/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [5.60ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [141.79ms]
+
+ 17 pass
+ 0 fail
+ 495 expect() calls
+Ran 17 tests across 5 files. [1454.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=34283 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [85.97ms]
+(pass) server startup fails clearly when setsid is absent on PATH [69.84ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [61.38ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [56.03ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [59.55ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [69.28ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [58.89ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [56.17ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [64.56ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [61.32ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [61.45ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [57.94ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [59.91ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [141.19ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [142.34ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [140.17ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [142.47ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [150.34ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [136.92ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [134.28ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [126.38ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [132.57ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [153.45ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [135.13ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [131.40ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [137.89ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [122.16ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [130.08ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [135.05ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [144.09ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [141.24ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [76.17ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.39s]
+EXIT=0
+
+$ bun run check
+$ ultracite check
+apps/server/test/unit/http-guard.test.ts:291:4 suppressions/unused ━━━━━━━━━━━━━
+
+  ! Suppression comment has no effect. Remove the suppression or make sure you are suppressing the correct rule.
+  
+    289 │ 			const response = await app.request(path, { headers: approvedHeaders() });
+    290 │ 			expect(response.status).toBe(status);
+  > 291 │ 			// biome-ignore lint/performance/noAwaitInLoops: Consume this response before checking the next error boundary.
+        │ 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    292 │ 			expect(await response.text()).toBe("Request rejected");
+    293 │ 		}
+  
+
+Checked 36 files in 144ms. No fixes applied.
+Found 1 warning.
+EXIT=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT=0
+
+$ git diff --check
+EXIT=0
+
+$ bunx ultracite fix apps/server/test/unit/http-guard.test.ts
+Checked 1 file in 118ms. Fixed 1 file.
+EXIT=0
+
+$ git diff --check
+EXIT=0
+
+FINAL POST-REBASE VERIFICATION
+BASE=c89c471567df61c1a99d04e38bb2cc1190453df1
+
+$ git fetch origin && git rebase origin/main (completed successfully immediately before this matrix)
+EXIT=0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.35s]
+EXIT=0
+
+$ bun test apps/server/test/http-guard.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [4.83ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.46ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.27ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.35ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.54ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.39ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.49ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [2.81ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) malformed or incorrect Authorization: basic [2.54ms]
+(pass) malformed or incorrect Authorization: empty [0.21ms]
+(pass) malformed or incorrect Authorization: short [0.83ms]
+(pass) malformed or incorrect Authorization: long [0.12ms]
+(pass) malformed or incorrect Authorization: duplicate [0.10ms]
+(pass) malformed or incorrect Authorization: extra-field [0.08ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.11ms]
+(pass) unapproved Host absent denies a valid bearer [0.39ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.15ms]
+(pass) unapproved Host localhost denies a valid bearer [0.11ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.09ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.09ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.17ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.13ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.13ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.15ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.12ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.09ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.30ms]
+(pass) unapproved present Origin null denies a valid bearer [0.13ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.14ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.10ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.47ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.13ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.10ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.14ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.12ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.90ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.44ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.11ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.00ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.66ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.73ms]
+(pass) malformed JSON is denied before MCP body parsing [0.24ms]
+(pass) URL-only token credential never authenticates [0.23ms]
+(pass) URL-only access_token credential never authenticates [0.14ms]
+(pass) URL-only bearer credential never authenticates [0.12ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [1.20ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [1.25ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.26ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.50ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.15ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [1.25ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.18ms]
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [205.89ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [192.71ms]
+TetherTerm MCP listening on http://127.0.0.1:34711/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [4.11ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [153.41ms]
+
+ 131 pass
+ 0 fail
+ 1205 expect() calls
+Ran 131 tests across 1 file. [725.00ms]
+EXIT=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [9.64ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.57ms]
+(pass) spawn failure closes its terminal and propagates the error [0.78ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.49ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.18ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.13ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.35ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.09ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.09ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.21ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.33ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.08ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.32ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.45ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.33ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.37ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.19ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.41ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.12ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.04ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.43ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.02ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.35ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.27ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.34ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) malformed or incorrect Authorization: basic [0.38ms]
+(pass) malformed or incorrect Authorization: empty [0.13ms]
+(pass) malformed or incorrect Authorization: short [2.00ms]
+(pass) malformed or incorrect Authorization: long [0.18ms]
+(pass) malformed or incorrect Authorization: duplicate [0.14ms]
+(pass) malformed or incorrect Authorization: extra-field [0.14ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.11ms]
+(pass) unapproved Host absent denies a valid bearer [0.34ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.13ms]
+(pass) unapproved Host localhost denies a valid bearer [0.12ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.10ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.15ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [2.34ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.18ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.11ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.10ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.30ms]
+(pass) unapproved present Origin null denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.11ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.46ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.16ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.15ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.13ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.12ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.10ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.09ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.11ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [0.90ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.39ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [2.02ms]
+(pass) malformed JSON is denied before MCP body parsing [0.37ms]
+(pass) URL-only token credential never authenticates [0.29ms]
+(pass) URL-only access_token credential never authenticates [0.12ms]
+(pass) URL-only bearer credential never authenticates [0.15ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.72ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [1.16ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.28ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.19ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.12ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.12ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.07ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.09ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+
+ 172 pass
+ 0 fail
+ 1051 expect() calls
+Ran 172 tests across 3 files. [160.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=32614 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.63ms]
+python3 PID=PGID=SID=TPGID=32621 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.43ms]
+bash GROUP=32623 GRANDCHILD=32626 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [21.94ms]
+bash GROUP=32627 GRANDCHILD=32630 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [33.03ms]
+python3 GROUP=32633 GRANDCHILD=32635 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.12ms]
+python3 GROUP=32636 GRANDCHILD=32638 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.74ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [167.94ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [164.71ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [200.30ms]
+TetherTerm MCP listening on http://127.0.0.1:46435/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [31.38ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.83ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.50ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.35ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [191.59ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [202.66ms]
+TetherTerm MCP listening on http://127.0.0.1:44591/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [5.33ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [144.10ms]
+
+ 17 pass
+ 0 fail
+ 495 expect() calls
+Ran 17 tests across 5 files. [1472.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=33325 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [72.47ms]
+(pass) server startup fails clearly when setsid is absent on PATH [59.14ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [57.43ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [60.39ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [55.10ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [63.32ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [56.41ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [62.42ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [58.68ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [54.74ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [63.35ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [61.57ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [67.26ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [132.76ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [138.98ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [135.09ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [148.06ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [131.08ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [136.59ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [130.01ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [130.49ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [130.48ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [131.55ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [132.23ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [113.80ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [116.99ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [118.48ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [124.50ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [114.57ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [125.89ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [126.53ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [71.29ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.20s]
+EXIT=0
+
+$ bun run check
+$ ultracite check
+Checked 36 files in 128ms. No fixes applied.
+EXIT=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT=0
+
+$ git diff --check
+EXIT=0
+
+$ python3 (final evidence/source-scope audit)
+Total default-suite tests: 221
+64-hex credential-like strings in evidence: 0
+Issue-only product scope and no src/sessions or src/pty changes: PASS
+EXIT=0

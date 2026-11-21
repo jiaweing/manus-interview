@@ -15,6 +15,7 @@
     "@ai-sdk/google": "^4.0.118",
     "@flopside/auth": "workspace:*",
     "@flopside/db": "workspace:*",
+    "@flopside/engine": "workspace:*",
     "ai": "catalog:",
     "better-auth": "catalog:",
     "evlog": "catalog:",

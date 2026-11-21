@@ -317,6 +317,9 @@ describe("dealing and clockwise action order", () => {
 			for (const [seatIndex, seat] of state.public.seats.entries()) {
 				expect(seat).toEqual({
 					...seatAt(previous, seatIndex),
+					actedThisRound: false,
+					lastActedBet: null,
+					raiseAllowed: !seat.folded,
 					streetContribution: 0,
 				});
 			}

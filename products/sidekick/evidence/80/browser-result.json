@@ -1,0 +1,50 @@
+{
+  "headed": true,
+  "executable": "/usr/bin/chromium",
+  "browserVersion": "156.0.8078.73",
+  "extensionId": "bhjhnhpccnppeikcjhmmdmcdalmpnmha",
+  "actualSidePanel": true,
+  "contexts": [
+    {
+      "type": "BACKGROUND"
+    },
+    {
+      "type": "SIDE_PANEL",
+      "url": "chrome-extension://bhjhnhpccnppeikcjhmmdmcdalmpnmha/sidepanel.html"
+    }
+  ],
+  "metadata": {
+    "title": "Ada Lovelace — selected-tab fixture",
+    "url": "http://127.0.0.1:18981/selected-page",
+    "width": 320,
+    "scrollWidth": 305
+  },
+  "extensionErrors": {
+    "state": "ENABLED",
+    "runtimeErrors": [],
+    "manifestErrors": []
+  },
+  "minimumContrast": 8.230890190480576,
+  "allComputedBorderWidths": "0px",
+  "allComputedOutlineWidths": "0px",
+  "font": "Inter 14px / 400,600",
+  "radius": "10px",
+  "animations": "none",
+  "forwardTabOrder": [
+    "disclosure-accepted",
+    "demo-token",
+    "Save token",
+    "Clear token",
+    "task",
+    "Observe page"
+  ],
+  "reverseTabOrder": [
+    "task",
+    "Clear token",
+    "Save token",
+    "demo-token",
+    "disclosure-accepted"
+  ],
+  "modelRequests": 0,
+  "pageErrors": []
+}

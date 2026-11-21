@@ -1,0 +1,20 @@
+Command: bun test tests/unit
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:49:18.814573+00:00
+Exit code: 0
+
+(pass) authenticated data envelopes > duplicate rejected [2.08ms]
+(pass) authenticated data envelopes > failed authentication preserves receive sequence [2.66ms]
+(pass) authenticated data envelopes > malformed and over-cap rejection [6.69ms]
+(pass) authenticated data envelopes > counter exhaustion [2.66ms]
+(pass) authenticated data envelopes > full uint64 receive boundary [1.57ms]
+(pass) authenticated data envelopes > strict encrypted body validation and UTF-8 message bound [27.82ms]
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [12.33ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [2.67ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [1.73ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [8.00ms]
+
+ 55 pass
+ 0 fail
+ 1706 expect() calls
+Ran 55 tests across 4 files. [279.00ms]

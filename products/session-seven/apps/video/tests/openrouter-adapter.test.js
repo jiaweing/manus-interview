@@ -278,7 +278,10 @@ describe('credential exclusion and cache handoff', () => {
     expect((await run(() => audioResponse(Buffer.from(SENTINEL)))).reason).toBe('malformed-response');
   });
   test('candidate-sink interface never fabricates acceptance', async () => {
-    expect(await acceptCandidate({bytes: new Uint8Array([1]), mimeType: 'audio/pcm', model: approved.model, prompt: MUSIC_PROMPT, usage: null, requestMeta: {}})).toEqual({accepted: false, reason: 'cache layer not implemented'});
+    const dir = await mkdtemp(join(tmpdir(), 'sink-invalid-'));
+    try {
+      expect(await acceptCandidate({bytes: new Uint8Array([1]), mimeType: 'audio/pcm', model: approved.model, prompt: MUSIC_PROMPT, usage: null, requestMeta: {}, cacheDir: join(dir, 'cache')})).toEqual({accepted: false, reason: 'corrupt-pcm'});
+    } finally { await rm(dir, {recursive: true, force: true}); }
   });
   test('script hands candidate bytes and safe metadata to the named sink; QA is redacted', async () => {
     let received;

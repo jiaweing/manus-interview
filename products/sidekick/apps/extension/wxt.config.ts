@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "wxt";
 import { validateProxyUrl } from "../../packages/config/src/proxy-url";
 import {
@@ -27,5 +28,6 @@ export default defineConfig({
 		define: {
 			"import.meta.env.WXT_SIDEKICK_PROXY_URL": JSON.stringify(publicProxyUrl),
 		},
+		plugins: [tailwindcss()],
 	}),
 });

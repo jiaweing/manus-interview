@@ -184,6 +184,7 @@ test("listener observer delegates to a real valid-config HTTP launcher socket", 
 		expect(child.exitCode).toBeNull();
 		const address = `http://127.0.0.1:${diagnostics.match(addressPattern)?.[1]}/healthz`;
 		const response = await fetch(address, {
+			headers: { Authorization: `Bearer ${fixture.token}` },
 			signal: AbortSignal.timeout(3000),
 		});
 		expect(response.status).toBe(200);

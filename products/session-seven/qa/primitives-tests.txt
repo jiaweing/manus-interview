@@ -1,0 +1,33 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/primitives.test.js:
+(pass) shared visual vocabulary > exact immutable exterior and monochrome palettes [12.39ms]
+(pass) shared visual vocabulary > every declared text/background pair passes AA [0.37ms]
+(pass) shared visual vocabulary > interface source and rendered markup contain zero prohibited line styles [3.14ms]
+(pass) shared visual vocabulary > accent references appear only in exterior/scenery modules [0.73ms]
+(pass) shared visual vocabulary > filled monochrome glyphs and fixed caret blocks [1.52ms]
+(pass) shared visual vocabulary > Inter 400/600/700 are bundled locally and block first paint [1.61ms]
+(pass) safe, fixed captions and truthful readiness labels > caption, label and illustration rectangles obey the 5% safe area [0.47ms]
+(pass) safe, fixed captions and truthful readiness labels > caption/label/reading text cannot fall below 48px [1.16ms]
+(pass) safe, fixed captions and truthful readiness labels > Concept and Prototype render distinct literal text [0.54ms]
+(pass) safe, fixed captions and truthful readiness labels > all eight independent scenes use SceneFrame and the correct timeline record [9.26ms]
+(pass) safe, fixed captions and truthful readiness labels > caption absolute endpoints become end-exclusive local endpoints [2.61ms]
+(pass) safe, fixed captions and truthful readiness labels > Hero contains only timeline Sequences and gallery is opt-in [0.79ms]
+(pass) static mascot and bounded frame-only motion > single primary capsule plus one offset copy, six static poses, unique shadow ids [6.48ms]
+(pass) static mascot and bounded frame-only motion > beat grid, easing, holds and entrances clamp deterministically [0.57ms]
+(pass) static mascot and bounded frame-only motion > Mulberry32 and seeded scenery regenerate identically for shuffled frames [1.07ms]
+(pass) static mascot and bounded frame-only motion > all render sources exclude wall clocks, unseeded randomness, timers, remote assets and benchmark imports [3.28ms]
+(pass) shared still CLI > strict frame parsing, output names and gallery routing [0.84ms]
+(pass) shared still CLI > rejects malformed, missing, duplicate, out-of-scene and out-of-range selections before bundling [0.29ms]
+Real still smoke: 7.662s
+PNG ../../../../../../tmp/s7-primitives-smoke-Am8s1T/frame-0000.png frame=0
+PNG ../../../../../../tmp/s7-primitives-smoke-Am8s1T/frame-0210.png frame=210
+PNG ../../../../../../tmp/s7-primitives-smoke-Am8s1T/frame-1799.png frame=1799
+TIMING bundle=3.542s renders=2.604s total=7.226s concurrency=1
+STILLS ok count=3
+(pass) shared still CLI > real pinned-Chromium Hero smoke renders three native PNG frames within 90s [7663.26ms]
+
+ 19 pass
+ 0 fail
+ 4100 expect() calls
+Ran 19 tests across 1 file. [8.07s]

@@ -1,0 +1,8 @@
+$ bun apps/video/scripts/validate-audio-cache.js --freeze
+PASS audio-cache selected source=js-fallback networkRequests=0
+sampleRate=48000 channels=2 samplesPerChannel=2880000 durationSeconds=60
+downbeats=30 maxAbsDriftFrames=0.1 toleranceFrames=1
+sha256=81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6 matchingHashes=true manifestHashMatches=true reason=no accepted provider cache
+
+Command: bun run validate:audio-cache --freeze
+Exit code: 0

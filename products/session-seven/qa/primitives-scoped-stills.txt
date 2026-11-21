@@ -1,0 +1,8 @@
+$ bun apps/video/scripts/preview-stills.js --scene caret --frames "210"
+PNG qa/stills/caret/frame-0210.png frame=210
+TIMING bundle=3.534s renders=0.979s total=5.634s concurrency=1
+STILLS ok count=1
+$ bun apps/video/scripts/preview-stills.js --scene caret --frames "420"
+STILLS error: Frame 420 outside caret [180,420)
+error: script "preview:stills" exited with code 1
+Out-of-scene exit=1 (expected 1)

@@ -63,6 +63,7 @@ function postBlind(seat: SeatState, amount: number): SeatState {
 		...seat,
 		allIn: seat.stack === posted,
 		handContribution: posted,
+		raiseAllowed: seat.stack > posted,
 		stack: seat.stack - posted,
 		streetContribution: posted,
 	};
@@ -74,16 +75,19 @@ function beginHand(
 	handNumber: number,
 	source: DeckSource
 ): MatchState {
-	const seats = previousSeats.map((seat) => {
+	const seats: SeatState[] = previousSeats.map((seat) => {
 		if (!Number.isSafeInteger(seat.stack) || seat.stack < 0) {
 			throw new Error("Seat stacks must be nonnegative safe integers");
 		}
 		return {
 			...seat,
+			actedThisRound: false,
 			allIn: false,
 			folded: false,
 			handContribution: 0,
 			inHand: seat.stack > 0,
+			lastActedBet: null,
+			raiseAllowed: seat.stack > 0,
 			streetContribution: 0,
 		};
 	});
@@ -124,9 +128,13 @@ function beginHand(
 			bigBlindIndex,
 			blinds: { ...BLINDS },
 			board: [],
+			currentBet: BLINDS.big,
 			dealerIndex,
 			handNumber,
+			handStatus: "playing",
+			lastFullRaiseIncrement: BLINDS.big,
 			seats,
+			settlement: null,
 			smallBlindIndex,
 			street: "preflop",
 		},
@@ -151,11 +159,14 @@ export function startMatch(
 	}
 	return beginHand(
 		seats.map((seat) => ({
+			actedThisRound: false,
 			allIn: false,
 			folded: false,
 			handContribution: 0,
 			id: seat.id,
 			inHand: true,
+			lastActedBet: null,
+			raiseAllowed: true,
 			stack: STARTING_STACK,
 			streetContribution: 0,
 		})),
@@ -210,8 +221,14 @@ export function advanceStreet(state: MatchState): MatchState {
 			...state.public,
 			actor: null,
 			board: [...state.public.board, ...drawn],
+			currentBet: 0,
+			lastFullRaiseIncrement: BLINDS.big,
 			seats: state.public.seats.map((seat) => ({
 				...seat,
+				actedThisRound: false,
+				lastActedBet: null,
+				raiseAllowed:
+					seat.inHand && !seat.folded && !seat.allIn && seat.stack > 0,
 				streetContribution: 0,
 			})),
 			street,
