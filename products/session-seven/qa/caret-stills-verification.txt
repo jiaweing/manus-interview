@@ -1,0 +1,9 @@
+$ bun apps/video/scripts/preview-stills.js --scene caret --frames "180,210,300,390,419"
+PNG qa/stills/caret/frame-0180.png frame=180
+PNG qa/stills/caret/frame-0210.png frame=210
+PNG qa/stills/caret/frame-0300.png frame=300
+PNG qa/stills/caret/frame-0390.png frame=390
+PNG qa/stills/caret/frame-0419.png frame=419
+TIMING bundle=3.015s renders=4.506s total=8.642s concurrency=1
+STILLS ok count=5
+exit=0
