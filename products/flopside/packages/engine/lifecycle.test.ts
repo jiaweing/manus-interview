@@ -355,11 +355,12 @@ describe("host-controlled same-room rematch", () => {
 		["non-host", "seat-2", "seat-0", ["seat-0", "seat-2"]],
 		["host with zero connected seats", "seat-0", "seat-0", []],
 		["host with one connected seat", "seat-0", "seat-0", ["seat-0"]],
+		["empty seat IDs are invalid", "seat-0", "seat-0", ["seat-0", " "]],
 		[
-			"unknown IDs cannot satisfy quorum",
+			"five connected seats exceed capacity",
 			"seat-0",
 			"seat-0",
-			["seat-0", "unknown"],
+			["seat-0", "seat-1", "seat-2", "seat-3", "seat-4"],
 		],
 		["disconnected host", "seat-0", "seat-0", ["seat-2", "seat-4"]],
 	] as const) {
@@ -391,6 +392,33 @@ describe("host-controlled same-room rematch", () => {
 			expect(rejected.ok).toBe(false);
 			expect(rejected.state).toBe(state);
 		}
+	});
+	test("connected lobby reservations enter the new match in authoritative room-seat order", () => {
+		const state = finishFixture([400, 0]);
+		const result = pure(state, () =>
+			rematch(
+				state,
+				"seat-0",
+				"seat-0",
+				new Set(["seat-0", "seat-1", "seat-3"]),
+				fullDeck,
+				(kind) => `reservation-${kind}`
+			)
+		);
+		assert.ok(result.ok);
+		expect(result.state.public.seats.map((seat) => seat.id)).toEqual([
+			"seat-0",
+			"seat-1",
+			"seat-3",
+		]);
+		expect(
+			result.state.public.seats.map(
+				(seat) => seat.stack + seat.handContribution
+			)
+		).toEqual([200, 200, 200]);
+		expect(result.state.public.dealerIndex).toBe(0);
+		expect(result.state.public.result).toBeNull();
+		expect(chips(result.state)).toBe(600);
 	});
 	test("successful rematch resets connected seats, stacks before blinds, dealer, counters, cards, results and IDs", () => {
 		const old = finishFixture([300, 200, 100], MAX_HANDS);

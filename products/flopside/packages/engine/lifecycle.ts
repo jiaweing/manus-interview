@@ -175,8 +175,8 @@ function reject(state: MatchState, message: string): RematchResult {
 }
 
 /**
- * Only finished matches can rematch. Connected IDs are intersected with the
- * locked engine roster; unknown IDs cannot become players or satisfy quorum.
+ * Only finished matches can rematch. The room supplies its authoritative
+ * connected roster in room-seat order, including returning lobby reservations.
  * Rejections never invoke deck/ID sources and return the exact original state.
  */
 export function rematch(
@@ -192,16 +192,19 @@ export function rematch(
 	}
 	if (
 		requesterSeatId !== hostSeatId ||
-		!connectedSeatIds.has(requesterSeatId) ||
-		!state.public.seats.some((seat) => seat.id === requesterSeatId)
+		!connectedSeatIds.has(requesterSeatId)
 	) {
 		return reject(state, "Only the connected host may rematch");
 	}
-	const seats = connectedSeats(state, connectedSeatIds);
-	if (seats.length < 2) {
+	const seats = [...connectedSeatIds].map((id) => ({ id }));
+	if (
+		seats.length < 2 ||
+		seats.length > 4 ||
+		seats.some((seat) => !seat.id.trim())
+	) {
 		return reject(
 			state,
-			"A rematch requires at least two connected participants"
+			"A rematch requires two to four valid connected seats"
 		);
 	}
 	const matchId = checkedId(newIds, "match", [
@@ -213,12 +216,7 @@ export function rematch(
 		state.public.matchId,
 		state.public.handId,
 	]);
-	const fresh = progressBetting(
-		startMatch(
-			seats.map((seat) => ({ id: seat.id })),
-			deckSource
-		)
-	);
+	const fresh = progressBetting(startMatch(seats, deckSource));
 	// Room code is outside the engine. Preserve it if a caller attached it,
 	// but never carry old hand/turn metadata into a reset public/private state.
 	const roomCode =
