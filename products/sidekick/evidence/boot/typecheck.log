@@ -1,0 +1,4 @@
+$ bun run --cwd apps/server typecheck && bun run --cwd apps/extension typecheck
+$ tsc --noEmit
+$ tsc --noEmit
+exit 0

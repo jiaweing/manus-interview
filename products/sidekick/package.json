@@ -1,0 +1,35 @@
+{
+  "name": "sidekick",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "zod": "^4.6.7",
+      "@types/bun": "^1.4.4"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev:extension": "bun run --cwd apps/extension dev",
+    "dev:server": "bun run --cwd apps/server dev",
+    "build:extension": "bun run --cwd apps/extension build",
+    "typecheck": "bun run --cwd apps/server typecheck && bun run --cwd apps/extension typecheck",
+    "test": "bun test",
+    "check": "ultracite check",
+    "fix": "ultracite fix"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@sidekick/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "^6.0.3",
+    "ultracite": "8.0.0"
+  },
+  "packageManager": "bun@1.4.5"
+}
