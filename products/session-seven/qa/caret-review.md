@@ -60,3 +60,7 @@ The first five-frame renderer succeeded and printed `STILLS ok count=5`, but its
 ### Post-rebase suite result
 
 **PASS:** `bun test apps/video/tests` after rebasing onto `origin/main`: **160 pass, 0 fail, 69,651 assertions**, eight files, 42.10s, **exit 0**. The full-suite Caret smoke rendered three native PNGs in 11.065s (exit 0). Retained complete output: `qa/caret-full-suite.txt`. Final exact five-frame preview: bundle 3.015s, renders 4.506s, total 8.642s, concurrency 1, **STILLS ok count=5 / exit 0**.
+
+### Final publication refresh
+
+After recording PR [#237](https://github.com/jiaweing/manus-interview/pull/237), fetched and rebased again (branch already up to date), then reran the full suite: **160 pass, 0 fail, 69,651 assertions**, eight files, **39.39s / exit 0**. Final Caret real smoke: **8.491s / exit 0**, three PNGs. `qa/caret-full-suite.txt` now contains this latest passing run; this refresh supersedes the earlier 42.10s timing above, not its unchanged passing count. The unrelated test-generated `qa/music-provider.json` timestamp-only side effect was restored, not committed. No product code changed during the publication refresh.
