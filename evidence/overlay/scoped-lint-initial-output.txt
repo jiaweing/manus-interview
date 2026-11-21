@@ -1,0 +1,28 @@
+/home/ubuntu/wt-05/products/caret/.overlay-biome/biome.json configuration ━━━━━━━━━━
+
+  × Found a nested root configuration, but there's already a root configuration.
+  
+  i The other configuration was found in /home/ubuntu/wt-05/products/caret.
+  
+  i Use the migration command from the root of the project to update the configuration.
+  
+  $ biome migrate --write
+  
+
+/home/ubuntu/wt-05/products/caret/apps/fumadocs/biome.json configuration ━━━━━━━━━━
+
+  × Found a nested root configuration, but there's already a root configuration.
+  
+  i The other configuration was found in /home/ubuntu/wt-05/products/caret.
+  
+  i Use the migration command from the root of the project to update the configuration.
+  
+  $ biome migrate --write
+  
+
+configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Biome exited because the configuration resulted in errors. Please fix them.
+  
+
+SCOPED_LINT_EXIT=1

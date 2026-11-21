@@ -7,14 +7,14 @@ export default defineConfig({
   preload: {
     build: {
       rollupOptions: {
-        input: resolve("src/preload/index.ts"),
+        input: { index: resolve("src/preload/index.ts"), overlay: resolve("src/preload/overlay.ts") },
         output: { format: "cjs", entryFileNames: "[name].cjs" },
       },
     },
   },
   renderer: {
     root: resolve("src/renderer"),
-    build: { rollupOptions: { input: resolve("src/renderer/index.html") } },
+    build: { rollupOptions: { input: { index: resolve("src/renderer/index.html"), overlay: resolve("src/renderer/overlay.html") } } },
     plugins: [react()],
   },
 });

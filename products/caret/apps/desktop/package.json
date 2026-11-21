@@ -5,22 +5,27 @@
   "type": "module",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite build && electron-vite dev",
     "build": "electron-vite build",
     "build:helper": "bun native/scripts/build.ts",
+    "dev": "electron-vite build && electron-vite dev",
+    "fixture:overlay": "bun run build && bun scripts/overlay-fixture.ts",
     "helper:snapshot": "bun native/scripts/test.ts --snapshot",
     "test:helper-protocol": "bun native/scripts/test.ts",
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
+    "test:overlay": "bun test tests/overlay-state.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
     "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "typecheck:helper": "tsc --noEmit -p native/tsconfig.json",
+    "typecheck:overlay": "tsc --noEmit -p tsconfig.overlay.json",
     "verify:helper-secrets": "bun native/scripts/check-secrets.ts",
+    "verify:overlay-secrets": "bun scripts/overlay-secrets.ts",
     "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "@fontsource/inter": "^5.3.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -30,6 +35,7 @@
     "electron": "^45.4.1",
     "electron-vite": "^6.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "playwright": "^1.65.1"
   }
 }

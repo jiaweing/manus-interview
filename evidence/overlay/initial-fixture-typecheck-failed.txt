@@ -1,0 +1,3 @@
+$ tsc --noEmit -p tsconfig.overlay.json
+scripts/overlay-fixture.ts(160,39): error TS2339: Property 'getLastWebPreferences' does not exist on type 'WebContents'.
+FIXTURE_TYPECHECK_EXIT=2
