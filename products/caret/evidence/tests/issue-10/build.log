@@ -1,0 +1,32 @@
+$ electron-vite build
+vite v8.3.8 building ssr environment for production...
+transforming...
+[32m✓[0m 14 modules transformed.
+rendering chunks...
+[2mout/main/[0m[36mindex.js  [0m[1;2m23.41 kB[0m
+
+✓ built in 51ms
+vite v8.3.8 building ssr environment for production...
+transforming...
+[32m✓[0m 6 modules transformed.
+rendering chunks...
+[2mout/preload/[0m[36moverlay.cjs  [0m[1;2m1.26 kB[0m
+[2mout/preload/[0m[36mindex.cjs    [0m[1;2m1.52 kB[0m
+
+✓ built in 37ms
+vite v8.3.8 building client environment for production...
+transforming...
+[32m✓[0m 20 modules transformed.
+rendering chunks...
+[2mout/renderer/[0m[32mindex.html                                    [0m[1;2m  0.44 kB[0m
+[2mout/renderer/[0m[32moverlay.html                                  [0m[1;2m  0.66 kB[0m
+[2mout/renderer/[0m[2massets/[0m[32minter-latin-400-normal-C38fXH4l.woff2  [0m[1;2m 23.66 kB[0m
+[2mout/renderer/[0m[2massets/[0m[32minter-latin-600-normal-LgqL8muc.woff2  [0m[1;2m 24.45 kB[0m
+[2mout/renderer/[0m[2massets/[0m[32minter-latin-400-normal-CyCys3Eg.woff   [0m[1;2m 30.69 kB[0m
+[2mout/renderer/[0m[2massets/[0m[32minter-latin-600-normal-CiBQ2DWP.woff   [0m[1;2m 31.26 kB[0m
+[2mout/renderer/[0m[2massets/[0m[35moverlay-DM257WYz.css                   [0m[1;2m  2.62 kB[0m
+[2mout/renderer/[0m[2massets/[0m[36mindex-C5OwSZTB.js                      [0m[1;2m  0.46 kB[0m
+[2mout/renderer/[0m[2massets/[0m[36moverlay-BvJMIfyn.js                    [0m[1;2m  4.29 kB[0m
+[2mout/renderer/[0m[2massets/[0m[36mjsx-runtime-CTLmSGKe.js                [0m[33;1m564.92 kB[0m
+
+✓ built in 204ms

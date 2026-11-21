@@ -12,6 +12,7 @@ export type SessionState =
   | "capture-complete"
   | "transcribing"
   | "cleaning"
+  | "inserting"
   | "done"
   | "error";
 

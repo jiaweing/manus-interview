@@ -1,0 +1,18 @@
+$ bun test tests/overlay-state.test.ts
+bun test v1.4.5 (a7733435c)
+
+tests/overlay-state.test.ts:
+(pass) overlay state-to-label contract > Starting yields its visible label [7.95ms]
+(pass) overlay state-to-label contract > Listening yields its visible label [0.83ms]
+(pass) overlay state-to-label contract > Transcribing yields its visible label [0.59ms]
+(pass) overlay state-to-label contract > Cleaning yields its visible label [0.49ms]
+(pass) overlay state-to-label contract > Done yields its visible label and Paste requested [0.35ms]
+(pass) overlay state-to-label contract > Error yields its visible label [0.28ms]
+(pass) only the six explicit states are accepted [0.22ms]
+(pass) each state has a distinct icon and active/error states invert fill [0.11ms]
+(pass) renderer is status-only, polite and non-interactive [0.89ms]
+
+ 9 pass
+ 0 fail
+ 46 expect() calls
+Ran 9 tests across 1 file. [62.00ms]
