@@ -1,0 +1,92 @@
+Decoded PCM analysis; NumPy FFT filtering only for measurements, no output audio written.
+{
+  "sampleRate": 48000,
+  "channels": 2,
+  "samplesPerChannel": 2880000,
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "firstStereoSample": [
+    0,
+    0
+  ],
+  "lastStereoSample": [
+    0,
+    0
+  ],
+  "first10SamplesMaxAbs": 0,
+  "last480SamplesRms": 0.0,
+  "peakDbfs": -5.451944249377591
+}
+
+Per-bar RMS (stereo average):
+bar=01 seconds=00-02 rms=0.042034478 dbfs=-27.528
+bar=02 seconds=02-04 rms=0.062111196 dbfs=-24.137
+bar=03 seconds=04-06 rms=0.077844258 dbfs=-22.175
+bar=04 seconds=06-08 rms=0.077020595 dbfs=-22.268
+bar=05 seconds=08-10 rms=0.075608166 dbfs=-22.429
+bar=06 seconds=10-12 rms=0.081890100 dbfs=-21.735
+bar=07 seconds=12-14 rms=0.077834357 dbfs=-22.177
+bar=08 seconds=14-16 rms=0.077017887 dbfs=-22.268
+bar=09 seconds=16-18 rms=0.075622760 dbfs=-22.427
+bar=10 seconds=18-20 rms=0.081886557 dbfs=-21.736
+bar=11 seconds=20-22 rms=0.077843251 dbfs=-22.176
+bar=12 seconds=22-24 rms=0.077033250 dbfs=-22.266
+bar=13 seconds=24-26 rms=0.075621903 dbfs=-22.427
+bar=14 seconds=26-28 rms=0.081871158 dbfs=-21.737
+bar=15 seconds=28-30 rms=0.077855683 dbfs=-22.174
+bar=16 seconds=30-32 rms=0.077024118 dbfs=-22.267
+bar=17 seconds=32-34 rms=0.075619971 dbfs=-22.427
+bar=18 seconds=34-36 rms=0.081888059 dbfs=-21.736
+bar=19 seconds=36-38 rms=0.077864475 dbfs=-22.173
+bar=20 seconds=38-40 rms=0.077024486 dbfs=-22.267
+bar=21 seconds=40-42 rms=0.075618549 dbfs=-22.427
+bar=22 seconds=42-44 rms=0.081877170 dbfs=-21.737
+bar=23 seconds=44-46 rms=0.077850457 dbfs=-22.175
+bar=24 seconds=46-48 rms=0.077036432 dbfs=-22.266
+bar=25 seconds=48-50 rms=0.075606462 dbfs=-22.429
+bar=26 seconds=50-52 rms=0.081883769 dbfs=-21.736
+bar=27 seconds=52-54 rms=0.077852110 dbfs=-22.175
+bar=28 seconds=54-56 rms=0.064049899 dbfs=-23.870
+bar=29 seconds=56-58 rms=0.042906107 dbfs=-27.350
+bar=30 seconds=58-60 rms=0.021039147 dbfs=-33.539
+
+35–160 Hz decoded onset check: zero-phase FFT band selection; search maximum 10 ms RMS in the first 80 ms after each scheduled downbeat (not independent tempo estimation).
+bar=01 expectedSample=0 expectedSeconds=0.000 measuredLowBandPeakSeconds=0.006 delayMs=6.0 rms=0.203689
+bar=02 expectedSample=96000 expectedSeconds=2.000 measuredLowBandPeakSeconds=2.005 delayMs=5.0 rms=0.241244
+bar=03 expectedSample=192000 expectedSeconds=4.000 measuredLowBandPeakSeconds=4.004 delayMs=4.0 rms=0.284483
+bar=04 expectedSample=288000 expectedSeconds=6.000 measuredLowBandPeakSeconds=6.005 delayMs=5.0 rms=0.296182
+bar=05 expectedSample=384000 expectedSeconds=8.000 measuredLowBandPeakSeconds=8.005 delayMs=5.0 rms=0.341962
+bar=06 expectedSample=480000 expectedSeconds=10.000 measuredLowBandPeakSeconds=10.005 delayMs=5.0 rms=0.301598
+bar=07 expectedSample=576000 expectedSeconds=12.000 measuredLowBandPeakSeconds=12.004 delayMs=4.0 rms=0.284534
+bar=08 expectedSample=672000 expectedSeconds=14.000 measuredLowBandPeakSeconds=14.005 delayMs=5.0 rms=0.296222
+bar=09 expectedSample=768000 expectedSeconds=16.000 measuredLowBandPeakSeconds=16.005 delayMs=5.0 rms=0.341999
+bar=10 expectedSample=864000 expectedSeconds=18.000 measuredLowBandPeakSeconds=18.005 delayMs=5.0 rms=0.301623
+bar=11 expectedSample=960000 expectedSeconds=20.000 measuredLowBandPeakSeconds=20.004 delayMs=4.0 rms=0.284541
+bar=12 expectedSample=1056000 expectedSeconds=22.000 measuredLowBandPeakSeconds=22.005 delayMs=5.0 rms=0.296236
+bar=13 expectedSample=1152000 expectedSeconds=24.000 measuredLowBandPeakSeconds=24.005 delayMs=5.0 rms=0.342023
+bar=14 expectedSample=1248000 expectedSeconds=26.000 measuredLowBandPeakSeconds=26.005 delayMs=5.0 rms=0.301633
+bar=15 expectedSample=1344000 expectedSeconds=28.000 measuredLowBandPeakSeconds=28.004 delayMs=4.0 rms=0.284552
+bar=16 expectedSample=1440000 expectedSeconds=30.000 measuredLowBandPeakSeconds=30.005 delayMs=5.0 rms=0.296254
+bar=17 expectedSample=1536000 expectedSeconds=32.000 measuredLowBandPeakSeconds=32.005 delayMs=5.0 rms=0.342037
+bar=18 expectedSample=1632000 expectedSeconds=34.000 measuredLowBandPeakSeconds=34.005 delayMs=5.0 rms=0.301648
+bar=19 expectedSample=1728000 expectedSeconds=36.000 measuredLowBandPeakSeconds=36.004 delayMs=4.0 rms=0.284564
+bar=20 expectedSample=1824000 expectedSeconds=38.000 measuredLowBandPeakSeconds=38.005 delayMs=5.0 rms=0.296261
+bar=21 expectedSample=1920000 expectedSeconds=40.000 measuredLowBandPeakSeconds=40.005 delayMs=5.0 rms=0.342053
+bar=22 expectedSample=2016000 expectedSeconds=42.000 measuredLowBandPeakSeconds=42.005 delayMs=5.0 rms=0.301658
+bar=23 expectedSample=2112000 expectedSeconds=44.000 measuredLowBandPeakSeconds=44.004 delayMs=4.0 rms=0.284573
+bar=24 expectedSample=2208000 expectedSeconds=46.000 measuredLowBandPeakSeconds=46.005 delayMs=5.0 rms=0.296294
+bar=25 expectedSample=2304000 expectedSeconds=48.000 measuredLowBandPeakSeconds=48.005 delayMs=5.0 rms=0.342086
+bar=26 expectedSample=2400000 expectedSeconds=50.000 measuredLowBandPeakSeconds=50.005 delayMs=5.0 rms=0.301699
+bar=27 expectedSample=2496000 expectedSeconds=52.000 measuredLowBandPeakSeconds=52.004 delayMs=4.0 rms=0.284593
+bar=28 expectedSample=2592000 expectedSeconds=54.000 measuredLowBandPeakSeconds=54.006 delayMs=6.0 rms=0.266292
+bar=29 expectedSample=2688000 expectedSeconds=56.000 measuredLowBandPeakSeconds=56.005 delayMs=5.0 rms=0.183239
+Median detected downbeat interval seconds: 2.0
+
+Final bar half-second RMS:
+58.0-58.5 rms=0.036778017 dbfs=-28.688
+58.5-59.0 rms=0.019914652 dbfs=-34.017
+59.0-59.5 rms=0.004619572 dbfs=-46.708
+59.5-60.0 rms=0.000163089 dbfs=-75.752
+
+FFT evidence (Hann window, 250 ms): expected bass C2=65.406 Hz, lead C5=523.251 Hz.
+intro bass: strongest band frequency=64.0 Hz, binWidth=4.0 Hz
+final tonic lead: strongest band frequency=524.0 Hz, binWidth=4.0 Hz

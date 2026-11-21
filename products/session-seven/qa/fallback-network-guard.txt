@@ -1,0 +1,82 @@
+{
+  "seed": 164120,
+  "promptEquivalent": "60-second instrumental, 120 BPM, 4/4, playful cartoon chiptune, clear downbeats, sparse melody, resolve over final three bars; no vocals or artist imitation.",
+  "bpm": 120,
+  "timeSignature": "4/4",
+  "bars": 30,
+  "sampleRate": 48000,
+  "channels": 2,
+  "samplesPerChannel": 2880000,
+  "durationSeconds": 60,
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "voices": {
+    "kick": {
+      "family": "percussion",
+      "waveform": "sine pitch sweep",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.7
+      }
+    },
+    "snare": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise + sine",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 1440,
+        "sustainLevel": 0.35,
+        "releaseFraction": 0.7
+      }
+    },
+    "hat": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise",
+      "envelope": {
+        "attackSamples": 48,
+        "decaySamples": 480,
+        "sustainLevel": 0.22,
+        "releaseFraction": 0.65
+      }
+    },
+    "bass": {
+      "family": "bass",
+      "waveform": "triangle",
+      "envelope": {
+        "attackSamples": 240,
+        "decaySamples": 2400,
+        "sustainLevel": 0.7,
+        "releaseFraction": 0.3
+      }
+    },
+    "melody": {
+      "family": "melody",
+      "waveform": "square (polyBLEP)",
+      "envelope": {
+        "attackSamples": 384,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.4
+      }
+    },
+    "chord": {
+      "family": "chord",
+      "waveform": "triangle/sine pad",
+      "envelope": {
+        "attackSamples": 2400,
+        "decaySamples": 7200,
+        "sustainLevel": 0.65,
+        "releaseFraction": 0.4
+      }
+    }
+  },
+  "generatorVersion": "1.0.0",
+  "generator": "pure JavaScript Float64 synthesis, seeded mulberry32 noise, PCM16 WAV",
+  "determinism": "Byte identity within pinned Bun 1.4.5; Math.sin/libm may differ across runtimes.",
+  "peakDbfs": -5.45216010010911,
+  "headroomGain": 1,
+  "wavBytes": 11520044,
+  "output": "/home/ubuntu/wt/b164/products/session-seven/apps/video/audio/fallback.wav"
+}
+guardNetworkRequests=0
