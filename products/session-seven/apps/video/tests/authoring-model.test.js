@@ -74,7 +74,9 @@ async function assertRuntimeIsolation(srcRoot) {
   async function walk(directory) {
     for (const item of await readdir(directory, { withFileTypes: true })) {
       const file = path.join(directory, item.name);
-      if (item.isDirectory()) await walk(file);
+      // src/music is the opt-in provider adapter (#163): it legitimately reads OPENROUTER_API_KEY and is
+      // fenced off from render paths by its own test. Anything render code imports from it is still visited.
+      if (item.isDirectory()) { if (item.name !== 'music') await walk(file); }
       else if (/\.(?:js|jsx|mjs|cjs)$/.test(file)) await visit(file);
     }
   }
