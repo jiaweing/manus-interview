@@ -1,0 +1,6 @@
+{
+  "PUBLIC_PORT": "4533",
+  "NEXT_INTERNAL_PORT": "5533",
+  "CHROMIUM_PATH": "/usr/bin/chromium",
+  "PW_NO_WEBSERVER": "1"
+}

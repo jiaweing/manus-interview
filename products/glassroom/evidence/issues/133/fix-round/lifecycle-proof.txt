@@ -1,0 +1,37 @@
+Creator lifecycle root-cause evidence (captured before changing the product)
+
+Owned stack: PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 bun run dev:https
+Secret-free stress probe: bun /home/ubuntu/work/f133-lifecycle-probe.ts
+100 independent browser profiles; one creator failed (profile 61).
+The failed probe used Playwright's default 30-second wait, NOT a raised product/test timeout.
+Profile 61 timeline, milliseconds since navigation:
+74: status-home
+1183: create-click
+1187: construct-signal
+1193: close-called-state-0 (WebSocket.CONNECTING)
+1206: status-connecting
+1213: socket-error
+1213: closed-1006
+1219: status-connecting
+No open event, join send, ready frame, joined frame, or second signal connection occurred.
+Owned Next dev startup: Ready in 472ms; the failing profile was the 61st, not a first compile.
+Raw secret-free probe output retained at /home/ubuntu/evidence-tmp/f133/lifecycle-probe/probe.txt.
+
+Deterministic reproduction: the browser init script invokes the creator action at
+InvitationRoom's first secure-context read in its passive effect, before StrictMode
+cleanup/replay. This models an early hydration-replayed user action and exercises
+actual React StrictMode and the real /signal endpoint, not a mocked product socket.
+
+$ PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 PW_NO_WEBSERVER=1 CHROMIUM_PATH=/usr/bin/chromium bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list --grep "creator action during initial"
+Before product fix: exit 1; expected Waiting for peer, received Connecting to room; Timeout 5000ms; 1 failed (5.9s).
+After product fix: exit 0; 1 passed (2.9s).
+Raw before/after output retained at /home/ubuntu/evidence-tmp/f133/lifecycle-probe/{before,after}-regression.txt.
+
+Fix: effect cleanup immediately cancels fragment consumption and detaches window
+listeners, but disposes the room at the next microtask only if no replacement
+effect setup advances its generation. StrictMode replay therefore retains the
+original socket; real unmount still disposes it, and pagehide stays immediate.
+The started latch is never reset: no second socket, room/key reuse, or reconnect.
+Admission disposal is exactly-once; late callbacks and sends on a closing socket
+are ignored, and a send exception becomes a terminal connection error.
+No expectation, suite, assertion, or product timeout was increased.

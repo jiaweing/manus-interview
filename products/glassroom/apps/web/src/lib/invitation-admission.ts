@@ -20,6 +20,7 @@ export function openInvitationAdmission(
 	let admitted = false;
 	let ended = false;
 	let failed = false;
+	let disposed = false;
 	const end = () => {
 		if (!ended) {
 			ended = true;
@@ -27,12 +28,24 @@ export function openInvitationAdmission(
 		}
 	};
 	const fail = () => {
+		if (ended) {
+			return;
+		}
 		failed = true;
 		onStatus("connection-error");
 		end();
 		socket.close();
 	};
-	socket.onopen = () => socket.send(admissionEnvelope(roomId, role));
+	socket.onopen = () => {
+		if (ended || socket.readyState !== WebSocket.OPEN) {
+			return;
+		}
+		try {
+			socket.send(admissionEnvelope(roomId, role));
+		} catch {
+			fail();
+		}
+	};
 	socket.onmessage = (event) => {
 		if (ended) {
 			return;
@@ -77,6 +90,10 @@ export function openInvitationAdmission(
 		end();
 	};
 	return () => {
+		if (disposed) {
+			return;
+		}
+		disposed = true;
 		socket.onopen = null;
 		socket.onmessage = null;
 		socket.onerror = null;

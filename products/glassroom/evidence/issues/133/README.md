@@ -24,13 +24,22 @@ The screenshots were captured from an isolated Xvfb display with FFmpeg after Pl
 Run from `products/glassroom` with Bun on PATH:
 
 ```sh
-python3 evidence/issues/133/verify.py static
-python3 evidence/issues/133/verify.py browser
+PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 python3 evidence/issues/133/verify.py static
+PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 python3 evidence/issues/133/verify.py browser
 ```
 
-The runner records each verbatim command, exit code, and last 15 output lines in this directory. The browser stage starts the owned `bun run dev:https` stack on `PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133`, waits for readiness, runs the issue's Playwright suite headed, and terminates only its own process group afterward. No Playwright HTML report or secret-bearing invitation trace is committed.
+The runner inherits the caller's `PUBLIC_PORT` and `NEXT_INTERNAL_PORT` (defaults 4133/5133 only when unset), including startup, readiness, and nested Playwright commands. It records each verbatim command, exit code, and last 15 output lines in this directory, redacting secret fragments and standalone 43-character base64url secrets before saving or printing. The browser stage starts its owned `bun run dev:https` stack, runs the issue's Playwright suite headed, and terminates only its own process group afterward. No Playwright HTML report or secret-bearing invitation trace is committed.
 
-All mandatory protocol gates **PASS (exit 0)**: fetch/merge main, frozen install, Biome fix, `bun run check`, `bun run check-types`, `bun run build`, `bun test tests/unit` (**44 passed**), invitation Playwright (**9 passed**, including all six issue-named cases), and relevant existing boot/preflight/server Playwright (**8 passed**). The strict isolated invitation test TypeScript check and `git diff --check` also pass. The blocked-connectivity preflight intentionally reports a failed connection inside a passing fail-closed test; there is no relay/fallback.
+The initial implementation's single passing invitation run was insufficient: the independent verifier subsequently reproduced an invalid-to-missing state race. The fix round adds a deterministic replay regression and repeated dev/production verification; current commands, exit codes, output tails, and acceptance results are recorded in `fix-round/`. The original acceptance assertions have not been relaxed. The blocked-connectivity preflight intentionally reports a failed connection inside a passing fail-closed test; there is no relay/fallback.
+
+## Fix-round root causes
+
+1. A delayed/replayed `hashchange` re-read the already-scrubbed URL and overwrote the cached invalid verdict with missing. The handler now validates the event's still-current, nonempty fragment and retains the first verdict after scrubbing. Deterministic regressions cover stale-event replay and a genuinely corrected fragment.
+2. A creator action can run before the initial React StrictMode effect cleanup (including hydration-replayed actions). Cleanup closed the CONNECTING socket, detached every callback, and left status connecting forever. The secret-free stress probe reproduced a close six milliseconds after construction, with no open event, join send, or second socket. A deterministic initial-effect creator action reproduced the same failure before the fix and passed afterward. Effect generations now cancel disposal during replay while real unmount remains terminal and pagehide disposes immediately. Admission disposal is exactly-once, ignores captured late callbacks/closing sockets, and turns send exceptions into terminal errors. The existing no-reconnect latch is never reset, so a room/secret is never reused. See `fix-round/lifecycle-proof.txt`.
+
+The second failure was not dev-server first-compilation latency, duplicate server admission, or a rejected second creator. No expectation or test timeout was increased. Secret-bearing navigation errors and verifier output are redacted at their failure boundaries; the verifier honours caller-assigned ports.
+
+Reproduce the required fix-round verification with `PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 CHROMIUM_PATH=/usr/bin/chromium python3 evidence/issues/133/fix-round/gates.py` followed by the same environment and `python3 evidence/issues/133/fix-round/repeat.py`. The repeat runner rebuilds after stopping dev and before starting production, records each suite's last 15 lines and exit code, and stops only its own process group.
 
 ## Caveats / unverified
 

@@ -1,17 +1,17 @@
 $ bun test tests/unit
 exit: 0
-(pass) invitation-authenticated signaling > uint64 boundary is validated without floating point rounding [1.40ms]
-(pass) invitation-authenticated signaling > invalid initialization and oversized plaintext are redacted [1.40ms]
-(pass) invitation-authenticated signaling > queued plaintext and envelope inputs are snapshotted [0.85ms]
+(pass) authenticated data envelopes > duplicate rejected [1.42ms]
+(pass) authenticated data envelopes > failed authentication preserves receive sequence [1.46ms]
+(pass) authenticated data envelopes > malformed and over-cap rejection [8.14ms]
+(pass) authenticated data envelopes > counter exhaustion [1.75ms]
+(pass) authenticated data envelopes > full uint64 receive boundary [1.48ms]
+(pass) authenticated data envelopes > strict encrypted body validation and UTF-8 message bound [18.15ms]
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [5.77ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [1.55ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [1.84ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [3.87ms]
 
-tests/unit/invitations.test.ts:
-(pass) client invitations > fresh room IDs and secrets have exact decoded lengths [0.77ms]
-(pass) client invitations > missing fragment and empty secret are local missing errors [0.14ms]
-(pass) client invitations > reject malformed and noncanonical room IDs [0.12ms]
-(pass) client invitations > reject malformed, padded, duplicate, encoded, and noncanonical secrets [0.20ms]
-(pass) client invitations > admission contains only public fields [0.14ms]
-
- 44 pass
+ 60 pass
  0 fail
- 1192 expect() calls
-Ran 44 tests across 4 files. [158.00ms]
+ 1726 expect() calls
+Ran 60 tests across 5 files. [218.00ms]

@@ -37,6 +37,7 @@ export default function InvitationRoom({ join = false }: { join?: boolean }) {
 	const initial = useRef<InvitationResult | null>(null);
 	const dispose = useRef<(() => void) | null>(null);
 	const started = useRef(false);
+	const effectGeneration = useRef(0);
 
 	const discard = useCallback(() => {
 		invitation.current?.secret.fill(0);
@@ -72,8 +73,12 @@ export default function InvitationRoom({ join = false }: { join?: boolean }) {
 	);
 
 	useEffect(() => {
+		effectGeneration.current += 1;
+		const generation = effectGeneration.current;
 		setSecure(window.isSecureContext);
 		if (join && !initial.current) {
+			// Keep the first verdict in this ref across renders/effect replay. Never
+			// derive a second verdict from the URL after removing its fragment.
 			initial.current = parseInvitation(
 				window.location.pathname,
 				window.location.hash
@@ -98,15 +103,21 @@ export default function InvitationRoom({ join = false }: { join?: boolean }) {
 		};
 		// Strict Mode's exploratory effect must not open/tear down a room and reuse it.
 		queueMicrotask(consume);
-		const onHashChange = () => {
-			const hash = window.location.hash;
+		const onHashChange = (event: HashChangeEvent) => {
+			const target = new URL(event.newURL);
+			// Hash-change delivery can lag behind initial consumption or another
+			// navigation. Only the still-present fragment may be evaluated once;
+			// a replay after replaceState must not turn invalid into missing.
+			if (!target.hash || target.href !== window.location.href) {
+				return;
+			}
 			window.history.replaceState(null, "", window.location.pathname);
 			// biome-ignore lint/suspicious/noUnnecessaryConditions: connect() sets this ref true before opening WSS, including after transport teardown.
 			if (started.current || !join) {
 				return;
 			}
 			// Pasting a corrected fragment is a same-document navigation, not a remount.
-			initial.current = parseInvitation(window.location.pathname, hash);
+			initial.current = parseInvitation(target.pathname, target.hash);
 			consume();
 		};
 		const endOnPageHide = () => {
@@ -120,8 +131,17 @@ export default function InvitationRoom({ join = false }: { join?: boolean }) {
 			cancelled = true;
 			window.removeEventListener("hashchange", onHashChange);
 			window.removeEventListener("pagehide", endOnPageHide);
-			dispose.current?.();
-			dispose.current = null;
+			// A hydration-replayed creator click can open admission before the
+			// initial StrictMode cleanup. Replay must retain that very socket,
+			// not close it or reopen the same room/key. Only a real unmount (no
+			// following setup) disposes it, at the next microtask; pagehide is
+			// still immediate. Consume is independently cancelled above.
+			queueMicrotask(() => {
+				if (effectGeneration.current === generation) {
+					dispose.current?.();
+					dispose.current = null;
+				}
+			});
 		};
 	}, [connect, discard, join]);
 

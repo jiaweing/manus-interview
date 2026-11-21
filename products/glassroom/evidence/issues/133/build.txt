@@ -12,5 +12,5 @@ web:build: ƒ  (Dynamic)  server-rendered on demand
 web:build:
 
  Tasks:    2 successful, 2 total
-Cached:    1 cached, 2 total
-  Time:    5.249s
+Cached:    0 cached, 2 total
+  Time:    8.803s

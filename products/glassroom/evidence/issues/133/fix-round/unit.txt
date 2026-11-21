@@ -1,0 +1,17 @@
+$ bun test tests/unit
+exit: 0
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [4.65ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [1.23ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [1.14ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [3.11ms]
+
+tests/unit/invitation-admission.test.ts:
+(pass) invitation admission lifecycle > creator reaches waiting after one public admission [0.60ms]
+(pass) invitation admission lifecycle > disposal before open is terminal and ignores captured late callbacks [0.11ms]
+(pass) invitation admission lifecycle > a queued open callback cannot send on a closing socket [0.05ms]
+(pass) invitation admission lifecycle > send failure ends once rather than leaving connecting forever [0.09ms]
+
+ 64 pass
+ 0 fail
+ 1739 expect() calls
+Ran 64 tests across 6 files. [228.00ms]

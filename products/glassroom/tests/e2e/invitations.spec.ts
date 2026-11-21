@@ -8,6 +8,7 @@ import {
 	type Page,
 	test,
 } from "@playwright/test";
+import { gotoInvitation } from "../helpers/invitation-navigation";
 
 const LOGIN_LABEL = /log ?in|sign ?in/i;
 // Traces can retain the pre-removal navigation URL and clipboard arguments.
@@ -150,6 +151,41 @@ test("random invitation lengths", async ({ browser }) => {
 	}
 });
 
+test("creator action during initial effect replay keeps one live admission", async ({
+	browser,
+}) => {
+	const { context, page } = await profile(browser);
+	try {
+		await context.addInitScript(() => {
+			const secure = window.isSecureContext;
+			let clicked = false;
+			Object.defineProperty(window, "isSecureContext", {
+				get() {
+					const button = document.querySelector("button");
+					if (!clicked && button?.textContent === "Create room") {
+						// The component reads this in its initial passive effect. Click
+						// before StrictMode's cleanup/replay, as a hydration-replayed
+						// user action can. No timing sleeps or product test UI needed.
+						clicked = true;
+						button.click();
+					}
+					return secure;
+				},
+			});
+		});
+		await page.goto("/");
+		await expect(page.getByRole("status")).toHaveText("Waiting for peer");
+		expect(
+			await page.evaluate(() => window.invitationProbe.fragmentFreeAtSignal)
+		).toEqual([true]);
+		await expect(
+			page.getByRole("button", { exact: true, name: "Copy invitation" })
+		).toBeVisible();
+	} finally {
+		await context.close();
+	}
+});
+
 test("deliberate copy only", async ({ browser }) => {
 	const { context, page } = await profile(browser);
 	try {
@@ -187,7 +223,7 @@ test("strip before signal", async ({ browser }) => {
 	try {
 		const link = await create(creator.page);
 		const secret = new URL(link).hash.slice(3);
-		await joiner.page.goto(link);
+		await gotoInvitation(joiner.page, link);
 		await expect(joiner.page.getByRole("status")).toHaveText(
 			"Peer joined. Identity is not yet verified."
 		);
@@ -255,7 +291,7 @@ for (const [name, hashes] of [
 		const requests = traffic(page);
 		try {
 			for (const hash of hashes) {
-				await page.goto(`${baseURL}/r/${"A".repeat(22)}${hash}`);
+				await gotoInvitation(page, `${baseURL}/r/${"A".repeat(22)}${hash}`);
 				await expect(page.getByRole("status")).toHaveText(
 					name.startsWith("missing")
 						? "Missing invitation secret. Ask for the complete link."
@@ -277,17 +313,106 @@ for (const [name, hashes] of [
 	});
 }
 
+test("fragment replay cannot overwrite the first invalid verdict", async ({
+	browser,
+	baseURL,
+}) => {
+	const { context, page } = await profile(browser);
+	try {
+		await gotoInvitation(page, `${baseURL}/r/${"A".repeat(22)}#s=short`);
+		await expect(page.getByRole("status")).toHaveText(
+			"Invalid invitation. Ask for a fresh link."
+		);
+		await expect.poll(() => new URL(page.url()).hash === "").toBe(true);
+		await page.evaluate(() => {
+			// A queued/replayed navigation event outlives the fragment it describes.
+			for (let replay = 0; replay < 2; replay += 1) {
+				window.dispatchEvent(
+					new HashChangeEvent("hashchange", {
+						newURL: `${location.href}#s=short`,
+						oldURL: location.href,
+					})
+				);
+			}
+		});
+		await expect(page.getByRole("status")).toHaveText(
+			"Invalid invitation. Ask for a fresh link."
+		);
+		expect(
+			await page.evaluate(
+				() => window.invitationProbe.fragmentFreeAtSignal.length
+			)
+		).toBe(0);
+	} finally {
+		await context.close();
+	}
+});
+
+test("a fresh fragment can correct a local invalid invitation", async ({
+	browser,
+}) => {
+	const creator = await profile(browser);
+	const joiner = await profile(browser);
+	try {
+		const link = await create(creator.page);
+		const target = new URL(link);
+		await gotoInvitation(
+			joiner.page,
+			`${target.origin}${target.pathname}#s=short`
+		);
+		await expect(joiner.page.getByRole("status")).toHaveText(
+			"Invalid invitation. Ask for a fresh link."
+		);
+		await gotoInvitation(joiner.page, link);
+		await expect(joiner.page.getByRole("status")).toHaveText(
+			"Peer joined. Identity is not yet verified."
+		);
+		expect(
+			await joiner.page.evaluate(
+				() => window.invitationProbe.fragmentFreeAtSignal
+			)
+		).toEqual([true]);
+	} finally {
+		await closeProfiles([creator.context, joiner.context]);
+	}
+});
+
+test("secret-link navigation failures expose only a redacted error", async ({
+	browser,
+	baseURL,
+}) => {
+	const { context, page } = await profile(browser);
+	try {
+		await page.route("**/r/**", (route) => route.abort());
+		let redacted = false;
+		try {
+			await gotoInvitation(
+				page,
+				`${baseURL}/r/${"A".repeat(22)}#s=${"A".repeat(43)}`
+			);
+		} catch (error) {
+			redacted =
+				error instanceof Error &&
+				error.message === "Invitation navigation failed (secret redacted)." &&
+				!(error.stack?.includes("#s=") || "cause" in error);
+		}
+		expect(redacted).toBe(true);
+	} finally {
+		await context.close();
+	}
+});
+
 test("no-login third-person rejection", async ({ browser }) => {
 	const creator = await profile(browser);
 	const joiner = await profile(browser);
 	const third = await profile(browser);
 	try {
 		const link = await create(creator.page);
-		await joiner.page.goto(link);
+		await gotoInvitation(joiner.page, link);
 		await expect(joiner.page.getByRole("status")).toHaveText(
 			"Peer joined. Identity is not yet verified."
 		);
-		await third.page.goto(link);
+		await gotoInvitation(third.page, link);
 		await expect(third.page.getByRole("status")).toHaveText(
 			"Room full or unavailable. Ask for a fresh invitation."
 		);
@@ -317,7 +442,7 @@ test("refresh ends old invitation without reconnection", async ({
 	const joiner = await profile(browser);
 	try {
 		const link = await create(creator.page);
-		await joiner.page.goto(link);
+		await gotoInvitation(joiner.page, link);
 		await expect(joiner.page.getByRole("status")).toHaveText(
 			"Peer joined. Identity is not yet verified."
 		);
@@ -336,7 +461,7 @@ test("refresh ends old invitation without reconnection", async ({
 		await expect(
 			creator.page.getByRole("button", { name: "Copy invitation" })
 		).toHaveCount(0);
-		await creator.page.goto(link);
+		await gotoInvitation(creator.page, link);
 		await expect.poll(() => new URL(creator.page.url()).hash === "").toBe(true);
 		expect(
 			await creator.page.evaluate(
@@ -358,7 +483,10 @@ test("invalid room ID stays local and Back does not restore the fragment", async
 	const { context, page } = await profile(browser);
 	try {
 		await page.goto("/");
-		await page.goto(`${baseURL}/r/${"A".repeat(21)}B#s=${"A".repeat(43)}`);
+		await gotoInvitation(
+			page,
+			`${baseURL}/r/${"A".repeat(21)}B#s=${"A".repeat(43)}`
+		);
 		await expect(page.getByRole("status")).toHaveText(
 			"Invalid invitation. Ask for a fresh link."
 		);

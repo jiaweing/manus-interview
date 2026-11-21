@@ -1,0 +1,9 @@
+$ PUBLIC_PORT=4533 NEXT_INTERNAL_PORT=5533 bun run start:https
+Owned stack intentionally stopped after verification.
+$ bun run scripts/https.ts start
+glassroom listening on https://localhost:4533
+▲ Next.js 16.4.6
+- Local:         http://127.0.0.1:5533
+- Network:       http://127.0.0.1:5533
+✓ Ready in 232ms
+✓ Running next.config.ts took 61ms

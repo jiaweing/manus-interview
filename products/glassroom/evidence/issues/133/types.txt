@@ -4,13 +4,13 @@ exit: 0
    • Running check-types in 4 packages
    • Remote caching disabled, using shared worktree cache
 
-@glassroom/ui:check-types: cache hit, replaying logs 9883e3a3636fb061
-server:check-types: cache hit, replaying logs f7351d76b96961fa
-server:check-types: $ tsc --noEmit
+@glassroom/ui:check-types: cache miss, executing 1d30bd14d8278edf
+server:check-types: cache miss, executing 3c3d31d4822dd716
 @glassroom/ui:check-types: $ tsc --noEmit
-web:check-types: cache miss, executing e541a39c1f70a669
+server:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing 4d9030968327f089
 web:check-types: $ tsc --noEmit
 
  Tasks:    3 successful, 3 total
-Cached:    2 cached, 3 total
-  Time:    2.567s
+Cached:    0 cached, 3 total
+  Time:    5.975s
