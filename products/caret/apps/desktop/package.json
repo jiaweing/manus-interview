@@ -7,9 +7,15 @@
   "scripts": {
     "dev": "electron-vite build && electron-vite dev",
     "build": "electron-vite build",
+    "build:helper": "bun native/scripts/build.ts",
+    "helper:snapshot": "bun native/scripts/test.ts --snapshot",
+    "test:helper-protocol": "bun native/scripts/test.ts",
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
+    "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:helper": "tsc --noEmit -p native/tsconfig.json",
+    "verify:helper-secrets": "bun native/scripts/check-secrets.ts",
     "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {

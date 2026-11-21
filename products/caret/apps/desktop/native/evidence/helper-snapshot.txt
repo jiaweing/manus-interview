@@ -1,0 +1,6 @@
+COMMAND: bun run --cwd apps/desktop helper:snapshot
+HOST: linux x64
+EXIT_CODE: 2
+
+$ bun native/scripts/test.ts --snapshot
+NOT RUN: needs Windows (real interactive desktop; Wine is not acceptance evidence)
