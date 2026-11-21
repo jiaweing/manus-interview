@@ -1,0 +1,13 @@
+$ bun run dev:https
+PUBLIC_PORT=4327 NEXT_INTERNAL_PORT=5327
+$ bun run scripts/https.ts dev
+glassroom listening on https://localhost:4327
+▲ Next.js 16.4.6 (Turbopack)
+- Local:         http://127.0.0.1:5327
+- Network:       http://127.0.0.1:5327
+✓ Ready in 378ms
+✓ Running next.config.ts took 50ms
+
+
+
+Orchestration note: all eight checks exited 0; the temporary Python runner then failed to import psutil during process cleanup. Owned stack cleanup completed separately by recorded PID; see cleanup.log.

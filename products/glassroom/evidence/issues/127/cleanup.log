@@ -1,0 +1,6 @@
+$ kill -TERM 27226 (owned scripts/https.ts runner)
+State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+
+Recorded profiles checked: 6
+Remaining recorded profiles: []
+profile_check_exit=0

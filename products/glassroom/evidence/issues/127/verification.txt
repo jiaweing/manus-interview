@@ -1,0 +1,116 @@
+Issue #127 fix-round verification; UTC 2026-11-21
+Environment: PUBLIC_PORT=4327 NEXT_INTERNAL_PORT=5327; same-host local sandbox
+All commands executed from products/glassroom. Final SHA is identified in the PR comment.
+
+$ bun run check
+exit_code=0
+$ ultracite check
+Checked 46 files in 234ms. No fixes applied.
+
+exit_code=0
+
+$ bun run check-types
+exit_code=0
+   • Remote caching disabled, using shared worktree cache
+
+@glassroom/ui:check-types: cache miss, executing 824625eb9ecc68d5
+server:check-types: cache miss, executing e31cec1c55a11dd3
+@glassroom/ui:check-types: $ tsc --noEmit
+server:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing e3370c769715fd9b
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    5.143s
+
+
+exit_code=0
+
+$ bun run build
+exit_code=0
+web:build:
+web:build: Route (app)
+web:build: ┌ ○ /
+web:build: └ ○ /_not-found
+web:build:
+web:build:
+web:build: ○  (Static)  prerendered as static content
+web:build:
+
+ Tasks:    2 successful, 2 total
+Cached:    0 cached, 2 total
+  Time:    8.071s
+
+
+exit_code=0
+
+$ bun test tests/unit
+exit_code=0
+(pass) ephemeral session handshake > nonce binding [0.83ms]
+(pass) ephemeral session handshake > invalid HMAC [0.95ms]
+(pass) ephemeral session handshake > fresh session material [1.66ms]
+(pass) ephemeral session handshake > no private material in envelopes [1.24ms]
+(pass) ephemeral session handshake > both local and peer confirmations are required [1.21ms]
+(pass) ephemeral session handshake > malformed and unknown envelope fields fail closed [5.90ms]
+(pass) ephemeral session handshake > one-shot derivation, copied envelopes, and teardown [1.17ms]
+(pass) ephemeral session handshake > teardown cannot resurrect an in-flight handshake [0.65ms]
+
+ 14 pass
+ 0 fail
+ 117 expect() calls
+Ran 14 tests across 1 file. [34.00ms]
+
+exit_code=0
+
+$ bunx tsc --noEmit -p tsconfig.json
+exit_code=0
+$ bunx tsc --noEmit -p tsconfig.json
+
+exit_code=0
+
+$ bun /home/ubuntu/work/f127/cleanup-probe.mjs
+exit_code=0
+$ bun /home/ubuntu/work/f127/cleanup-probe.mjs
+PASS: success; both closes settled; all profiles removed; failure visibility preserved
+PASS: write rejection; both closes settled; all profiles removed; failure visibility preserved
+PASS: attach rejection; both closes settled; all profiles removed; failure visibility preserved
+PASS: close rejection; both closes settled; all profiles removed; failure visibility preserved
+
+exit_code=0
+
+$ bunx playwright test tests/e2e/preflight.spec.ts --project=chromium
+exit_code=0
+  ],
+  "status": "failed",
+  "testedOrigin": "https://localhost:4327",
+  "timestamp": "2026-11-21T14:35:22.333Z"
+}
+  ✓  2 [chromium] › tests/e2e/preflight.spec.ts:458:1 › blocked-connectivity fails without relay or fallback (11.7s)
+
+  2 passed (15.4s)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+
+exit_code=0
+
+$ bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity --reporter=list
+exit_code=0
+  "relayCandidates": 0,
+  "scenario": "blocked-connectivity",
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-yudvsg",
+    "/tmp/glassroom-preflight-b-VCks44"
+  ],
+  "status": "failed",
+  "testedOrigin": "https://localhost:4327",
+  "timestamp": "2026-11-21T14:35:35.679Z"
+}
+  ✓  1 [chromium] › tests/e2e/preflight.spec.ts:458:1 › blocked-connectivity fails without relay or fallback (11.5s)
+
+  1 passed (12.5s)
+
+exit_code=0

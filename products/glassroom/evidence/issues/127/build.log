@@ -1,0 +1,45 @@
+$ bun run build
+$ turbo run build
+
+   • turbo 2.11.13
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running build in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+web:build: cache miss, executing a3daaa15233ee866
+server:build: cache miss, executing 11fe41440a951690
+server:build: $ bun build src/index.ts --target bun --outdir dist
+web:build: $ bun --bun next build
+server:build: Bundled 27 modules in 17ms
+server:build:
+server:build:   index.js  51.66 KB  (entry point)
+server:build:
+web:build: ▲ Next.js 16.4.6 (Turbopack)
+web:build: ✓ Running next.config.ts took 47ms
+web:build:
+web:build:   Creating an optimized production build ...
+web:build: ✓ Compiled successfully in 3.4s
+web:build:   Running TypeScript ...
+web:build:   Finished TypeScript in 2.6s ...
+web:build:   Collecting page data using 5 workers ...
+web:build:   Generating static pages using 5 workers (0/4) ...
+web:build:   Generating static pages using 5 workers (1/4)
+web:build:   Generating static pages using 5 workers (2/4)
+web:build:   Generating static pages using 5 workers (3/4)
+web:build: ✓ Generating static pages using 5 workers (4/4) in 462ms
+web:build:   Finalizing page optimization ...
+web:build:
+web:build: Route (app)
+web:build: ┌ ○ /
+web:build: └ ○ /_not-found
+web:build:
+web:build:
+web:build: ○  (Static)  prerendered as static content
+web:build:
+
+ Tasks:    2 successful, 2 total
+Cached:    0 cached, 2 total
+  Time:    8.071s
+
+
+exit_code=0

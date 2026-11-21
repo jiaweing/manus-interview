@@ -1,0 +1,112 @@
+$ bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity --reporter=list
+
+Running 1 test using 1 worker
+
+(node:28024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "chromiumVersions": [
+    "159.0.8154.6",
+    "159.0.8154.6"
+  ],
+  "deliveryBlocked": true,
+  "desktop": true,
+  "droppedCandidates": 2,
+  "failure": null,
+  "fallbackAttempts": [],
+  "faultInjection": "runner withholds all SDP ICE candidates in both directions",
+  "headless": true,
+  "negotiationBoundMs": 10000,
+  "negotiationElapsedMs": 9525.91408,
+  "network": "local sandbox network; two desktop Chromium profiles on the same host",
+  "networkInterfaces": [
+    {
+      "family": "IPv4",
+      "internal": true,
+      "name": "lo"
+    },
+    {
+      "family": "IPv6",
+      "internal": true,
+      "name": "lo"
+    },
+    {
+      "family": "IPv4",
+      "internal": false,
+      "name": "eth0"
+    },
+    {
+      "family": "IPv6",
+      "internal": false,
+      "name": "eth0"
+    }
+  ],
+  "networkLimit": "This establishes same-host direct connectivity only; rerun on the intended demo/judge network before delivery.",
+  "peers": [
+    {
+      "candidateTypes": [
+        "host"
+      ],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "connectionState": "closed",
+      "elapsedMs": 9503.799999999814,
+      "origin": "https://localhost:4327",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "received": [],
+      "secureContext": true,
+      "selectedPairs": [],
+      "status": "failed",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "candidateTypes": [
+        "host"
+      ],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "connectionState": "closed",
+      "elapsedMs": 9503.100000000093,
+      "origin": "https://localhost:4327",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "received": [],
+      "secureContext": true,
+      "selectedPairs": [],
+      "status": "failed",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    }
+  ],
+  "probeTimeoutMs": 9500,
+  "relayCandidates": 0,
+  "scenario": "blocked-connectivity",
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-yudvsg",
+    "/tmp/glassroom-preflight-b-VCks44"
+  ],
+  "status": "failed",
+  "testedOrigin": "https://localhost:4327",
+  "timestamp": "2026-11-21T14:35:35.679Z"
+}
+  ✓  1 [chromium] › tests/e2e/preflight.spec.ts:458:1 › blocked-connectivity fails without relay or fallback (11.5s)
+
+  1 passed (12.5s)
+
+exit_code=0

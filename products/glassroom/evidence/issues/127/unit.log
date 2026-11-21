@@ -1,0 +1,25 @@
+$ bun test tests/unit
+bun test v1.4.5 (a7733435c)
+
+tests/unit/handshake-crypto.test.ts:
+(pass) ephemeral session handshake > creator-first canonical transcript [4.66ms]
+(pass) ephemeral session handshake > matching fingerprint [1.54ms]
+(pass) ephemeral session handshake > directional and purpose separation [3.70ms]
+(pass) ephemeral session handshake > room binding [1.74ms]
+(pass) ephemeral session handshake > role binding [1.05ms]
+(pass) ephemeral session handshake > public-key binding [0.92ms]
+(pass) ephemeral session handshake > nonce binding [0.83ms]
+(pass) ephemeral session handshake > invalid HMAC [0.95ms]
+(pass) ephemeral session handshake > fresh session material [1.66ms]
+(pass) ephemeral session handshake > no private material in envelopes [1.24ms]
+(pass) ephemeral session handshake > both local and peer confirmations are required [1.21ms]
+(pass) ephemeral session handshake > malformed and unknown envelope fields fail closed [5.90ms]
+(pass) ephemeral session handshake > one-shot derivation, copied envelopes, and teardown [1.17ms]
+(pass) ephemeral session handshake > teardown cannot resurrect an in-flight handshake [0.65ms]
+
+ 14 pass
+ 0 fail
+ 117 expect() calls
+Ran 14 tests across 1 file. [34.00ms]
+
+exit_code=0
