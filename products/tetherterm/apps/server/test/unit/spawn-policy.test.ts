@@ -143,6 +143,37 @@ describe("configuration fails before startup", () => {
 		expect(stdio.tunnelHostname).toBeUndefined();
 	});
 
+	test("legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent", async () => {
+		const legacy = await loadConfig("http", {
+			...fixture.env,
+			PORT: "0",
+			TETHERTERM_PORT: undefined,
+		});
+		expect(legacy.port).toBe(0);
+		await expect(
+			loadConfig("http", {
+				...fixture.env,
+				PORT: "65536",
+				TETHERTERM_PORT: undefined,
+			})
+		).rejects.toBeInstanceOf(ConfigurationError);
+	});
+
+	test("TETHERTERM_PORT takes precedence over PORT without bypassing validation", async () => {
+		const canonical = await loadConfig("http", {
+			...fixture.env,
+			PORT: "65536",
+		});
+		expect(canonical.port).toBe(0);
+		await expect(
+			loadConfig("http", {
+				...fixture.env,
+				PORT: "0",
+				TETHERTERM_PORT: "-1",
+			})
+		).rejects.toBeInstanceOf(ConfigurationError);
+	});
+
 	const invalidInputs: [string, () => Record<string, string | undefined>][] = [
 		["missing root", () => ({ TETHERTERM_APPROVED_ROOT: undefined })],
 		["relative root", () => ({ TETHERTERM_APPROVED_ROOT: "root" })],

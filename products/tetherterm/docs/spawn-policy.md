@@ -6,11 +6,19 @@ startup callback in `startWithConfig(mode, start, env)`. Validation failures thr
 a plain-text `ConfigurationError` and never include input values. The loader does
 not initialize dormant scaffold addons or log environments.
 
+Both real MCP launchers (`terminal:http` and `terminal:stdio`) await this loader
+before opening a listener or connecting stdio. The legacy `src/index.ts` health
+launcher also validates HTTP configuration before checking the native dependency
+and listening. Missing or invalid mode-required inputs exit with code 1 and a
+readable, input-free configuration message on stderr; stdio stdout remains
+protocol-only. Unexpected transport/platform errors are replaced with static
+startup diagnostics. The health launcher's actionable setsid check is preserved.
+
 | Environment variable | Contract |
 | --- | --- |
 | `TETHERTERM_APPROVED_ROOT` | Required for both modes. Absolute path to an existing directory; canonicalized with `realpath`. |
 | `TETHERTERM_APPROVED_EXECUTABLES` | Required for both modes. Nonempty JSON array of literal command names on operator PATH or absolute executable paths. Every entry resolves at startup to a canonical executable file. |
-| `TETHERTERM_PORT` | Loopback port, default `3000`, integer `0`–`65535`. Tests use `0`. Binding hostname is always `127.0.0.1`, not configurable. |
+| `TETHERTERM_PORT` | Loopback port, integer `0`–`65535`. Takes precedence over the legacy `PORT` alias; the alias is validated identically and used only when this key is absent. Default is `3000` when both are absent. Tests use `0`. All HTTP launchers use the validated port and hostname, always `127.0.0.1`, not configurable. |
 | `TETHERTERM_TUNNEL_HOSTNAME` | Required for HTTP only. One exact DNS hostname, not a URL, wildcard, path, or hostname with port. |
 | `TETHERTERM_TOKEN_ENV_VAR` | Required for HTTP only. Name of the environment variable containing the bearer token, not the token itself. |
 
@@ -72,9 +80,21 @@ bun run check
 bun run check-types
 ```
 
-The issue-named test entrypoint imports the policy unit/integration suites; root
+The issue-named test entrypoint imports policy unit/integration and actual-process
+startup suites; root
 scripts independently execute those suites from their standard directories. Each
 denial asserts zero spawn calls. All credential sentinels are generated only at
 runtime. The real-PTY test asserts absence of credentials without printing child
 environments or sentinel values. Committed command output, including intermediate
 lint/type corrections, is in `evidence/tests/103-builder.log`.
+
+Actual-process tests cover `index.ts`, `http.ts`, and `stdio.ts` with missing and
+invalid required inputs. They leave stdin open with a queued initialize request,
+assert exit 1, readable stderr, no startup success or stdout, no runtime token
+values, and preload a transparent observer recording every `Bun.serve` call in
+the owned launcher process. The observer delegates unchanged to the real listener:
+a positive control gets actual HTTP 200 and verifies the socket closes on exit.
+Bad configuration must fail without even attempting to open a listening socket.
+Valid SDK boot tests retain empty tool discovery and
+credential-free owner-trusted stdio. HTTP request authentication and tools remain
+separate follow-up issues; this change does not add middleware or tools.

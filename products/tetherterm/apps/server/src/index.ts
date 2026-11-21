@@ -1,17 +1,37 @@
 import { Hono } from "hono";
+import { loadConfig } from "./config";
+import { ConfigurationError } from "./errors";
 import { requireSetsid } from "./pty/spawn";
+import { reportStartupFailure } from "./startup";
 
 export const app = new Hono();
 
-// Boot probe only; the authenticated MCP transport is implemented by issue #102.
+// Retain the original boot probe; the MCP launcher lives in http.ts.
 app.get("/healthz", (context) => context.text("ok"));
 
 if (import.meta.main) {
-	requireSetsid();
-	const server = Bun.serve({
-		fetch: app.fetch,
-		hostname: "127.0.0.1",
-		port: Number(Bun.env.PORT ?? "3000"),
-	});
-	console.error(`TetherTerm listening on http://127.0.0.1:${server.port}`);
+	try {
+		const config = await loadConfig("http");
+		try {
+			requireSetsid();
+		} catch {
+			// biome-ignore lint/style/useErrorCause: Never expose raw platform errors at startup.
+			throw new ConfigurationError(
+				"native PTYs require util-linux setsid on PATH and Linux; install util-linux before starting the server"
+			);
+		}
+		const server = Bun.serve({
+			fetch: app.fetch,
+			hostname: config.hostname,
+			port: config.port,
+		});
+		console.error(
+			`TetherTerm listening on http://${config.hostname}:${server.port}`
+		);
+		const shutdown = () => server.stop(true);
+		process.once("SIGINT", shutdown);
+		process.once("SIGTERM", shutdown);
+	} catch (error) {
+		reportStartupFailure("HTTP", error);
+	}
 }

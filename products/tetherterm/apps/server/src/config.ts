@@ -62,7 +62,8 @@ export async function loadConfig(
 	const parsed = commonSchema.safeParse({
 		approvedExecutables: parseExecutables(env.TETHERTERM_APPROVED_EXECUTABLES),
 		approvedRoot: env.TETHERTERM_APPROVED_ROOT,
-		port: env.TETHERTERM_PORT ?? "3000",
+		// Keep legacy PORT=0 boot probes working, but never bypass validation.
+		port: env.TETHERTERM_PORT ?? env.PORT ?? "3000",
 	});
 	if (!parsed.success) {
 		// Never format Zod's input/error object: it can contain credential values.
