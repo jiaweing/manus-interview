@@ -1,0 +1,3 @@
+{
+  "extends": "@tetherterm/config/tsconfig.base.json"
+}
