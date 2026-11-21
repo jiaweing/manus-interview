@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline";
 
 // Test-only process. Never imported by production main code.
-const mode = process.argv[2];
+const [, , mode] = process.argv;
 const input = createInterface({ input: process.stdin });
 input.on("line", (line) => {
   const request = JSON.parse(line) as { requestId: string; op: string };
@@ -25,7 +25,7 @@ input.on("line", (line) => {
       break;
     case "wrong-id":
       process.stdout.write(
-        JSON.stringify({ ...response, requestId: "other" }) + "\n"
+        `${JSON.stringify({ ...response, requestId: "other" })}\n`
       );
       break;
     case "null-id":
@@ -35,19 +35,19 @@ input.on("line", (line) => {
       break;
     case "extra":
       process.stdout.write(
-        JSON.stringify({ ...response, command: "extra" }) + "\n"
+        `${JSON.stringify({ ...response, command: "extra" })}\n`
       );
       break;
     case "wrong-type":
-      process.stdout.write(JSON.stringify({ ...response, ok: "true" }) + "\n");
+      process.stdout.write(`${JSON.stringify({ ...response, ok: "true" })}\n`);
       break;
     case "wrong-op":
       process.stdout.write(
-        JSON.stringify({
+        `${JSON.stringify({
           ok: true,
           outcome: "unsupported",
           requestId: request.requestId,
-        }) + "\n"
+        })}\n`
       );
       break;
     case "duplicate-key":
@@ -67,21 +67,21 @@ input.on("line", (line) => {
       break;
     case "error":
       process.stdout.write(
-        JSON.stringify({
+        `${JSON.stringify({
           error: "no_target",
           ok: false,
           requestId: request.requestId,
-        }) + "\n"
+        })}\n`
       );
       break;
     case "split": {
-      const data = JSON.stringify(response) + "\n";
+      const data = `${JSON.stringify(response)}\n`;
       for (const byte of Buffer.from(data)) {
         process.stdout.write(Buffer.from([byte]));
       }
       break;
     }
     default:
-      process.stdout.write(JSON.stringify(response) + "\n");
+      process.stdout.write(`${JSON.stringify(response)}\n`);
   }
 });

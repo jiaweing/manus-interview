@@ -21,8 +21,8 @@ export interface SenderContext {
 export interface BoundaryServices {
   cancel?: (sessionId: string) => void | Promise<void>;
   // These getters and callbacks belong to main, never to the renderer.
-  getActiveSession(): ActiveSession | null;
-  getStatus(): CaretStatus;
+  getActiveSession: () => ActiveSession | null;
+  getStatus: () => CaretStatus;
   setupKey?: (key: string) => void | Promise<void>;
   submitAudio?: (submission: AudioSubmission) => void | Promise<void>;
 }
@@ -53,8 +53,10 @@ function exactKeys(value: Record<string, unknown>, keys: string[]): boolean {
   );
 }
 
+const SESSION_ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
+
 function sessionId(value: unknown): value is string {
-  return typeof value === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(value);
+  return typeof value === "string" && SESSION_ID_PATTERN.test(value);
 }
 
 export function isBundledUrl(candidate: string, trustedUrl: string): boolean {
@@ -84,6 +86,93 @@ export function publicStatus(status: CaretStatus): CaretStatus {
   return { sessionId: status.sessionId, state: status.state };
 }
 
+function validateSetupKey(
+  payload: Record<string, unknown>
+): BoundaryError | null {
+  if (
+    !exactKeys(payload, ["key"]) ||
+    typeof payload.key !== "string" ||
+    payload.key.length > 4096 ||
+    payload.key.trim().length === 0
+  ) {
+    return "invalid_payload";
+  }
+  return null;
+}
+
+function validateCancel(
+  payload: Record<string, unknown>,
+  services: BoundaryServices
+): BoundaryError | null {
+  if (!(exactKeys(payload, ["sessionId"]) && sessionId(payload.sessionId))) {
+    return "invalid_payload";
+  }
+  if (services.getActiveSession()?.id !== payload.sessionId) {
+    return "invalid_session";
+  }
+  return null;
+}
+
+function validateAudio(
+  payload: Record<string, unknown>,
+  services: BoundaryServices
+): BoundaryError | null {
+  if (
+    !(
+      exactKeys(payload, ["sessionId", "mimeType", "audio"]) &&
+      sessionId(payload.sessionId)
+    ) ||
+    typeof payload.mimeType !== "string" ||
+    !(payload.audio instanceof ArrayBuffer)
+  ) {
+    return "invalid_payload";
+  }
+  const active = services.getActiveSession();
+  if (!active || active.id !== payload.sessionId) {
+    return "invalid_session";
+  }
+  if (active.state !== "capture-complete") {
+    return "invalid_state";
+  }
+  if (!WEBM_MIME_TYPES.some((mime) => mime === payload.mimeType)) {
+    return "invalid_mime";
+  }
+  if (
+    payload.audio.byteLength === 0 ||
+    payload.audio.byteLength > MAX_AUDIO_BYTES
+  ) {
+    return "invalid_size";
+  }
+  return null;
+}
+
+function validateOperation(
+  operation: unknown,
+  payload: Record<string, unknown>,
+  services: BoundaryServices
+): BoundaryError | null {
+  switch (operation) {
+    case "setupKey":
+      return (
+        validateSetupKey(payload) ?? (services.setupKey ? null : "unavailable")
+      );
+    case "subscribeStatus":
+      return exactKeys(payload, []) ? null : "invalid_payload";
+    case "cancel":
+      return (
+        validateCancel(payload, services) ??
+        (services.cancel ? null : "unavailable")
+      );
+    case "submitAudio":
+      return (
+        validateAudio(payload, services) ??
+        (services.submitAudio ? null : "unavailable")
+      );
+    default:
+      return "unknown_operation";
+  }
+}
+
 export function createIpcBoundary(
   trusted: () => TrustedRenderer,
   services: BoundaryServices
@@ -109,76 +198,29 @@ export function createIpcBoundary(
 
     // No await occurs between validation and handing off to a main-owned callback.
     try {
+      const error = validateOperation(operation, payload, services);
+      if (error) {
+        return reject(error);
+      }
+      // The synchronous validator checked availability; retain the services receiver.
       switch (operation) {
-        case "setupKey": {
-          if (
-            !exactKeys(payload, ["key"]) ||
-            typeof payload.key !== "string" ||
-            payload.key.length > 4096 ||
-            payload.key.trim().length === 0
-          ) {
-            return reject("invalid_payload");
-          }
-          if (!services.setupKey) {
-            return reject("unavailable");
-          }
-          await services.setupKey(payload.key);
+        case "setupKey":
+          await (
+            services.setupKey as NonNullable<BoundaryServices["setupKey"]>
+          )(payload.key as string);
           return { ok: true };
-        }
-        case "subscribeStatus": {
-          if (!exactKeys(payload, [])) {
-            return reject("invalid_payload");
-          }
+        case "subscribeStatus":
           return { ok: true, status: publicStatus(services.getStatus()) };
-        }
-        case "cancel": {
-          if (
-            !(exactKeys(payload, ["sessionId"]) && sessionId(payload.sessionId))
-          ) {
-            return reject("invalid_payload");
-          }
-          if (services.getActiveSession()?.id !== payload.sessionId) {
-            return reject("invalid_session");
-          }
-          if (!services.cancel) {
-            return reject("unavailable");
-          }
-          await services.cancel(payload.sessionId);
+        case "cancel":
+          await (services.cancel as NonNullable<BoundaryServices["cancel"]>)(
+            payload.sessionId as string
+          );
           return { ok: true };
-        }
-        case "submitAudio": {
-          if (
-            !(
-              exactKeys(payload, ["sessionId", "mimeType", "audio"]) &&
-              sessionId(payload.sessionId)
-            ) ||
-            typeof payload.mimeType !== "string" ||
-            !(payload.audio instanceof ArrayBuffer)
-          ) {
-            return reject("invalid_payload");
-          }
-          const active = services.getActiveSession();
-          if (!active || active.id !== payload.sessionId) {
-            return reject("invalid_session");
-          }
-          if (active.state !== "capture-complete") {
-            return reject("invalid_state");
-          }
-          if (!WEBM_MIME_TYPES.some((mime) => mime === payload.mimeType)) {
-            return reject("invalid_mime");
-          }
-          if (
-            payload.audio.byteLength === 0 ||
-            payload.audio.byteLength > MAX_AUDIO_BYTES
-          ) {
-            return reject("invalid_size");
-          }
-          if (!services.submitAudio) {
-            return reject("unavailable");
-          }
-          await services.submitAudio(payload as unknown as AudioSubmission);
+        case "submitAudio":
+          await (
+            services.submitAudio as NonNullable<BoundaryServices["submitAudio"]>
+          )(payload as unknown as AudioSubmission);
           return { ok: true };
-        }
         default:
           return reject("unknown_operation");
       }

@@ -7,19 +7,21 @@ export const RENDERER_PRIVILEGES = Object.freeze({
 });
 
 interface PreventableEvent {
-  preventDefault(): void;
+  preventDefault: () => void;
 }
 
 interface GuardedContents {
-  on(
-    event:
+  on: <
+    Event extends
       | "will-navigate"
       | "will-frame-navigate"
       | "will-redirect"
       | "will-attach-webview",
+  >(
+    event: Event,
     listener: (event: PreventableEvent) => void
-  ): unknown;
-  setWindowOpenHandler(handler: () => { action: "deny" }): void;
+  ) => unknown;
+  setWindowOpenHandler: (handler: () => { action: "deny" }) => void;
 }
 
 export function guardRenderer(

@@ -9,15 +9,18 @@ import {
 
 // Kept private in preload; contextBridge receives only the four-method facade.
 export interface PreloadTransport {
-  invoke(channel: string, request: BoundaryRequest): Promise<BoundaryResult>;
-  on(
+  invoke: (
+    channel: string,
+    request: BoundaryRequest
+  ) => Promise<BoundaryResult>;
+  on: (
     channel: string,
     listener: (event: unknown, status: CaretStatus) => void
-  ): unknown;
-  removeListener(
+  ) => unknown;
+  removeListener: (
     channel: string,
     listener: (event: unknown, status: CaretStatus) => void
-  ): unknown;
+  ) => unknown;
 }
 
 export function createCaretApi(transport: PreloadTransport): CaretApi {

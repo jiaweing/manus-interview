@@ -5,11 +5,11 @@ import { startTrayHotkey } from "./tray-hotkey";
 import { createTrayTestAdapter } from "./tray-test-adapter";
 
 export interface TrayCallbacks {
-  getReadiness(): Readiness;
-  getSessionPhase(): SessionPhase;
-  onCancel(): void;
-  onStatus?(status: TrayStatus): void;
-  onToggle(): void;
+  getReadiness: () => Readiness;
+  getSessionPhase: () => SessionPhase;
+  onCancel: () => void;
+  onStatus?: (status: TrayStatus) => void;
+  onToggle: () => void;
 }
 
 // Embedded monochrome PNG avoids an unpackaged development-only asset path.
@@ -21,8 +21,12 @@ const TRAY_ICON =
 const NOT_READY: TrayCallbacks = {
   getReadiness: () => ({ key: false, microphone: false }),
   getSessionPhase: () => "idle",
-  onCancel: () => {},
-  onToggle: () => {},
+  onCancel: () => {
+    /* No session integration is installed yet. */
+  },
+  onToggle: () => {
+    /* No session integration is installed yet. */
+  },
 };
 
 export function launchCaretTray(

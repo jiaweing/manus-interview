@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
+import { which } from "bun";
 
 const native = resolve(import.meta.dir, "..");
 const build = resolve(native, "build");
@@ -8,13 +9,13 @@ mkdirSync(build, { recursive: true });
 const fixturesOnly = process.argv.includes("--fixtures");
 const windows = process.platform === "win32";
 const cross = !(windows || fixturesOnly);
-const compiler =
-  process.env.CXX ??
-  (cross
-    ? "x86_64-w64-mingw32-g++-posix"
-    : windows && Bun.which("cl.exe")
-      ? "cl.exe"
-      : "g++");
+function defaultCompiler(): string {
+  if (cross) {
+    return "x86_64-w64-mingw32-g++-posix";
+  }
+  return windows && which("cl.exe") ? "cl.exe" : "g++";
+}
+const compiler = process.env.CXX ?? defaultCompiler();
 const msvc = /(^|[\\/])cl(\.exe)?$/i.test(compiler);
 const suffix = windows || cross ? ".exe" : "";
 

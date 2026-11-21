@@ -20,7 +20,7 @@ function scan(path: string): void {
     if (entry.isDirectory()) {
       scan(file);
     } else if (entry.isFile()) {
-      scanned++;
+      scanned += 1;
       const content = readFileSync(file, "utf8");
       if (patterns.some((pattern) => pattern.test(content))) {
         console.error(

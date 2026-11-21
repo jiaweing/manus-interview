@@ -27,6 +27,13 @@ import {
 
 const rendererUrl = "file:///caret/out/renderer/index.html";
 
+function required<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) {
+    throw new Error("Required fixture value is missing");
+  }
+  return value;
+}
+
 function fixture() {
   const sender = {};
   const mainFrame = { url: rendererUrl };
@@ -145,28 +152,29 @@ describe("untrusted senders rejected before effects", () => {
     [
       "external main-frame URL",
       (event) => {
-        event.senderFrame!.url = "https://example.com";
+        required(event.senderFrame).url = "https://example.com";
         return event;
       },
     ],
     [
       "different bundled file",
       (event) => {
-        event.senderFrame!.url = "file:///caret/out/renderer/other.html";
+        required(event.senderFrame).url =
+          "file:///caret/out/renderer/other.html";
         return event;
       },
     ],
     [
       "malformed main-frame URL",
       (event) => {
-        event.senderFrame!.url = "invalid";
+        required(event.senderFrame).url = "invalid";
         return event;
       },
     ],
     [
       "query-string variation",
       (event) => {
-        event.senderFrame!.url += "?remote=true";
+        required(event.senderFrame).url += "?remote=true";
         return event;
       },
     ],
@@ -185,7 +193,7 @@ describe("untrusted senders rejected before effects", () => {
   }
   test("bundled same-document fragment stays trusted", async () => {
     const f = fixture();
-    f.event.senderFrame!.url += "#status";
+    required(f.event.senderFrame).url += "#status";
     expect((await f.handle(f.event, validRequests[1])).ok).toBe(true);
   });
 });
@@ -348,19 +356,18 @@ describe("audio session, main state, MIME and size", () => {
   });
   test("future integrations fail closed until installed", async () => {
     const f = fixture();
-    delete f.services.setupKey;
-    delete f.services.cancel;
-    delete f.services.submitAudio;
-    for (const request of [
-      validRequests[0],
-      validRequests[2],
-      validRequests[3],
-    ]) {
+    Reflect.deleteProperty(f.services, "setupKey");
+    Reflect.deleteProperty(f.services, "cancel");
+    Reflect.deleteProperty(f.services, "submitAudio");
+    async function expectUnavailable(request: unknown): Promise<void> {
       expect(await f.handle(f.event, request)).toEqual({
         error: "unavailable",
         ok: false,
       });
     }
+    await expectUnavailable(validRequests[0]);
+    await expectUnavailable(validRequests[2]);
+    await expectUnavailable(validRequests[3]);
     expect(f.effects).toEqual([]);
   });
   test("handler failures never echo secrets or payloads", async () => {
@@ -378,7 +385,9 @@ describe("audio session, main state, MIME and size", () => {
 function transportFixture() {
   const requests: { channel: string; request: BoundaryRequest }[] = [];
   const listeners = new Set<(event: unknown, status: CaretStatus) => void>();
-  let resolve: (result: BoundaryResult) => void = () => {};
+  let resolve: (result: BoundaryResult) => void = () => {
+    /* Intentional no-op in this fixture. */
+  };
   const pending = new Promise<BoundaryResult>((done) => {
     resolve = done;
   });
@@ -427,9 +436,11 @@ describe("preload exposes only four documented capabilities", () => {
     const setup = f.api.setupKey("fixture-key");
     const cancel = f.api.cancel("session-1");
     const submit = f.api.submitAudio(audio().payload as AudioSubmission);
-    const unsubscribe = f.api.subscribeStatus(() => {});
+    const unsubscribe = f.api.subscribeStatus(() => {
+      /* Intentional no-op in this fixture. */
+    });
     expect(f.requests.map(({ channel }) => channel)).toEqual(
-      Array(4).fill(IPC_REQUEST_CHANNEL)
+      new Array(4).fill(IPC_REQUEST_CHANNEL)
     );
     expect(f.requests.map(({ request }) => request.operation)).toEqual([
       "setupKey",
@@ -507,7 +518,7 @@ describe("renderer security configuration and navigation guards (Linux fixtures,
   test("external navigation, redirects, subframes, webviews and window.open are blocked without URL logs", () => {
     const handlers = new Map<
       string,
-      (event: { preventDefault(): void }) => void
+      (event: { preventDefault: () => void }) => void
     >();
     let open: (() => { action: "deny" }) | undefined;
     const logs: string[] = [];
@@ -529,16 +540,16 @@ describe("renderer security configuration and navigation guards (Linux fixtures,
       "will-attach-webview",
     ]) {
       let prevented = false;
-      handlers.get(name)!({
+      required(handlers.get(name))({
         preventDefault: () => {
           prevented = true;
         },
       });
       expect(prevented).toBe(true);
     }
-    expect(open!()).toEqual({ action: "deny" });
+    expect(required(open)()).toEqual({ action: "deny" });
     expect(logs).toEqual([
-      ...Array(4).fill("Caret: blocked navigation"),
+      ...new Array(4).fill("Caret: blocked navigation"),
       "Caret: blocked new window",
     ]);
   });

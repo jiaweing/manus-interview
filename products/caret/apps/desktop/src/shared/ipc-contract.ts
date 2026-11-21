@@ -43,10 +43,10 @@ export type BoundaryResult =
   | { ok: false; error: BoundaryError };
 
 export interface CaretApi {
-  cancel(sessionId: string): Promise<BoundaryResult>;
-  setupKey(key: string): Promise<BoundaryResult>;
-  submitAudio(submission: AudioSubmission): Promise<BoundaryResult>;
-  subscribeStatus(listener: (status: CaretStatus) => void): () => void;
+  cancel: (sessionId: string) => Promise<BoundaryResult>;
+  setupKey: (key: string) => Promise<BoundaryResult>;
+  submitAudio: (submission: AudioSubmission) => Promise<BoundaryResult>;
+  subscribeStatus: (listener: (status: CaretStatus) => void) => () => void;
 }
 
 export type BoundaryRequest =

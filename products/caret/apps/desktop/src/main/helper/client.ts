@@ -15,8 +15,11 @@ import {
 } from "./protocol";
 
 export class HelperRequestError extends Error {
-  constructor(readonly code: HelperErrorCode) {
+  readonly code: HelperErrorCode;
+
+  constructor(code: HelperErrorCode) {
     super(`Helper rejected request: ${code}`);
+    this.code = code;
     this.name = "HelperRequestError";
   }
 }
@@ -30,6 +33,8 @@ interface Pending {
 // Own ONE client/helper for the app lifetime. Never retry/restart after a failed
 // insert: the previous process may already have acted. No request/response logs.
 export class HelperClient {
+  private readonly child: ChildProcessWithoutNullStreams;
+  private readonly timeoutMs: number;
   private readonly pending = new Map<string, Pending>();
   private buffer: Buffer = Buffer.alloc(0);
   private failure: Error | undefined;
@@ -50,10 +55,9 @@ export class HelperClient {
   }
 
   // Injectable transport allows real process-exit/pipe tests without Win32.
-  constructor(
-    private readonly child: ChildProcessWithoutNullStreams,
-    private readonly timeoutMs = 5000
-  ) {
+  constructor(child: ChildProcessWithoutNullStreams, timeoutMs = 5000) {
+    this.child = child;
+    this.timeoutMs = timeoutMs;
     if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
       child.kill();
       throw new Error("Invalid helper timeout");
@@ -149,30 +153,7 @@ export class HelperClient {
       const line = this.buffer;
       this.buffer = Buffer.alloc(0);
       try {
-        const response = parseResponse(this.decoder.decode(line));
-        const item =
-          response.requestId === null
-            ? undefined
-            : this.pending.get(response.requestId);
-        if (!item) {
-          throw new Error("Unexpected helper response");
-        }
-        if (
-          response.ok &&
-          ((item.op === "snapshot" && !("target" in response)) ||
-            (item.op === "insert" && !("outcome" in response)))
-        ) {
-          throw new Error("Wrong helper response operation");
-        }
-        this.pending.delete(response.requestId as string);
-        clearTimeout(item.timer);
-        if (response.ok) {
-          item.resolve(
-            "target" in response ? response.target : response.outcome
-          );
-        } else {
-          item.reject(new HelperRequestError(response.error));
-        }
+        this.handleResponse(line);
       } catch {
         // Do not include the response (or user text) in an error.
         this.fail(new Error("Malformed or unexpected helper response"));
@@ -181,6 +162,31 @@ export class HelperClient {
       start = newline + 1;
     }
   }
+  private handleResponse(line: Buffer): void {
+    const response = parseResponse(this.decoder.decode(line));
+    const item =
+      response.requestId === null
+        ? undefined
+        : this.pending.get(response.requestId);
+    if (!item) {
+      throw new Error("Unexpected helper response");
+    }
+    if (
+      response.ok &&
+      ((item.op === "snapshot" && !("target" in response)) ||
+        (item.op === "insert" && !("outcome" in response)))
+    ) {
+      throw new Error("Wrong helper response operation");
+    }
+    this.pending.delete(response.requestId as string);
+    clearTimeout(item.timer);
+    if (response.ok) {
+      item.resolve("target" in response ? response.target : response.outcome);
+    } else {
+      item.reject(new HelperRequestError(response.error));
+    }
+  }
+
   private fail(error: Error): void {
     if (this.failure) {
       return;

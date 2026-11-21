@@ -18,7 +18,7 @@ export function registerCaretIpc(
     getActiveSession: () => null,
     getStatus: () => ({ sessionId: null, state: "idle" }),
   }
-): { publishStatus(): void; dispose(): void } {
+): { publishStatus: () => void; dispose: () => void } {
   const trusted = () => ({
     mainFrame: contents.mainFrame,
     sender: contents,

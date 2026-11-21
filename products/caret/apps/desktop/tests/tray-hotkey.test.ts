@@ -21,7 +21,7 @@ function fixture(
   const appListeners = new Map<string, () => void>();
   const windowListeners = new Map<
     string,
-    (event: { preventDefault(): void }) => void
+    (event: { preventDefault: () => void }) => void
   >();
   let shortcut: (() => void) | undefined;
   let menu: TrayMenuItem[] = [];
@@ -30,28 +30,40 @@ function fixture(
     microphone: true,
   };
   let phase: SessionPhase = "idle";
-  let releaseReady: () => void = () => {};
+  let releaseReady: () => void = () => {
+    /* Intentional no-op in this fixture. */
+  };
   const statuses: TrayStatus[] = [];
   const setup = {
-    hide: mock(() => {}),
+    hide: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
     isMinimized: mock(() => false),
     on: mock(
       (
         event: "close" | "minimize",
-        listener: (event: { preventDefault(): void }) => void
+        listener: (event: { preventDefault: () => void }) => void
       ) => {
         windowListeners.set(event, listener);
       }
     ),
-    restore: mock(() => {}),
-    show: mock(() => {}),
+    restore: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
+    show: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
   const tray = {
-    destroy: mock(() => {}),
+    destroy: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
     setContextMenu: mock((items: unknown) => {
       menu = items as TrayMenuItem[];
     }),
-    setToolTip: mock((_text: string) => {}),
+    setToolTip: mock((_text: string) => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
   const ready = options.pendingReady
     ? new Promise<void>((resolve) => {
@@ -63,7 +75,9 @@ function fixture(
       on: mock((event: "before-quit" | "will-quit", listener: () => void) => {
         appListeners.set(event, listener);
       }),
-      quit: mock(() => {}),
+      quit: mock(() => {
+        /* Intentional no-op in this fixture. */
+      }),
       requestSingleInstanceLock: mock(() => options.lock ?? true),
       whenReady: mock(() => ready),
     },
@@ -80,13 +94,19 @@ function fixture(
         }
         return options.registration ?? true;
       }),
-      unregister: mock((_accelerator: string) => {}),
+      unregister: mock((_accelerator: string) => {
+        /* Intentional no-op in this fixture. */
+      }),
     },
-    onCancel: mock(() => {}),
+    onCancel: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
     onStatus: (status) => {
       statuses.push(status);
     },
-    onToggle: mock(() => {}),
+    onToggle: mock(() => {
+      /* Intentional no-op in this fixture. */
+    }),
   };
   const lifecycle = startTrayHotkey(deps);
   return {
@@ -108,7 +128,9 @@ function fixture(
     statuses,
     tray,
     windowEvent: (event: string) => {
-      const preventDefault = mock(() => {});
+      const preventDefault = mock(() => {
+        /* Intentional no-op in this fixture. */
+      });
       windowListeners.get(event)?.({ preventDefault });
       return preventDefault;
     },
@@ -305,7 +327,9 @@ describe("Windows development adapter — injected fixtures only", () => {
   });
 
   test("opt-in adapter emits only bounded event metadata with injected handles; no capture", () => {
-    const emit = mock((_event: unknown) => {});
+    const emit = mock((_event: unknown) => {
+      /* Intentional no-op in this fixture. */
+    });
     const hooks = createTrayTestAdapter({
       emit,
       enabled: true,

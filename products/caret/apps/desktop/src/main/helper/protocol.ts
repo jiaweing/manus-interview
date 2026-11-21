@@ -46,8 +46,12 @@ const errors = new Set<string>([
   "limit_exceeded",
   "internal_error",
 ]);
+const IDENTIFIER_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;
+const HANDLE_PATTERN = /^0x[1-9a-f][0-9a-f]{0,15}$/;
+const WHITESPACE_PATTERN = /\s/;
+
 export function isIdentifier(value: unknown): value is string {
-  return typeof value === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(value);
+  return typeof value === "string" && IDENTIFIER_PATTERN.test(value);
 }
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -65,8 +69,8 @@ export function isTarget(value: unknown): value is Target {
     keys(value, ["foreground", "focus"]) &&
     typeof value.foreground === "string" &&
     typeof value.focus === "string" &&
-    /^0x[1-9a-f][0-9a-f]{0,15}$/.test(value.foreground) &&
-    /^0x[1-9a-f][0-9a-f]{0,15}$/.test(value.focus)
+    HANDLE_PATTERN.test(value.foreground) &&
+    HANDLE_PATTERN.test(value.focus)
   );
 }
 export function isText(value: unknown): value is string {
@@ -79,10 +83,11 @@ export function isText(value: unknown): value is string {
     return false;
   }
   // JSON.stringify would otherwise silently transmit lone surrogate escapes.
-  for (let i = 0; i < value.length; i++) {
+  for (let i = 0; i < value.length; i += 1) {
     const unit = value.charCodeAt(i);
     if (unit >= 0xd8_00 && unit <= 0xdb_ff) {
-      const low = value.charCodeAt(++i);
+      i += 1;
+      const low = value.charCodeAt(i);
       if (!(low >= 0xdc_00 && low <= 0xdf_ff)) {
         return false;
       }
@@ -93,11 +98,41 @@ export function isText(value: unknown): value is string {
   return true;
 }
 
+function stringEnd(line: string, start: number): number {
+  let end = start + 1;
+  while (end < line.length && line[end] !== '"') {
+    if (line[end] === "\\") {
+      end += 1;
+    }
+    end += 1;
+  }
+  return end;
+}
+
+function checkObjectKey(
+  line: string,
+  start: number,
+  end: number,
+  objectKeys: Set<string> | null | undefined
+): void {
+  let after = end + 1;
+  while (WHITESPACE_PATTERN.test(line[after] ?? "") && after < line.length) {
+    after += 1;
+  }
+  if (line[after] === ":") {
+    const key = JSON.parse(line.slice(start, end + 1)) as string;
+    if (!objectKeys || objectKeys.has(key)) {
+      throw new Error("Malformed helper response");
+    }
+    objectKeys.add(key);
+  }
+}
+
 // JSON.parse checks grammar first. This lexical pass additionally rejects
 // duplicate object keys, including keys expressed via JSON Unicode escapes.
 function rejectDuplicateKeys(line: string): void {
   const stack: (Set<string> | null)[] = [];
-  for (let i = 0; i < line.length; i++) {
+  for (let i = 0; i < line.length; i += 1) {
     const c = line[i];
     if (c === "{") {
       stack.push(new Set());
@@ -106,25 +141,9 @@ function rejectDuplicateKeys(line: string): void {
     } else if (c === "}" || c === "]") {
       stack.pop();
     } else if (c === '"') {
-      const start = i++;
-      while (i < line.length && line[i] !== '"') {
-        if (line[i] === "\\") {
-          i++;
-        }
-        i++;
-      }
-      let after = i + 1;
-      while (/\s/.test(line[after] ?? "") && after < line.length) {
-        after++;
-      }
-      if (line[after] === ":") {
-        const key = JSON.parse(line.slice(start, i + 1)) as string;
-        const objectKeys = stack[stack.length - 1];
-        if (!objectKeys || objectKeys.has(key)) {
-          throw new Error("Malformed helper response");
-        }
-        objectKeys.add(key);
-      }
+      const start = i;
+      i = stringEnd(line, start);
+      checkObjectKey(line, start, i, stack.at(-1));
     }
   }
 }

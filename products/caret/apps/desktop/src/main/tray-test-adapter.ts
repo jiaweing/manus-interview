@@ -16,6 +16,7 @@ interface TestAdapterOptions {
 }
 
 // Fixed test-only command: accepts no user text, keys, audio, or target contents.
+const FOREGROUND_HANDLE_PATTERN = /^\d+$/;
 const FOREGROUND_SCRIPT = `Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public static class CaretForeground { [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow(); }'; [CaretForeground]::GetForegroundWindow().ToInt64().ToString()`;
 
 function readWindowsForegroundHandle(): string {
@@ -30,7 +31,7 @@ function readWindowsForegroundHandle(): string {
         windowsHide: true,
       }
     ).trim();
-    return /^\d+$/.test(output) ? output : "unavailable";
+    return FOREGROUND_HANDLE_PATTERN.test(output) ? output : "unavailable";
   } catch {
     return "unavailable";
   }
@@ -45,7 +46,8 @@ export function createTrayTestAdapter(
   }
   const readHandle =
     options.readForegroundHandle ?? readWindowsForegroundHandle;
-  const emit = options.emit ?? ((event) => console.info(JSON.stringify(event)));
+  const emit =
+    options.emit ?? ((metadata) => console.info(JSON.stringify(metadata)));
   let phase: "idle" | "recording" = "idle";
   function event(name: "toggle" | "cancel"): void {
     const foregroundBefore = readHandle();

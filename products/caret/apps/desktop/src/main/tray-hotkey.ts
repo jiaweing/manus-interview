@@ -17,18 +17,18 @@ export interface TrayStatus {
 }
 
 interface PreventableEvent {
-  preventDefault(): void;
+  preventDefault: () => void;
 }
 
 export interface SetupWindowPort {
-  hide(): void;
-  isMinimized(): boolean;
-  on(
-    event: "close" | "minimize",
+  hide: () => void;
+  isMinimized: () => boolean;
+  on: <Event extends "close" | "minimize">(
+    event: Event,
     listener: (event: PreventableEvent) => void
-  ): unknown;
-  restore(): void;
-  show(): void;
+  ) => unknown;
+  restore: () => void;
+  show: () => void;
 }
 
 export interface TrayMenuItem {
@@ -38,38 +38,41 @@ export interface TrayMenuItem {
 }
 
 export interface TrayPort {
-  destroy(): void;
-  setContextMenu(menu: unknown): void;
-  setToolTip(text: string): void;
+  destroy: () => void;
+  setContextMenu: (menu: unknown) => void;
+  setToolTip: (text: string) => void;
 }
 
 export interface TrayHotkeyDependencies {
   app: {
-    requestSingleInstanceLock(): boolean;
-    whenReady(): Promise<void>;
-    on(event: "before-quit" | "will-quit", listener: () => void): unknown;
-    quit(): void;
+    requestSingleInstanceLock: () => boolean;
+    whenReady: () => Promise<void>;
+    on: <Event extends "before-quit" | "will-quit">(
+      event: Event,
+      listener: () => void
+    ) => unknown;
+    quit: () => void;
   };
-  buildMenu(items: TrayMenuItem[]): unknown;
-  createSetupWindow(): SetupWindowPort;
-  createTray(): TrayPort;
-  getReadiness(): Readiness;
-  getSessionPhase(): SessionPhase;
+  buildMenu: (items: TrayMenuItem[]) => unknown;
+  createSetupWindow: () => SetupWindowPort;
+  createTray: () => TrayPort;
+  getReadiness: () => Readiness;
+  getSessionPhase: () => SessionPhase;
   globalShortcut: {
-    register(accelerator: string, callback: () => void): boolean;
-    unregister(accelerator: string): void;
+    register: (accelerator: string, callback: () => void) => boolean;
+    unregister: (accelerator: string) => void;
   };
-  onCancel(): void;
-  onStatus?(status: TrayStatus): void;
-  onToggle(): void;
+  onCancel: () => void;
+  onStatus?: (status: TrayStatus) => void;
+  onToggle: () => void;
 }
 
 export interface TrayHotkeyLifecycle {
-  dispose(): void;
+  dispose: () => void;
   /** Resolves false for the secondary instance; it creates no windows or tray. */
   ready: Promise<boolean>;
   /** Call when the main-owned key or microphone readiness changes. */
-  refreshReadiness(): TrayStatus;
+  refreshReadiness: () => TrayStatus;
 }
 
 const ERROR_LABELS: Record<ReadinessError, string> = {

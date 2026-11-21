@@ -29,10 +29,12 @@ afterEach(() => {
 
 describe("helper main-process client", () => {
   test("PASS valid snapshot and split response framing", async () => {
-    for (const mode of ["valid", "split"]) {
+    async function expectSnapshot(mode: string): Promise<void> {
       const { client } = fixture(mode);
       expect(await client.snapshot()).toEqual(target);
     }
+    await expectSnapshot("valid");
+    await expectSnapshot("split");
   });
   for (const outcome of [
     "target_changed",
@@ -110,22 +112,25 @@ describe("helper main-process client", () => {
   });
   test("PASS invalid insert requests never write to the helper", async () => {
     const { client, writes } = fixture("valid");
-    for (const invalid of [
-      [{ ...target, foreground: "0x0" }, "s", "text"],
-      [{ ...target, extra: 1 }, "s", "text"],
-      [target, "bad session", "text"],
-      [target, "s".repeat(129), "text"],
-      [target, "s", ""],
-      [target, "s", "a\0b"],
-      [target, "s", "\ud800"],
-      [target, "s", "\udc00"],
-      [target, "s", "x".repeat(32_769)],
-      [target, "s", "🎙".repeat(8193)],
-    ] as [typeof target, string, string][]) {
+    await (
+      [
+        [{ ...target, foreground: "0x0" }, "s", "text"],
+        [{ ...target, extra: 1 }, "s", "text"],
+        [target, "bad session", "text"],
+        [target, "s".repeat(129), "text"],
+        [target, "s", ""],
+        [target, "s", "a\0b"],
+        [target, "s", "\ud800"],
+        [target, "s", "\udc00"],
+        [target, "s", "x".repeat(32_769)],
+        [target, "s", "🎙".repeat(8193)],
+      ] as [typeof target, string, string][]
+    ).reduce(async (previous, invalid) => {
+      await previous;
       await expect(client.insert(...invalid)).rejects.toThrow(
         "Invalid helper insert request"
       );
-    }
+    }, Promise.resolve());
     expect(writes).toHaveBeenCalledTimes(0);
     expect(await client.insert(target, "s", "x".repeat(32_768))).toBe(
       "unsupported"
