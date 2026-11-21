@@ -45,10 +45,10 @@ Electron + TypeScript React renderer + a C++ Win32 helper. The Win32 helper, the
 Where to build: create the independent scaffold at `products/caret/` inside the repo by running the scaffold script with target `products/caret` and `--no-git` instead of `--git` (the scaffold must not contain its own `.git`). Install dependencies, then boot the generated app and record that it runs BEFORE building features (the scaffold's install and boot have never been verified). Keep `products/caret` self-contained with its own lockfile, scripts and `.env.example`. Needs an interactive TTY for the ultracite, wxt, skills and mcp addons (answers: linter Biome; editors/agent files/hooks none; WXT template React; skills scope Project); use a pty (`script`, `expect`, or a tmux session) to answer them.
 
 Product rules:
-- Order matters: the packaged Windows Notepad native-loop gate must pass BEFORE any cloud STT/cleanup work starts.
+- Order matters: the packaged Windows Notepad native-loop gate must pass BEFORE any cloud or local STT/cleanup work starts.
 - AI provider is OpenRouter: `OPENROUTER_API_KEY` from `.env` in development, entered once in setup for the packaged app. STT is an audio-input chat/Responses call (candidate `google/gemini-3.5-flash-lite`; Responses API accepts wav/mp3 only). Freeze one model per step after a smoke test; no model selector in the UI.
 - Audio and transcripts stay in RAM; nothing sensitive is logged or persisted; the clipboard is restored only if Caret still owns it.
-- Out of scope: macOS/Linux delivery, local Whisper, streaming, push-to-talk, dictionary UI, per-app profiles, history, analytics, accounts, payments.
+- Out of scope: macOS/Linux delivery, streaming (local Whisper is IN scope per PRD Amendment A1; see issues #254-#259), push-to-talk, dictionary UI, per-app profiles, history, analytics, accounts, payments.
 
 ### Non-negotiable rules
 
@@ -94,13 +94,19 @@ Run waves in order. Issues within a wave have no dependency on each other and ma
 | 7 | #12 | P0 | feature | Send one abortable OpenRouter audio-input transcription request with phrase hints | #10 |
 | 7 | #13 | P0 | feature | Apply one neutral cleanup request and reject invalid or renumbered output | #10 |
 | 7 | #15 | P0 | feature | Persist the protected provider key and disclose cloud processing in setup | #3, #4, #10 |
-| 8 | #14 | P0 | feature | Connect capture, transcription, cleanup, and one guarded paste attempt | #7, #8, #10, #11, #12, #13 |
+| 7 | #254 | P0 | feature | Run local whisper.cpp transcription in a child process behind the STT adapter interface | #9, #10, #12 |
+| 7 | #255 | P0 | feature | Download, verify and store local Whisper models on first use | #3, #9, #10 |
+| 7 | #256 | P0 | feature | Add a selectable cleanup provider (OpenRouter or local OpenAI-compatible endpoint) and a cleanup toggle | #9, #10, #13, #15 |
+| 8 | #14 | P0 | feature | Connect capture, transcription, cleanup, and one guarded paste attempt | #7, #8, #10, #11, #12, #13, #254, #255, #256, #257 |
 | 8 | #16 | P0 | feature | Load local phrase configuration and pass it only as transcription hints | #12, #15 |
+| 8 | #257 | P0 | feature | Add the Cloud/Local STT mode and cleanup settings with an accurate privacy disclosure | #15, #254, #255, #256 |
 | 9 | #17 | P0 | feature | Remove transient content on termination and exclude sensitive data from logs | #11, #14, #15, #16 |
 | 9 | #19 | P0 | test | Test neutral cleanup fidelity and embedded-instruction rejection | #13, #14 |
 | 9 | #20 | P0 | test | Test IPC and insertion rejection paths with Linux protocol fixtures | #3, #6, #14 |
+| 9 | #258 | P0 | test | Test local STT, model verification and cleanup providers with Linux fixtures | #254, #255, #256, #257 |
 | 10 | #18 | P0 | test | Prove recording and cancellation release invariants with Linux fixtures | #14, #17 |
 | 10 | #22 | P0 | verification | Verify Windows cancellation and target-switch safety without wrong-window pastes | #14, #17 |
+| 10 | #259 | P0 | verification | Verify local STT and local cleanup on Windows with the packaged app | #254, #255, #256, #257, #258 |
 | 11 | #23 | P0 | docs | Document the selected alternatives and Linux-to-Windows verification runbook | #12, #13, #15, #16, #18, #20, #21, #22 |
 | 11 | #24 | P0 | verification | Package the portable Windows release and pass both application smoke checks | #14, #15, #16, #17, #18, #19, #20, #21, #22 |
 | 12 | #25 | P1 | verification | Rehearse the 4:30 PRD demo and capture requirement-linked pass evidence | #23, #24 |
