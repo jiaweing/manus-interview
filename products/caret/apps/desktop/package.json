@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
+    "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

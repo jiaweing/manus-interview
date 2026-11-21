@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { BrowserWindow } from "electron";
 import { join } from "node:path";
+import { launchCaretTray } from "./tray-runtime";
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 480,
     height: 320,
@@ -19,7 +20,7 @@ function createWindow(): void {
   } else {
     win.loadFile(join(import.meta.dirname, "../renderer/index.html"));
   }
+  return win;
 }
 
-app.whenReady().then(createWindow);
-app.on("window-all-closed", () => app.quit());
+launchCaretTray(createWindow);
