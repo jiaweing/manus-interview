@@ -1,0 +1,8 @@
+# Chrome agent platform notes
+
+- Native side panel: Chrome 114+, MV3; toolbar opening uses setPanelBehavior({openPanelOnActionClick:true}). sidePanel.open requires a user action and Chrome 116+. Source: https://developer.chrome.com/docs/extensions/reference/api/sidePanel
+- Extension service workers can stop after 30 seconds idle; globals disappear; fetch response arrival has a 30-second limit. Keep the agent orchestrator in the visible panel and persist checkpoints in chrome.storage.session, not worker globals. Source: https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle
+- chrome.scripting requires scripting plus host permission or activeTab; default injection world is ISOLATED, default target main frame. Source: https://developer.chrome.com/docs/extensions/reference/api/scripting
+- activeTab requires invocation such as toolbar action; same-origin navigation retains access, cross-origin navigation revokes it. Restricted chrome:// pages cannot be scripted. A side-panel chat submit is not itself an activeTab grant. Source: https://developer.chrome.com/docs/extensions/develop/concepts/activeTab
+- Most tabs management APIs do not require tabs permission. tabs permission enables sensitive metadata URL/title access and is chosen here for browser-state awareness. Source: https://developer.chrome.com/docs/extensions/reference/api/tabs
+- debugger permission offers Accessibility/DOMSnapshot/Input CDP domains but adds attach/detach and frame complexity; opening DevTools can detach. Reject for MVP; use honest accessibility-inspired DOM snapshot instead of claiming a full browser accessibility tree. Source: https://developer.chrome.com/docs/extensions/reference/api/debugger
