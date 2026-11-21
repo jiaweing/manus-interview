@@ -25,7 +25,10 @@ export async function runMusicGeneration({
     try {
       const accepted = await sink({
         bytes: result.bytes, mimeType: result.mimeType, model: result.model,
-        prompt: result.prompt, usage: result.usage, requestMeta: result.requestMeta,
+        prompt: result.prompt, usage: result.usage, requestMeta: {
+          ...result.requestMeta, createdAt: checkedAt, rights: approval.rights,
+          pcmFormat: contract.pcmFormat,
+        },
       });
       outcome = accepted?.accepted === true ? 'validated' : 'rejected';
       reason = typeof accepted?.reason === 'string' ? accepted.reason : 'cache-rejected';
