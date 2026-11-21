@@ -1,0 +1,299 @@
+Issue #53 builder verification
+UTC: 2026-11-21T14:25:41Z
+Working directory: products/patchbay
+Rebased base: 2c0a0f79e7986a1c451eb4ce10cab94464de98d5
+
+$ bun test apps/server/test/manifest.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [82.29ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [25.54ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [24.20ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [21.69ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [10.33ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [44.92ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [2.78ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [2.11ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [1.91ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.02ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [1.87ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [1.58ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [1.43ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [1.67ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.37ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [1.63ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [22.70ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [28.25ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [2.10ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [0.95ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [1.56ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [1.43ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [1.47ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [19.27ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [38.26ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.33ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [23.22ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [21.34ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [39.93ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [18.10ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [24.64ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [37.64ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [38.81ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [37.60ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [21.56ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [2.10ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [1.78ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.49ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.65ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.87ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.77ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.71ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [1.89ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [1.77ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.59ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.39ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.53ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.75ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [2.12ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [1.66ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [1.74ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.42ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.76ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.37ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.40ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [1.38ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.09ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.06ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.19ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.26ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.25ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [1.51ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [20.31ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [39.78ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [50.15ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.70ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [12.91ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [42.47ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.27ms]
+(pass) unavailable host executable fails without running package code or modifying registry [20.97ms]
+
+ 71 pass
+ 0 fail
+ 855 expect() calls
+Ran 71 tests across 1 file. [979.00ms]
+EXIT CODE: 0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1409 installs across 1555 packages (no changes) [5.94s]
+EXIT CODE: 0
+
+$ bun run lint
+$ biome check apps/server/src/cli.ts apps/server/src/cli apps/server/src/kernel apps/server/test
+Checked 14 files in 549ms. No fixes applied.
+EXIT CODE: 0
+
+$ bun run typecheck
+$ tsc --noEmit -p apps/server/tsconfig.cli.json
+EXIT CODE: 0
+
+$ bun run test
+$ bun test apps/server/test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [0.91ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [36.86ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [73.64ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [36.34ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [36.47ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [37.84ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [32.79ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [36.22ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [3.86ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [3.73ms]
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [71.99ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [25.35ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [25.74ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [22.54ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [11.08ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [47.06ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [2.97ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [1.84ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [2.09ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.45ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.22ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [2.01ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [1.94ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [2.14ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [2.03ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.86ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [2.37ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [22.37ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [24.25ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [2.05ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [0.90ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [2.07ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [1.86ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [2.02ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [20.17ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [39.11ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.12ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [21.63ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [22.92ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [41.16ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [19.22ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [18.60ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [38.16ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [30.34ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [39.29ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [21.28ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [2.00ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [1.72ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.61ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.86ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.97ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.90ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [1.72ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [1.59ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.62ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.53ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.89ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.50ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [1.54ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [1.68ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [1.88ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.71ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.96ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.65ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.47ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [1.62ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.18ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.13ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.16ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.25ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.31ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [1.73ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [18.45ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [39.97ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [32.96ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.06ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [9.11ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [38.30ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.60ms]
+(pass) unavailable host executable fails without running package code or modifying registry [17.66ms]
+
+ 81 pass
+ 0 fail
+ 899 expect() calls
+Ran 81 tests across 2 files. [1242.00ms]
+EXIT CODE: 0
+
+$ bun test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [0.94ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [37.42ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [72.41ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [44.90ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [37.14ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [38.87ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [35.21ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [38.62ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [4.18ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [3.80ms]
+
+apps/server/test/manifest.test.ts:
+(pass) declarative manifest acceptance > minimal Linux tool parses and resolves argv without executing its marker fixture or changing registry bytes [86.19ms]
+(pass) declarative manifest acceptance > minimal llm@1 provider is declarative and does not need a hard-coded plugin ID [30.86ms]
+(pass) declarative manifest acceptance > omitted unused declaration list normalizes to empty without mutating input [30.15ms]
+(pass) declarative manifest acceptance > accepts a local executable, internal symlinks, and directory-link cycles without loading code [25.06ms]
+(pass) declarative manifest acceptance > local references and valid embedded defaults compile without applying or coercing defaults [16.38ms]
+(pass) declarative manifest acceptance > version comparison is numeric and supports exact release/prerelease versions [63.33ms]
+(pass) stable rejection of malformed declarations > unsupported manifest version: UNSUPPORTED_MANIFEST_VERSION; marker absent and registry unchanged [3.45ms]
+(pass) stable rejection of malformed declarations > incompatible host version: INCOMPATIBLE_HOST_VERSION; marker absent and registry unchanged [2.29ms]
+(pass) stable rejection of malformed declarations > non-Linux platform: INCOMPATIBLE_PLATFORM; marker absent and registry unchanged [2.32ms]
+(pass) stable rejection of malformed declarations > invalid package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.51ms]
+(pass) stable rejection of malformed declarations > noncanonical package semver: INVALID_MANIFEST; marker absent and registry unchanged [2.31ms]
+(pass) stable rejection of malformed declarations > invalid minimum host version: INVALID_MANIFEST; marker absent and registry unchanged [1.95ms]
+(pass) stable rejection of malformed declarations > invalid ID: INVALID_MANIFEST; marker absent and registry unchanged [1.68ms]
+(pass) stable rejection of malformed declarations > blank name: INVALID_MANIFEST; marker absent and registry unchanged [1.78ms]
+(pass) stable rejection of malformed declarations > unknown manifest field/hooks: INVALID_MANIFEST; marker absent and registry unchanged [1.98ms]
+(pass) stable rejection of malformed declarations > duplicate permission: INVALID_MANIFEST; marker absent and registry unchanged [1.88ms]
+(pass) stable rejection of malformed declarations > undeclared required permission: INVALID_DECLARATION; marker absent and registry unchanged [2.56ms]
+(pass) stable rejection of malformed declarations > duplicate exact tool declaration: INVALID_DECLARATION; marker absent and registry unchanged [23.00ms]
+(pass) stable rejection of malformed declarations > ambiguous tool/provider name: INVALID_DECLARATION; marker absent and registry unchanged [23.30ms]
+(pass) stable rejection of malformed declarations > no capabilities: INVALID_DECLARATION; marker absent and registry unchanged [1.96ms]
+(pass) stable rejection of malformed declarations > missing capability description: INVALID_MANIFEST; marker absent and registry unchanged [0.90ms]
+(pass) stable rejection of malformed declarations > invalid RPC method: INVALID_MANIFEST; marker absent and registry unchanged [1.39ms]
+(pass) stable rejection of malformed declarations > invalid capability name: INVALID_MANIFEST; marker absent and registry unchanged [1.37ms]
+(pass) stable rejection of malformed declarations > unknown capability field: INVALID_MANIFEST; marker absent and registry unchanged [1.58ms]
+(pass) stable rejection of malformed declarations > invalid config schema type: INVALID_SCHEMA; marker absent and registry unchanged [19.37ms]
+(pass) stable rejection of malformed declarations > unknown schema keyword: INVALID_SCHEMA; marker absent and registry unchanged [41.08ms]
+(pass) stable rejection of malformed declarations > non-object input schema: INVALID_SCHEMA; marker absent and registry unchanged [2.21ms]
+(pass) stable rejection of malformed declarations > bad input schema: INVALID_SCHEMA; marker absent and registry unchanged [17.91ms]
+(pass) stable rejection of malformed declarations > remote schema reference: INVALID_SCHEMA; marker absent and registry unchanged [23.88ms]
+(pass) stable rejection of malformed declarations > missing local schema reference: INVALID_SCHEMA; marker absent and registry unchanged [38.76ms]
+(pass) stable rejection of malformed declarations > async schema: INVALID_SCHEMA; marker absent and registry unchanged [17.86ms]
+(pass) stable rejection of malformed declarations > schema from unsupported draft: INVALID_SCHEMA; marker absent and registry unchanged [23.56ms]
+(pass) stable rejection of malformed declarations > config defaults violate schema: INVALID_DEFAULTS; marker absent and registry unchanged [45.16ms]
+(pass) stable rejection of malformed declarations > unknown config default: INVALID_DEFAULTS; marker absent and registry unchanged [31.31ms]
+(pass) stable rejection of malformed declarations > invalid embedded schema default: INVALID_DEFAULTS; marker absent and registry unchanged [33.23ms]
+(pass) stable rejection of malformed declarations > invalid embedded input default: INVALID_DEFAULTS; marker absent and registry unchanged [17.21ms]
+(pass) stable rejection of malformed declarations > argv shell string: INVALID_MANIFEST; marker absent and registry unchanged [1.65ms]
+(pass) stable rejection of malformed declarations > empty argv: INVALID_MANIFEST; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > non-string argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.43ms]
+(pass) stable rejection of malformed declarations > empty argv element: INVALID_MANIFEST; marker absent and registry unchanged [1.31ms]
+(pass) stable rejection of malformed declarations > shell execution: INVALID_ARGV; marker absent and registry unchanged [1.66ms]
+(pass) stable rejection of malformed declarations > shell via package path: INVALID_ARGV; marker absent and registry unchanged [1.41ms]
+(pass) stable rejection of malformed declarations > env wrapper: INVALID_ARGV; marker absent and registry unchanged [1.36ms]
+(pass) stable rejection of malformed declarations > interpreter eval: INVALID_ARGV; marker absent and registry unchanged [1.41ms]
+(pass) stable rejection of malformed declarations > interpreter without entry: INVALID_ARGV; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > nonlocal entry: INVALID_ARGV; marker absent and registry unchanged [1.45ms]
+(pass) stable rejection of malformed declarations > entry traversal: INVALID_ARGV; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > traversal even if normalized inside root: INVALID_ARGV; marker absent and registry unchanged [1.61ms]
+(pass) stable rejection of malformed declarations > absolute executable: INVALID_ARGV; marker absent and registry unchanged [1.48ms]
+(pass) stable rejection of malformed declarations > absolute entry: INVALID_ARGV; marker absent and registry unchanged [1.33ms]
+(pass) stable rejection of malformed declarations > absolute path operand: INVALID_ARGV; marker absent and registry unchanged [1.47ms]
+(pass) stable rejection of malformed declarations > NUL argv: INVALID_ARGV; marker absent and registry unchanged [1.46ms]
+(pass) stable rejection of malformed declarations > Windows path argv: INVALID_ARGV; marker absent and registry unchanged [1.71ms]
+(pass) stable rejection of malformed declarations > malformed TOML yields a redacted stable parser error [1.81ms]
+(pass) stable rejection of malformed declarations > duplicate ID checks read-only installed IDs [1.63ms]
+(pass) stable rejection of malformed declarations > a Linux declaration cannot activate on another platform [1.45ms]
+(pass) local package boundaries > rejects file escaping/broken symlink: INVALID_PACKAGE_PATH [1.65ms]
+(pass) local package boundaries > rejects directory escaping/broken symlink: INVALID_PACKAGE_PATH [1.13ms]
+(pass) local package boundaries > rejects manifest escaping/broken symlink: INVALID_PACKAGE_PATH [1.20ms]
+(pass) local package boundaries > rejects entry escaping/broken symlink: INVALID_PACKAGE_PATH [1.15ms]
+(pass) local package boundaries > rejects dangling escaping/broken symlink: INVALID_PACKAGE_PATH [1.21ms]
+(pass) local package boundaries > rejects prefix-sibling escaping/broken symlink: INVALID_PACKAGE_PATH [1.43ms]
+(pass) local package boundaries > rejects nonexistent, file, traversal, empty, remote, and symlink package roots [1.70ms]
+(pass) local package boundaries > rejects missing manifest and missing entry [18.16ms]
+(pass) local package boundaries > rejects directory entry and nonexecutable local executable [38.88ms]
+(pass) schema and declaration edge cases > standard URI formats validate config defaults [34.13ms]
+(pass) schema and declaration edge cases > missing capability field is also rejected through the TOML package path [2.26ms]
+(pass) schema and declaration edge cases > duplicate provider names are rejected even with different RPC methods [13.82ms]
+(pass) schema and declaration edge cases > referenced and nested array defaults are validated [35.09ms]
+(pass) schema and declaration edge cases > non-cloneable raw values do not escape as native errors [1.47ms]
+(pass) unavailable host executable fails without running package code or modifying registry [21.02ms]
+
+ 81 pass
+ 0 fail
+ 899 expect() calls
+Ran 81 tests across 2 files. [1296.00ms]
+EXIT CODE: 0
+
+All rejected fixtures asserted exact stable codes, absent execution marker, and unchanged installed registry bytes.
+AGGREGATE EXIT CODE: 0
