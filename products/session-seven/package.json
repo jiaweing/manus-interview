@@ -45,7 +45,9 @@
     "music:generate": "bun apps/video/scripts/music-generate.js",
     "authoring:verify-model": "bun apps/video/scripts/authoring-verify-model.js",
     "benchmark:scene": "bun apps/video/scripts/benchmark-scene.js",
-    "music:fallback": "bun apps/video/scripts/music-fallback.js"
+    "music:fallback": "bun apps/video/scripts/music-fallback.js",
+    "preview:stills": "bun apps/video/scripts/preview-stills.js",
+    "validate:audio-cache": "bun apps/video/scripts/validate-audio-cache.js"
   },
   "dependencies": {
     "zod": "catalog:"

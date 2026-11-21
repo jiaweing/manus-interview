@@ -1,0 +1,15 @@
+{
+  "closedPanelDocument": true,
+  "reopened": {
+    "tokenStatus": "Token configured for this browser session.",
+    "task": "",
+    "tokenDraftLength": 0,
+    "accepted": "false",
+    "ready": "false"
+  },
+  "cleared": {
+    "tokenStatus": "Token cleared from this browser session.",
+    "sessionKeys": [],
+    "ready": "false"
+  }
+}

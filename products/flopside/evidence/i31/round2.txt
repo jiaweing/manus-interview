@@ -1,0 +1,46 @@
+Issue #31 / PR #221 — round 2 blocking short-BB fix
+
+Feedback read:
+https://github.com/jiaweing/manus-interview/issues/31#issuecomment-7064532996
+https://github.com/jiaweing/manus-interview/pull/221#issuecomment-7064493882
+Verifier repro: /home/ubuntu/swarm/evidence/verify-i31/short-bb-repro.ts
+
+Reused the clean /home/ubuntu/wt/i31-betting worktree on flopside/i31-betting;
+rebased onto origin/main c89c471 (includes #222 rooms) without conflicts.
+No apps/server changes, dependencies, refunds, payouts, transport or timer work.
+
+Changes:
+- Derive actual street maximum from live in-hand, non-folded seats.
+- Betting closure and pending actor selection use each funded contender's actual
+  outstanding wager and, while multiple funded contenders remain, unacted options.
+- A sole funded contender who already covers every live wager gets no decision:
+  progressBetting runs out to river/showdown; legalActions offers nothing even
+  before normalization; applyAction rejects phantom actions unchanged.
+- A sole funded contender calls only the actual difference (BB 7 / SB 5 => 2),
+  capped by stack. All-in is forbidden if it would pay uncontested nominal excess.
+- Preserve nominal preflop bring-in 10 while multiple funded players can bet.
+  Preserve the live BB option and prior short-raise/reopening behavior.
+- Unmatched posted chips remain in handContribution for #32 settlement.
+
+Tests:
+11 added deterministic regression cases cover heads-up BB 1 / SB 5, BB 3 / SB 5,
+BB 7 / SB 5, BB 10 control, exact/short all-in calls vs dry nominal excess,
+3/4-seat covered-SB fold runouts, 3/4-seat real 2-chip call transitions,
+nominal multiway bring-in, and skipping an already-acted covered funded seat.
+Before the reducer fix, the first ten cases ran with 2 pass / 8 fail;
+regressions-before.txt retains that deliberately failing output.
+
+The 4,500 seeded hands (1,500 each for 2/3/4 seats) now mix broad random starting
+stacks, random short blinds with funded opponents, and all-short tables. Actual-
+wager assertions independently reject phantom sole-player actors and nominal
+call/all-in excess; each seat count must encounter >500 short-blind hands and
+covered all-in runouts. Exhaustive integer descriptor probes, adjacent illegal
+rejections, deep-frozen inputs, chip conservation, and loop bounds remain.
+
+README.md documents these semantics. gates.txt and the per-command logs contain
+the final gate results after all source/document changes. short-bb-repro.txt
+records the verifier's exact original public-API reproduction on the fixed code.
+
+Docker build: not run, no docker in sandbox.
+Browser/e2e: not run; no e2e required by pure-engine issue #31.
+Independent verifier rerun is pending; this builder does not self-claim verified.

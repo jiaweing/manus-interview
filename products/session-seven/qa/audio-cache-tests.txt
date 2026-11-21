@@ -1,0 +1,45 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/audio-cache.test.js:
+(pass) candidate integrity, content and measured timing > synthetic 60-second on-grid candidate measures every downbeat [129.19ms]
+(pass) candidate integrity, content and measured timing > raw PCM16 needs explicit format; the only non-WAV supported decode is lossless JS wrapping [117.04ms]
+(pass) candidate integrity, content and measured timing > compressed provider bytes need a decoder, even if PCM format metadata is supplied [0.22ms]
+(pass) candidate integrity, content and measured timing > corrupt PCM block/header sizes reject [15.80ms]
+(pass) candidate integrity, content and measured timing > truncation, extra bytes, impossible chunk lengths and duplicate chunks reject [16.73ms]
+(pass) candidate integrity, content and measured timing > wrong sample rate and channel count reject without resampling [5.84ms]
+(pass) candidate integrity, content and measured timing > 59.5 and 60.5 second usable arrangements reject rather than trim or pad [18.17ms]
+(pass) candidate integrity, content and measured timing > delay by two video frames rejects with actual measured drift [80.58ms]
+(pass) candidate integrity, content and measured timing > advance by two video frames also rejects [52.00ms]
+(pass) candidate integrity, content and measured timing > sub-frame delay and advance pass the same measured gate [113.27ms]
+(pass) candidate integrity, content and measured timing > one off-grid downbeat is not averaged away [46.36ms]
+(pass) candidate integrity, content and measured timing > silence and near-constant DC content reject [90.21ms]
+(pass) candidate integrity, content and measured timing > clipped content rejects with a measured clipping fraction [47.24ms]
+(pass) candidate integrity, content and measured timing > missing energy onset rejects rather than claiming timing [46.09ms]
+(pass) auditable atomic sink and cache-first selection > complete accepted cache has original bytes, decoded WAV/PCM, rights, usage and caller timestamp [412.16ms]
+(pass) auditable atomic sink and cache-first selection > raw PCM source accepted only with explicit PCM16 format and full audit [394.28ms]
+(pass) auditable atomic sink and cache-first selection > already frozen cache is not replaced or mutated [414.50ms]
+(pass) auditable atomic sink and cache-first selection > missing rights or caller-createdAt rejects otherwise-valid candidate [489.34ms]
+(pass) auditable atomic sink and cache-first selection > MP3 needs-decoder rejection is recorded and selects fallback [143.71ms]
+(pass) auditable atomic sink and cache-first selection > sink records drift rejection measurements for fallback review [210.46ms]
+(pass) auditable atomic sink and cache-first selection > missing cache uses the frozen fallback with explicit reason and matching seed hash [127.01ms]
+(pass) auditable atomic sink and cache-first selection > hash-invalid source selects fallback [232.09ms]
+(pass) auditable atomic sink and cache-first selection > hash-invalid decoded WAV and decoded PCM select fallback [541.69ms]
+(pass) auditable atomic sink and cache-first selection > trusted manifest pins reject self-consistent but unexpected cache hashes [446.59ms]
+(pass) auditable atomic sink and cache-first selection > corrupt/truncated PCM rejects even when its file hash has been updated [521.44ms]
+(pass) auditable atomic sink and cache-first selection > wrong-length decoded arrangement selects fallback with named validation reason [279.98ms]
+(pass) auditable atomic sink and cache-first selection > invalid metadata, rejected metadata, and missing decoded files select fallback [415.07ms]
+(pass) auditable atomic sink and cache-first selection > fallback itself is hash-verified and never silently accepts modified bytes [119.59ms]
+(pass) auditable atomic sink and cache-first selection > delete ONLY a temporary accepted cache copy; rerun selects fallback without transport/fetch/WebSocket [559.07ms]
+(pass) render-import isolation and frozen report > selector/validation dependency graph imports nothing from src/music or network/model modules [2.71ms]
+(pass) render-import isolation and frozen report > dynamic module imports and validation use zero requests under throwing globals [342.24ms]
+(pass) render-import isolation and frozen report > explicit freeze and later validation preserve manifest and write sample/timing QA [308.47ms]
+(pass) render-import isolation and frozen report > a frozen provider manifest still allows verified fallback after cache damage [908.25ms]
+(pass) render-import isolation and frozen report > real CLI with no API key and throwing fetch/WebSocket guard reports zero attempts [198.85ms]
+
+ 34 pass
+ 0 fail
+ 206 expect() calls
+Ran 34 tests across 1 file. [9.65s]
+
+Command: bun test apps/video/tests/audio-cache.test.js
+Exit code: 0

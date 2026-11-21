@@ -1,5 +1,15 @@
-:root {
-	font-family: Geist, Inter, sans-serif;
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+
+@theme {
+	--font-sans: "Inter", sans-serif;
+}
+
+/* Chrome injects unlayered panel typography; a layered reset cannot override it. */
+:root,
+:root body {
+	font-family: var(--font-sans);
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.5;
@@ -7,20 +17,80 @@
 	background: #fff;
 }
 
-body {
-	margin: 0;
+@layer base {
+	*,
+	*::before,
+	*::after {
+		outline: 0;
+		border-width: 0;
+		transition: none;
+		animation: none;
+	}
+
+	body {
+		min-width: 0;
+		margin: 0;
+	}
+
+	button,
+	input,
+	textarea {
+		font: inherit;
+	}
+
+	button {
+		cursor: pointer;
+	}
+
+	button:disabled {
+		cursor: not-allowed;
+		opacity: 1;
+	}
+
+	:focus {
+		outline: 0;
+	}
+
+	:focus-visible {
+		outline: 0;
+		box-shadow:
+			0 0 0 2px #fff,
+			0 0 0 4px #000;
+	}
 }
 
-main {
-	padding: 24px;
-}
+@layer components {
+	.surface {
+		@apply rounded-[10px] bg-neutral-100 p-4;
+	}
 
-h1 {
-	margin: 0 0 16px;
-	font-size: 20px;
-	font-weight: 600;
-}
+	.field {
+		@apply w-full min-w-0 rounded-[10px] bg-neutral-100 px-3 py-3 text-black;
+	}
 
-p {
-	margin: 0;
+	.field::placeholder {
+		color: #404040;
+		opacity: 1;
+	}
+
+	.button-primary {
+		@apply rounded-[10px] bg-black px-4 py-3 font-semibold text-white;
+	}
+
+	.button-secondary {
+		@apply rounded-[10px] bg-neutral-200 px-4 py-3 font-semibold text-black;
+	}
+
+	.button-primary:disabled,
+	.button-secondary:disabled {
+		@apply bg-neutral-200 text-neutral-700;
+	}
+
+	.disclosure-checkbox {
+		@apply flex size-8 items-center justify-center rounded-[10px] bg-neutral-300 text-black;
+	}
+
+	.disclosure-checkbox[data-state="checked"] {
+		@apply bg-black font-semibold text-white;
+	}
 }

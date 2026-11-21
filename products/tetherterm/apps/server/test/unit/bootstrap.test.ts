@@ -2,20 +2,33 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { app } from "../../src/index";
+import { loadConfig } from "../../src/config";
+import { createBootApp } from "../../src/index";
 import { requireSetsid, spawnPty } from "../../src/pty/spawn";
+import { launcherFixture } from "../fixtures/launcher";
 
 test("only the boot health route is available", async () => {
-	const health = await app.request("/healthz");
-	expect(health.status).toBe(200);
-	expect(await health.text()).toBe("ok");
-	const responses = await Promise.all(
-		["/", "/ai", "/api/auth/session", "/polar/success"].map((dormant) =>
-			app.request(dormant)
-		)
-	);
-	for (const response of responses) {
-		expect(response.status).toBe(404);
+	const fixture = await launcherFixture();
+	try {
+		const config = await loadConfig("http", fixture.env);
+		const app = createBootApp(config, fixture.env, () => config.port);
+		const headers = {
+			Authorization: `Bearer ${fixture.token}`,
+			Host: `127.0.0.1:${config.port}`,
+		};
+		const health = await app.request("/healthz", { headers });
+		expect(health.status).toBe(200);
+		expect(await health.text()).toBe("ok");
+		const responses = await Promise.all(
+			["/", "/ai", "/api/auth/session", "/polar/success"].map((dormant) =>
+				app.request(dormant, { headers })
+			)
+		);
+		for (const response of responses) {
+			expect(response.status).toBe(404);
+		}
+	} finally {
+		await fixture.cleanup();
 	}
 });
 

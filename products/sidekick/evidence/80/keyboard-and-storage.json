@@ -1,0 +1,274 @@
+{
+  "actualSidePanel": true,
+  "metadata": {
+    "title": "Ada Lovelace — selected-tab fixture",
+    "url": "http://127.0.0.1:18981/selected-page",
+    "width": 320,
+    "scrollWidth": 305
+  },
+  "forward": [
+    {
+      "id": "disclosure-accepted",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 31.5,
+      "y": 520,
+      "width": 28,
+      "height": 28,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "demo-token",
+      "tag": "INPUT",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 705.5,
+      "width": 270,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "Save token",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 758,
+      "width": 102.515625,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "Clear token",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 130.515625,
+      "y": 758,
+      "width": 105.359375,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "task",
+      "tag": "TEXTAREA",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 379,
+      "width": 270,
+      "height": 98,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "Observe page",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 729.5,
+      "width": 270,
+      "height": 41,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    }
+  ],
+  "reverse": [
+    {
+      "id": "task",
+      "tag": "TEXTAREA",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 272,
+      "width": 270,
+      "height": 98,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "Clear token",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 130.515625,
+      "y": 132,
+      "width": 105.359375,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "Save token",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 132,
+      "width": 102.515625,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "demo-token",
+      "tag": "INPUT",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 17.5,
+      "y": 79.5,
+      "width": 270,
+      "height": 42,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    },
+    {
+      "id": "disclosure-accepted",
+      "tag": "BUTTON",
+      "focusVisible": true,
+      "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 2px, rgb(0, 0, 0) 0px 0px 0px 4px",
+      "outlineWidth": "0px",
+      "borderWidths": [
+        "0px",
+        "0px",
+        "0px",
+        "0px"
+      ],
+      "x": 31.5,
+      "y": 386,
+      "width": 28,
+      "height": 28,
+      "viewportWidth": 320,
+      "viewportHeight": 800
+    }
+  ],
+  "accessibleNames": [
+    {
+      "role": "checkbox",
+      "name": "I understand the provider disclosure.",
+      "disabled": false
+    },
+    {
+      "role": "textbox",
+      "name": "Task",
+      "disabled": false
+    },
+    {
+      "role": "button",
+      "name": "Run",
+      "disabled": true
+    },
+    {
+      "role": "button",
+      "name": "Stop",
+      "disabled": true
+    },
+    {
+      "role": "button",
+      "name": "Observe page",
+      "disabled": false
+    },
+    {
+      "role": "textbox",
+      "name": "Session token",
+      "disabled": false
+    },
+    {
+      "role": "button",
+      "name": "Save token",
+      "disabled": false
+    },
+    {
+      "role": "button",
+      "name": "Clear token",
+      "disabled": false
+    }
+  ],
+  "storage": {
+    "session": {
+      "sidekickDemoToken": "[REDACTED]"
+    },
+    "localKeys": [],
+    "syncKeys": [],
+    "pageLocalStorageKeys": [],
+    "pageSessionStorageKeys": []
+  },
+  "modelRequests": 0
+}

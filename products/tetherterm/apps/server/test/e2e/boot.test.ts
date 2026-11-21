@@ -60,6 +60,8 @@ test("server boots with valid configuration without MongoDB or addon keys and cu
 				"--fail",
 				"--max-time",
 				"3",
+				"--header",
+				"@-",
 				"--write-out",
 				"\nHTTP_STATUS=%{http_code}\n",
 				`http://127.0.0.1:${port}/healthz`,
@@ -67,6 +69,7 @@ test("server boots with valid configuration without MongoDB or addon keys and cu
 			{
 				env: { PATH: "/usr/bin:/bin" },
 				stderr: "pipe",
+				stdin: new Blob([`Authorization: Bearer ${fixture.token}\n`]),
 				stdout: "pipe",
 			}
 		);

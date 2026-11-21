@@ -1,0 +1,11 @@
+$ bun apps/video/scripts/preview-stills.js --frames "0,210,630,870,1110,1350,1590,1799"
+PNG qa/stills/frame-0000.png frame=0
+PNG qa/stills/frame-0210.png frame=210
+PNG qa/stills/frame-0630.png frame=630
+PNG qa/stills/frame-0870.png frame=870
+PNG qa/stills/frame-1110.png frame=1110
+PNG qa/stills/frame-1350.png frame=1350
+PNG qa/stills/frame-1590.png frame=1590
+PNG qa/stills/frame-1799.png frame=1799
+TIMING bundle=22.044s renders=5.715s total=28.886s concurrency=1
+STILLS ok count=8

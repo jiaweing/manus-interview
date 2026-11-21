@@ -1,0 +1,22 @@
+▲ [WARNING] Cannot find base config file "@session-seven/config/tsconfig.base.json" [tsconfig.json]
+
+    ../../tsconfig.json:2:13:
+      2 │   "extends": "@session-seven/config/tsconfig.base.json"
+        ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Bundling code        ━                  6%
+Bundling code        ━━                 12%
+Bundling code        ━━━━━━━━━╸         55%
+Bundling code        ━━━━━━━━━━━╸       65%
+Bundling code        ━━━━━━━━━━━━╸      71%
+Bundling code        ━━━━━━━━━━━━━╸     76%
+Bundling code        ━━━━━━━━━━━━━━╸    81%
+Bundling code        ━━━━━━━━━━━━━━━╸   87%
+Bundling code        ━━━━━━━━━━━━━━━━╸  92%
+Bundling code        ━━━━━━━━━━━━━━━━━╸ 98%
+Bundling code        ━━━━━━━━━━━━━━━━━━ 100%
+Bundled code         ━━━━━━━━━━━━━━━━━━ 5509ms
+
+The following compositions are available:
+
+Hero    30      1920x1080      1800 (60.00 sec)
