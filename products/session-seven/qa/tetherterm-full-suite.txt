@@ -1,0 +1,259 @@
+COMMAND=bun test apps/video/tests
+BASE=9de89de098832afc2fba08c9712e52f94e3b50d1
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/audio-cache.test.js:
+(pass) candidate integrity, content and measured timing > synthetic 60-second on-grid candidate measures every downbeat [131.20ms]
+(pass) candidate integrity, content and measured timing > raw PCM16 needs explicit format; the only non-WAV supported decode is lossless JS wrapping [115.55ms]
+(pass) candidate integrity, content and measured timing > compressed provider bytes need a decoder, even if PCM format metadata is supplied [0.26ms]
+(pass) candidate integrity, content and measured timing > corrupt PCM block/header sizes reject [22.02ms]
+(pass) candidate integrity, content and measured timing > truncation, extra bytes, impossible chunk lengths and duplicate chunks reject [22.37ms]
+(pass) candidate integrity, content and measured timing > wrong sample rate and channel count reject without resampling [15.15ms]
+(pass) candidate integrity, content and measured timing > 59.5 and 60.5 second usable arrangements reject rather than trim or pad [23.28ms]
+(pass) candidate integrity, content and measured timing > delay by two video frames rejects with actual measured drift [91.63ms]
+(pass) candidate integrity, content and measured timing > advance by two video frames also rejects [59.94ms]
+(pass) candidate integrity, content and measured timing > sub-frame delay and advance pass the same measured gate [128.03ms]
+(pass) candidate integrity, content and measured timing > one off-grid downbeat is not averaged away [48.75ms]
+(pass) candidate integrity, content and measured timing > silence and near-constant DC content reject [93.10ms]
+(pass) candidate integrity, content and measured timing > clipped content rejects with a measured clipping fraction [59.07ms]
+(pass) candidate integrity, content and measured timing > missing energy onset rejects rather than claiming timing [50.36ms]
+(pass) auditable atomic sink and cache-first selection > complete accepted cache has original bytes, decoded WAV/PCM, rights, usage and caller timestamp [463.97ms]
+(pass) auditable atomic sink and cache-first selection > raw PCM source accepted only with explicit PCM16 format and full audit [435.37ms]
+(pass) auditable atomic sink and cache-first selection > already frozen cache is not replaced or mutated [465.72ms]
+(pass) auditable atomic sink and cache-first selection > missing rights or caller-createdAt rejects otherwise-valid candidate [565.92ms]
+(pass) auditable atomic sink and cache-first selection > MP3 needs-decoder rejection is recorded and selects fallback [126.10ms]
+(pass) auditable atomic sink and cache-first selection > sink records drift rejection measurements for fallback review [188.91ms]
+(pass) auditable atomic sink and cache-first selection > missing cache uses the frozen fallback with explicit reason and matching seed hash [124.23ms]
+(pass) auditable atomic sink and cache-first selection > hash-invalid source selects fallback [254.22ms]
+(pass) auditable atomic sink and cache-first selection > hash-invalid decoded WAV and decoded PCM select fallback [627.29ms]
+(pass) auditable atomic sink and cache-first selection > trusted manifest pins reject self-consistent but unexpected cache hashes [437.21ms]
+(pass) auditable atomic sink and cache-first selection > corrupt/truncated PCM rejects even when its file hash has been updated [508.90ms]
+(pass) auditable atomic sink and cache-first selection > wrong-length decoded arrangement selects fallback with named validation reason [182.63ms]
+(pass) auditable atomic sink and cache-first selection > invalid metadata, rejected metadata, and missing decoded files select fallback [420.76ms]
+(pass) auditable atomic sink and cache-first selection > fallback itself is hash-verified and never silently accepts modified bytes [89.37ms]
+(pass) auditable atomic sink and cache-first selection > delete ONLY a temporary accepted cache copy; rerun selects fallback without transport/fetch/WebSocket [404.07ms]
+(pass) render-import isolation and frozen report > selector/validation dependency graph imports nothing from src/music or network/model modules [1.08ms]
+(pass) render-import isolation and frozen report > dynamic module imports and validation use zero requests under throwing globals [311.47ms]
+(pass) render-import isolation and frozen report > explicit freeze and later validation preserve manifest and write sample/timing QA [257.86ms]
+(pass) render-import isolation and frozen report > a frozen provider manifest still allows verified fallback after cache damage [820.66ms]
+(pass) render-import isolation and frozen report > real CLI with no API key and throwing fetch/WebSocket guard reports zero attempts [162.66ms]
+
+apps/video/tests/authoring-model.test.js:
+(pass) authoring model gate (fake transport only) > catalog present + exactly one scoped completion produces verified metadata [2.05ms]
+(pass) authoring model gate (fake transport only) > missing catalog model blocks without sending chat, even with a key [0.43ms]
+(pass) authoring model gate (fake transport only) > no key still checks catalog, records blocker and sends zero chat requests [1.85ms]
+(pass) authoring model gate (fake transport only) > no key + missing model truthfully records both independent blockers [0.23ms]
+(pass) authoring model gate (fake transport only) > product .env key works unchanged; all saved/output fields redact echoed key [5.82ms]
+(pass) authoring model gate (fake transport only) > HTTP denial and thrown transport errors redact keys without retries [0.82ms]
+(pass) authoring model gate (fake transport only) > malformed, truncated, or substitute-model responses cannot pass [1.31ms]
+(pass) authoring model gate (fake transport only) > malformed catalog records failure and cannot authorize a completion [0.26ms]
+(pass) authoring model gate (fake transport only) > tiny parser handles comments, whitespace, quotes and export without expansion [1.83ms]
+(pass) authoring model gate (fake transport only) > other provider environment variables are never a substitute [0.96ms]
+(pass) authoring model gate (fake transport only) > nothing in apps/video/src imports the authoring verifier (directly or transitively) [3.65ms]
+
+apps/video/tests/benchmark.test.js:
+(pass) benchmark pure helpers (no renderer or Chromium) > 240-frame measurement projects to all 1800 frames [0.10ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > invalid measurement values are rejected [0.14ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > report helper produces qa/benchmark.json shape in a temporary fixture [2.75ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > saved real QA report has the same contract, without re-rendering [0.30ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > comparison retains c2 as the conservative baseline and records both runs [0.12ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > six-hour window uses the supplied clock, clamps expired windows, and compares estimates [0.20ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > fixture copies the locked two-line Caret caption and cannot pollute the Hero registry [1.07ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > caption/labels and interface text keep at least 4.5:1 contrast [0.42ms]
+
+apps/video/tests/openrouter-adapter.test.js:
+(pass) zero-request fail-closed preflight > no-key selects fallback without transport [0.72ms]
+(pass) zero-request fail-closed preflight > unvalidated-contract selects fallback without transport [0.03ms]
+(pass) zero-request fail-closed preflight > missing-rights selects fallback without transport [0.02ms]
+(pass) zero-request fail-closed preflight > missing-budget selects fallback without transport [0.01ms]
+(pass) zero-request fail-closed preflight > JSON approval cannot override the unvalidated production contract [0.11ms]
+(pass) zero-request fail-closed preflight > access approval is mandatory [0.02ms]
+(pass) zero-request fail-closed preflight > wrong/unsupported models do not request [0.04ms]
+(pass) zero-request fail-closed preflight > invalid and nonnumeric budgets do not request [0.04ms]
+(pass) zero-request fail-closed preflight > default config, empty and whitespace keys skip [0.12ms]
+(pass) documented contract mapping > records fetched docs, retrieval date, exact sample and response path [0.06ms]
+(pass) documented contract mapping > uses exact PRD prompt and only documented fields; reserves total budget [1.84ms]
+(pass) documented contract mapping > accepts arbitrary byte splits and LF SSE, ignores text/transcript metadata [0.54ms]
+(pass) documented contract mapping > usage is numeric allowlisted, not raw provider metadata [0.40ms]
+(pass) documented contract mapping > reported cost above reserved ceiling rejects [0.36ms]
+(pass) deadlines, retry and fallback outcomes > AbortController deadline is exactly 120000ms, including stalled transport; max two attempts [0.56ms]
+(pass) deadlines, retry and fallback outcomes > deadline includes a stalled SSE body, not just response headers [0.35ms]
+(pass) deadlines, retry and fallback outcomes > transient failures stop after one retry [0.24ms]
+(pass) deadlines, retry and fallback outcomes > one retry can produce a candidate within the total approved ceiling [0.32ms]
+(pass) deadlines, retry and fallback outcomes > denial 401 is fallback with no retry or error-body disclosure [0.23ms]
+(pass) deadlines, retry and fallback outcomes > denial 402 is fallback with no retry or error-body disclosure [0.05ms]
+(pass) deadlines, retry and fallback outcomes > denial 403 is fallback with no retry or error-body disclosure [0.06ms]
+(pass) deadlines, retry and fallback outcomes > unsupported HTTP generation response is fallback [0.33ms]
+(pass) deadlines, retry and fallback outcomes > non-streaming JSON is not misrepresented as accepted audio [0.16ms]
+(pass) deadlines, retry and fallback outcomes > invalid JSON returns malformed-response fallback [0.27ms]
+(pass) deadlines, retry and fallback outcomes > empty audio returns malformed-response fallback [0.08ms]
+(pass) deadlines, retry and fallback outcomes > truncated stream returns malformed-response fallback [0.07ms]
+(pass) deadlines, retry and fallback outcomes > invalid base64 returns malformed-response fallback [0.07ms]
+(pass) deadlines, retry and fallback outcomes > wrong audio type returns malformed-response fallback [0.05ms]
+(pass) deadlines, retry and fallback outcomes > SSE error with denied access discards arbitrary error text [0.22ms]
+(pass) deadlines, retry and fallback outcomes > missing dependencies and malformed configuration never throw [0.29ms]
+(pass) credential exclusion and cache handoff > transport exception with sentinel never rejects or logs sensitive text [1.48ms]
+(pass) credential exclusion and cache handoff > redacts Bearer, OpenRouter/key patterns and exact arbitrary credentials [0.13ms]
+(pass) credential exclusion and cache handoff > credential echo in generated bytes is rejected rather than cached [0.34ms]
+(pass) credential exclusion and cache handoff > candidate-sink interface never fabricates acceptance [0.88ms]
+(pass) credential exclusion and cache handoff > script hands candidate bytes and safe metadata to the named sink; QA is redacted [0.90ms]
+(pass) credential exclusion and cache handoff > sink exceptions also become redacted fallback outcomes [0.39ms]
+(pass) credential exclusion and cache handoff > no-key script entry point returns skipped with zero injected requests [0.31ms]
+(pass) credential exclusion and cache handoff > real Bun command has exit zero and no fetch calls when key is unset [22.68ms]
+(pass) credential exclusion and cache handoff > no render path or other non-music src file imports/reexports the adapter [2.29ms]
+(pass) credential exclusion and cache handoff > importing adapter triggers no network calls [0.68ms]
+
+apps/video/tests/primitives.test.js:
+(pass) shared visual vocabulary > exact immutable exterior and monochrome palettes [16.09ms]
+(pass) shared visual vocabulary > every declared text/background pair passes AA [0.36ms]
+(pass) shared visual vocabulary > interface source and rendered markup contain zero prohibited line styles [2.75ms]
+(pass) shared visual vocabulary > accent references appear only in exterior/scenery modules [3.12ms]
+(pass) shared visual vocabulary > filled monochrome glyphs and fixed caret blocks [1.70ms]
+(pass) shared visual vocabulary > Inter 400/600/700 are bundled locally and block first paint [1.59ms]
+(pass) safe, fixed captions and truthful readiness labels > caption, label and illustration rectangles obey the 5% safe area [0.50ms]
+(pass) safe, fixed captions and truthful readiness labels > caption/label/reading text cannot fall below 48px [1.17ms]
+(pass) safe, fixed captions and truthful readiness labels > Concept and Prototype render distinct literal text [0.44ms]
+(pass) safe, fixed captions and truthful readiness labels > all eight independent scenes use SceneFrame and the correct timeline record [10.72ms]
+(pass) safe, fixed captions and truthful readiness labels > caption absolute endpoints become end-exclusive local endpoints [0.35ms]
+(pass) safe, fixed captions and truthful readiness labels > Hero contains only timeline Sequences and gallery is opt-in [0.80ms]
+(pass) static mascot and bounded frame-only motion > single primary capsule plus one offset copy, six static poses, unique shadow ids [6.39ms]
+(pass) static mascot and bounded frame-only motion > beat grid, easing, holds and entrances clamp deterministically [0.47ms]
+(pass) static mascot and bounded frame-only motion > Mulberry32 and seeded scenery regenerate identically for shuffled frames [1.08ms]
+(pass) static mascot and bounded frame-only motion > all render sources exclude wall clocks, unseeded randomness, timers, remote assets and benchmark imports [2.20ms]
+(pass) shared still CLI > strict frame parsing, output names and gallery routing [0.59ms]
+(pass) shared still CLI > rejects malformed, missing, duplicate, out-of-scene and out-of-range selections before bundling [0.26ms]
+Real still smoke: 7.552s
+PNG ../../../../../../tmp/s7-primitives-smoke-8GAUN4/frame-0000.png frame=0
+PNG ../../../../../../tmp/s7-primitives-smoke-8GAUN4/frame-0210.png frame=210
+PNG ../../../../../../tmp/s7-primitives-smoke-8GAUN4/frame-1799.png frame=1799
+TIMING bundle=3.206s renders=2.779s total=7.086s concurrency=1
+STILLS ok count=3
+(pass) shared still CLI > real pinned-Chromium Hero smoke renders three native PNG frames within 90s [7552.88ms]
+
+apps/video/tests/synth.test.js:
+(pass) fallback PCM WAV > canonical RIFF/WAVE PCM header, byte rate and exact 60-second sample counts [0.50ms]
+(pass) fallback PCM WAV > PCM interleaves left/right little-endian with explicit quantization [0.42ms]
+(pass) fallback PCM WAV > Float64 accumulation, stereo content and at least 3 dBFS headroom [27.52ms]
+(pass) fallback PCM WAV > startup and ending have zero PCM samples, not clicks [0.57ms]
+(pass) score, oscillators and envelopes > exports percussion, triangle bass, square melody and repeating chord voice [0.34ms]
+(pass) score, oscillators and envelopes > every note has an ADSR-ish envelope with exact zero endpoints [24.39ms]
+(pass) score, oscillators and envelopes > 120 BPM downbeats and beat-3 kicks are integer-aligned to the video beat grid [1.20ms]
+(pass) score, oscillators and envelopes > C-major repeating progression, sparse melody, and a short intro build [3.16ms]
+(pass) score, oscillators and envelopes > bars 28–30 resolve to tonic only, thin percussion and decay to silence [3.18ms]
+(pass) offline determinism and frozen fallback > same seed produces byte-identical WAV twice in-process [4565.81ms]
+(pass) offline determinism and frozen fallback > changing only the seed changes percussion and WAV bytes [4434.19ms]
+(pass) offline determinism and frozen fallback > frozen WAV and metadata match the generator, prompt and exact format [108.42ms]
+(pass) offline determinism and frozen fallback > source has no network, clock or unseeded randomness; core has no Node APIs or dependencies [0.94ms]
+
+apps/video/tests/timeline.test.js:
+(pass) locked timeline > accepts the namespace and scenes-only JSON contract [2.56ms]
+(pass) locked timeline > owns fixed beat values, readiness labels and recursively frozen illustration data [0.29ms]
+(pass) locked timeline > scene lookup respects every end-exclusive cut and rejects outside/noninteger frames [0.32ms]
+(pass) locked timeline > rejects missing product with MISSING_PRODUCT [0.55ms]
+(pass) locked timeline > rejects one-frame gap with GAP [0.50ms]
+(pass) locked timeline > rejects caption outside interval with CAPTION_OUT_OF_SCENE [0.28ms]
+(pass) locked timeline > rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE [0.23ms]
+(pass) locked timeline > rejects duplicate product with DUPLICATE_PRODUCT [0.25ms]
+(pass) locked timeline > rejects overlap with OVERLAP [0.32ms]
+(pass) locked timeline > rejects wrong duration with WRONG_DURATION [0.25ms]
+(pass) locked timeline > rejects over-long line with CAPTION_LINE_LENGTH [0.25ms]
+(pass) locked timeline > rejects three lines with CAPTION_LINES [0.21ms]
+(pass) locked timeline > rejects bad status with INVALID_STATUS [0.23ms]
+(pass) locked timeline > rejects each changed beat constant and total frame count [0.80ms]
+(pass) locked timeline > rejects short key-text holds, missing PRDs, changed captions and framing status [0.74ms]
+(pass) locked timeline > requires purpose-specific truthful claims and concept qualification [0.41ms]
+(pass) locked timeline > audits unsupported wording in both claims and captions [2.57ms]
+(pass) locked timeline > allows prototype only with a nonblank auditable reference, never out-of-scope promises [0.45ms]
+(pass) locked timeline > malformed records return named violations without throwing [0.28ms]
+$ bun run validate:timeline
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js
+exitCode=0
+(pass) real CLI verification with temporary fixtures > default command prints the exact PASS line and exits zero [20.97ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/missing-product.json
+FAIL timeline: WRONG_SCENE_COUNT Expected 8 scenes, received 7.
+FAIL timeline: MISSING_PRODUCT Missing Caret.
+FAIL timeline: MISSING_SCENE Missing caret.
+FAIL timeline: WRONG_SCENE_ORDER flopside is not in the prescribed position 1.
+FAIL timeline: GAP flopside starts at 420; previous end is 180.
+FAIL timeline: WRONG_SCENE_ORDER patchbay is not in the prescribed position 2.
+FAIL timeline: WRONG_SCENE_ORDER sidekick is not in the prescribed position 3.
+FAIL timeline: WRONG_SCENE_ORDER tetherterm is not in the prescribed position 4.
+FAIL timeline: WRONG_SCENE_ORDER glassroom is not in the prescribed position 5.
+FAIL timeline: WRONG_SCENE_ORDER outro is not in the prescribed position 6.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1560, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/missing-product.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects missing product with MISSING_PRODUCT and exit 1 [20.77ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/one-frame-gap.json
+FAIL timeline: WRONG_SCENE_INTERVAL caret must start at bar 4 and span 4 bars.
+FAIL timeline: WRONG_BEAT_VALUES caret requires positive whole bars and a one-based startBar.
+FAIL timeline: WRONG_DURATION caret must span 240 frames.
+FAIL timeline: GAP flopside starts at 420; previous end is 419.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1799, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/one-frame-gap.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects one-frame gap with GAP and exit 1 [20.56ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/caption-outside-interval.json
+FAIL timeline: CAPTION_OUT_OF_SCENE caret caption must stay inside [180,420) with integer end-exclusive frames.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/caption-outside-interval.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects caption outside interval with CAPTION_OUT_OF_SCENE and exit 1 [21.01ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/prototype-without-evidence.json
+FAIL timeline: PROTOTYPE_WITHOUT_EVIDENCE caret prototype requires a nonempty evidenceRef.
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/prototype-without-evidence.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE and exit 1 [21.31ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/valid.json
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/valid.json
+exitCode=0
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/valid.js
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/valid.js
+exitCode=0
+(pass) real CLI verification with temporary fixtures > accepts a JavaScript fixture module and valid scenes-only JSON [47.96ms]
+$ bun run validate:timeline --unknown
+FAIL timeline: INVALID_ARGUMENTS Expected --file <path.json|.js>.
+$ bun apps/video/scripts/validate-timeline.js --unknown
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/invalid.json
+FAIL timeline: INVALID_FILE JSON Parse error: Unexpected identifier "not"
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/invalid.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-UBXyGZ/missing.json
+FAIL timeline: INVALID_FILE ENOENT: no such file or directory, open '/tmp/session-seven-timeline-UBXyGZ/missing.json'
+$ bun apps/video/scripts/validate-timeline.js --file /tmp/session-seven-timeline-UBXyGZ/missing.json
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > invalid input and arguments fail without a passing line [63.60ms]
+
+apps/video/tests/tetherterm.test.js:
+(pass) TetherTerm persistent session illustration > registered component retains the shared SceneFrame and locked interval [0.76ms]
+(pass) TetherTerm persistent session illustration > input starts exactly at local 120 and output holds from 180 [0.38ms]
+(pass) TetherTerm persistent session illustration > all 240 frames retain one fixed identifier, all history and one terminal [60.84ms]
+(pass) TetherTerm persistent session illustration > 1170/1260/1350 comparison shows retained history and corresponding input/output [0.20ms]
+(pass) TetherTerm persistent session illustration > frame states are regenerated identically in repeated and shuffled order [4.19ms]
+(pass) TetherTerm persistent session illustration > exact caption and honest labels persist over every local frame [1.15ms]
+(pass) TetherTerm persistent session illustration > native 48px short reading lines fit the illustration without movement [0.66ms]
+(pass) TetherTerm persistent session illustration > source and visible text exclude extra UI, operational claims and impure render code [1.24ms]
+(pass) TetherTerm persistent session illustration > scene-scoped CLI accepts only its end-exclusive absolute frames [0.26ms]
+TetherTerm real still smoke: 9.502s
+PNG ../../../../../../tmp/s7-tetherterm-smoke-4tXjQh/tetherterm/frame-1170.png frame=1170
+PNG ../../../../../../tmp/s7-tetherterm-smoke-4tXjQh/tetherterm/frame-1260.png frame=1260
+PNG ../../../../../../tmp/s7-tetherterm-smoke-4tXjQh/tetherterm/frame-1350.png frame=1350
+TIMING bundle=3.892s renders=3.996s total=9.034s concurrency=1
+STILLS ok count=3
+(pass) TetherTerm persistent session illustration > real pinned-Chromium smoke renders hold/action/result PNGs within 90s [9504.44ms]
+
+ 161 pass
+ 0 fail
+ 71082 expect() calls
+Ran 161 tests across 8 files. [38.37s]
+EXIT_CODE=0
