@@ -1,0 +1,62 @@
+COMMAND: ASAN_OPTIONS=detect_leaks=1 apps/desktop/native/build/clipboard_policy-sanitizer
+PASS plain-text restore / exactly 700 ms timer: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS empty restore: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS plain-text/system-derived format set: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at clipboard: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at wait: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS post-mutation cancel at snapshot: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS late foreground-change restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS late control-change restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed/short input restore (zero input retries): opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS modifier timeout restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS input exception restore: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS newer sequence preserved: opens=2 inputs=1 restore-waits=1 payload-hash=2357b81b7dd69680 (synthetic recording fixture; NOT Windows evidence)
+PASS newer sequence with identical payload preserved: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS owned payload mismatch with unchanged sequence preserved: opens=2 inputs=1 restore-waits=1 payload-hash=646afb8f558922d4 (synthetic recording fixture; NOT Windows evidence)
+PASS unchanged sequence with new unsupported format preserved: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS empty Unicode text restored as text, not empty clipboard: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49153 before/after-hash=aa1f28bbd925272
+PASS HTML: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49154 before/after-hash=aa1f28bbd925272
+PASS RTF: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=2 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS bitmap: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=8 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS DIB image: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=512 before/after-hash=aa1f28bbd925272
+PASS private format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+SNAPSHOT rejected format=49155 before/after-hash=aa1f28bbd925272
+PASS registered format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+SNAPSHOT rejected format=3 before/after-hash=aa1f28bbd925272
+SNAPSHOT rejected format=13 before/after-hash=1374691bb06f5146
+PASS unknown standard format: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial busy: paste count 0, zero retries: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS restore busy: single attempt, failure outcome, zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS initial formats failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial read failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS initial empty failure: opens=1 inputs=0 restore-waits=0 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS failed owned write restores snapshot from owned-empty: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS restore formats failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore read failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore empty failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore clipboard failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=cbf29ce484222325 (synthetic recording fixture; NOT Windows evidence)
+PASS restore sequence failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS restore close failure / zero retries: opens=2 inputs=1 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS ownership sequence failure: opens=1 inputs=0 restore-waits=1 payload-hash=92f1639259be4a13 (synthetic recording fixture; NOT Windows evidence)
+PASS ownership close failure: opens=2 inputs=0 restore-waits=1 payload-hash=8fe2874e743ca5d6 (synthetic recording fixture; NOT Windows evidence)
+PASS hash comparison uses all UTF-16 bytes plus exact equality
+PASS clipboard policy suite: 46 cases (fake platform only)

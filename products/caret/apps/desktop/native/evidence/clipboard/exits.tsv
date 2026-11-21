@@ -1,0 +1,31 @@
+command	exit	log
+bun install --frozen-lockfile	0	install.txt
+bun run lint	0	lint.txt
+bun run --cwd apps/desktop typecheck	0	typecheck.txt
+bun run --cwd apps/desktop typecheck:overlay	0	typecheck-overlay.txt
+bun run --cwd apps/desktop typecheck:helper	0	typecheck-helper.txt
+bun run --cwd apps/desktop build	0	build.txt
+bun run --cwd apps/desktop build:helper	0	build-helper.txt
+bun run --cwd apps/desktop test:ipc-boundary	0	test-ipc-boundary.txt
+bun run --cwd apps/desktop test:tray-hotkey	0	test-tray-hotkey.txt
+bun run --cwd apps/desktop test:overlay	0	test-overlay.txt
+bun run --cwd apps/desktop test:helper-protocol	0	test-helper-protocol.txt
+bun run --cwd apps/desktop verify:helper-secrets	0	verify-helper-secrets.txt
+bun run --cwd apps/desktop verify:tray-secrets	0	verify-tray-secrets.txt
+bun run --cwd apps/desktop verify:overlay-secrets	0	verify-overlay-secrets.txt
+bun run --cwd apps/desktop test:windows:clipboard-policy	2	test-windows-clipboard-policy.txt
+bun run --cwd apps/desktop test:windows:helper-protocol	2	test-windows-helper-protocol.txt
+bun run --cwd apps/desktop test:windows:paste-target	2	test-windows-paste-target.txt
+bun run --cwd apps/desktop helper:snapshot	2	helper-snapshot.txt
+git diff --check	0	diff-check.txt
+g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -no-pie apps/desktop/native/protocol.cpp apps/desktop/native/tests/protocol_test.cpp -o apps/desktop/native/build/protocol-sanitizer	0	sanitizer-protocol-build.txt
+ASAN_OPTIONS=detect_leaks=1 apps/desktop/native/build/protocol-sanitizer	0	sanitizer-protocol.txt
+g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -no-pie apps/desktop/native/protocol.cpp apps/desktop/native/paste.cpp apps/desktop/native/tests/paste_test.cpp -o apps/desktop/native/build/paste-sanitizer	0	sanitizer-paste-build.txt
+ASAN_OPTIONS=detect_leaks=1 apps/desktop/native/build/paste-sanitizer	0	sanitizer-paste.txt
+g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -no-pie apps/desktop/native/protocol.cpp apps/desktop/native/paste.cpp apps/desktop/native/tests/clipboard_policy_test.cpp -o apps/desktop/native/build/clipboard_policy-sanitizer	0	sanitizer-clipboard_policy-build.txt
+ASAN_OPTIONS=detect_leaks=1 apps/desktop/native/build/clipboard_policy-sanitizer	0	sanitizer-clipboard_policy.txt
+bun run --cwd apps/desktop verify:helper-secrets (final staged rerun)	0	verify-helper-secrets.txt
+bun run --cwd apps/desktop verify:tray-secrets (final staged rerun)	0	verify-tray-secrets.txt
+bun run --cwd apps/desktop verify:overlay-secrets (final staged rerun)	0	verify-overlay-secrets.txt
+git diff --cached --check	2	staged-diff-check-before-evidence-trim.txt
+git diff --cached --check (after evidence EOF fix)	0	staged-diff-check.txt

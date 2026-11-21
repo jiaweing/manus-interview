@@ -181,12 +181,16 @@ void fixtures() {
   std::cout << "PASS no usable target and failure consumes session ID\n";
   platform.throws = false;
   for (const auto outcome : {caret::Outcome::target_changed, caret::Outcome::clipboard_busy,
+                             caret::Outcome::clipboard_restore_failed,
                              caret::Outcome::unsupported, caret::Outcome::paste_requested}) {
     platform.outcome = outcome;
     const auto id = "outcome" + std::to_string(platform.inserts);
-    check(protocol.dispatch(insert(id, id)).find("\"ok\":true") != std::string::npos, "outcome serialization");
+    const auto response = protocol.dispatch(insert(id, id));
+    check(response.find("\"ok\":true") != std::string::npos, "outcome serialization");
+    if (outcome == caret::Outcome::clipboard_restore_failed)
+      check(response.find("clipboard_restore_failed") != std::string::npos, "restore failure serialization");
   }
-  std::cout << "PASS four typed outcomes (fixture only; no paste implementation)\n";
+  std::cout << "PASS five typed outcomes (fixture only; no paste implementation)\n";
 
   std::string line;
   std::istringstream stream(std::string(caret::max_line_bytes + 1, 'x') + "\n" +

@@ -1,0 +1,3 @@
+COMMAND: bun run --cwd apps/desktop typecheck:helper
+
+$ tsc --noEmit -p native/tsconfig.json

@@ -1,0 +1,3 @@
+COMMAND: bun run --cwd apps/desktop typecheck
+
+$ tsc --noEmit -p tsconfig.json

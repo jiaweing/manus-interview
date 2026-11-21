@@ -1,0 +1,4 @@
+COMMAND: bun run --cwd apps/desktop test:windows:paste-target
+
+$ bun native/scripts/paste-target.ts
+NOT RUN: needs Windows (real interactive desktop; Wine is not acceptance evidence)

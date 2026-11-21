@@ -1,0 +1,10 @@
+COMMAND: x86_64-w64-mingw32-objdump -p apps/desktop/native/build/caret-helper.exe (filtered clipboard/input import audit)
+	1053b0	   78  CloseClipboard
+	1053f8	  230  EmptyClipboard
+	10540a	  245  EnumClipboardFormats
+	105444	  307  GetClipboardData
+	105458	  311  GetClipboardSequenceNumber
+	1054ec	  637  OpenClipboard
+	10550c	  748  SendInput
+	105518	  766  SetClipboardData
+PASS forbidden refocus imports absent; cross-compile import evidence only

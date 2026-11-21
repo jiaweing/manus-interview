@@ -5,6 +5,23 @@
 
 namespace caret {
 namespace {
+// Read handles belong to Windows; only unlock them, never free them.
+struct GlobalMemoryLock {
+  HGLOBAL memory;
+  void* data;
+  explicit GlobalMemoryLock(HGLOBAL handle) : memory(handle), data(GlobalLock(handle)) {}
+  ~GlobalMemoryLock() { if (data) GlobalUnlock(memory); }
+  GlobalMemoryLock(const GlobalMemoryLock&) = delete;
+  GlobalMemoryLock& operator=(const GlobalMemoryLock&) = delete;
+};
+struct OwnedGlobalMemory {
+  HGLOBAL memory;
+  explicit OwnedGlobalMemory(std::size_t bytes) : memory(GlobalAlloc(GMEM_MOVEABLE, bytes)) {}
+  ~OwnedGlobalMemory() { if (memory) GlobalFree(memory); }
+  OwnedGlobalMemory(const OwnedGlobalMemory&) = delete;
+  OwnedGlobalMemory& operator=(const OwnedGlobalMemory&) = delete;
+  void release() { memory = nullptr; }  // SetClipboardData transferred ownership.
+};
 std::string handle(HWND window) {
   std::ostringstream out;
   out << "0x" << std::hex << reinterpret_cast<std::uintptr_t>(window);
@@ -74,23 +91,54 @@ Modifiers Win32Platform::modifiers() {
 }
 std::uint64_t Win32Platform::now_ms() { return GetTickCount64(); }
 void Win32Platform::wait_ms(unsigned duration) { Sleep(duration); }
-bool Win32Platform::write_unicode(const std::u16string& text) {
-  // ISSUE #8 SEAM: intentionally destructive one-way Unicode write only. The
-  // next issue owns supported-format checks, snapshot and conditional restore.
+bool Win32Platform::open_clipboard() {
+  return clipboard_owner_ && OpenClipboard(clipboard_owner_);
+}
+bool Win32Platform::clipboard_formats(std::vector<std::uint32_t>& formats) {
+  formats.clear();
+  UINT format = 0;
+  for (;;) {
+    SetLastError(ERROR_SUCCESS);
+    format = EnumClipboardFormats(format);
+    if (!format) return GetLastError() == ERROR_SUCCESS;
+    formats.push_back(format);
+  }
+}
+bool Win32Platform::read_plain_text(std::u16string& text) {
+  // Windows synthesizes Unicode from CF_TEXT/CF_OEMTEXT using CF_LOCALE.
+  // The shared policy has already rejected every non-text format.
   static_assert(sizeof(wchar_t) == sizeof(char16_t));
-  if (!clipboard_owner_) return false;
-  const auto bytes = (text.size() + 1) * sizeof(char16_t);
-  HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE, bytes);
+  const HANDLE memory = GetClipboardData(CF_UNICODETEXT);
   if (!memory) return false;
-  void* destination = GlobalLock(memory);
-  if (!destination) { GlobalFree(memory); return false; }
-  std::memcpy(destination, text.c_str(), bytes);
-  GlobalUnlock(memory);
-  if (!OpenClipboard(clipboard_owner_)) { GlobalFree(memory); return false; }
-  const bool written = EmptyClipboard() && SetClipboardData(CF_UNICODETEXT, memory);
-  CloseClipboard();
-  if (!written) GlobalFree(memory);  // Success transfers ownership to the OS.
-  return written;
+  const auto units = GlobalSize(memory) / sizeof(char16_t);
+  GlobalMemoryLock lock(memory);
+  const auto* data = static_cast<const char16_t*>(lock.data);
+  if (!data) return false;
+  std::size_t length = 0;
+  while (length < units && data[length] != 0) ++length;
+  const bool terminated = length < units;
+  if (terminated) text.assign(data, length);
+  return terminated;
+}
+bool Win32Platform::empty_clipboard() { return EmptyClipboard() != FALSE; }
+std::optional<std::uint32_t> Win32Platform::clipboard_sequence() {
+  const auto sequence = GetClipboardSequenceNumber();
+  return sequence ? std::optional<std::uint32_t>(sequence) : std::nullopt;
+}
+bool Win32Platform::close_clipboard() { return CloseClipboard() != FALSE; }
+bool Win32Platform::write_unicode(const std::u16string& text) {
+  static_assert(sizeof(wchar_t) == sizeof(char16_t));
+  const auto bytes = (text.size() + 1) * sizeof(char16_t);
+  OwnedGlobalMemory allocation(bytes);
+  if (!allocation.memory) return false;
+  {
+    GlobalMemoryLock lock(allocation.memory);
+    if (!lock.data) return false;
+    std::memcpy(lock.data, text.c_str(), bytes);
+  }  // Unlock before transferring ownership, even on an exception.
+  if (!SetClipboardData(CF_UNICODETEXT, allocation.memory)) return false;
+  allocation.release();
+  return true;
 }
 unsigned Win32Platform::send_input(std::span<const KeyEvent> events) {
   std::vector<INPUT> inputs(events.size());

@@ -1,0 +1,2 @@
+COMMAND: git diff --cached --check
+products/caret/apps/desktop/native/evidence/clipboard/diff-check.txt:2: new blank line at EOF.
