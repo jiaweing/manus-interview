@@ -1,0 +1,5 @@
+c396e041c9a4d3a6953125f50aa49faca1529262e3ea2c75358c5caf0beb4b26  qa/stills/sidekick/frame-0900.png
+506575885c0f759f28e0cc575aa6f764689c066c3c5c1224311b36178d1d765f  qa/stills/sidekick/frame-0930.png
+bbd95bf38862c4d3bc42cbdfed3110ed42c90537f8febc3d8ca13c00cbc9b297  qa/stills/sidekick/frame-1020.png
+90208561b9883d0b16183fb62348d3916e017d8278ab1c95c58fefc3d93f63de  qa/stills/sidekick/frame-1110.png
+90208561b9883d0b16183fb62348d3916e017d8278ab1c95c58fefc3d93f63de  qa/stills/sidekick/frame-1139.png

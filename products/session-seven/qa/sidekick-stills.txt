@@ -1,0 +1,9 @@
+$ bun apps/video/scripts/preview-stills.js --scene sidekick --frames "900,930,1020,1110,1139"
+PNG qa/stills/sidekick/frame-0900.png frame=900
+PNG qa/stills/sidekick/frame-0930.png frame=930
+PNG qa/stills/sidekick/frame-1020.png frame=1020
+PNG qa/stills/sidekick/frame-1110.png frame=1110
+PNG qa/stills/sidekick/frame-1139.png frame=1139
+TIMING bundle=4.314s renders=6.323s total=12.059s concurrency=1
+STILLS ok count=5
+EXIT_CODE=0
