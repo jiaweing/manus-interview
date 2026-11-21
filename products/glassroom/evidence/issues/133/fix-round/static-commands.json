@@ -1,0 +1,52 @@
+[
+  {
+    "name": "merge-main",
+    "command": "git fetch origin && git merge origin/main",
+    "exit": 0
+  },
+  {
+    "name": "install",
+    "command": "bun install --frozen-lockfile",
+    "exit": 0
+  },
+  {
+    "name": "biome-fix",
+    "command": "bunx biome check --write",
+    "exit": 0
+  },
+  {
+    "name": "check",
+    "command": "bun run check",
+    "exit": 0
+  },
+  {
+    "name": "types",
+    "command": "bun run check-types",
+    "exit": 0
+  },
+  {
+    "name": "invitation-test-types",
+    "command": "bunx tsc --ignoreConfig --noEmit --strict --noUncheckedIndexedAccess --skipLibCheck --target es2022 --module esnext --moduleResolution bundler --types bun tests/e2e/invitations.spec.ts tests/unit/invitations.test.ts tests/unit/invitation-admission.test.ts",
+    "exit": 0
+  },
+  {
+    "name": "build",
+    "command": "bun run build",
+    "exit": 0
+  },
+  {
+    "name": "unit",
+    "command": "bun test tests/unit",
+    "exit": 0
+  },
+  {
+    "name": "redaction-unit",
+    "command": "python3 evidence/issues/133/verify_test.py",
+    "exit": 0
+  },
+  {
+    "name": "diff",
+    "command": "git diff --check",
+    "exit": 0
+  }
+]

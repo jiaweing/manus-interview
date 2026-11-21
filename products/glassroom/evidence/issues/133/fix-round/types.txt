@@ -1,0 +1,16 @@
+$ bun run check-types
+exit: 0
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+server:check-types: cache hit, replaying logs 3c3d31d4822dd716
+server:check-types: $ tsc --noEmit
+@glassroom/ui:check-types: cache hit, replaying logs 1d30bd14d8278edf
+@glassroom/ui:check-types: $ tsc --noEmit
+web:check-types: cache hit, replaying logs 1811f6a8a8fdc71a
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    3 cached, 3 total
+  Time:    27ms >>> FULL TURBO

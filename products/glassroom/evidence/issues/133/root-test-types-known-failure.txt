@@ -1,0 +1,7 @@
+$ bunx tsc --noEmit -p tsconfig.json
+exit: 2
+This optional check is not the mandatory bun run check-types gate. All remaining errors are in the unchanged #128 tests, not #133. The isolated #133 test typecheck uses strict mode and noUncheckedIndexedAccess and passes.
+tests/unit/signaling-crypto.test.ts(98,33): error TS18048: 'sender' is possibly 'undefined'.
+tests/unit/signaling-crypto.test.ts(103,23): error TS18048: 'receiver' is possibly 'undefined'.
+tests/unit/signaling-crypto.test.ts(106,12): error TS18048: 'receiver' is possibly 'undefined'.
+tests/unit/signaling-crypto.test.ts(106,41): error TS18048: 'sender' is possibly 'undefined'.

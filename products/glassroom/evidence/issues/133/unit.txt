@@ -1,0 +1,17 @@
+$ bun test tests/unit
+exit: 0
+(pass) authenticated data envelopes > duplicate rejected [1.42ms]
+(pass) authenticated data envelopes > failed authentication preserves receive sequence [1.46ms]
+(pass) authenticated data envelopes > malformed and over-cap rejection [8.14ms]
+(pass) authenticated data envelopes > counter exhaustion [1.75ms]
+(pass) authenticated data envelopes > full uint64 receive boundary [1.48ms]
+(pass) authenticated data envelopes > strict encrypted body validation and UTF-8 message bound [18.15ms]
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [5.77ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [1.55ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [1.84ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [3.87ms]
+
+ 60 pass
+ 0 fail
+ 1726 expect() calls
+Ran 60 tests across 5 files. [218.00ms]

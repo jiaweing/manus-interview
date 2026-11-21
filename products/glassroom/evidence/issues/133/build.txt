@@ -1,0 +1,16 @@
+$ bun run build
+exit: 0
+web:build:
+web:build: Route (app)
+web:build: ┌ ○ /
+web:build: ├ ○ /_not-found
+web:build: └ ƒ /r/[id]
+web:build:
+web:build:
+web:build: ○  (Static)   prerendered as static content
+web:build: ƒ  (Dynamic)  server-rendered on demand
+web:build:
+
+ Tasks:    2 successful, 2 total
+Cached:    0 cached, 2 total
+  Time:    8.803s

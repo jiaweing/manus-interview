@@ -1,0 +1,17 @@
+$ xvfb-run -a --server-args='-screen 0 1280x900x24' env PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133 CHROMIUM_PATH=/usr/bin/chromium PW_NO_WEBSERVER=1 INVITATION_SCREENSHOTS=1 bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --headed --reporter=list
+exit: 0
+Running 9 tests using 1 worker
+
+  ✓  1 [chromium] › tests/e2e/invitations.spec.ts:125:1 › random invitation lengths (3.2s)
+  ✓  2 [chromium] › tests/e2e/invitations.spec.ts:153:1 › deliberate copy only (1.3s)
+
+  ✓  3 [chromium] › tests/e2e/invitations.spec.ts:182:1 › strip before signal (3.3s)
+  ✓  4 [chromium] › tests/e2e/invitations.spec.ts:253:2 › missing secret stays local (1.2s)
+  ✓  5 [chromium] › tests/e2e/invitations.spec.ts:253:2 › invalid secret stays local (1.5s)
+
+  ✓  6 [chromium] › tests/e2e/invitations.spec.ts:280:1 › no-login third-person rejection (3.8s)
+  ✓  7 [chromium] › tests/e2e/invitations.spec.ts:313:1 › refresh ends old invitation without reconnection (3.2s)
+  ✓  8 [chromium] › tests/e2e/invitations.spec.ts:354:1 › invalid room ID stays local and Back does not restore the fragment (2.1s)
+  ✓  9 [chromium] › tests/e2e/invitations.spec.ts:384:1 › native clipboard copies only on deliberate action (1.1s)
+
+  9 passed (23.3s)

@@ -1,0 +1,7 @@
+[
+  {
+    "name": "post-merge-all-chromium",
+    "command": "bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts tests/e2e/data-envelope.spec.ts tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  }
+]

@@ -1,0 +1,7 @@
+$ python3 evidence/issues/133/verify_test.py
+exit: 0
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK

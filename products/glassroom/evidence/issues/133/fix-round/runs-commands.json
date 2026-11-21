@@ -1,0 +1,117 @@
+[
+  {
+    "name": "dev-01",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-02",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-03",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-04",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-05",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-06",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-07",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-08",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-09",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-10",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "dev-all-chromium",
+    "command": "bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts tests/e2e/data-envelope.spec.ts tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-build",
+    "command": "bun run build",
+    "exit": 0
+  },
+  {
+    "name": "prod-01",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-02",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-03",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-04",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-05",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-06",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-07",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-08",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-09",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-10",
+    "command": "bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "prod-all-chromium",
+    "command": "bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts tests/e2e/data-envelope.spec.ts tests/e2e/invitations.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  }
+]

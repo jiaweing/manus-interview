@@ -1,0 +1,12 @@
+[
+  {
+    "name": "invitations-e2e",
+    "command": "xvfb-run -a --server-args='-screen 0 1280x900x24' env PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133 CHROMIUM_PATH=/usr/bin/chromium PW_NO_WEBSERVER=1 INVITATION_SCREENSHOTS=1 bunx playwright test tests/e2e/invitations.spec.ts --project=chromium --headed --reporter=list",
+    "exit": 0
+  },
+  {
+    "name": "regression-e2e",
+    "command": "PUBLIC_PORT=4133 NEXT_INTERNAL_PORT=5133 CHROMIUM_PATH=/usr/bin/chromium PW_NO_WEBSERVER=1 bunx playwright test tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts --project=chromium --reporter=list",
+    "exit": 0
+  }
+]
