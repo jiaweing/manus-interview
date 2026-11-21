@@ -1,0 +1,151 @@
+bun test v1.4.5 (a7733435c)
+
+packages/engine/betting.test.ts:
+542 | 			expect(initial.public.currentBet).toBe(10);
+543 | 			expect(initial.public.seats.map((seat) => seat.streetContribution)).toEqual([
+544 | 				bigBlind, 5,
+545 | 			]);
+546 | 			// Even an unnormalized hand cannot advertise/accept a phantom fold.
+547 | 			expect(types(initial, 1)).toEqual([]);
+                                   ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   "fold",
++   "call",
++ ]
+
+- Expected  - 1
++ Received  + 4
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:547:30)
+(fail) turn order, round completion and unsettled hand endings > heads-up BB 1/SB 5 is already covered: no decision, immediate runout [4.97ms]
+542 | 			expect(initial.public.currentBet).toBe(10);
+543 | 			expect(initial.public.seats.map((seat) => seat.streetContribution)).toEqual([
+544 | 				bigBlind, 5,
+545 | 			]);
+546 | 			// Even an unnormalized hand cannot advertise/accept a phantom fold.
+547 | 			expect(types(initial, 1)).toEqual([]);
+                                   ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   "fold",
++   "call",
++ ]
+
+- Expected  - 1
++ Received  + 4
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:547:30)
+(fail) turn order, round completion and unsettled hand endings > heads-up BB 3/SB 5 is already covered: no decision, immediate runout [0.42ms]
+576 | 	for (const bigBlind of [7, 10]) {
+577 | 		test(`heads-up all-in BB ${bigBlind}/SB 5 calls only ${bigBlind - 5} actual chips`, () => {
+578 | 			let state = progressBetting(nextHand([bigBlind, 400 - bigBlind]));
+579 | 			expect(state.public.actor).toBe(1);
+580 | 			expect(state.public.handStatus).toBe("playing");
+581 | 			expect(legalActions(state, 1)).toEqual({
+                                        ^
+error: expect(received).toEqual(expected)
+
+  {
+    "actions": [
+      {
+        "type": "fold",
+      },
+      {
+        "type": "call",
+      },
+    ],
+-   "callAmount": 2,
++   "callAmount": 5,
+    "canRaise": false,
+    "maxTotalTo": null,
+    "minTotalTo": null,
+  }
+
+- Expected  - 1
++ Received  + 1
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:581:35)
+(fail) turn order, round completion and unsettled hand endings > heads-up all-in BB 7/SB 5 calls only 2 actual chips [1.16ms]
+(pass) turn order, round completion and unsettled hand endings > heads-up all-in BB 10/SB 5 calls only 5 actual chips [1.13ms]
+599 | 	}
+600 | 
+601 | 	test("BB 7/SB 5 offers all-in only for an actual short or exact call, never nominal excess", () => {
+602 | 		for (const smallBlindStack of [6, 7, 9]) {
+603 | 			let state = progressBetting(nextHand([7, smallBlindStack]));
+604 | 			expect(legalActions(state, 1).callAmount).toBe(
+                                                   ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 4
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:604:46)
+(fail) turn order, round completion and unsettled hand endings > BB 7/SB 5 offers all-in only for an actual short or exact call, never nominal excess [0.70ms]
+628 | 			// Two or more funded contenders still use the nominal multiway bring-in.
+629 | 			expect(legalActions(state, state.public.actor as number).callAmount).toBe(10);
+630 | 			for (let fold = 0; fold < count - 2; fold += 1) {
+631 | 				state = play(state, { type: "fold" });
+632 | 			}
+633 | 			expect(state.public.handStatus).toBe("showdown");
+                                         ^
+error: expect(received).toBe(expected)
+
+Expected: "showdown"
+Received: "playing"
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:633:36)
+(fail) turn order, round completion and unsettled hand endings > 3 seats: covered SB runs out after other funded seats fold against BB 3 [0.42ms]
+645 | 			state = play(state, { type: "allin" });
+646 | 			if (count === 4) {
+647 | 				state = play(state, { type: "fold" });
+648 | 			}
+649 | 			expect(state.public.actor).toBe(2);
+650 | 			expect(legalActions(state, 2).callAmount).toBe(2);
+                                                   ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 5
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:650:46)
+(fail) turn order, round completion and unsettled hand endings > 3 seats: BB 7 plus a shorter all-in leaves SB 5 owing only 2 [0.45ms]
+628 | 			// Two or more funded contenders still use the nominal multiway bring-in.
+629 | 			expect(legalActions(state, state.public.actor as number).callAmount).toBe(10);
+630 | 			for (let fold = 0; fold < count - 2; fold += 1) {
+631 | 				state = play(state, { type: "fold" });
+632 | 			}
+633 | 			expect(state.public.handStatus).toBe("showdown");
+                                         ^
+error: expect(received).toBe(expected)
+
+Expected: "showdown"
+Received: "playing"
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:633:36)
+(fail) turn order, round completion and unsettled hand endings > 4 seats: covered SB runs out after other funded seats fold against BB 3 [0.44ms]
+645 | 			state = play(state, { type: "allin" });
+646 | 			if (count === 4) {
+647 | 				state = play(state, { type: "fold" });
+648 | 			}
+649 | 			expect(state.public.actor).toBe(2);
+650 | 			expect(legalActions(state, 2).callAmount).toBe(2);
+                                                   ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 5
+
+      at <anonymous> (/home/ubuntu/wt/i31-betting/products/flopside/packages/engine/betting.test.ts:650:46)
+(fail) turn order, round completion and unsettled hand endings > 4 seats: BB 7 plus a shorter all-in leaves SB 5 owing only 2 [0.35ms]
+(pass) turn order, round completion and unsettled hand endings > multiway BB 3 retains nominal bring-in and funded SB's voluntary option [0.49ms]
+
+ 2 pass
+ 27 filtered out
+ 8 fail
+ 102 expect() calls
+Ran 10 tests across 1 file. [46.00ms]

@@ -1,0 +1,84 @@
+Round 2 verification: gates run after the final source/document edit
+Rebased onto origin/main containing rooms PR #222. No apps/server edits.
+
+$ bun run fix
+exit=0; output=fix-final.txt
+$ biome check --write .
+Checked 43 files in 272ms. No fixes applied.
+
+$ bun install --frozen-lockfile
+exit=0; output=install.txt
+bun install v1.4.5 (a7733435c)
+
+Checked 1409 installs across 1555 packages (no changes) [1.82s]
+
+$ bun test packages/engine/betting.test.ts
+exit=0; output=betting.txt
+(pass) turn order, round completion and unsettled hand endings > 4 seats: covered SB runs out after other funded seats fold against BB 3 [0.25ms]
+(pass) turn order, round completion and unsettled hand endings > 4 seats: BB 7 plus a shorter all-in leaves SB 5 owing only 2 [0.28ms]
+(pass) turn order, round completion and unsettled hand endings > multiway BB 3 retains nominal bring-in and funded SB's voluntary option [0.28ms]
+(pass) turn order, round completion and unsettled hand endings > multiway actor selection skips an already-acted covered funded seat [0.51ms]
+(pass) turn order, round completion and unsettled hand endings > all-in runout retains unmatched contributions for #32 refunds [0.33ms]
+(pass) turn order, round completion and unsettled hand endings > normalization resolves blind-only all-ins and preserves an initial live actor [0.17ms]
+(pass) turn order, round completion and unsettled hand endings > blinds do not count as voluntary actions; street resets restore rights [0.12ms]
+(pass) seeded property play > 2 seats: 1500 random-stack hands, short-blind rule oracle and exhaustive wagers [704.31ms]
+(pass) seeded property play > 3 seats: 1500 random-stack hands, short-blind rule oracle and exhaustive wagers [1443.96ms]
+(pass) seeded property play > 4 seats: 1500 random-stack hands, short-blind rule oracle and exhaustive wagers [2314.50ms]
+
+ 38 pass
+ 0 fail
+ 1485 expect() calls
+Ran 38 tests across 1 file. [4.50s]
+
+$ bun run lint
+exit=0; output=lint.txt
+$ biome check .
+Checked 43 files in 218ms. No fixes applied.
+
+$ bun run typecheck
+exit=0; output=typecheck.txt
+$ bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && bun run --cwd packages/engine check-types && tsc --noEmit -p tsconfig.json
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+
+$ bun run test
+exit=0; output=test.txt
+(pass) host start and connectivity > playing disconnect never transfers host or alters roster [0.74ms]
+(pass) host start and connectivity > connection flags are idempotent and unknown seats are AUTH_REQUIRED [0.82ms]
+(pass) injectable-clock idle expiry > idle room exists at 29:59.999 [0.71ms]
+(pass) injectable-clock idle expiry > idle room at exactly 30:00 returns ROOM_EXPIRED and cannot revive [1.19ms]
+(pass) injectable-clock idle expiry > unknown and invalid codes use the same ROOM_EXPIRED error [0.74ms]
+(pass) injectable-clock idle expiry > successful requests and rejected requests touch idle activity [1.17ms]
+(pass) injectable-clock idle expiry > connection and start commands also touch the injected clock [0.74ms]
+(pass) test-only deck injection > constructor accepts a deterministic function and private reads are detached [1.04ms]
+(pass) test-only deck injection > failed injected deck leaves room in lobby without partial mutation [0.63ms]
+(pass) test-only deck injection > production app constructs RoomStore without deck configuration or env selectors [0.79ms]
+
+ 165 pass
+ 0 fail
+ 22817 expect() calls
+Ran 165 tests across 6 files. [7.56s]
+
+$ bun run build
+exit=0; output=build.txt
+✓ Generating static pages using 5 workers (4/4) in 486ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+└ ○ /_not-found
+
+
+○  (Static)  prerendered as static content
+
+$ bun build ./src/index.ts --target bun --outdir dist
+Bundled 152 modules in 22ms
+
+  index.js  235.37 KB  (entry point)
+
+
+All seven gates passed.
+Docker build: not run, no docker in sandbox.
+Browser/e2e: not run; no e2e required by pure-engine issue #31.
+Independent verifier rerun: pending, not self-claimed.
