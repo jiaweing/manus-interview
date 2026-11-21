@@ -141,7 +141,7 @@ The code in this run was authored by Manus swarm agents, not `anthropic/claude-o
 ## #157
 
 - **Issue:** #157 — Illustrate Caret desktop dictation without sending the inserted text.
-- **PR:** branch `session-seven/157-caret` (one scoped PR, body contains `Closes #157`; publication URL to be recorded after creation).
+- **PR:** https://github.com/jiaweing/manus-interview/pull/237, branch `session-seven/157-caret`; body contains `Closes #157`.
 - **Files:** `apps/video/src/scenes/CaretScene.jsx`, `apps/video/tests/caret.test.js`, `qa/caret-{review.md,tests.txt,stills-verification.txt,full-suite.txt}`, five `qa/stills/caret/frame-{0180,0210,0300,0390,0419}.png`, and this ledger entry. No shared render primitives, timeline records or dependencies changed.
 - **Author kind:** authored by Manus swarm agent b157/builder, not by anthropic/claude-opus-5.5 (access blocked: no OPENROUTER_API_KEY).
 - **Request reference:** none. No model request, generation id or accepted Opus patch exists or is claimed. Lead dependency waiver allows Manus scene authoring without satisfying blocked #152; real API check not run: no key.
