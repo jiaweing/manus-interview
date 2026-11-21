@@ -91,11 +91,13 @@ test("server boots with valid configuration without MongoDB or addon keys and cu
 	}
 }, 10_000);
 
-test("server startup fails clearly when setsid is absent on PATH", async () => {
+test("server boots with canonical approved executable paths and no setsid on PATH", async () => {
 	const cwd = await mkdtemp(join(tmpdir(), "tetherterm-101-boot-"));
 	const fixture = await launcherFixture();
 	let server: ReturnType<typeof Bun.spawn> | undefined;
+	let cancelReader: (() => Promise<void>) | undefined;
 	try {
+		expect(Bun.which("setsid", { cwd, PATH: cwd })).toBeNull();
 		const started = Bun.spawn([process.execPath, serverEntrypoint], {
 			cwd,
 			env: { ...fixture.env, PATH: cwd },
@@ -103,11 +105,35 @@ test("server startup fails clearly when setsid is absent on PATH", async () => {
 			stdout: "pipe",
 		});
 		server = started;
-		const output = await withTimeout(new Response(started.stderr).text());
-		expect(await withTimeout(started.exited)).not.toBe(0);
-		expect(output).toContain("require util-linux setsid on PATH");
-		expect(output).not.toContain("TetherTerm listening");
+		const stderr = started.stderr.getReader();
+		cancelReader = async () => {
+			await stderr.cancel();
+			stderr.releaseLock();
+		};
+		let output = "";
+		await withTimeout(
+			(async () => {
+				while (!addressPattern.test(output)) {
+					// biome-ignore lint/performance/noAwaitInLoops: Observe actual boot, never wait a fixed readiness delay.
+					const chunk = await stderr.read();
+					if (chunk.done) {
+						throw new Error("server exited before native boot");
+					}
+					output += new TextDecoder().decode(chunk.value);
+				}
+			})()
+		);
+		const port = Number(output.match(addressPattern)?.[1]);
+		expect(port).toBeGreaterThan(0);
+		const response = await withTimeout(
+			fetch(`http://127.0.0.1:${port}/healthz`, {
+				headers: { Authorization: `Bearer ${fixture.token}` },
+			})
+		);
+		expect(response.status).toBe(200);
+		expect(await response.text()).toBe("ok");
 		expect(output.includes(fixture.token)).toBe(false);
+		expect(started.exitCode).toBeNull();
 	} finally {
 		if (server) {
 			if (server.exitCode === null) {
@@ -115,6 +141,7 @@ test("server startup fails clearly when setsid is absent on PATH", async () => {
 			}
 			await withTimeout(server.exited);
 		}
+		await cancelReader?.();
 		await rm(cwd, { force: true, recursive: true });
 		await fixture.cleanup();
 	}

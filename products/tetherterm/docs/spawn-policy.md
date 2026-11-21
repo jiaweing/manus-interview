@@ -8,11 +8,12 @@ not initialize dormant scaffold addons or log environments.
 
 Both real MCP launchers (`terminal:http` and `terminal:stdio`) await this loader
 before opening a listener or connecting stdio. The legacy `src/index.ts` health
-launcher also validates HTTP configuration before checking the native dependency
-and listening. Missing or invalid mode-required inputs exit with code 1 and a
+launcher also validates HTTP configuration before listening. Missing or invalid
+mode-required inputs exit with code 1 and a
 readable, input-free configuration message on stderr; stdio stdout remains
 protocol-only. Unexpected transport/platform errors are replaced with static
-startup diagnostics. The health launcher's actionable setsid check is preserved.
+startup diagnostics. Native inline Bun PTYs no longer require an external setsid
+utility; see the dated amendment in [pty-decision.md](pty-decision.md).
 
 | Environment variable | Contract |
 | --- | --- |
@@ -39,7 +40,8 @@ Session creation must use `spawnWithPolicy(config, request)` from
 boundary validates literal executable/arguments and `realpath`-checks the cwd
 before invoking its injectable spawn callback. It then passes the canonical cwd
 and the exact configured executable's canonical path as an argv array to the
-existing `Bun.Terminal` + `setsid -c` helper. Request strings are never used to
+inline `Bun.spawn({ terminal: { data, exit, cols, rows } })` helper, without a wrapper.
+Request strings are never used to
 construct shell commands. An approved interpreter may interpret its own argv:
 this policy is a guardrail, **not an isolation or sandbox guarantee**.
 

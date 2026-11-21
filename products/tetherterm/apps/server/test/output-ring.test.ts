@@ -144,7 +144,7 @@ describe("fragmented Unicode", () => {
 				const prefix = ring.read("0");
 				expect(prefix.output).toBe("x");
 				expect(prefix.nextCursor).toBe("1");
-				expect(prefix.headCursor).toBe(String(1 + split));
+				expect(prefix.headCursor).toBe("1");
 				assertBounded(ring, prefix, "0");
 				const pending = ring.read("1");
 				expect(pending.output).toBe("");
@@ -373,7 +373,7 @@ describe("invalid cursors", () => {
 	});
 });
 
-describe("invalid UTF-8: replacement display, raw byte cursors", () => {
+describe("invalid UTF-8: normalized replacement bytes and exact cursors", () => {
 	for (const bytes of [
 		[0xff],
 		[0x80],
@@ -394,15 +394,13 @@ describe("invalid UTF-8: replacement display, raw byte cursors", () => {
 			ring.finish();
 			const result = ring.read("0");
 			expect(result.output).toBe(new TextDecoder().decode(raw));
-			expect(result.nextCursor).toBe(String(raw.byteLength));
-			expect(encode(result.output).byteLength).toBeLessThanOrEqual(
-				MAX_READ_BYTES
-			);
-			expect(ring.retainedBytes).toBe(raw.byteLength);
+			assertBounded(ring, result, "0");
+			expect(result.nextCursor).toBe(String(encode(result.output).byteLength));
+			expect(ring.retainedBytes).toBe(encode(result.output).byteLength);
 		});
 	}
 
-	test("replacement expansion respects encoded budgets while advancing raw bytes only", () => {
+	test("replacement expansion respects budgets and advances normalized bytes only", () => {
 		const ring = new OutputRing();
 		ring.append(new Uint8Array(MAX_READ_BYTES).fill(0xff));
 		const stalled = ring.read("0", 2);
@@ -414,10 +412,10 @@ describe("invalid UTF-8: replacement display, raw byte cursors", () => {
 			const result = ring.read(cursor);
 			const { length } = result.output;
 			expect(result.output).toBe("�".repeat(length));
-			expect(encode(result.output).byteLength).toBeLessThanOrEqual(
-				MAX_READ_BYTES
+			assertBounded(ring, result, cursor);
+			expect(BigInt(result.nextCursor)).toBe(
+				BigInt(cursor) + BigInt(length * 3)
 			);
-			expect(BigInt(result.nextCursor)).toBe(BigInt(cursor) + BigInt(length));
 			expect(length).toBeGreaterThan(0);
 			replacements += length;
 			cursor = result.nextCursor;
@@ -425,18 +423,50 @@ describe("invalid UTF-8: replacement display, raw byte cursors", () => {
 		expect(replacements).toBe(MAX_READ_BYTES);
 	});
 
-	test("incomplete suffix is withheld until finish, then one replacement consumes the raw prefix", () => {
+	test("replacement-expanding oversized input evicts only whole normalized characters", () => {
 		const ring = new OutputRing();
-		ring.append(new Uint8Array([0x61, 0xf0, 0x9f, 0x99]));
+		ring.append(new Uint8Array(OUTPUT_RING_CAPACITY + 1).fill(0xff));
+		expect(ring.headCursor).toBe(String((OUTPUT_RING_CAPACITY + 1) * 3));
+		expect(BigInt(ring.oldestCursor) % 3n).toBe(0n);
+		expect(ring.retainedBytes).toBeLessThanOrEqual(OUTPUT_RING_CAPACITY);
+		const result = ring.read("0", 4);
+		expect(result.gap).toBe(true);
+		expect(result.output).toBe("�");
+		assertBounded(ring, result, "0", 4);
+		badCursor(ring, String(BigInt(ring.oldestCursor) + 1n));
+		badCursor(ring, String(BigInt(ring.oldestCursor) + 2n));
+	});
+
+	test("EOF replacement at full capacity evicts a complete leading multibyte character", () => {
+		const ring = new OutputRing();
+		ring.append(encode(`🙂${"a".repeat(OUTPUT_RING_CAPACITY - 4)}`));
+		ring.append(new Uint8Array([0xf0, 0x9f]));
+		expect(ring.retainedBytes).toBe(OUTPUT_RING_CAPACITY);
+		ring.finish();
+		expect(ring.oldestCursor).toBe("4");
+		const result = ring.read("0", 1);
+		expect(result.gap).toBe(true);
+		expect(result.output).toBe("a");
+		assertBounded(ring, result, "0", 1);
+		const tailCursor = String(BigInt(ring.headCursor) - 3n);
+		expect(ring.read(tailCursor, 3).output).toBe("�");
+	});
+
+	test("incomplete suffix is withheld until EOF, then one replacement adds three bytes exactly once", () => {
+		const ring = new OutputRing();
+		ring.append(new Uint8Array([0x61, 0xf0, 0x9f]));
 		expect(ring.read("0").output).toBe("a");
 		expect(ring.read("1").output).toBe("");
+		expect(ring.headCursor).toBe("1");
 		ring.finish();
 		ring.finish();
 		const result = ring.read("1", 3);
 		expect(result.output).toBe("�");
 		expect(result.nextCursor).toBe("4");
+		assertBounded(ring, result, "1", 3);
 		badCursor(ring, "2");
 		badCursor(ring, "3");
+		expect(() => ring.append(encode("late"))).toThrow("after PTY EOF");
 	});
 });
 
@@ -450,22 +480,20 @@ describe("differential fragmented/raw-byte coverage", () => {
 			raw[index] = seed % 256;
 		}
 		const standard = new TextDecoder("utf-8", { ignoreBOM: true });
+		const normalized = encode(standard.decode(raw));
 		let cursor = "0";
 		const outputs: string[] = [];
 		function readAvailable(budget: number): void {
 			for (let count = 0; count <= raw.byteLength; count += 1) {
 				const result = ring.read(cursor, budget);
-				expect(encode(result.output).byteLength).toBeLessThanOrEqual(budget);
-				expect(BigInt(result.nextCursor)).toBeLessThanOrEqual(
-					BigInt(result.headCursor)
-				);
+				assertBounded(ring, result, cursor, budget);
 				if (result.nextCursor === cursor) {
 					expect(result.output).toBe("");
 					return;
 				}
 				expect(result.output).toBe(
 					standard.decode(
-						raw.subarray(Number(cursor), Number(result.nextCursor))
+						normalized.subarray(Number(cursor), Number(result.nextCursor))
 					)
 				);
 				expect(result.output.length).toBeGreaterThan(0);

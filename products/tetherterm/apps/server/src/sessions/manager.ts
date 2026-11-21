@@ -4,7 +4,6 @@ import type { Environment, ServerConfig } from "../config";
 import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
-import { OutputRing, type OutputRingRead } from "./ring";
 import {
 	type WriteSessionRequest,
 	type WriteSessionResult,
@@ -17,6 +16,7 @@ import {
 	resizeSession,
 } from "./resize";
 import { SessionRetention } from "./retention";
+import { OutputRing, type OutputRingRead } from "./ring";
 import {
 	type PtyHandle,
 	type Session,
@@ -122,6 +122,9 @@ export class SessionManager {
 							session.receivedBytes = receivedBytes;
 						}
 					},
+					onEof() {
+						output.finish();
+					},
 					rows: limits.data.rows,
 				},
 				{
@@ -155,7 +158,12 @@ export class SessionManager {
 		this.sessions.set(record.id, record);
 		this.retention.prune();
 		// Observe actual exit without awaiting it in create/status/list.
+		let exitObserved = false;
 		pty.child.exited.then(() => {
+			if (exitObserved) {
+				return;
+			}
+			exitObserved = true;
 			record.state = "exited";
 			record.exitCode = pty.child.exitCode;
 			record.signal = pty.child.signalCode ?? null;

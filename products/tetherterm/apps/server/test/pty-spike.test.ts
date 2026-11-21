@@ -64,8 +64,9 @@ async function hasTerminated(pid: number) {
 function spawnProbe(executable: string, args: string[]) {
 	let output = "";
 	let ownGroup = false;
+	let eofCalls = 0;
 	const decoder = new TextDecoder();
-	const { child, terminal } = spawnPty({
+	const { child, eof, terminal } = spawnPty({
 		args,
 		cols: 80,
 		cwd: process.cwd(),
@@ -75,8 +76,13 @@ function spawnProbe(executable: string, args: string[]) {
 		onData(bytes) {
 			output += decoder.decode(bytes, { stream: true });
 		},
+		onEof() {
+			eofCalls += 1;
+			output += decoder.decode();
+		},
 		rows: 24,
 	});
+	expect(child.terminal).toBe(terminal);
 	return {
 		async assertIdentity() {
 			await this.waitFor("READY");
@@ -88,7 +94,7 @@ function spawnProbe(executable: string, args: string[]) {
 			const pgid = Number(match?.[2]);
 			const sid = Number(match?.[3]);
 			const foregroundPgid = Number(match?.[4]);
-			// Verifies setsid did not fork; never assume a different leader pid.
+			// Inline Bun spawning owns the controlling session without a wrapper/fork.
 			expect(pid).toBe(child.pid);
 			expect(pgid).toBe(pid);
 			expect(sid).toBe(pid);
@@ -114,7 +120,23 @@ function spawnProbe(executable: string, args: string[]) {
 				child.kill("SIGKILL");
 			}
 			await exited(child);
-			terminal.close();
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			try {
+				await Promise.race([
+					eof,
+					new Promise<never>((_resolve, reject) => {
+						timer = setTimeout(
+							() => reject(new Error("native PTY EOF did not arrive")),
+							timeoutMs
+						);
+					}),
+				]);
+				expect(eofCalls).toBe(1);
+			} finally {
+				clearTimeout(timer);
+				terminal.close();
+			}
+			expect(eofCalls).toBe(1);
 		},
 		output: () => output,
 		terminal,

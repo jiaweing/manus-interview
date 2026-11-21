@@ -10,9 +10,11 @@ import {
 	SessionManager,
 } from "../src/sessions/manager";
 import type { ResizeSessionRequest } from "../src/sessions/resize";
+import { EXIT_RETENTION_MS } from "../src/sessions/retention";
 import type { PtyHandle } from "../src/sessions/session";
 
 interface ResizeFixture {
+	clock: { now: number };
 	manager: SessionManager;
 	output: () => string;
 	ptys: PtyHandle[];
@@ -72,7 +74,9 @@ async function fixture(): Promise<ResizeFixture> {
 	let output = "";
 	let spawnCalls = 0;
 	const decoder = new TextDecoder();
+	const clock = { now: 1000 };
 	const manager = new SessionManager(await loadConfig("stdio", env), {
+		clock: { now: () => clock.now },
 		env,
 		spawn(options) {
 			spawnCalls += 1;
@@ -89,6 +93,7 @@ async function fixture(): Promise<ResizeFixture> {
 		},
 	});
 	const f = {
+		clock,
 		manager,
 		output: () => output,
 		ptys,
@@ -120,7 +125,7 @@ async function cleanup(pty: PtyHandle) {
 				if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
 					throw error;
 				}
-				// A setup failure may occur before setsid execs; this child never forks.
+				// Group already disappeared; fallback targets only this owned child.
 				pty.child.kill("SIGKILL");
 			}
 		}
@@ -135,6 +140,8 @@ afterEach(async () => {
 		fixtures.splice(0).map(async (f) => {
 			try {
 				await Promise.all(f.ptys.map(cleanup));
+				f.clock.now += EXIT_RETENTION_MS;
+				expect(f.manager.list().sessions).toHaveLength(0);
 			} finally {
 				await rm(f.root, { force: true, recursive: true });
 			}

@@ -18,7 +18,6 @@ interface Fixture {
 	clock: { now: number };
 	closed: Set<PtyHandle>;
 	manager: SessionManager;
-	output: Map<PtyHandle, Uint8Array[]>;
 	ptys: PtyHandle[];
 	root: string;
 }
@@ -55,31 +54,22 @@ async function fixture(): Promise<Fixture> {
 	const clock = { now: 1000 };
 	const ptys: PtyHandle[] = [];
 	const closed = new Set<PtyHandle>();
-	const output = new Map<PtyHandle, Uint8Array[]>();
 	const manager = new SessionManager(config, {
 		clock: { now: () => clock.now },
 		env,
 		spawn(options) {
-			const chunks: Uint8Array[] = [];
-			const pty = spawnPty({
-				...options,
-				onData(bytes) {
-					chunks.push(bytes.slice());
-					options.onData(bytes);
-				},
-			});
+			const pty = spawnPty(options);
 			const close = pty.terminal.close.bind(pty.terminal);
 			pty.terminal.close = () => {
 				closed.add(pty);
 				close();
 			};
-			output.set(pty, chunks);
 			ptys.push(pty);
 			ownPids.add(pty.child.pid);
 			return pty;
 		},
 	});
-	const result = { clock, closed, manager, output, ptys, root };
+	const result = { clock, closed, manager, ptys, root };
 	fixtures.push(result);
 	return result;
 }
@@ -122,7 +112,7 @@ async function cleanup(pty: PtyHandle): Promise<void> {
 				if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
 					throw error;
 				}
-				// setsid has not run yet; these fixtures never fork descendants.
+				// Group already disappeared; fallback targets only this owned child.
 				pty.child.kill("SIGKILL");
 			}
 		}
@@ -195,30 +185,27 @@ test("real PTY exit 7 preserves final output and summary until exact five-minute
 	const f = await fixture();
 	const created = await create(f, "printf 'final-output\\033[0m\\n'; exit 7");
 	const record = f.manager.get(created.sessionId);
-	// Test-only attached output exercises record preservation without implementing #107's ring.
-	const buffered = Object.assign(record, {
-		finalOutput: f.output.get(record.pty),
-	});
 	expect(await bounded(record.pty.child.exited)).toBe(7);
-	const deadline = Date.now() + 4000;
-	while (record.receivedBytes === 0 && Date.now() < deadline) {
-		// biome-ignore lint/performance/noAwaitInLoops: Wait for the native PTY's final data callback with a bounded deadline.
-		await Bun.sleep(5);
-	}
+	await bounded(record.pty.eof);
 	expect(record.receivedBytes).toBeGreaterThan(0);
 	expect(f.manager.status(record.id)).toMatchObject({
 		exitCode: 7,
 		signal: null,
 		state: "exited",
 	});
-	const output = Buffer.concat(buffered.finalOutput ?? []).toString();
-	expect(output).toContain("final-output\u001b[0m");
+	const output = f.manager.read({ cursor: "0", sessionId: record.id });
+	expect(output.output).toBe("final-output\u001b[0m\r\n");
+	expect(output.nextCursor).toBe(String(Buffer.byteLength(output.output)));
+	expect(output.state).toBe("exited");
 	f.clock.now += EXIT_RETENTION_MS - 1;
-	expect(f.manager.get(record.id)).toBe(buffered);
-	expect(Buffer.concat(buffered.finalOutput ?? []).toString()).toBe(output);
+	expect(f.manager.get(record.id)).toBe(record);
+	expect(f.manager.read({ cursor: "0", sessionId: record.id })).toEqual(output);
 	expect(f.closed.has(record.pty)).toBe(false);
 	expect(f.manager.list().sessions).toHaveLength(1);
 	f.clock.now += 1;
+	expect(() => f.manager.read({ cursor: "0", sessionId: record.id })).toThrow(
+		expect.objectContaining({ code: "NOT_FOUND" })
+	);
 	expect(() => f.manager.status(record.id)).toThrow(
 		expect.objectContaining({ code: "NOT_FOUND" })
 	);
@@ -269,9 +256,13 @@ test("real registry cap evicts oldest exited IDs on create while preserving runn
 	const exited: string[] = [];
 	for (let index = 0; index < MAX_SESSION_RECORDS; index += 1) {
 		// biome-ignore lint/performance/noAwaitInLoops: Each actual exit must free capacity and establish eviction order.
-		const created = await create(f, "exit 0");
+		const created = await create(f, `printf 'retained-${index}'; exit 0`);
 		const record = f.manager.get(created.sessionId);
 		await bounded(record.pty.child.exited);
+		await bounded(record.pty.eof);
+		expect(f.manager.read({ cursor: "0", sessionId: record.id }).output).toBe(
+			`retained-${index}`
+		);
 		exited.push(created.sessionId);
 		expect(f.manager.list().sessions.length).toBeLessThanOrEqual(
 			MAX_SESSION_RECORDS
@@ -282,6 +273,12 @@ test("real registry cap evicts oldest exited IDs on create while preserving runn
 	if (!(oldest && newest)) {
 		throw new Error("Expected exited sessions");
 	}
+	expect(() => f.manager.read({ cursor: "0", sessionId: oldest })).toThrow(
+		expect.objectContaining({ code: "NOT_FOUND" })
+	);
+	expect(f.manager.read({ cursor: "0", sessionId: newest }).output).toBe(
+		`retained-${MAX_SESSION_RECORDS - 1}`
+	);
 	expect(() => f.manager.status(oldest)).toThrow(
 		expect.objectContaining({ code: "NOT_FOUND" })
 	);
