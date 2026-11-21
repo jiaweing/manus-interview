@@ -1,0 +1,61 @@
+{
+  "merged_main_sha": "4eb9f446cf2c4599a81f559833155c6bb401d463",
+  "public_port": 4130,
+  "next_internal_port": 5130,
+  "checks": [
+    {
+      "name": "sync-main",
+      "command": "git fetch origin && git merge origin/main",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/sync-main.txt"
+    },
+    {
+      "name": "install",
+      "command": "bun install --frozen-lockfile",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/install.txt"
+    },
+    {
+      "name": "check",
+      "command": "bun run check",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/check.txt"
+    },
+    {
+      "name": "check-types",
+      "command": "bun run check-types",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/check-types.txt"
+    },
+    {
+      "name": "build",
+      "command": "bun run build",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/build.txt"
+    },
+    {
+      "name": "issue-unit",
+      "command": "bun test tests/unit/data-envelope.test.ts",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/issue-unit.txt"
+    },
+    {
+      "name": "all-unit",
+      "command": "bun test tests/unit",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/all-unit.txt"
+    },
+    {
+      "name": "chromium",
+      "command": "PUBLIC_PORT=4130 NEXT_INTERNAL_PORT=5130 bunx playwright test --project=chromium tests/e2e/data-envelope.spec.ts tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts --reporter=list",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/chromium.txt"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "evidence": "products/glassroom/evidence/issues/130/diff-check.txt"
+    }
+  ]
+}

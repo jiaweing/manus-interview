@@ -1,0 +1,7 @@
+Command: bun run check
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:48:58.877710+00:00
+Exit code: 0
+
+$ ultracite check
+Checked 54 files in 313ms. No fixes applied.
