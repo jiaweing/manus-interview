@@ -1,0 +1,3 @@
+{
+  "extends": "@caret/config/tsconfig.base.json"
+}
