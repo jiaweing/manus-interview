@@ -1,0 +1,545 @@
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1371 packages installed [3.43s]
+EXIT_CODE=0
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+Saved lockfile
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.52s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/transport-boot.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [190.84ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [165.43ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [179.32ms]
+TetherTerm MCP listening on http://127.0.0.1:38915/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [33.67ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.02ms]
+
+ 5 pass
+ 0 fail
+ 35 expect() calls
+Ran 5 tests across 1 file. [826.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [4.58ms]
+(pass) missing setsid fails clearly before allocating a PTY [10.21ms]
+(pass) spawn failure closes its terminal and propagates the error [1.28ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [39.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=10806 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.03ms]
+python3 PID=PGID=SID=TPGID=10813 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [72.53ms]
+bash GROUP=10815 GRANDCHILD=10818 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.04ms]
+bash GROUP=10819 GRANDCHILD=10822 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.91ms]
+python3 GROUP=10824 GRANDCHILD=10826 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.73ms]
+python3 GROUP=10827 GRANDCHILD=10829 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.89ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [227.77ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [185.45ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [220.74ms]
+TetherTerm MCP listening on http://127.0.0.1:35975/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [26.61ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.81ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.54ms]
+
+ 12 pass
+ 0 fail
+ 128 expect() calls
+Ran 12 tests across 3 files. [1140.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=38545 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [25.51ms]
+(pass) server startup fails clearly when setsid is absent on PATH [17.12ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [53.00ms]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+apps/server/src/http.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     8  8 │       port,
+     9  9 │     });
+    10    │ - → console.error(`TetherTerm·MCP·listening·on·http://127.0.0.1:${server.port}/mcp`);
+       10 │ + → console.error(
+       11 │ + → → `TetherTerm·MCP·listening·on·http://127.0.0.1:${server.port}/mcp`
+       12 │ + → );
+    11 13 │     return server;
+    12 14 │   }
+  
+
+apps/server/src/stdio.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     6  6 │     const transport = new StdioServerTransport();
+     7  7 │     // Do not log request bodies, environment values, or protocol traffic.
+     8    │ - → server.server.onerror·=·()·=>·console.error("TetherTerm·stdio·transport·error");
+        8 │ + → server.server.onerror·=·()·=>
+        9 │ + → → console.error("TetherTerm·stdio·transport·error");
+     9 10 │     await server.connect(transport);
+    10 11 │     console.error("TetherTerm MCP ready on stdio");
+  
+
+apps/server/test/transport-boot.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     96  96 │       command: process.execPath,
+     97  97 │       cwd: productRoot,
+     98     │ - → → env:·{·PATH:·`${new·URL(".",·`file://${process.execPath}`).pathname}:/usr/bin:/bin`·},
+         98 │ + → → env:·{
+         99 │ + → → → PATH:·`${new·URL(".",·`file://${process.execPath}`).pathname}:/usr/bin:/bin`,
+        100 │ + → → },
+     99 101 │       stderr: "pipe",
+    100 102 │     });
+    ······· │ 
+    108 110 │       expect(diagnostics).toContain("TetherTerm MCP ready on stdio");
+    109 111 │       expect(errors).toEqual([]);
+    110     │ - → → console.log("stdio·SDK·initialize=OK·tools/list=EMPTY·protocol_errors=0·stderr_startup=OK");
+        112 │ + → → console.log(
+        113 │ + → → → "stdio·SDK·initialize=OK·tools/list=EMPTY·protocol_errors=0·stderr_startup=OK"
+        114 │ + → → );
+    111 115 │     } finally {
+    112 116 │       await withTimeout(client.close());
+    ······· │ 
+    125 129 │     const stderr = captureStream(child.stderr);
+    126 130 │     try {
+    127     │ - → → child.stdin.write(serializeMessage({
+    128     │ - → → → id:·0,
+    129     │ - → → → jsonrpc:·"2.0",
+    130     │ - → → → method:·"initialize",
+    131     │ - → → → params:·{
+    132     │ - → → → → capabilities:·{},
+    133     │ - → → → → clientInfo:·{·name:·"stdio-capture",·version:·"0.1.0"·},
+    134     │ - → → → → protocolVersion:·LATEST_PROTOCOL_VERSION,
+    135     │ - → → → },
+    136     │ - → → }));
+        131 │ + → → child.stdin.write(
+        132 │ + → → → serializeMessage({
+        133 │ + → → → → id:·0,
+        134 │ + → → → → jsonrpc:·"2.0",
+        135 │ + → → → → method:·"initialize",
+        136 │ + → → → → params:·{
+        137 │ + → → → → → capabilities:·{},
+        138 │ + → → → → → clientInfo:·{·name:·"stdio-capture",·version:·"0.1.0"·},
+        139 │ + → → → → → protocolVersion:·LATEST_PROTOCOL_VERSION,
+        140 │ + → → → → },
+        141 │ + → → → })
+        142 │ + → → );
+    137 143 │       await stdout.until((text) => text.includes("\n"));
+    138     │ - → → child.stdin.write(serializeMessage({·jsonrpc:·"2.0",·method:·"notifications/initialized"·}));
+    139     │ - → → child.stdin.write(serializeMessage({·id:·1,·jsonrpc:·"2.0",·method:·"tools/list"·}));
+        144 │ + → → child.stdin.write(
+        145 │ + → → → serializeMessage({·jsonrpc:·"2.0",·method:·"notifications/initialized"·})
+        146 │ + → → );
+        147 │ + → → child.stdin.write(
+        148 │ + → → → serializeMessage({·id:·1,·jsonrpc:·"2.0",·method:·"tools/list"·})
+        149 │ + → → );
+    140 150 │       await stdout.until((text) => text.trim().split(linePattern).length >= 2);
+    141 151 │       child.stdin.end();
+    ······· │ 
+    147 157 │       expect(exitCode).toBe(0);
+    148 158 │       expect(protocol.endsWith("\n")).toBe(true);
+    149     │ - → → const·messages·=·protocol.trim().split(linePattern).map((line)·=>·JSONRPCMessageSchema.parse(JSON.parse(line)));
+        159 │ + → → const·messages·=·protocol
+        160 │ + → → → .trim()
+        161 │ + → → → .split(linePattern)
+        162 │ + → → → .map((line)·=>·JSONRPCMessageSchema.parse(JSON.parse(line)));
+    150 163 │       expect(messages).toHaveLength(2);
+    151     │ - → → expect(messages[0]).toMatchObject({·id:·0,·jsonrpc:·"2.0",·result:·{·serverInfo:·{·name:·"tetherterm"·}·}·});
+    152     │ - → → expect(messages[1]).toEqual({·id:·1,·jsonrpc:·"2.0",·result:·{·tools:·[]·}·});
+        164 │ + → → expect(messages[0]).toMatchObject({
+        165 │ + → → → id:·0,
+        166 │ + → → → jsonrpc:·"2.0",
+        167 │ + → → → result:·{·serverInfo:·{·name:·"tetherterm"·}·},
+        168 │ + → → });
+        169 │ + → → expect(messages[1]).toEqual({
+        170 │ + → → → id:·1,
+        171 │ + → → → jsonrpc:·"2.0",
+        172 │ + → → → result:·{·tools:·[]·},
+        173 │ + → → });
+    153 174 │       expect(diagnostics).toContain("TetherTerm MCP ready on stdio");
+    154 175 │       expect(protocol).not.toContain("TetherTerm MCP ready");
+    155     │ - → → console.log("stdio·stdout=2·SDK-valid·JSON-RPC·lines·diagnostics_on_stderr=OK·EOF_exit=0");
+        176 │ + → → console.log(
+        177 │ + → → → "stdio·stdout=2·SDK-valid·JSON-RPC·lines·diagnostics_on_stderr=OK·EOF_exit=0"
+        178 │ + → → );
+    156 179 │     } finally {
+    157 180 │       await stopChild(child);
+    ······· │ 
+    181 204 │       expect(transport.sessionId).toBeUndefined();
+    182 205 │       expect(errors).toEqual([]);
+    183     │ - → → const·extraRoutes·=·await·Promise.all(["/",·"/healthz",·"/ai",·"/api/auth/session"].map((path)·=>·fetch(new·URL(path,·endpoint))));
+        206 │ + → → const·extraRoutes·=·await·Promise.all(
+        207 │ + → → → ["/",·"/healthz",·"/ai",·"/api/auth/session"].map((path)·=>
+        208 │ + → → → → fetch(new·URL(path,·endpoint))
+        209 │ + → → → )
+        210 │ + → → );
+    184 211 │       for (const response of extraRoutes) {
+    185 212 │         expect(response.status).toBe(404);
+    ······· │ 
+    190 217 │       expect(await stdout.drain()).toBe("");
+    191 218 │       await stderr.drain();
+    192     │ - → → console.log("HTTP·SDK·initialize=OK·tools/list=EMPTY·stateless=OK·extra_routes=404·stdout=EMPTY");
+        219 │ + → → console.log(
+        220 │ + → → → "HTTP·SDK·initialize=OK·tools/list=EMPTY·stateless=OK·extra_routes=404·stdout=EMPTY"
+        221 │ + → → );
+    193 222 │     } finally {
+    194 223 │       await withTimeout(client.close());
+    ······· │ 
+    204 233 │       expect(listener.port).toBeGreaterThan(0);
+    205 234 │       const endpoint = new URL(`http://127.0.0.1:${listener.port}/mcp`);
+    206     │ - → → await·Promise.all(clients.map(async·(client)·=>·{
+    207     │ - → → → await·withTimeout(client.connect(new·StreamableHTTPClientTransport(endpoint)));
+    208     │ - → → → await·assertDiscovery(client);
+    209     │ - → → }));
+    210     │ - → → console.log("HTTP·bound_hostname=127.0.0.1·ephemeral_port=OK·concurrent_clients=2·discovery=OK");
+        235 │ + → → await·Promise.all(
+        236 │ + → → → clients.map(async·(client)·=>·{
+        237 │ + → → → → await·withTimeout(
+        238 │ + → → → → → client.connect(new·StreamableHTTPClientTransport(endpoint))
+        239 │ + → → → → );
+        240 │ + → → → → await·assertDiscovery(client);
+        241 │ + → → → })
+        242 │ + → → );
+        243 │ + → → console.log(
+        244 │ + → → → "HTTP·bound_hostname=127.0.0.1·ephemeral_port=OK·concurrent_clients=2·discovery=OK"
+        245 │ + → → );
+    211 246 │     } finally {
+    212 247 │       await Promise.all(clients.map((client) => withTimeout(client.close())));
+  
+
+Checked 20 files in 86ms. No fixes applied.
+Found 3 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "check" exited with code 1
+EXIT_CODE=1
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ bun --version
+1.4.5
+EXIT_CODE=0
+
+Tested packages: SDK=1.32.2
+Hono=4.13.18
+Zod=4.6.7
+
+$ bunx ultracite fix apps/server/src/mcp apps/server/src/stdio.ts apps/server/src/http.ts apps/server/test/transport-boot.test.ts
+Checked 5 files in 105ms. Fixed 3 files.
+EXIT_CODE=0
+
+$ bun test apps/server/test/transport-boot.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [176.14ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [169.78ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [171.53ms]
+TetherTerm MCP listening on http://127.0.0.1:36011/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [29.33ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.98ms]
+
+ 5 pass
+ 0 fail
+ 35 expect() calls
+Ran 5 tests across 1 file. [758.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [4.05ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.18ms]
+(pass) spawn failure closes its terminal and propagates the error [0.83ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [28.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=11118 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.08ms]
+python3 PID=PGID=SID=TPGID=11125 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.18ms]
+bash GROUP=11127 GRANDCHILD=11130 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.69ms]
+bash GROUP=11131 GRANDCHILD=11135 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.40ms]
+python3 GROUP=11136 GRANDCHILD=11138 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.28ms]
+python3 GROUP=11139 GRANDCHILD=11141 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.49ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [176.04ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [165.03ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [184.41ms]
+TetherTerm MCP listening on http://127.0.0.1:35657/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [33.66ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.17ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.26ms]
+
+ 12 pass
+ 0 fail
+ 128 expect() calls
+Ran 12 tests across 3 files. [950.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=40991 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [25.05ms]
+(pass) server startup fails clearly when setsid is absent on PATH [16.00ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [51.00ms]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 20 files in 101ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+=== FINAL POST-REBASE VERIFICATION ===
+d8ac3d226239236a821e53248e4faad164a50654
+2c0a0f79e7986a1c451eb4ce10cab94464de98d5
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.87s]
+EXIT_CODE=0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.38s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/transport-boot.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [195.91ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [201.93ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [208.05ms]
+TetherTerm MCP listening on http://127.0.0.1:44489/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [34.72ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.58ms]
+
+ 5 pass
+ 0 fail
+ 35 expect() calls
+Ran 5 tests across 1 file. [802.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.07ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.38ms]
+(pass) spawn failure closes its terminal and propagates the error [0.93ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [27.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=11845 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.44ms]
+python3 PID=PGID=SID=TPGID=11852 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.24ms]
+bash GROUP=11854 GRANDCHILD=11857 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.12ms]
+bash GROUP=11858 GRANDCHILD=11861 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.36ms]
+python3 GROUP=11862 GRANDCHILD=11865 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.18ms]
+python3 GROUP=11866 GRANDCHILD=11868 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.79ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [183.08ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [196.27ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [182.69ms]
+TetherTerm MCP listening on http://127.0.0.1:37279/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [35.18ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.65ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [4.04ms]
+
+ 12 pass
+ 0 fail
+ 128 expect() calls
+Ran 12 tests across 3 files. [992.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=36347 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [27.83ms]
+(pass) server startup fails clearly when setsid is absent on PATH [16.13ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [58.00ms]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 20 files in 102ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+$ bun --version
+1.4.5
+EXIT_CODE=0
+
+$ bun -e (print pinned SDK/Hono/Zod package versions)
+@modelcontextprotocol/sdk=1.32.2
+hono=4.13.18
+zod=4.6.7
+EXIT_CODE=0
+
+Assertion summary: stdio SDK initialize + empty tools/list; 2 SDK-valid stdout frames; stderr startup; EOF exit 0; HTTP SDK initialize + empty tools/list; stateless JSON mode; loopback hostname asserted; two concurrent clients; extra routes 404; middleware precedes /mcp. No real terminal tools or HTTP authentication added in this issue.

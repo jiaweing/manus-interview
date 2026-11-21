@@ -38,9 +38,11 @@
     "fix": "ultracite fix",
     "postinstall": "bun run env:generate",
     "start": "bun run --cwd apps/server start",
+    "terminal:http": "bun run ./apps/server/src/http.ts",
+    "terminal:stdio": "bun run ./apps/server/src/stdio.ts",
     "test": "bun run test:unit && bun run test:integration && bun run test:e2e",
     "test:e2e": "bun test ./apps/server/test/e2e",
-    "test:integration": "bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration",
+    "test:integration": "bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration",
     "test:unit": "bun test ./apps/server/test/unit",
     "verify:coverage": "bun test --coverage ./apps/server/test"
   },
