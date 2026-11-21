@@ -2,12 +2,13 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "bun ./node_modules/next/dist/bin/next build",
+    "build": "NEXT_TELEMETRY_DISABLED=1 bun ./node_modules/next/dist/bin/next build",
     "check-types": "tsc --noEmit",
     "dev": "bun ./node_modules/next/dist/bin/next dev --port ${WEB_PORT:-3000} --hostname ${HOST:-127.0.0.1}",
     "env:generate": "varlock codegen",
-    "start": "bun ./node_modules/next/dist/bin/next start --port ${WEB_PORT:-3000} --hostname ${HOST:-127.0.0.1}"
+    "start": "bun run --cwd ../.. start"
   },
   "dependencies": {
     "@ai-sdk/react": "catalog:",
@@ -37,6 +38,7 @@
     "@types/node": "catalog:",
     "@types/react": "^19.3.0",
     "@types/react-dom": "catalog:",
+    "playwright": "1.65.1",
     "tailwindcss": "catalog:",
     "typescript": "^6.0.3"
   }

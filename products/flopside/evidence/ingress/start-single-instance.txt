@@ -1,0 +1,8 @@
+START_PID=8073
+    PID    PPID COMMAND         COMMAND
+   8073    8071 bun             bun run start
+CHILDREN (must be empty):
+    PID    PPID COMMAND         COMMAND
+LISTENERS (3285 must be absent):
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      512        127.0.0.1:3284      0.0.0.0:*    users:(("bun",pid=8073,fd=6))
