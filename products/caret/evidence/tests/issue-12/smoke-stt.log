@@ -1,0 +1,2 @@
+$ bun scripts/stt-smoke.ts
+{"durationMs":0,"modelId":"google/gemini-3.5-flash-lite","status":"NOT RUN: no key"}

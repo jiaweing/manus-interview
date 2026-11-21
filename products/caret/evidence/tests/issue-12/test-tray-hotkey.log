@@ -1,0 +1,27 @@
+$ bun test tests/tray-hotkey.test.ts
+bun test v1.4.5 (a7733435c)
+
+tests/tray-hotkey.test.ts:
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > second-instance exit: acquires lock before readiness and creates no tray/window [14.99ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > successful registration: only Control+Alt+Space toggles without showing setup [2.26ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > conflicting registration: exposes error and blocks start [0.35ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > conflicting registration (exception): exposes error and blocks start [0.12ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > key readiness blocker: no start callback and corresponding error [0.46ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > microphone readiness blocker: no start callback and corresponding error [0.09ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > key and microphone readiness blocker: no start callback and corresponding error [0.07ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > dynamic readiness is rechecked on activation and can be refreshed for tray display [0.18ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > busy activation: non-recording work cannot start a parallel session [0.14ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > recording activation calls the stop toggle even after key/microphone readiness is lost [0.11ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > tray Cancel calls cancellation without opening or restoring setup, even while blocked/busy [0.28ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > setup close hides to tray rather than terminating [0.33ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > setup minimize hides to tray rather than terminating [0.05ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > only explicit tray Setup restores and shows the existing setup window [0.16ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > shutdown unregister: releases only the owned shortcut and destroys tray exactly once [0.15ms]
+(pass) tray / fixed global hotkey — Linux injected fixtures, not Windows evidence > quit before app ready never creates a tray, window or shortcut [0.20ms]
+(pass) Windows development adapter — injected fixtures only > disabled, Linux, and packaged paths cannot enable fixture readiness [0.09ms]
+(pass) Windows development adapter — injected fixtures only > opt-in adapter emits only bounded event metadata with injected handles; no capture [0.15ms]
+
+ 18 pass
+ 0 fail
+ 74 expect() calls
+Ran 18 tests across 1 file. [67.00ms]
