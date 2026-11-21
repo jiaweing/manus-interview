@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "file": "/home/ubuntu/wt/b166/products/session-seven/apps/video/audio/master.wav",
+  "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
+  "durationSeconds": 60,
+  "sampleRate": 48000,
+  "channels": 2,
+  "bitsPerSample": 16,
+  "samplesPerChannel": 2880000,
+  "integratedLufs": -13.98198533391803,
+  "truePeakDbtp": -1.5106767963089827,
+  "measurements": {
+    "integratedLufs": -13.98198533391803,
+    "totalBlocks": 597,
+    "absoluteGatedBlocks": 594,
+    "relativeGatedBlocks": 583,
+    "relativeThresholdLufs": -24.06124062323475,
+    "truePeak": 0.8403615243732929,
+    "truePeakDbtp": -1.5106767963089827,
+    "samplePeakDbfs": -1.5245560577570298,
+    "oversampling": 4
+  },
+  "meter": {
+    "standard": "ITU-R BS.1770-4",
+    "sampleRate": 48000,
+    "blockSamples": 19200,
+    "hopSamples": 4800,
+    "absoluteGateLufs": -70,
+    "relativeGateLu": -10,
+    "truePeakOversampling": 4,
+    "truePeakMethod": "Annex 2 48-tap, four-phase FIR; includes zero-padded filter tail and sample peak",
+    "calibration": "997Hz stereo in-phase sine, per-channel PEAK -20dBFS: -20.0 LUFS +/-0.1; 1kHz stereo -23dBFS: -23.0 +/-0.1 (EBU Tech 3341 case 1)"
+  },
+  "networkRequests": 0,
+  "crossCheck": {
+    "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
+    "tool": "FFmpeg ebur128=peak=true, independent final-WAV analysis only",
+    "command": "ffmpeg -hide_banner -nostats -i apps/video/audio/master.wav -af ebur128=peak=true -f null -",
+    "log": "qa/audio-master-ffmpeg.txt",
+    "exitCode": 0,
+    "integratedLufs": -14,
+    "truePeakDbtp": -1.3,
+    "precision": "FFmpeg summary rounds both measurements to 0.1",
+    "authorship": "Not used for synthesis, mixing, fades, mastering or the JS meter",
+    "deltaLu": 0.018014666081970887,
+    "deltaDb": 0.21067679630898262,
+    "toleranceLu": 0.5,
+    "toleranceDb": 0.5,
+    "status": "pass"
+  }
+}

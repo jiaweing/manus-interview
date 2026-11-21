@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "generatorVersion": "1.0.0",
+  "source": "js-fallback + blips + master",
+  "sourceSha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
+  "sampleRate": 48000,
+  "channels": 2,
+  "bitsPerSample": 16,
+  "samplesPerChannel": 2880000,
+  "durationSeconds": 60,
+  "samplesPerFrame": 1600,
+  "samplesPerBar": 96000,
+  "toleranceFrames": 1,
+  "blipFrames": [
+    300,
+    540,
+    780,
+    1020,
+    1260,
+    1500
+  ],
+  "blips": [
+    {
+      "sceneId": "caret",
+      "frame": 300,
+      "localFrame": 120,
+      "startSample": 480000,
+      "lengthSamples": 5760,
+      "frequencyHz": 880,
+      "label": "Illustrative action blips, not native product sounds"
+    },
+    {
+      "sceneId": "flopside",
+      "frame": 540,
+      "localFrame": 120,
+      "startSample": 864000,
+      "lengthSamples": 5760,
+      "frequencyHz": 660,
+      "label": "Illustrative action blips, not native product sounds"
+    },
+    {
+      "sceneId": "patchbay",
+      "frame": 780,
+      "localFrame": 120,
+      "startSample": 1248000,
+      "lengthSamples": 5760,
+      "frequencyHz": 1046.5,
+      "label": "Illustrative action blips, not native product sounds"
+    },
+    {
+      "sceneId": "sidekick",
+      "frame": 1020,
+      "localFrame": 120,
+      "startSample": 1632000,
+      "lengthSamples": 5760,
+      "frequencyHz": 784,
+      "label": "Illustrative action blips, not native product sounds"
+    },
+    {
+      "sceneId": "tetherterm",
+      "frame": 1260,
+      "localFrame": 120,
+      "startSample": 2016000,
+      "lengthSamples": 5760,
+      "frequencyHz": 587.33,
+      "label": "Illustrative action blips, not native product sounds"
+    },
+    {
+      "sceneId": "glassroom",
+      "frame": 1500,
+      "localFrame": 120,
+      "startSample": 2400000,
+      "lengthSamples": 5760,
+      "frequencyHz": 987.77,
+      "label": "Illustrative action blips, not native product sounds"
+    }
+  ],
+  "blipLabel": "Illustrative action blips, not native product sounds",
+  "fades": {
+    "inSamples": 480,
+    "outSamples": 96000,
+    "shape": "raised cosine"
+  },
+  "target": {
+    "integratedLufs": -14,
+    "maxTruePeakDbtp": -1,
+    "workingTruePeakDbtp": -1.15
+  },
+  "integratedLufs": -13.98198533391803,
+  "truePeakDbtp": -1.5106767963089827,
+  "meter": {
+    "standard": "ITU-R BS.1770-4",
+    "sampleRate": 48000,
+    "blockSamples": 19200,
+    "hopSamples": 4800,
+    "absoluteGateLufs": -70,
+    "relativeGateLu": -10,
+    "truePeakOversampling": 4,
+    "truePeakMethod": "Annex 2 48-tap, four-phase FIR; includes zero-padded filter tail and sample peak",
+    "calibration": "997Hz stereo in-phase sine, per-channel PEAK -20dBFS: -20.0 LUFS +/-0.1; 1kHz stereo -23dBFS: -23.0 +/-0.1 (EBU Tech 3341 case 1)"
+  },
+  "initial": {
+    "integratedLufs": -21.594912870729214,
+    "totalBlocks": 597,
+    "absoluteGatedBlocks": 593,
+    "relativeGatedBlocks": 582,
+    "relativeThresholdLufs": -31.673677544443667,
+    "truePeak": 0.6022782791307384,
+    "truePeakDbtp": -4.4040559832682264,
+    "samplePeakDbfs": -4.424088114214466,
+    "oversampling": 4
+  },
+  "limiter": {
+    "method": "C1-continuous symmetric tanh soft knee + measured 4x FIR peak-safe gain; re-meter PCM16",
+    "threshold": 0.55,
+    "ceiling": 0.84,
+    "workingTruePeakDbtp": -1.15
+  },
+  "passes": [
+    {
+      "pass": 1,
+      "gainDb": 7.594912870729214,
+      "peakSafeGain": 1,
+      "integratedLufs": -14.183826124865613,
+      "truePeakDbtp": -1.5138040554443133
+    },
+    {
+      "pass": 2,
+      "gainDb": 7.8155042205679495,
+      "peakSafeGain": 1,
+      "integratedLufs": -13.98198533391803,
+      "truePeakDbtp": -1.5106767963089827
+    }
+  ],
+  "networkRequests": 0,
+  "determinism": "Pure JavaScript Float64, fixed operation order, canonical PCM16; pinned Bun 1.4.5"
+}
