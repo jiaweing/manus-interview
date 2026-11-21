@@ -81,7 +81,7 @@ The code in this run was authored by Manus swarm agents, not `anthropic/claude-o
 ## #165
 
 - **Issue:** #165 — Freeze validated audio caches and select fallback without render-time requests.
-- **PR:** branch `session-seven/165-audio-cache`; PR URL added after creation; body contains `Closes #165`.
+- **PR:** https://github.com/jiaweing/manus-interview/pull/228, branch `session-seven/165-audio-cache`; body contains `Closes #165`.
 - **Files:** `apps/video/src/audio/{cache.js,select-audio.js}`, implemented `src/music/candidate-sink.js`, minimal audit-context glue in `scripts/music-generate.js`, minimal old-stub assertion update in `tests/openrouter-adapter.test.js`, `scripts/validate-audio-cache.js`, `tests/audio-cache.test.js`, `audio/{audio-manifest.json,cache-format.md}`, one root `validate:audio-cache` script, `qa/audio-cache{.json,-tests.txt,-verification.txt,-freeze.txt,-full-suite.txt}`, and this review ledger.
 - **Author kind:** authored by Manus swarm agent b165/builder, not by anthropic/claude-opus-5.5 (access blocked: no OPENROUTER_API_KEY).
 - **Request reference:** none. No real provider candidate exists; the committed source is `js-fallback`, reason `no accepted provider cache`. Real provider smoke test **not run: no key**. Synthetic provider fixtures exist only in temporary test directories and are not committed as provider evidence.
