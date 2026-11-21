@@ -1,0 +1,24 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/sidekick.test.js:
+(pass) Sidekick supervised browser illustration > named scene export uses the existing registry and wrapper [0.25ms]
+(pass) Sidekick supervised browser illustration > beat-derived plan/action/approval frames are exactly 15/30/120/180 [0.26ms]
+(pass) Sidekick supervised browser illustration > all 240 frames keep the consequential step unexecuted [0.86ms]
+(pass) Sidekick supervised browser illustration > short sanitized browser copy and a two-step plan [0.52ms]
+(pass) Sidekick supervised browser illustration > no operational claims, wall clocks, network, external assets or interface lines [0.25ms]
+(pass) Sidekick supervised browser illustration > exact caption and persistent Concept/Illustrated UI across [900,1140) [2.45ms]
+(pass) Sidekick supervised browser illustration > frame state is deterministic in repeated and shuffled evaluation [0.21ms]
+(pass) Sidekick supervised browser illustration > exact requested still list uses absolute frames and end-exclusive bounds [0.68ms]
+Sidekick real still smoke: 10.493s
+PNG ../../../../../../tmp/s7-sidekick-smoke-8sx1Hs/sidekick/frame-0930.png frame=930
+PNG ../../../../../../tmp/s7-sidekick-smoke-8sx1Hs/sidekick/frame-1020.png frame=1020
+PNG ../../../../../../tmp/s7-sidekick-smoke-8sx1Hs/sidekick/frame-1139.png frame=1139
+TIMING bundle=3.784s renders=4.632s total=9.839s concurrency=1
+STILLS ok count=3
+(pass) Sidekick supervised browser illustration > real three-state pinned-Chromium PNG smoke stays within a 90s deadline [10495.09ms]
+
+ 9 pass
+ 0 fail
+ 1534 expect() calls
+Ran 9 tests across 1 file. [10.83s]
+EXIT_CODE=0
