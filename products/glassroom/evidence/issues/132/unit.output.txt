@@ -1,0 +1,19 @@
+bun test v1.4.5 (a7733435c)
+
+tests/unit/signal-server.test.ts:
+(pass) memory-only signal server > creator plus one joiner [3.40ms]
+(pass) memory-only signal server > third participant rejected [1.60ms]
+(pass) memory-only signal server > duplicate role rejected [0.25ms]
+(pass) memory-only signal server > join nonexistent room rejected [0.11ms]
+(pass) memory-only signal server > socket room-role binding [0.91ms]
+(pass) memory-only signal server > schema and over-cap rejection [5.28ms]
+(pass) memory-only signal server > ciphertext forwarded unchanged [0.34ms]
+(pass) memory-only signal server > termination deletes room [0.39ms]
+(pass) memory-only signal server > complete UTF-8 frame cap is inclusive [0.46ms]
+(pass) memory-only signal server > decoded ciphertext cap is inclusive [0.68ms]
+(pass) memory-only signal server > no forwarding queue before a peer joins [0.14ms]
+
+ 11 pass
+ 0 fail
+ 408 expect() calls
+Ran 11 tests across 1 file. [65.00ms]

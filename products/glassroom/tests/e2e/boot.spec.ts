@@ -11,25 +11,31 @@ test("same-origin signal upgrade", async ({ page }) => {
   await page.goto("/");
   const result = await page.evaluate(
     () =>
-      new Promise<{ url: string; first: string; closedOnPayload: boolean; code: number }>((resolve, reject) => {
+      new Promise<{ url: string; first: string; admitted: string; code: number }>((resolve, reject) => {
         const ws = new WebSocket(`wss://${location.host}/signal`);
         let first = "";
+        let admitted = "";
         const timer = setTimeout(() => reject(new Error("timeout")), 10_000);
         ws.onmessage = (e) => {
-          first = String(e.data);
-          ws.send("not-a-chat-payload");
+          if (!first) {
+            first = String(e.data);
+            ws.send(JSON.stringify({ version: 1, roomId: "AAAAAAAAAAAAAAAAAAAAAA", role: "creator", operation: "join" }));
+          } else {
+            admitted = String(e.data);
+            ws.send("not-a-chat-payload");
+          }
         };
         ws.onclose = (e) => {
           clearTimeout(timer);
-          resolve({ url: ws.url, first, closedOnPayload: first.length > 0, code: e.code });
+          resolve({ url: ws.url, first, admitted, code: e.code });
         };
         ws.onerror = () => reject(new Error("ws error"));
       }),
   );
   expect(result.url).toBe(`wss://localhost:${process.env.PUBLIC_PORT ?? "3443"}/signal`);
   expect(JSON.parse(result.first)).toEqual({ type: "ready" });
-  // the bootstrap endpoint accepts nothing: any payload closes the socket
-  expect(result.closedOnPayload).toBe(true);
+  expect(JSON.parse(result.admitted)).toEqual({ type: "joined", version: 1, roomId: "AAAAAAAAAAAAAAAAAAAAAA", role: "creator" });
+  // Admission is now supported, but arbitrary payloads still fail closed.
   expect(result.code).toBe(1008);
 });
 

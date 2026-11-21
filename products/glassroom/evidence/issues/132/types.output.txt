@@ -1,0 +1,18 @@
+$ turbo run check-types
+
+   • turbo 2.11.13
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+server:check-types: cache hit, replaying logs 703bf149fb133890
+server:check-types: $ tsc --noEmit
+@glassroom/ui:check-types: cache hit, replaying logs f6010de32d3236f3
+@glassroom/ui:check-types: $ tsc --noEmit
+web:check-types: cache hit, replaying logs 6b86136d8ba647de
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    3 cached, 3 total
+  Time:    21ms >>> FULL TURBO
+

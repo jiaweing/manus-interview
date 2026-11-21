@@ -1,0 +1,1 @@
+PUBLIC_PORT=4132 NEXT_INTERNAL_PORT=5132 CHROMIUM_PATH=/usr/bin/chromium bun run test:e2e tests/e2e/boot.spec.ts tests/e2e/signal-server.spec.ts

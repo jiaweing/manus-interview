@@ -1,8 +1,9 @@
 import { Hono } from "hono";
+import { SIGNAL_FRAME_CAP_BYTES, SignalServer } from "./signal-server";
 
 /**
  * One public HTTPS origin:
- *   - GET/UPGRADE /signal  -> bootstrap signaling endpoint (no chat payloads, no relay)
+ *   - GET/UPGRADE /signal  -> memory-only encrypted signaling (no chat payloads, no relay)
  *   - everything else      -> reverse proxy to the Next.js server on loopback
  */
 
@@ -17,6 +18,7 @@ type SocketData =
   | { kind: "next"; path: string; upstream?: WebSocket; queue: (string | ArrayBuffer)[] };
 
 const app = new Hono();
+const signal = new SignalServer();
 
 app.all("/signal", (c) => c.text("Upgrade Required", 426, { Upgrade: "websocket" }));
 
@@ -116,12 +118,11 @@ const server = Bun.serve<SocketData>({
     return proxyToNext(req);
   },
   websocket: {
-    maxPayloadLength: 64 * 1024,
+    maxPayloadLength: SIGNAL_FRAME_CAP_BYTES,
     open(ws) {
       const data = ws.data;
       if (data.kind === "signal") {
-        // Bootstrap only: acknowledge the upgrade. No payload is accepted or relayed.
-        ws.send(JSON.stringify({ type: "ready" }));
+        signal.open(ws);
         return;
       }
       const upstream = new WebSocket(`ws://127.0.0.1:${NEXT_PORT}${data.path}`);
@@ -138,7 +139,7 @@ const server = Bun.serve<SocketData>({
     message(ws, message) {
       const data = ws.data;
       if (data.kind === "signal") {
-        ws.close(1008, "unsupported");
+        signal.message(ws, message);
         return;
       }
       const m = message as string | ArrayBuffer;
@@ -149,7 +150,9 @@ const server = Bun.serve<SocketData>({
       }
     },
     close(ws) {
-      if (ws.data.kind === "next") {
+      if (ws.data.kind === "signal") {
+        signal.close(ws);
+      } else {
         ws.data.upstream?.close();
       }
     },
