@@ -1,0 +1,11 @@
+$ bun run preview:stills --scene patchbay --frames 660,690,780,870,899
+$ bun apps/video/scripts/preview-stills.js --scene patchbay --frames "660,690,780,870,899"
+PNG qa/stills/patchbay/frame-0660.png frame=660
+PNG qa/stills/patchbay/frame-0690.png frame=690
+PNG qa/stills/patchbay/frame-0780.png frame=780
+PNG qa/stills/patchbay/frame-0870.png frame=870
+PNG qa/stills/patchbay/frame-0899.png frame=899
+TIMING bundle=3.998s renders=4.548s total=10.189s concurrency=1
+STILLS ok count=5
+
+exit=0

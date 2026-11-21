@@ -1,0 +1,28 @@
+$ bun test apps/video/tests/patchbay.test.js
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/patchbay.test.js:
+(pass) Patchbay CLI illustration > named scene is registered and uses exactly one shared CLI, no GUI [0.22ms]
+(pass) Patchbay CLI illustration > event constants match exact local and absolute action frames [0.08ms]
+(pass) Patchbay CLI illustration > discovery first appears at local 30 / absolute 690 [0.19ms]
+(pass) Patchbay CLI illustration > inspectable plugin name and read-only capability appear together at exactly 120 [0.10ms]
+(pass) Patchbay CLI illustration > write request precedes the pending approval state; no write executes [0.74ms]
+(pass) Patchbay CLI illustration > block caret blinks from frames only, approval words stay fixed [0.14ms]
+(pass) Patchbay CLI illustration > no runtime I/O, clocks, randomness, live claims, completed writes or colored UI [1.00ms]
+(pass) Patchbay CLI illustration > fixed caption and Concept/Illustrated UI labels cover every scene frame [2.40ms]
+(pass) Patchbay CLI illustration > six short 48px lines and caret fit the illustration, clear of fixed overlays [10.87ms]
+(pass) Patchbay CLI illustration > transcript derivation is immutable and stable under shuffled frames [0.19ms]
+Patchbay still smoke: 8.238s
+PNG ../../../../../../tmp/s7-patchbay-smoke-utjRTr/patchbay/frame-0780.png frame=780
+PNG ../../../../../../tmp/s7-patchbay-smoke-utjRTr/patchbay/frame-0870.png frame=870
+PNG ../../../../../../tmp/s7-patchbay-smoke-utjRTr/patchbay/frame-0899.png frame=899
+TIMING bundle=3.526s renders=3.058s total=7.715s concurrency=1
+STILLS ok count=3
+(pass) Patchbay CLI illustration > real pinned Chromium smoke renders action and both approval frames within 90s [8239.87ms]
+
+ 11 pass
+ 0 fail
+ 2432 expect() calls
+Ran 11 tests across 1 file. [8.61s]
+
+exit=0
