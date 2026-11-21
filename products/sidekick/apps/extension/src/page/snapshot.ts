@@ -243,6 +243,13 @@ export function createSnapshotObserver(document: Document) {
 		return state;
 	}
 	return {
+		matchesSnapshot(snapshotId: string, documentToken: string): boolean {
+			const current = currentState();
+			return (
+				current.snapshotId === snapshotId &&
+				current.documentToken === documentToken
+			);
+		},
 		observe(tabId: number): Snapshot {
 			if (document.defaultView?.top !== document.defaultView) {
 				throw new Error("Sidekick supports top-frame documents only");

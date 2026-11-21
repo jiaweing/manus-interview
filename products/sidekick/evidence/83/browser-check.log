@@ -1,0 +1,11 @@
+PASS production packaged script: isolated listener, valid envelope routing, removed-target rejection, zero mutations
+PASS real Chromium removed: zero mutations; explicit re-observation
+PASS real Chromium replaced: zero mutations; explicit re-observation
+PASS real Chromium reordered: zero mutations; explicit re-observation
+PASS real Chromium hidden: zero mutations; explicit re-observation
+PASS real Chromium disabled: zero mutations; explicit re-observation
+PASS real Chromium snapshot: zero mutations; explicit re-observation
+PASS real Chromium malformed: zero mutations; explicit re-observation
+PASS real Chromium unknown-index: zero mutations; explicit re-observation
+PASS real Chromium document navigation: zero mutations; explicit re-observation
+PASS real Chromium matching target: exactly one mutation through fixed packaged isolated file; duplicate rejected
