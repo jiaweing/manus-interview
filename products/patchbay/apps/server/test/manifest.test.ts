@@ -719,6 +719,24 @@ describe("stable rejection of malformed declarations", () => {
 		await rejects(() => validateLocalPackage(root), "INVALID_MANIFEST");
 	});
 
+	for (const field of ["version", "min_host_version"] as const) {
+		test(`over-long ${field} (300 chars) is a stable error, never a native exception`, async () => {
+			const manifest = toolManifest();
+			manifest[field] = `1.0.0+${"b".repeat(294)}`;
+			await rejectsThroughAllPaths(manifest);
+		});
+
+		test(`${field} of exactly 256 chars is accepted`, async () => {
+			const manifest = toolManifest();
+			manifest[field] = `0.1.0+${"b".repeat(250)}`;
+			expect(manifest[field]).toHaveLength(256);
+			const written = join(root, "patchbay-plugin.toml");
+			await writeFile(written, stringify(manifest as never));
+			const result = await validateLocalPackage(root);
+			expect(result.manifest[field]).toBe(manifest[field]);
+		});
+	}
+
 	test("duplicate ID checks read-only installed IDs", async () => {
 		const installedIds = new Set(["test-tool"]);
 		await rejects(

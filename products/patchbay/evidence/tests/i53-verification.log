@@ -2408,3 +2408,8 @@ $ git diff --check
 EXIT CODE: 0
 
 AGGREGATE EXIT CODE: 0
+--- round 4 (lead fix): version length bound ---
+ 283 pass
+ 0 fail
+ 5899 expect() calls
+Ran 283 tests across 1 file. [4.03s]

@@ -140,8 +140,14 @@ export function compilePluginSchema(
 	}
 }
 
+// The semver library throws on versions longer than 256 characters, so bound the syntax up front.
+const MAX_VERSION_LENGTH = 256;
+
 function isCanonicalVersion(version: string): boolean {
-	return canonicalVersion.exec(version)?.[0] === version;
+	return (
+		version.length <= MAX_VERSION_LENGTH &&
+		canonicalVersion.exec(version)?.[0] === version
+	);
 }
 
 function validateCompatibility(
