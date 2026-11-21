@@ -1,0 +1,6 @@
+bun install --frozen-lockfile | exit 0
+bun test packages/engine/evaluator.test.ts | exit 0
+bun run lint | exit 0
+bun run typecheck | exit 0
+bun run test | exit 0
+bun run build | exit 0
