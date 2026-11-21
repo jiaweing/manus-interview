@@ -1,0 +1,12 @@
+COMMAND: x86_64-w64-mingw32-objdump -p apps/desktop/native/build/caret-helper.exe
+HOST: Linux x64; compile/static audit only
+103362	   78  CloseClipboard
+1033aa	  230  EmptyClipboard
+1033ca	  286  GetAsyncKeyState
+1033de	  336  GetForegroundWindow
+1033f4	  337  GetGUIThreadInfo
+103454	  637  OpenClipboard
+103474	  748  SendInput
+103480	  766  SetClipboardData
+PASS no forbidden refocus/thread-attachment imports (not Windows behavioral evidence)
+EXIT_CODE: 0

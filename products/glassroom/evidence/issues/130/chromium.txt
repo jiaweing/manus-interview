@@ -1,0 +1,20 @@
+Command: PUBLIC_PORT=4130 NEXT_INTERNAL_PORT=5130 bunx playwright test --project=chromium tests/e2e/data-envelope.spec.ts tests/e2e/boot.spec.ts tests/e2e/preflight.spec.ts tests/e2e/signal-server.spec.ts --reporter=list
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:49:19.104539+00:00
+Exit code: 0
+
+  "scenario": "blocked-connectivity",
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-2rmuwC",
+    "/tmp/glassroom-preflight-b-DVM2N6"
+  ],
+  "status": "failed",
+  "testedOrigin": "https://localhost:4130",
+  "timestamp": "2026-11-21T14:49:44.206Z"
+}
+  ✓  6 [chromium] › tests/e2e/preflight.spec.ts:458:1 › blocked-connectivity fails without relay or fallback (11.8s)
+  ✓  7 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and participant-close teardown (936ms)
+  ✓  8 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and room-role-spoof teardown (851ms)
+  ✓  9 [chromium] › tests/e2e/signal-server.spec.ts:9:2 › WSS admission, opaque forwarding, and over-cap teardown (944ms)
+
+  9 passed (27.4s)

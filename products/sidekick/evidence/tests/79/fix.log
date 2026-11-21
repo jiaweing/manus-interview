@@ -1,0 +1,171 @@
+$ ultracite fix
+apps/server/src/agent/app.ts:103:13 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━
+
+  × Excessive complexity of 25 detected (max: 20).
+  
+    101 │ 		bearerAuth(config.demoToken),
+    102 │ 		requestRateLimit(config, now),
+  > 103 │ 		async (c) => {
+        │ 		          ^^^
+    104 │ 			let body: unknown;
+    105 │ 			try {
+  
+  i Please refactor this function to reduce its complexity score from 25 to the max allowed complexity 20.
+  
+
+apps/server/src/agent/openrouter.ts:98:8 lint/style/useDestructuring ━━━━━━━━━━━
+
+  × Use array destructuring instead of accessing array elements by index.
+  
+     96 │ 		throw new ModelProtocolError();
+     97 │ 	}
+   > 98 │ 	const choice = parsed.data.choices[0];
+        │ 	      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     99 │ 	if (!choice) {
+    100 │ 		throw new ModelProtocolError();
+  
+  i Array destructuring is more readable and expressive than accessing individual elements by index.
+  
+  i Replace the array index access with array destructuring syntax.
+  
+
+apps/server/src/agent/openrouter.ts:111:4 lint/style/useErrorCause ━━━━━━━━━━━━━
+
+  × The original error is being discarded because the `catch` clause doesn't have a parameter.Specify an error object in the `catch` clause to access the original error.
+  
+    109 │ 			args = JSON.parse(call.function.arguments);
+    110 │ 		} catch {
+  > 111 │ 			throw new ModelProtocolError();
+        │ 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    112 │ 		}
+    113 │ 	}
+  
+
+apps/server/src/agent/openrouter.ts:178:5 lint/style/useErrorCause ━━━━━━━━━━━━━
+
+  × The original error is being discarded because the `catch` clause doesn't have a parameter.Specify an error object in the `catch` clause to access the original error.
+  
+    176 │ 				});
+    177 │ 			} catch {
+  > 178 │ 				throw new ModelUnavailableError();
+        │ 				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    179 │ 			}
+    180 │ 			if (!response.ok) {
+  
+
+apps/server/src/agent/openrouter.ts:188:5 lint/style/useErrorCause ━━━━━━━━━━━━━
+
+  × The original error is being discarded because the `catch` clause doesn't have a parameter.Specify an error object in the `catch` clause to access the original error.
+  
+    186 │ 				body = await response.json();
+    187 │ 			} catch {
+  > 188 │ 				throw new ModelProtocolError();
+        │ 				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    189 │ 			}
+    190 │ 			return decodeResponse(body);
+  
+
+apps/server/src/agent/turn.test.ts:468:9 lint/style/useDestructuring ━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    466 │ 		const { app, transport } = fakeOpenRouter();
+    467 │ 		expect((await post(app, transcript())).status).toBe(200);
+  > 468 │ 		const tools = outbound(transport).tools;
+        │ 		      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    469 │ 		expect(
+    470 │ 			tools.map((tool: { function: { name: string } }) => tool.function.name)
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/src/agent/turn.test.ts:493:9 lint/style/useDestructuring ━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    491 │ 			toolCall: TOOL_CALLS[2],
+    492 │ 		});
+  > 493 │ 		const messages = outbound(transport).messages;
+        │ 		      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    494 │ 		expect(messages[0].role).toBe("system");
+    495 │ 		expect(messages[0].content).toContain("untrusted observations");
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/src/agent/turn.test.ts:637:28 lint/suspicious/useAwait ━━━━━━━━━━━━━
+
+  × This async function lacks an await expression.
+  
+    635 │ 		await Promise.all(
+    636 │ 			[undefined, 401, 429, 500].map(async (status) => {
+  > 637 │ 				const transport = mock(async () => {
+        │ 				                       ^^^^^^^^^^^^^
+  > 638 │ 					if (status === undefined) {
+  > 639 │ 						throw new Error(SERVER_KEY_SENTINEL);
+  > 640 │ 					}
+  > 641 │ 					return new Response(SERVER_KEY_SENTINEL, { status });
+  > 642 │ 				});
+        │ 				^
+    643 │ 				const adapter = createOpenRouterAdapter(
+    644 │ 					{ OPENROUTER_API_KEY: SERVER_KEY_SENTINEL },
+  
+  i Remove this async modifier, or add an await expression in the function.
+  
+    635 │ 		await Promise.all(
+    636 │ 			[undefined, 401, 429, 500].map(async (status) => {
+  > 637 │ 				const transport = mock(async () => {
+        │ 				                       ^^^^^^^^^^^^^
+  > 638 │ 					if (status === undefined) {
+  > 639 │ 						throw new Error(SERVER_KEY_SENTINEL);
+  > 640 │ 					}
+  > 641 │ 					return new Response(SERVER_KEY_SENTINEL, { status });
+  > 642 │ 				});
+        │ 				^
+    643 │ 				const adapter = createOpenRouterAdapter(
+    644 │ 					{ OPENROUTER_API_KEY: SERVER_KEY_SENTINEL },
+  
+  i Async functions without await expressions may not need to be declared async.
+  
+
+apps/server/src/agent/turn.test.ts:723:9 lint/correctness/noUndeclaredVariables ━━━━━━━━━━
+
+  × The Bun variable is undeclared.
+  
+    721 │ 		const success = fakeAdapter();
+    722 │ 		await runModelTurn(success, VALID_TURN, new AbortController().signal, 5);
+  > 723 │ 		await Bun.sleep(10);
+        │ 		      ^^^
+    724 │ 		expect(success.turn.mock.calls[0]?.[1].aborted).toBe(false);
+    725 │ 	});
+  
+  i By default, Biome recognizes browser and Node.js globals.
+    You can ignore more globals using the javascript.globals configuration.
+  
+
+packages/protocol/src/index.ts:3:61 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    1 │ import { z } from "zod";
+    2 │ 
+  > 3 │ const nonblank = (max: number) => z.string().max(max).regex(/\S/);
+      │                                                             ^^^^
+    4 │ const identifier = nonblank(200);
+    5 │ const tabId = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+Checked 38 files in 335ms. Fixed 7 files.
+Found 10 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+error: script "fix" exited with code 1

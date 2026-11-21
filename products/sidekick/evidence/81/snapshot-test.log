@@ -1,0 +1,15 @@
+bun test v1.4.5 (a7733435c)
+
+apps/extension/src/page/snapshot.test.ts:
+(pass) indexed top-frame DOM snapshots > returns exact Snapshot fields, URL/title and rendered text without field values [54.11ms]
+(pass) indexed top-frame DOM snapshots > visible controls, headings and labels have exact roles/names and unique live indexes [32.95ms]
+(pass) indexed top-frame DOM snapshots > hidden/disabled controls and unsupported frame/shadow/canvas/PDF contents have no actionable map entries [19.80ms]
+(pass) indexed top-frame DOM snapshots > re-observation rotates snapshot IDs while retaining document identity and invalidating the old map [21.64ms]
+(pass) indexed top-frame DOM snapshots > replacing the same document root rotates documentToken and discards original targets [16.47ms]
+(pass) indexed top-frame DOM snapshots > a newly created document has a distinct token and removed live elements cannot resolve [23.51ms]
+(pass) indexed top-frame DOM snapshots > PDF and child-frame documents are rejected rather than indexed [12.74ms]
+
+ 7 pass
+ 0 fail
+ 79 expect() calls
+Ran 7 tests across 1 file. [349.00ms]

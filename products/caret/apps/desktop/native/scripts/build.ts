@@ -26,6 +26,7 @@ function compile(sources: string[], name: string, win32 = false): void {
         "/nologo",
         "/std:c++20",
         "/EHsc",
+        "/utf-8",
         "/W4",
         "/WX",
         "/O2",
@@ -34,7 +35,7 @@ function compile(sources: string[], name: string, win32 = false): void {
         `/Fe:${output}`,
         "/link",
         "/MACHINE:X64",
-        ...(win32 ? ["user32.lib"] : []),
+        ...(win32 ? ["user32.lib", "advapi32.lib"] : []),
       ]
     : [
         "-std=c++20",
@@ -49,7 +50,7 @@ function compile(sources: string[], name: string, win32 = false): void {
         ...sources.map((source) => resolve(native, source)),
         "-o",
         output,
-        ...(win32 ? ["-luser32"] : []),
+        ...(win32 ? ["-luser32", "-ladvapi32"] : []),
       ];
   const result = spawnSync(compiler, args, {
     cwd: build,
@@ -71,7 +72,25 @@ function compile(sources: string[], name: string, win32 = false): void {
 }
 
 compile(["protocol.cpp", "tests/protocol_test.cpp"], "protocol-fixtures");
+compile(
+  ["protocol.cpp", "paste.cpp", "tests/paste_test.cpp"],
+  "paste-fixtures"
+);
 if (!fixturesOnly) {
-  compile(["protocol.cpp", "win32_main.cpp"], "caret-helper", true);
+  compile(
+    ["protocol.cpp", "paste.cpp", "win32_platform.cpp", "win32_main.cpp"],
+    "caret-helper",
+    true
+  );
   compile(["tests/record_target.cpp"], "record-target", true);
+  compile(
+    [
+      "protocol.cpp",
+      "paste.cpp",
+      "win32_platform.cpp",
+      "tests/paste_target.cpp",
+    ],
+    "paste-target",
+    true
+  );
 }

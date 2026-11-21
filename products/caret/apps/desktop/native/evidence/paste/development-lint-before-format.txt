@@ -1,0 +1,112 @@
+$ biome check apps/desktop
+apps/desktop/native/scripts/build.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+
+    73 73 │
+    74 74 │   compile(["protocol.cpp", "tests/protocol_test.cpp"], "protocol-fixtures");
+    75    │ - compile(["protocol.cpp",·"paste.cpp",·"tests/paste_test.cpp"],·"paste-fixtures");
+       75 │ + compile(
+       76 │ + ··["protocol.cpp",·"paste.cpp",·"tests/paste_test.cpp"],
+       77 │ + ··"paste-fixtures"
+       78 │ + );
+    76 79 │   if (!fixturesOnly) {
+    77 80 │     compile(
+    ····· │
+    82 85 │     compile(["tests/record_target.cpp"], "record-target", true);
+    83 86 │     compile(
+    84    │ - ····["protocol.cpp",·"paste.cpp",·"win32_platform.cpp",·"tests/paste_target.cpp"],
+       87 │ + ····[
+       88 │ + ······"protocol.cpp",
+       89 │ + ······"paste.cpp",
+       90 │ + ······"win32_platform.cpp",
+       91 │ + ······"tests/paste_target.cpp",
+       92 │ + ····],
+    85 93 │       "paste-target",
+    86 94 │       true
+
+
+apps/desktop/native/scripts/paste-target.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+
+    11 11 │   const desktop = resolve(import.meta.dir, "../..");
+    12 12 │   // Adapter has no refocus primitive; additionally audit actual Windows sources.
+    13    │ - const·forbidden·=·/\b(?:SetForegroundWindow|AttachThreadInput|SetFocus|SetActiveWindow|BringWindowToTop|SwitchToThisWindow)\s*\(/;
+       13 │ + const·forbidden·=
+       14 │ + ··/\b(?:SetForegroundWindow|AttachThreadInput|SetFocus|SetActiveWindow|BringWindowToTop|SwitchToThisWindow)\s*\(/;
+    14 15 │   for (const source of ["win32_platform.cpp", "win32_main.cpp", "paste.cpp"]) {
+    15    │ - ··if·(forbidden.test(readFileSync(resolve(desktop,·"native",·source),·"utf8")))·{
+       16 │ + ··if·(
+       17 │ + ····forbidden.test(readFileSync(resolve(desktop,·"native",·source),·"utf8"))
+       18 │ + ··)·{
+    16 19 │       console.error("FAIL foreground-setting API found in insertion sources");
+    17 20 │       process.exit(1);
+
+
+apps/desktop/native/tests/client.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+
+     34  34 │       controller.abort();
+     35  35 │       await expect(
+     36     │ - ······client.insert(target,·"cancel",·"Jia·Wei·Ng·—·Manus·42",·controller.signal)
+         36 │ + ······client.insert(
+         37 │ + ········target,
+         38 │ + ········"cancel",
+         39 │ + ········"Jia·Wei·Ng·—·Manus·42",
+         40 │ + ········controller.signal
+         41 │ + ······)
+     37  42 │       ).rejects.toThrow("cancelled");
+     38  43 │       expect(writes).toHaveBeenCalledTimes(0);
+    ······· │
+     42  47 │       const { client, writes } = fixture("silent");
+     43  48 │       const controller = new AbortController();
+     44     │ - ····const·attempt·=·client.insert(target,·"cancel",·"fixture",·controller.signal);
+         49 │ + ····const·attempt·=·client.insert(
+         50 │ + ······target,
+         51 │ + ······"cancel",
+         52 │ + ······"fixture",
+         53 │ + ······controller.signal
+         54 │ + ····);
+     45  55 │       controller.abort();
+     46  56 │       await expect(attempt).rejects.toThrow("cancelled");
+     47     │ - ····await·expect(client.insert(target,·"cancel",·"fixture")).rejects.toThrow("cancelled");
+         57 │ + ····await·expect(client.insert(target,·"cancel",·"fixture")).rejects.toThrow(
+         58 │ + ······"cancelled"
+         59 │ + ····);
+     48  60 │       expect(writes).toHaveBeenCalledTimes(1);
+     49  61 │     });
+     50  62 │     test("PASS main cancellation hook terminates all pending calls with no new request", async () => {
+     51  63 │       const { client, writes } = fixture("silent");
+     52     │ - ····const·pending·=·Promise.allSettled([client.snapshot(),·client.insert(target,·"cancel",·"fixture")]);
+         64 │ + ····const·pending·=·Promise.allSettled([
+         65 │ + ······client.snapshot(),
+         66 │ + ······client.insert(target,·"cancel",·"fixture"),
+         67 │ + ····]);
+     53  68 │       client.cancelPendingInsert();
+     54     │ - ····expect((await·pending).every((result)·=>·result.status·===·"rejected")).toBe(true);
+         69 │ + ····expect(
+         70 │ + ······(await·pending).every((result)·=>·result.status·===·"rejected")
+         71 │ + ····).toBe(true);
+     55  72 │       await expect(client.snapshot()).rejects.toThrow("cancelled");
+     56  73 │       expect(writes).toHaveBeenCalledTimes(2);
+    ······· │
+     59  76 │       const { client, writes } = fixture("outcome-paste_requested");
+     60  77 │       const controller = new AbortController();
+     61     │ - ····expect(await·client.insert(target,·"success",·"fixture",·controller.signal)).toBe("paste_requested");
+         78 │ + ····expect(
+         79 │ + ······await·client.insert(target,·"success",·"fixture",·controller.signal)
+         80 │ + ····).toBe("paste_requested");
+     62  81 │       controller.abort();
+     63  82 │       expect(await client.snapshot()).toEqual(target);
+
+
+Checked 42 files in 2s. No fixes applied.
+Found 3 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+
+
+error: script "lint" exited with code 1

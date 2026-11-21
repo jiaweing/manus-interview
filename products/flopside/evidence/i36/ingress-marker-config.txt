@@ -1,0 +1,35 @@
+{
+  "backendInstancesConfigured": 1,
+  "bootMarker": "593070a0-7e82-45d7-9b11-0d89e5659c4e",
+  "configuration": "root start.ts direct Bun entry + Dockerfile: one Bun process, no Next runtime/cluster",
+  "contextA": [
+    {
+      "bootMarker": "593070a0-7e82-45d7-9b11-0d89e5659c4e",
+      "connections": 1
+    },
+    {
+      "bootMarker": "593070a0-7e82-45d7-9b11-0d89e5659c4e",
+      "connections": 2
+    }
+  ],
+  "contextB": [
+    {
+      "bootMarker": "593070a0-7e82-45d7-9b11-0d89e5659c4e",
+      "connections": 2
+    }
+  ],
+  "handshakeObservation": "Chromium CDP Network.webSocketHandshakeResponseReceived",
+  "handshakes": [
+    {
+      "status": 101,
+      "url": "ws://127.0.0.1:3360/api/ws"
+    },
+    {
+      "status": 101,
+      "url": "ws://127.0.0.1:3360/api/ws"
+    }
+  ],
+  "mode": "production Next static export + Hono/Bun native WebSockets",
+  "origin": "http://127.0.0.1:3360",
+  "probe": "TEMPORARY transport-only; replace with authentication before release (#49)"
+}

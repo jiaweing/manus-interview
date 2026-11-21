@@ -1,6 +1,12 @@
-# Flopside — scaffold and WebSocket ingress (#27 / #28)
+# Flopside — scaffold, WebSocket ingress and rooms (#27 / #28 / #36)
 
-Independent Better-T-Stack Bun workspace at `products/flopside/`, with its own `bun.lock` and no nested Git repository. Next.js remains the browser client; Hono on Bun owns native WebSockets. Poker rooms and gameplay are not implemented at these milestones.
+Independent Better-T-Stack Bun workspace at `products/flopside/`, with its own `bun.lock` and no nested Git repository. Next.js remains the browser client; Hono on Bun owns native WebSockets. In-memory room creation/joining and host-controlled store start are implemented; authenticated gameplay transport and the lobby UI remain subsequent milestones.
+
+## In-memory rooms (#36)
+
+`POST /api/rooms {nickname}` creates a room (201); `POST /api/rooms/:code/join {nickname}` joins it (200). Both return `{seat, state}` with only the caller's crypto seat token and an allowlisted lobby view. Nicknames are trimmed before Zod's 1–16-unit validation. HTTP seats begin disconnected; socket integration will call `markConnected`/`markDisconnected`. The four-seat lobby rejects a fifth with `ROOM_FULL`, and host start with 2–4 connected players locks admission with `MATCH_STARTED`. Unknown/expired codes share `ROOM_EXPIRED`; idle expiry is exactly 30 minutes on an injectable clock.
+
+See [the server room contract](apps/server/ROOMS.md) for response/error schemas, synchronous `RoomStore` methods, host transfer, connected match participants, revision/activity semantics, privacy boundaries and downstream integration notes (#37/#38/#39/#41). Production constructs `new RoomStore()` with no deterministic deck source or env selector; deck-function injection exists only in the store constructor for isolated tests. No engine files are changed. Run `bun test apps/server/src/rooms.test.ts`; evidence lives under `evidence/i36/`.
 
 ## Setup and commands
 
@@ -124,6 +130,6 @@ Biome retains Ultracite core/React/Next rules. Lint/typecheck include maintained
 
 ## Verification boundaries and limitations
 
-See `evidence/ingress/README.md` for commands, exit codes and screenshots. The isolated server smoke probe `apps/server/src/ingress-probe.ts` is **temporary / transport-only**: on open it broadcasts only a non-secret random boot marker and current live count; joins/closes update the count. It ignores all incoming messages and contains no gameplay. Its matching isolated web panel exists only to show real transport evidence. **#49 must remove/replace both with authenticated gameplay and repeat the release ingress check; this unauthenticated probe must not survive release.**
+See `evidence/ingress/README.md` for commands, exit codes and screenshots. The isolated server smoke probe `apps/server/src/ingress-probe.ts` is **temporary / transport-only**: on open it broadcasts only a non-secret random boot marker and current live count; joins/closes update the count. It ignores all incoming messages and contains no gameplay. Its matching isolated web panel exists only to show real transport evidence. **#38 must remove/replace both when authenticated gameplay sockets arrive; #49 must repeat the release ingress check. This unauthenticated probe must not survive release.**
 
 Local production HTTP/WS and development connectivity are builder-tested. Published HTTPS/WSS ingress, real TLS reverse-proxy configuration, container build/runtime, production authentication and gameplay are **not verified** at #28. A failed published upgrade or multi-instance setup blocks release; polling and local substitutes are forbidden. No independent-verifier verdict is claimed. AI calls: not run, no key; AI is dormant and unnecessary for Flopside. All builder-started servers are stopped before handoff.

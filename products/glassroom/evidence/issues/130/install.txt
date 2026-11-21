@@ -1,0 +1,8 @@
+Command: bun install --frozen-lockfile
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:48:58.738865+00:00
+Exit code: 0
+
+bun install v1.4.5 (a7733435c)
+
+Checked 327 installs across 393 packages (no changes) [132.00ms]

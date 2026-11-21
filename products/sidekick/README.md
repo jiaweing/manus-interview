@@ -25,7 +25,9 @@ The server explicitly loads `products/sidekick/.env`; automatic Bun environment 
 
 For extension builds, put **only** `WXT_SIDEKICK_PROXY_URL=<same public origin>` in `apps/extension/.env`, or export that public variable when running WXT. The extension does not read the server's root `.env`. Both the manifest's single required proxy host permission and `apps/extension/src/proxy.ts` use this same public origin and the shared validator in `packages/config/src/proxy-url.ts`; the later turn client is owned by #88. Never put a token/provider key in extension environment files. A production extension build also requires HTTPS when `NODE_ENV=production` is set. The five browser permissions are `sidePanel`, `activeTab`, `scripting`, `tabs`, and `storage`; Wikipedia and httpbin origins remain optional, user-granted permissions.
 
-`POST /v1/agent/turn` authenticates before parsing or adapter dispatch. CORS permits transport/preflight but never authorizes a POST. Bearer tokens are compared with Node's constant-time `timingSafeEqual` on fixed-length SHA-256 digests. The turn shell checks JSON content type and a nonempty string `goal`, array `messages`, and object `snapshot`. Full protocol validation/provider integration is #79. A valid envelope returns 501 until an adapter is injected; invalid/empty envelopes return 400 without a model call.
+`POST /v1/agent/turn` authenticates before parsing or adapter dispatch. CORS permits transport/preflight but never authorizes a POST. Bearer tokens are compared with Node's constant-time `timingSafeEqual` on fixed-length SHA-256 digests. The endpoint validates strict shared Zod schemas for `goal`, current-run `messages` with matching call/result IDs, and the indexed `snapshot`; invalid input returns 400 before a model call. Responses are assistant `text` plus zero or one validated `toolCall`. Only the extension executes browser tools. See [the shared protocol](packages/protocol/README.md) for exact shapes and error statuses.
+
+Set `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` **only in the server's gitignored `.env`**. One model is fixed at startup for every client; the fallback `anthropic/claude-sonnet-5.5` is the PRD candidate, not a live-verified availability claim. No client model/provider selector exists. With no key, a valid turn returns 501 (unconfigured adapter), while malformed input still returns 400. Every model turn has a 20-second abort deadline; Stop/request cancellation propagates to the provider request. Model responses are validated independently of OpenRouter's `parallel_tool_calls: false`, and multiple/unknown/invalid calls return 502 rather than an action. No provider request is retried. Real API check: **not run: no key**.
 
 Request limits are explicit and configurable:
 
@@ -42,6 +44,9 @@ No request/response/body/header logging or evlog is mounted. The Hono error hand
 ## Verification and HTTPS hosting gate
 
 ```bash
+WXT_SIDEKICK_PROXY_URL=https://proxy.example.com bun run build:extension
+bun test apps/server/src/agent/turn.test.ts
+bun run typecheck
 bun test apps/server/src/agent/security.test.ts
 # Environment is loaded privately, never passed as literal credentials:
 bun --env-file=.env test apps/server/tests/https.smoke.test.ts
@@ -56,3 +61,8 @@ The smoke test requires `SIDEKICK_PROXY_URL` to be reachable HTTPS and `SIDEKICK
 The #78 builder verification used an **EPHEMERAL sandbox forwarding URL** for local port 8787. This proves temporary authenticated HTTPS routing only, **not a durable deployment**. The durable-hosting gate remains **UNMET** until the user supplies a permanent HTTPS host, ingress/logging configuration, and private token. The sandbox may hibernate or stop forwarding; do not use its URL as a production service. See `evidence/tests/78-verification.md` for sanitized results and the temporary public origin. Real API check: **not run: no key**.
 
 Full setup, test and demo instructions are added by issue #98.
+
+## Tests
+- `bun test` (or `bun run test`): the automated suite. It excludes the HTTPS hosting gate.
+- `bun run test:https`: the HTTPS hosting gate (issue #78). Requires `SIDEKICK_PROXY_URL` (a reachable HTTPS origin) and `SIDEKICK_DEMO_TOKEN`; it FAILS by design when either is absent. It is excluded from `bun test` through `bunfig.toml` so the rest of the suite can be judged on its own, but the gate is still required for the final handover.
+- The manifest test inspects `apps/extension/.output/chrome-mv3`; run `bun run build:extension` (with `WXT_SIDEKICK_PROXY_URL=https://...`) first if that directory is stale.

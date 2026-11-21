@@ -1,0 +1,115 @@
+COMMAND: bun run --cwd apps/desktop test:ipc-boundary
+HOST: Linux x64 (not Windows)
+
+$ bun test tests/ipc-boundary.test.ts
+bun test v1.4.5 (a7733435c)
+
+tests/ipc-boundary.test.ts:
+(pass) four permitted operations > PASS setupKey [2.10ms]
+(pass) four permitted operations > PASS subscribeStatus [0.10ms]
+(pass) four permitted operations > PASS cancel [0.13ms]
+(pass) four permitted operations > PASS submitAudio [0.15ms]
+(pass) four permitted operations > PASS Opus WebM and exact 10 MB boundary [0.13ms]
+(pass) four permitted operations > status strips extra main-private fields [0.10ms]
+(pass) untrusted senders rejected before effects > reject other webContents: setupKey [0.10ms]
+(pass) untrusted senders rejected before effects > reject other webContents: subscribeStatus
+(pass) untrusted senders rejected before effects > reject other webContents: cancel [0.01ms]
+(pass) untrusted senders rejected before effects > reject other webContents: submitAudio
+(pass) untrusted senders rejected before effects > reject missing frame: setupKey [0.02ms]
+(pass) untrusted senders rejected before effects > reject missing frame: subscribeStatus
+(pass) untrusted senders rejected before effects > reject missing frame: cancel
+(pass) untrusted senders rejected before effects > reject missing frame: submitAudio
+(pass) untrusted senders rejected before effects > reject child frame with matching URL: setupKey [0.01ms]
+(pass) untrusted senders rejected before effects > reject child frame with matching URL: subscribeStatus
+(pass) untrusted senders rejected before effects > reject child frame with matching URL: cancel
+(pass) untrusted senders rejected before effects > reject child frame with matching URL: submitAudio
+(pass) untrusted senders rejected before effects > reject external main-frame URL: setupKey [0.04ms]
+(pass) untrusted senders rejected before effects > reject external main-frame URL: subscribeStatus [0.02ms]
+(pass) untrusted senders rejected before effects > reject external main-frame URL: cancel [0.12ms]
+(pass) untrusted senders rejected before effects > reject external main-frame URL: submitAudio
+(pass) untrusted senders rejected before effects > reject different bundled file: setupKey [0.06ms]
+(pass) untrusted senders rejected before effects > reject different bundled file: subscribeStatus
+(pass) untrusted senders rejected before effects > reject different bundled file: cancel
+(pass) untrusted senders rejected before effects > reject different bundled file: submitAudio
+(pass) untrusted senders rejected before effects > reject malformed main-frame URL: setupKey [0.49ms]
+(pass) untrusted senders rejected before effects > reject malformed main-frame URL: subscribeStatus [0.03ms]
+(pass) untrusted senders rejected before effects > reject malformed main-frame URL: cancel
+(pass) untrusted senders rejected before effects > reject malformed main-frame URL: submitAudio [0.02ms]
+(pass) untrusted senders rejected before effects > reject query-string variation: setupKey [0.04ms]
+(pass) untrusted senders rejected before effects > reject query-string variation: subscribeStatus [0.01ms]
+(pass) untrusted senders rejected before effects > reject query-string variation: cancel
+(pass) untrusted senders rejected before effects > reject query-string variation: submitAudio [0.21ms]
+(pass) untrusted senders rejected before effects > bundled same-document fragment stays trusted [0.13ms]
+(pass) unknown operations and strict message schemas > reject unknown operation helper [0.10ms]
+(pass) unknown operations and strict message schemas > reject unknown operation exec [0.03ms]
+(pass) unknown operations and strict message schemas > reject unknown operation fs [0.01ms]
+(pass) unknown operations and strict message schemas > reject unknown operation ipcRenderer [0.01ms]
+(pass) unknown operations and strict message schemas > reject unknown operation status
+(pass) unknown operations and strict message schemas > reject unknown operation  [0.02ms]
+(pass) unknown operations and strict message schemas > reject unknown operation 0 [0.03ms]
+(pass) unknown operations and strict message schemas > reject unknown operation null [0.01ms]
+(pass) unknown operations and strict message schemas > reject null request [0.13ms]
+(pass) unknown operations and strict message schemas > reject array request [0.01ms]
+(pass) unknown operations and strict message schemas > reject string request [0.04ms]
+(pass) unknown operations and strict message schemas > reject missing payload
+(pass) unknown operations and strict message schemas > reject extra request field
+(pass) unknown operations and strict message schemas > reject null payload [0.02ms]
+(pass) unknown operations and strict message schemas > reject array payload
+(pass) unknown operations and strict message schemas > reject missing key [0.02ms]
+(pass) unknown operations and strict message schemas > reject numeric key [0.05ms]
+(pass) unknown operations and strict message schemas > reject empty key [0.02ms]
+(pass) unknown operations and strict message schemas > reject blank key [0.02ms]
+(pass) unknown operations and strict message schemas > reject unbounded key [0.02ms]
+(pass) unknown operations and strict message schemas > reject extra key field [0.01ms]
+(pass) unknown operations and strict message schemas > reject status payload fields [0.04ms]
+(pass) unknown operations and strict message schemas > reject missing cancel id
+(pass) unknown operations and strict message schemas > reject invalid cancel id
+(pass) unknown operations and strict message schemas > reject empty cancel id [0.01ms]
+(pass) unknown operations and strict message schemas > reject extra cancel field
+(pass) unknown operations and strict message schemas > reject invalid audio id
+(pass) unknown operations and strict message schemas > reject unbounded audio id [0.01ms]
+(pass) unknown operations and strict message schemas > reject whitespace audio id
+(pass) unknown operations and strict message schemas > reject renderer-supplied state
+(pass) unknown operations and strict message schemas > reject renderer-supplied target
+(pass) unknown operations and strict message schemas > reject numeric MIME
+(pass) unknown operations and strict message schemas > reject missing audio [0.01ms]
+(pass) unknown operations and strict message schemas > reject string audio [0.01ms]
+(pass) unknown operations and strict message schemas > reject typed-array audio [0.03ms]
+(pass) unknown operations and strict message schemas > reject shared-memory audio
+(pass) audio session, main state, MIME and size > reject cancel with no active session [0.12ms]
+(pass) audio session, main state, MIME and size > reject cancel with mismatching session [0.01ms]
+(pass) audio session, main state, MIME and size > reject submitAudio with no active session [0.01ms]
+(pass) audio session, main state, MIME and size > reject submitAudio with mismatching session [0.02ms]
+(pass) audio session, main state, MIME and size > reject main-owned starting state [0.11ms]
+(pass) audio session, main state, MIME and size > reject main-owned listening state [0.03ms]
+(pass) audio session, main state, MIME and size > reject main-owned transcribing state
+(pass) audio session, main state, MIME and size > reject main-owned cleaning state
+(pass) audio session, main state, MIME and size > reject main-owned done state
+(pass) audio session, main state, MIME and size > reject main-owned error state
+(pass) audio session, main state, MIME and size > reject non-allowed MIME audio/wav [0.09ms]
+(pass) audio session, main state, MIME and size > reject non-allowed MIME audio/mp3 [0.01ms]
+(pass) audio session, main state, MIME and size > reject non-allowed MIME video/webm
+(pass) audio session, main state, MIME and size > reject non-allowed MIME application/octet-stream
+(pass) audio session, main state, MIME and size > reject non-allowed MIME audio/webm;codecs=vorbis
+(pass) audio session, main state, MIME and size > reject non-allowed MIME  [0.01ms]
+(pass) audio session, main state, MIME and size > reject non-allowed MIME audio/webm;codecs=opus;untrusted=true [0.04ms]
+(pass) audio session, main state, MIME and size > reject audio size 0 [0.09ms]
+(pass) audio session, main state, MIME and size > reject audio size 10000001 [0.03ms]
+(pass) audio session, main state, MIME and size > session state is read from main for each request [0.15ms]
+(pass) audio session, main state, MIME and size > future integrations fail closed until installed [0.25ms]
+(pass) audio session, main state, MIME and size > handler failures never echo secrets or payloads [0.10ms]
+(pass) preload exposes only four documented capabilities > no generic IPC/process/filesystem/helper channel [1.05ms]
+(pass) preload exposes only four documented capabilities > every method targets a fixed channel and operation [0.44ms]
+(pass) preload exposes only four documented capabilities > status callback receives metadata, not Electron event or private fields [0.19ms]
+(pass) preload exposes only four documented capabilities > unsubscribe suppresses late initial status [0.11ms]
+(pass) preload exposes only four documented capabilities > a live update cannot be overwritten by an older initial snapshot [0.18ms]
+(pass) renderer security configuration and navigation guards (Linux fixtures, not Windows evidence) > Node integration is off; isolation and sandbox stay on [0.02ms]
+(pass) renderer security configuration and navigation guards (Linux fixtures, not Windows evidence) > main loads bundled UI only and attaches guards before loading [0.70ms]
+(pass) renderer security configuration and navigation guards (Linux fixtures, not Windows evidence) > external navigation, redirects, subframes, webviews and window.open are blocked without URL logs [0.24ms]
+
+ 101 pass
+ 0 fail
+ 222 expect() calls
+Ran 101 tests across 1 file. [33.00ms]
+
+EXIT_CODE: 0

@@ -1,0 +1,30 @@
+.page-observer {
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.page-observer button {
+	padding: 10px 14px;
+	font: inherit;
+	font-weight: 600;
+	color: #fff;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+	background: #000;
+	border: 0;
+	border-radius: 10px;
+}
+
+.page-observer button:focus-visible {
+	outline: 0;
+	box-shadow:
+		0 0 0 2px #fff,
+		0 0 0 4px #000;
+}
+
+.page-observer button:disabled {
+	color: #333;
+	cursor: default;
+	background: #eee;
+}

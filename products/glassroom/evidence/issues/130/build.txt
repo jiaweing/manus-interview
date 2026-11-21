@@ -1,0 +1,19 @@
+Command: bun run build
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:49:06.900153+00:00
+Exit code: 0
+
+web:build: ✓ Generating static pages using 5 workers (4/4) in 609ms
+web:build:   Finalizing page optimization ...
+web:build:
+web:build: Route (app)
+web:build: ┌ ○ /
+web:build: └ ○ /_not-found
+web:build:
+web:build:
+web:build: ○  (Static)  prerendered as static content
+web:build:
+
+ Tasks:    2 successful, 2 total
+Cached:    0 cached, 2 total
+  Time:    11.515s

@@ -29,6 +29,7 @@ if (!snapshotOnly) {
     run(process.execPath, ["native/scripts/build.ts", "--fixtures"]);
   }
   run(resolve(build, `protocol-fixtures${suffix}`), []);
+  run(resolve(build, `paste-fixtures${suffix}`), []);
   run(process.execPath, ["test", "native/tests/client.test.ts"]);
 }
 
@@ -80,12 +81,12 @@ if (windowsOnly || snapshotOnly) {
       "PASS real Windows Notepad foreground/focused-control handle comparison"
     );
     const outcome = await client.insert(
-      actual,
+      { ...actual, foreground: actual.foreground === "0x1" ? "0x2" : "0x1" },
       "windows-protocol-only",
       "fixture text"
     );
-    if (outcome !== "unsupported") {
-      throw new Error("Issue #6 must not implement paste");
+    if (outcome === "paste_requested" || outcome === "clipboard_busy") {
+      throw new Error("Stale target must not reach clipboard or paste");
     }
     try {
       await client.insert(actual, "windows-protocol-only", "fixture text");
@@ -99,7 +100,7 @@ if (windowsOnly || snapshotOnly) {
       }
     }
     console.log(
-      "PASS real helper insert contract is unsupported; duplicate session rejected (no paste requested)"
+      "PASS real helper stale-target rejection; duplicate session rejected (no paste requested)"
     );
   } finally {
     client.close();

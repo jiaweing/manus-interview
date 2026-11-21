@@ -1,31 +1,23 @@
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
+import {
+	type TurnRequest,
+	turnRequestSchema,
+} from "../../../../packages/protocol/src";
 import type { ProxyConfig } from "./config";
 import { bearerAuth, requestRateLimit } from "./security";
+import {
+	ModelDeadlineError,
+	ModelProtocolError,
+	ModelUnavailableError,
+	runModelTurn,
+	TurnAbortedError,
+} from "./turn";
 
-/** Envelope only; #79 owns full protocol validation and the provider adapter. */
-export interface TurnRequest {
-	goal: string;
-	messages: unknown[];
-	snapshot: Record<string, unknown>;
-}
+export type { TurnRequest } from "../../../../packages/protocol/src";
 
 export interface TurnAdapter {
 	turn: (request: TurnRequest, signal: AbortSignal) => Promise<unknown>;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isTurnRequest(value: unknown): value is TurnRequest {
-	return (
-		isRecord(value) &&
-		typeof value.goal === "string" &&
-		value.goal.trim().length > 0 &&
-		Array.isArray(value.messages) &&
-		isRecord(value.snapshot)
-	);
 }
 
 class BodyTooLargeError extends Error {}
@@ -69,6 +61,22 @@ async function readBoundedBody(
 		offset += chunk.byteLength;
 	}
 	return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+}
+
+function modelErrorResponse(c: Context, error: unknown) {
+	if (error instanceof ModelDeadlineError) {
+		return c.json({ error: "Model deadline exceeded" }, 504);
+	}
+	if (error instanceof TurnAbortedError) {
+		return c.json({ error: "Turn request aborted" }, 408);
+	}
+	if (error instanceof ModelProtocolError) {
+		return c.json({ error: "Invalid model turn response" }, 502);
+	}
+	if (error instanceof ModelUnavailableError) {
+		return c.json({ error: "Model provider unavailable" }, 502);
+	}
+	throw error;
 }
 
 export function createProxyApp(
@@ -125,14 +133,23 @@ export function createProxyApp(
 				}
 				return c.json({ error: "Invalid turn request" }, 400);
 			}
-			if (!isTurnRequest(body)) {
+			const parsed = turnRequestSchema.safeParse(body);
+			if (!parsed.success) {
 				return c.json({ error: "Invalid turn request" }, 400);
 			}
 			if (!adapter) {
 				return c.json({ error: "Turn adapter is not configured" }, 501);
 			}
-			const result = await adapter.turn(body, c.req.raw.signal);
-			return c.json(result);
+			try {
+				const result = await runModelTurn(
+					adapter,
+					parsed.data,
+					c.req.raw.signal
+				);
+				return c.json(result);
+			} catch (error) {
+				return modelErrorResponse(c, error);
+			}
 		}
 	);
 	return app;
