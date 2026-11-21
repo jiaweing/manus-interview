@@ -1,0 +1,202 @@
+$ env -u OPENROUTER_API_KEY bun run music:fallback
+$ bun apps/video/scripts/music-fallback.js
+{
+  "seed": 164120,
+  "promptEquivalent": "60-second instrumental, 120 BPM, 4/4, playful cartoon chiptune, clear downbeats, sparse melody, resolve over final three bars; no vocals or artist imitation.",
+  "bpm": 120,
+  "timeSignature": "4/4",
+  "bars": 30,
+  "sampleRate": 48000,
+  "channels": 2,
+  "samplesPerChannel": 2880000,
+  "durationSeconds": 60,
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "voices": {
+    "kick": {
+      "family": "percussion",
+      "waveform": "sine pitch sweep",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.7
+      }
+    },
+    "snare": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise + sine",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 1440,
+        "sustainLevel": 0.35,
+        "releaseFraction": 0.7
+      }
+    },
+    "hat": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise",
+      "envelope": {
+        "attackSamples": 48,
+        "decaySamples": 480,
+        "sustainLevel": 0.22,
+        "releaseFraction": 0.65
+      }
+    },
+    "bass": {
+      "family": "bass",
+      "waveform": "triangle",
+      "envelope": {
+        "attackSamples": 240,
+        "decaySamples": 2400,
+        "sustainLevel": 0.7,
+        "releaseFraction": 0.3
+      }
+    },
+    "melody": {
+      "family": "melody",
+      "waveform": "square (polyBLEP)",
+      "envelope": {
+        "attackSamples": 384,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.4
+      }
+    },
+    "chord": {
+      "family": "chord",
+      "waveform": "triangle/sine pad",
+      "envelope": {
+        "attackSamples": 2400,
+        "decaySamples": 7200,
+        "sustainLevel": 0.65,
+        "releaseFraction": 0.4
+      }
+    }
+  },
+  "generatorVersion": "1.0.0",
+  "generator": "pure JavaScript Float64 synthesis, seeded mulberry32 noise, PCM16 WAV",
+  "determinism": "Byte identity within pinned Bun 1.4.5; Math.sin/libm may differ across runtimes.",
+  "peakDbfs": -5.45216010010911,
+  "headroomGain": 1,
+  "wavBytes": 11520044,
+  "output": "/home/ubuntu/wt/b164/products/session-seven/apps/video/audio/fallback.wav"
+}
+exit=0
+
+$ bun test apps/video/tests/synth.test.js
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/synth.test.js:
+(pass) fallback PCM WAV > canonical RIFF/WAVE PCM header, byte rate and exact 60-second sample counts [1.62ms]
+(pass) fallback PCM WAV > PCM interleaves left/right little-endian with explicit quantization [0.40ms]
+(pass) fallback PCM WAV > Float64 accumulation, stereo content and at least 3 dBFS headroom [20.16ms]
+(pass) fallback PCM WAV > startup and ending have zero PCM samples, not clicks [0.40ms]
+(pass) score, oscillators and envelopes > exports percussion, triangle bass, square melody and repeating chord voice [0.28ms]
+(pass) score, oscillators and envelopes > every note has an ADSR-ish envelope with exact zero endpoints [13.02ms]
+(pass) score, oscillators and envelopes > 120 BPM downbeats and beat-3 kicks are integer-aligned to the video beat grid [1.01ms]
+(pass) score, oscillators and envelopes > C-major repeating progression, sparse melody, and a short intro build [2.90ms]
+(pass) score, oscillators and envelopes > bars 28–30 resolve to tonic only, thin percussion and decay to silence [2.99ms]
+(pass) offline determinism and frozen fallback > same seed produces byte-identical WAV twice in-process [1780.18ms]
+(pass) offline determinism and frozen fallback > changing only the seed changes percussion and WAV bytes [4417.83ms]
+(pass) offline determinism and frozen fallback > frozen WAV and metadata match the generator, prompt and exact format [111.65ms]
+(pass) offline determinism and frozen fallback > source has no network, clock or unseeded randomness; core has no Node APIs or dependencies [0.84ms]
+
+ 13 pass
+ 0 fail
+ 62410 expect() calls
+Ran 13 tests across 1 file. [8.12s]
+exit=0
+
+$ env -u OPENROUTER_API_KEY bun run music:fallback
+$ bun apps/video/scripts/music-fallback.js
+{
+  "seed": 164120,
+  "promptEquivalent": "60-second instrumental, 120 BPM, 4/4, playful cartoon chiptune, clear downbeats, sparse melody, resolve over final three bars; no vocals or artist imitation.",
+  "bpm": 120,
+  "timeSignature": "4/4",
+  "bars": 30,
+  "sampleRate": 48000,
+  "channels": 2,
+  "samplesPerChannel": 2880000,
+  "durationSeconds": 60,
+  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "voices": {
+    "kick": {
+      "family": "percussion",
+      "waveform": "sine pitch sweep",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.7
+      }
+    },
+    "snare": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise + sine",
+      "envelope": {
+        "attackSamples": 96,
+        "decaySamples": 1440,
+        "sustainLevel": 0.35,
+        "releaseFraction": 0.7
+      }
+    },
+    "hat": {
+      "family": "percussion",
+      "waveform": "seeded high-pass noise",
+      "envelope": {
+        "attackSamples": 48,
+        "decaySamples": 480,
+        "sustainLevel": 0.22,
+        "releaseFraction": 0.65
+      }
+    },
+    "bass": {
+      "family": "bass",
+      "waveform": "triangle",
+      "envelope": {
+        "attackSamples": 240,
+        "decaySamples": 2400,
+        "sustainLevel": 0.7,
+        "releaseFraction": 0.3
+      }
+    },
+    "melody": {
+      "family": "melody",
+      "waveform": "square (polyBLEP)",
+      "envelope": {
+        "attackSamples": 384,
+        "decaySamples": 2400,
+        "sustainLevel": 0.55,
+        "releaseFraction": 0.4
+      }
+    },
+    "chord": {
+      "family": "chord",
+      "waveform": "triangle/sine pad",
+      "envelope": {
+        "attackSamples": 2400,
+        "decaySamples": 7200,
+        "sustainLevel": 0.65,
+        "releaseFraction": 0.4
+      }
+    }
+  },
+  "generatorVersion": "1.0.0",
+  "generator": "pure JavaScript Float64 synthesis, seeded mulberry32 noise, PCM16 WAV",
+  "determinism": "Byte identity within pinned Bun 1.4.5; Math.sin/libm may differ across runtimes.",
+  "peakDbfs": -5.45216010010911,
+  "headroomGain": 1,
+  "wavBytes": 11520044,
+  "output": "/home/ubuntu/wt/b164/products/session-seven/apps/video/audio/fallback.wav"
+}
+exit=0
+
+$ cmp qa/fallback-run-1.meta.json qa/fallback-run-2.meta.json
+exit=0
+
+$ sha256sum apps/video/audio/fallback.wav
+81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6  apps/video/audio/fallback.wav
+
+$ stat -c %s apps/video/audio/fallback.wav
+11520044

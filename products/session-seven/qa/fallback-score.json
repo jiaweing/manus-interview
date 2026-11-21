@@ -1,0 +1,142 @@
+{
+  "voiceEvents": {
+    "kick": 57,
+    "snare": 55,
+    "hat": 212,
+    "bass": 58,
+    "melody": 60,
+    "chord": 90
+  },
+  "outro": [
+    {
+      "bar": 28,
+      "percussion": 8,
+      "notes": [
+        {
+          "voice": "chord",
+          "midi": 60,
+          "chord": "C",
+          "startSample": 2592000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 64,
+          "chord": "C",
+          "startSample": 2592000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 67,
+          "chord": "C",
+          "startSample": 2592000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "bass",
+          "midi": 36,
+          "chord": "C",
+          "startSample": 2592000,
+          "lengthSamples": 42000
+        },
+        {
+          "voice": "melody",
+          "midi": 79,
+          "chord": "C",
+          "startSample": 2604000,
+          "lengthSamples": 26400
+        },
+        {
+          "voice": "bass",
+          "midi": 43,
+          "chord": "C",
+          "startSample": 2640000,
+          "lengthSamples": 39600
+        },
+        {
+          "voice": "melody",
+          "midi": 76,
+          "chord": "C",
+          "startSample": 2640000,
+          "lengthSamples": 36000
+        }
+      ]
+    },
+    {
+      "bar": 29,
+      "percussion": 4,
+      "notes": [
+        {
+          "voice": "chord",
+          "midi": 60,
+          "chord": "C",
+          "startSample": 2688000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 64,
+          "chord": "C",
+          "startSample": 2688000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 67,
+          "chord": "C",
+          "startSample": 2688000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "bass",
+          "midi": 36,
+          "chord": "C",
+          "startSample": 2688000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "melody",
+          "midi": 72,
+          "chord": "C",
+          "startSample": 2736000,
+          "lengthSamples": 144000
+        }
+      ]
+    },
+    {
+      "bar": 30,
+      "percussion": 0,
+      "notes": [
+        {
+          "voice": "chord",
+          "midi": 60,
+          "chord": "C",
+          "startSample": 2784000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 64,
+          "chord": "C",
+          "startSample": 2784000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "chord",
+          "midi": 67,
+          "chord": "C",
+          "startSample": 2784000,
+          "lengthSamples": 96000
+        },
+        {
+          "voice": "bass",
+          "midi": 36,
+          "chord": "C",
+          "startSample": 2784000,
+          "lengthSamples": 96000
+        }
+      ]
+    }
+  ]
+}
