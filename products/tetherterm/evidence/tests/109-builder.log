@@ -1,0 +1,942 @@
+Issue #109 builder verification
+Worktree: /home/ubuntu/wt/109
+Branch: tetherterm/109-resize
+Runtime: Bun 1.4.5 on Linux
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+Code generated successfully (three dormant workspaces)
+Checked 1448 installs across 1595 packages (no changes) [2.50s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/terminal-resize.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [68.37ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [44.19ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [38.78ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [29.21ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [28.48ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [28.51ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [28.44ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [33.70ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [39.05ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [28.73ms]
+(pass) invalid cols null rejects create and resize before touching PTY [39.30ms]
+(pass) invalid cols array rejects create and resize before touching PTY [28.92ms]
+(pass) invalid cols object rejects create and resize before touching PTY [34.90ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [39.35ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [33.88ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [33.90ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [28.68ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [38.93ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [28.14ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [28.02ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [28.34ms]
+(pass) invalid rows null rejects create and resize before touching PTY [28.31ms]
+(pass) invalid rows array rejects create and resize before touching PTY [28.13ms]
+(pass) invalid rows object rejects create and resize before touching PTY [27.98ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [28.36ms]
+(pass) resize requires both dimensions and never supplies creation defaults [23.66ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [23.47ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [26.35ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [20.94ms]
+(pass) failed native resize does not publish new dimensions [33.69ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+ 30 pass
+ 0 fail
+ 304 expect() calls
+Ran 30 tests across 1 file. [1101.00ms]
+EXIT_CODE=
+NOTE: The first exact resize test reported 30 pass / 0 fail / 304 assertions, but its interactive pipeline wrapper lost PIPESTATUS and exited 2 (numeric exit argument was empty). No test-command exit code is claimed for that attempt; rerunning through a saved runner captures the actual command code below.
+
+$ bunx biome check --write apps/server/src/sessions/resize.ts apps/server/test/terminal-resize.test.ts apps/server/test/integration/terminal-resize.test.ts
+Checked 3 files. Fixed 1 file.
+Found 1 error: lint/performance/noAwaitInLoops on the readiness poll.
+EXIT_CODE=1 (lint command; the enclosing inspection command finished successfully)
+Correction: narrow documented lint exception for sequential, deadline-bounded real-child output polling. No assertions disabled; shared files were not autoformatted.
+
+$ bun test apps/server/test/terminal-resize.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [62.76ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [38.32ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [38.17ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [28.63ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [27.90ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [28.22ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [33.40ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [33.12ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [27.83ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [27.84ms]
+(pass) invalid cols null rejects create and resize before touching PTY [28.10ms]
+(pass) invalid cols array rejects create and resize before touching PTY [28.47ms]
+(pass) invalid cols object rejects create and resize before touching PTY [38.81ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [28.14ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [27.87ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [27.93ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [27.94ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [27.94ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [27.83ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [27.67ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [33.08ms]
+(pass) invalid rows null rejects create and resize before touching PTY [33.71ms]
+(pass) invalid rows array rejects create and resize before touching PTY [27.77ms]
+(pass) invalid rows object rejects create and resize before touching PTY [27.90ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [28.55ms]
+(pass) resize requires both dimensions and never supplies creation defaults [23.26ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [22.97ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [26.12ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [22.84ms]
+(pass) failed native resize does not publish new dimensions [28.11ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+ 30 pass
+ 0 fail
+ 304 expect() calls
+Ran 30 tests across 1 file. [987.00ms]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 44 files in 140ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [11.39ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.67ms]
+(pass) spawn failure closes its terminal and propagates the error [0.84ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.19ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.45ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) malformed or incorrect Authorization: basic [0.27ms]
+(pass) malformed or incorrect Authorization: empty [0.11ms]
+(pass) malformed or incorrect Authorization: short [0.10ms]
+(pass) malformed or incorrect Authorization: long [0.09ms]
+(pass) malformed or incorrect Authorization: duplicate [0.07ms]
+(pass) malformed or incorrect Authorization: extra-field [0.07ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.10ms]
+(pass) unapproved Host absent denies a valid bearer [0.20ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved Host localhost denies a valid bearer [0.07ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.07ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.08ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.10ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.07ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.18ms]
+(pass) unapproved present Origin null denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.07ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.13ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [1.22ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.44ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.16ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.15ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.16ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [2.31ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.18ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.11ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.08ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [0.87ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.52ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.38ms]
+(pass) malformed JSON is denied before MCP body parsing [0.25ms]
+(pass) URL-only token credential never authenticates [0.25ms]
+(pass) URL-only access_token credential never authenticates [0.09ms]
+(pass) URL-only bearer credential never authenticates [0.08ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.47ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.73ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.22ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.15ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.07ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.07ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.09ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.53ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.22ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.14ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.42ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.06ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.31ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.07ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.30ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.44ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.37ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.37ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.38ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.12ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.03ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.46ms]
+
+ 172 pass
+ 0 fail
+ 1051 expect() calls
+Ran 172 tests across 3 files. [223.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=42549 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.28ms]
+python3 PID=PGID=SID=TPGID=42556 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.67ms]
+bash GROUP=42558 GRANDCHILD=42561 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.01ms]
+bash GROUP=42562 GRANDCHILD=42565 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.15ms]
+python3 GROUP=42566 GRANDCHILD=42569 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [31.69ms]
+python3 GROUP=42570 GRANDCHILD=42572 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.75ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [157.01ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [148.25ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [171.85ms]
+TetherTerm MCP listening on http://127.0.0.1:33435/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [30.31ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.81ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [170.97ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [185.74ms]
+TetherTerm MCP listening on http://127.0.0.1:41997/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [5.37ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [140.53ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [5.72ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.60ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.50ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.45ms]
+(pass) terminating sessions still occupy the four live slots [2.46ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [7.73ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [1.86ms]
+(pass) a new server process cannot recognize the previous process's UUID [120.24ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.21ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.31ms]
+(pass) injected clock records finite default and explicit runtime deadlines [1.80ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [0.98ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.54ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.54ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.55ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.55ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.56ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.61ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.49ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [2.80ms]
+OWN_PID_PS checked=42698,42699,42700,42701,42702,42703,42704,42705,42706,42707,42708,42709,42710,42711,42712,42713,42716,42717,42729,42730,42742,42743,42744,42745,42746,42747,42748,42749,42750,42751,42752,42753,42754,42755,42756
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.03ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.46ms]
+
+apps/server/test/integration/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [34.90ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [38.11ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [37.95ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [28.39ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [27.70ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [27.75ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [27.71ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [28.04ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [27.85ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [27.76ms]
+(pass) invalid cols null rejects create and resize before touching PTY [27.88ms]
+(pass) invalid cols array rejects create and resize before touching PTY [28.00ms]
+(pass) invalid cols object rejects create and resize before touching PTY [27.85ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [27.79ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [28.06ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [31.00ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [28.39ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [27.92ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [27.86ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [27.87ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [27.96ms]
+(pass) invalid rows null rejects create and resize before touching PTY [27.91ms]
+(pass) invalid rows array rejects create and resize before touching PTY [27.94ms]
+(pass) invalid rows object rejects create and resize before touching PTY [27.87ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [27.69ms]
+(pass) resize requires both dimensions and never supplies creation defaults [23.13ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [22.88ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [38.50ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [27.88ms]
+(pass) failed native resize does not publish new dimensions [27.95ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+ 68 pass
+ 0 fail
+ 1495 expect() calls
+Ran 68 tests across 7 files. [2.43s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=35575 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [84.29ms]
+(pass) server startup fails clearly when setsid is absent on PATH [62.08ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [56.83ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [56.74ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [56.40ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [64.81ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [55.55ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [58.55ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [58.41ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [58.70ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [64.47ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [62.50ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [83.00ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [134.98ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [141.68ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [163.73ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [134.27ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [135.82ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [129.20ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [138.74ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [128.53ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [135.85ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [132.16ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [149.57ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [127.19ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [127.17ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [142.81ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [126.25ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [113.07ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [119.10ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [121.14ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [76.67ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.32s]
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+test/terminal-resize.test.ts(271,40): error TS2352: Conversion of type '{ cols?: undefined; rows?: undefined; } | { cols: number; rows?: undefined; } | { rows: number; cols?: undefined; } | { cols: undefined; rows: number; } | { cols: number; rows: undefined; }' to type 'ResizeSessionRequest' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ cols: number; rows: undefined; }' is not comparable to type 'ResizeSessionRequest'.
+    Types of property 'rows' are incompatible.
+      Type 'undefined' is not comparable to type 'number'.
+EXIT_CODE=2
+
+$ bun run check
+$ ultracite check
+Checked 44 files in 135ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+Correction after the first check-types failure: deliberately incomplete runtime resize inputs now cast through unknown; production types and validation are unchanged. Subsequent check and check-types both exited 0.
+
+$ git fetch origin && git rebase origin/main
+Current branch tetherterm/109-resize is up to date.
+EXIT_CODE=0
+
+Final verification after rebase follows.
+
+$ bun test apps/server/test/terminal-resize.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [48.37ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [38.35ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [38.84ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [28.70ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [27.96ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [27.96ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [27.90ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [28.31ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [28.12ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [33.32ms]
+(pass) invalid cols null rejects create and resize before touching PTY [28.17ms]
+(pass) invalid cols array rejects create and resize before touching PTY [28.31ms]
+(pass) invalid cols object rejects create and resize before touching PTY [33.88ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [33.83ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [28.35ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [33.13ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [28.11ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [28.32ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [28.00ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [27.95ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [33.09ms]
+(pass) invalid rows null rejects create and resize before touching PTY [28.11ms]
+(pass) invalid rows array rejects create and resize before touching PTY [27.97ms]
+(pass) invalid rows object rejects create and resize before touching PTY [27.82ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [27.76ms]
+(pass) resize requires both dimensions and never supplies creation defaults [23.12ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [22.81ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [26.51ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [33.28ms]
+(pass) failed native resize does not publish new dimensions [38.74ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+ 30 pass
+ 0 fail
+ 304 expect() calls
+Ran 30 tests across 1 file. [967.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [15.53ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.79ms]
+(pass) spawn failure closes its terminal and propagates the error [1.09ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.50ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.56ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.47ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.37ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.36ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.30ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.46ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.32ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.35ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.36ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.32ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.34ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.30ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.35ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.41ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.44ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.42ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) malformed or incorrect Authorization: basic [0.29ms]
+(pass) malformed or incorrect Authorization: empty [0.11ms]
+(pass) malformed or incorrect Authorization: short [0.10ms]
+(pass) malformed or incorrect Authorization: long [0.08ms]
+(pass) malformed or incorrect Authorization: duplicate [0.07ms]
+(pass) malformed or incorrect Authorization: extra-field [0.08ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.10ms]
+(pass) unapproved Host absent denies a valid bearer [0.22ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.10ms]
+(pass) unapproved Host localhost denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.07ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.08ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.07ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.11ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.07ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.18ms]
+(pass) unapproved present Origin null denies a valid bearer [0.10ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [1.56ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.38ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.80ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.31ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.28ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.31ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [4.76ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.41ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.25ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.24ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.48ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.66ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.65ms]
+(pass) malformed JSON is denied before MCP body parsing [0.41ms]
+(pass) URL-only token credential never authenticates [0.35ms]
+(pass) URL-only access_token credential never authenticates [0.17ms]
+(pass) URL-only bearer credential never authenticates [0.17ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.81ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [1.31ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.35ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.24ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.21ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.16ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.18ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.17ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.15ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.21ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.15ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.17ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.67ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.31ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.19ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.42ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.29ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.54ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.13ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.54ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.70ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.91ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.92ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.19ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.15ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.45ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.25ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.33ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.19ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.15ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.19ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.24ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.90ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.31ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.10ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [1.17ms]
+
+ 172 pass
+ 0 fail
+ 1051 expect() calls
+Ran 172 tests across 3 files. [249.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=44746 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.87ms]
+python3 PID=PGID=SID=TPGID=44753 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.31ms]
+bash GROUP=44755 GRANDCHILD=44758 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.22ms]
+bash GROUP=44759 GRANDCHILD=44762 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.73ms]
+python3 GROUP=44763 GRANDCHILD=44766 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.26ms]
+python3 GROUP=44767 GRANDCHILD=44769 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.84ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [180.88ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [164.54ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [243.20ms]
+TetherTerm MCP listening on http://127.0.0.1:39151/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [52.38ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [3.38ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [227.39ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [241.06ms]
+TetherTerm MCP listening on http://127.0.0.1:45937/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [7.05ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [186.64ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [6.55ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.87ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.81ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [2.63ms]
+(pass) terminating sessions still occupy the four live slots [2.47ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.57ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.64ms]
+(pass) a new server process cannot recognize the previous process's UUID [189.06ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [4.64ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [3.16ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.43ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.26ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.64ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.68ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.66ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.56ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.69ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.73ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.56ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [3.53ms]
+OWN_PID_PS checked=44895,44896,44897,44898,44899,44900,44901,44902,44903,44904,44905,44906,44907,44908,44909,44910,44911,44912,44924,44925,44937,44938,44939,44940,44941,44942,44943,44944,44945,44946,44947,44948,44949,44950,44951
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.60ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.03ms]
+
+apps/server/test/integration/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [36.59ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [49.09ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [43.60ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [34.77ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [28.25ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [28.48ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [33.61ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [33.86ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [44.19ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [33.80ms]
+(pass) invalid cols null rejects create and resize before touching PTY [28.89ms]
+(pass) invalid cols array rejects create and resize before touching PTY [39.39ms]
+(pass) invalid cols object rejects create and resize before touching PTY [39.15ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [34.16ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [39.20ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [33.66ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [33.46ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [28.11ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [28.46ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [28.29ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [28.28ms]
+(pass) invalid rows null rejects create and resize before touching PTY [28.13ms]
+(pass) invalid rows array rejects create and resize before touching PTY [33.06ms]
+(pass) invalid rows object rejects create and resize before touching PTY [27.90ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [28.43ms]
+(pass) resize requires both dimensions and never supplies creation defaults [23.51ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [23.46ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [26.52ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [23.42ms]
+(pass) failed native resize does not publish new dimensions [39.21ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+ 68 pass
+ 0 fail
+ 1495 expect() calls
+Ran 68 tests across 7 files. [2.98s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=43535 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [87.34ms]
+(pass) server startup fails clearly when setsid is absent on PATH [68.61ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [67.90ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [70.34ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [62.16ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [63.48ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [74.79ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [71.30ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [66.42ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [91.52ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [89.29ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [74.08ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [64.37ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [148.33ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [162.78ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [142.99ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [149.11ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [153.36ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [150.75ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [178.36ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [219.71ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [176.81ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [139.74ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [143.11ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [176.80ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [141.90ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [144.53ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [133.22ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [135.31ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [139.20ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [141.99ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [104.65ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.85s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 44 files in 165ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
