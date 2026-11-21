@@ -19,7 +19,12 @@ const compiler = process.env.CXX ?? defaultCompiler();
 const msvc = /(^|[\\/])cl(\.exe)?$/i.test(compiler);
 const suffix = windows || cross ? ".exe" : "";
 
-function compile(sources: string[], name: string, win32 = false): void {
+function compile(
+  sources: string[],
+  name: string,
+  win32 = false,
+  extraFlags: string[] = []
+): void {
   const output = resolve(build, `${name}${suffix}`);
   const args = msvc
     ? [
@@ -43,7 +48,16 @@ function compile(sources: string[], name: string, win32 = false): void {
         "-Wextra",
         "-Werror",
         "-pedantic",
-        "-O2",
+        ...(process.platform === "linux" && fixturesOnly
+          ? [
+              "-O1",
+              "-g",
+              "-fsanitize=address,undefined",
+              "-fno-omit-frame-pointer",
+              "-no-pie",
+            ]
+          : ["-O2"]),
+        ...extraFlags,
         ...(windows || cross
           ? ["-static", "-static-libgcc", "-static-libstdc++"]
           : []),
@@ -80,6 +94,19 @@ compile(
   ["protocol.cpp", "paste.cpp", "tests/clipboard_policy_test.cpp"],
   "clipboard-policy-fixtures"
 );
+if (process.platform === "linux" && fixturesOnly) {
+  compile(
+    [
+      "protocol.cpp",
+      "paste.cpp",
+      "win32_platform.cpp",
+      "tests/win32_resource_test.cpp",
+    ],
+    "win32-resource-fixtures",
+    false,
+    ["-fshort-wchar", `-I${resolve(native, "tests/win32_shim")}`]
+  );
+}
 if (!fixturesOnly) {
   compile(
     ["protocol.cpp", "paste.cpp", "win32_platform.cpp", "win32_main.cpp"],

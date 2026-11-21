@@ -151,6 +151,70 @@ void run() {
     restored(f, 0); check(f.writes == 2, "failed owned write not restored from empty");
     pass("failed owned write restores snapshot from owned-empty", f);
   }
+  {
+    Fake f;
+    f.on_call = [](Fake& f, const std::string& call) {
+      if (call == "clipboard" && f.writes == 1) throw std::bad_alloc();
+    };
+    check(f.insert(target, "write-throw", fixture) == Outcome::unsupported, "owned write exception outcome");
+    restored(f, 0); check(f.writes == 2 && f.empties == 2, "owned-empty exception not restored once");
+    pass("owned write exception restores original sentinel", f);
+  }
+  {
+    Fake f; f.formats.clear(); f.data.clear(); f.clipboard.clear();
+    f.on_call = [](Fake& f, const std::string& call) {
+      if (call == "clipboard" && f.writes == 1) throw std::runtime_error("synthetic write failure");
+    };
+    check(f.insert(target, "empty-write-throw", fixture) == Outcome::unsupported, "empty write exception outcome");
+    check(f.formats.empty() && f.clipboard.empty() && f.opens == 2 && f.empties == 2 && f.inputs == 0,
+          "originally empty clipboard exception cleanup");
+    pass("owned write exception restores originally empty clipboard", f);
+  }
+  for (const bool newer : {false, true}) {
+    Fake f;
+    f.on_call = [newer](Fake& f, const std::string& call) {
+      if (call == "wait") {
+        if (newer) f.copy(u"Synthetic newer copy before timer failure");
+        throw std::runtime_error("synthetic timer failure");
+      }
+    };
+    check(f.insert(target, "timer-throw", fixture) == Outcome::clipboard_restore_failed, "timer exception not reported");
+    check(f.opens == 2 && f.timers.size() == 1 && f.timers[0].second == 700, "timer failure bypassed/retried cleanup");
+    if (newer) check(f.clipboard == u"Synthetic newer copy before timer failure" && f.empties == 1 && f.writes == 1,
+                     "timer exception overwrote newer copy");
+    else restored(f);
+    pass(newer ? "timer exception preserves newer copy" : "700 ms timer exception still restores sentinel", f);
+  }
+  {
+    Fake f;
+    f.on_call = [](Fake& f, const std::string& call) {
+      if (call == "clipboard" && f.writes == 1) throw std::bad_alloc();
+      if (call == "wait") f.copy(u"Synthetic newer copy after write failure");
+    };
+    check(f.insert(target, "write-throw-newer", fixture) == Outcome::unsupported, "write exception newer outcome");
+    check(f.opens == 2 && f.writes == 1 && f.empties == 1 && f.inputs == 0 &&
+          f.clipboard == u"Synthetic newer copy after write failure", "write exception overwrote newer copy");
+    pass("owned write exception preserves newer copy", f);
+  }
+  for (const std::string operation : {"open", "formats", "read", "sequence", "empty", "clipboard", "close"}) {
+    Fake f;
+    f.on_call = [operation](Fake& f, const std::string& call) {
+      if (call == operation && f.opens == 2) throw std::bad_alloc();
+    };
+    check(f.insert(target, "restore-throw", fixture) == Outcome::clipboard_restore_failed,
+          "restoration exception escaped typed outcome");
+    check(f.opens == 2 && f.closes == (operation == "open" ? 1u : 2u), "restoration exception retried/leaked close");
+    pass(("restoration " + operation + " allocation exception / zero retries").c_str(), f);
+  }
+  {
+    Fake f;
+    f.on_call = [](Fake& f, const std::string& call) {
+      if (call == "close" && f.closes == 1) throw std::runtime_error("synthetic close failure");
+    };
+    check(f.insert(target, "close-throw", fixture) == Outcome::clipboard_restore_failed, "ownership close exception outcome");
+    check(f.inputs == 0 && f.opens == 2 && f.closes == 2 && f.clipboard == sentinel, "ownership close exception bypassed cleanup");
+    pass("ownership close exception attempts conditional restore without close retry", f);
+  }
   for (const std::string operation : {"formats", "read", "empty", "clipboard", "sequence", "close"}) {
     Fake f; f.fail_at[operation] = 2;
     check(f.insert(target, "restore-fail", fixture) == Outcome::clipboard_restore_failed, "restore failure not reported");

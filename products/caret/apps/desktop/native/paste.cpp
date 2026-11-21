@@ -50,39 +50,50 @@ struct ClipboardLock {
   PastePlatform& platform;
   bool active;
   explicit ClipboardLock(PastePlatform& p) : platform(p), active(p.open_clipboard()) {}
-  bool close() {
+  bool close() noexcept {
     if (!active) return true;
     active = false;  // A failed close is reported, never retried.
-    return platform.close_clipboard();
+    try { return platform.close_clipboard(); }
+    catch (...) { return false; }
   }
-  ~ClipboardLock() { if (active) platform.close_clipboard(); }
+  ~ClipboardLock() { close(); }
 };
 Outcome restore(PastePlatform& platform, const std::optional<std::u16string>& original,
                 const std::optional<std::u16string>& owned,
                 std::optional<std::uint32_t> sequence, Outcome outcome) {
   // One scheduled wait, exactly 700 ms, including cancellation and failed input.
   // The wait is not shortened by cancellation. No clipboard open retry loop.
-  platform.wait_ms(clipboard_restore_ms);
-  if (!sequence) return Outcome::clipboard_restore_failed;
-  ClipboardLock lock(platform);
-  if (!lock.active) return Outcome::clipboard_restore_failed;
-  const auto current_sequence = platform.clipboard_sequence();
-  if (!current_sequence) return Outcome::clipboard_restore_failed;
-  if (*current_sequence != *sequence)
-    return lock.close() ? outcome : Outcome::clipboard_restore_failed;
-  std::vector<std::uint32_t> formats;
-  if (!platform.clipboard_formats(formats)) return Outcome::clipboard_restore_failed;
-  bool same = false;
-  if (!owned) same = formats.empty();
-  else if (!formats.empty() && plain_text_formats(formats)) {
-    std::u16string current;
-    if (!platform.read_plain_text(current)) return Outcome::clipboard_restore_failed;
-    same = clipboard_payload_hash(current) == clipboard_payload_hash(*owned) && current == *owned;
+  try { platform.wait_ms(clipboard_restore_ms); }
+  catch (...) {
+    // A broken timer is a failure, but must not bypass ownership-checked cleanup.
+    outcome = Outcome::clipboard_restore_failed;
   }
-  if (!same) return lock.close() ? outcome : Outcome::clipboard_restore_failed;
-  if (!platform.empty_clipboard() || (original && !platform.write_unicode(*original)))
+  try {
+    if (!sequence) return Outcome::clipboard_restore_failed;
+    ClipboardLock lock(platform);
+    if (!lock.active) return Outcome::clipboard_restore_failed;
+    const auto current_sequence = platform.clipboard_sequence();
+    if (!current_sequence) return Outcome::clipboard_restore_failed;
+    if (*current_sequence != *sequence)
+      return lock.close() ? outcome : Outcome::clipboard_restore_failed;
+    std::vector<std::uint32_t> formats;
+    if (!platform.clipboard_formats(formats)) return Outcome::clipboard_restore_failed;
+    bool same = false;
+    if (!owned) same = formats.empty();
+    else if (!formats.empty() && plain_text_formats(formats)) {
+      std::u16string current;
+      if (!platform.read_plain_text(current)) return Outcome::clipboard_restore_failed;
+      same = clipboard_payload_hash(current) == clipboard_payload_hash(*owned) && current == *owned;
+    }
+    if (!same) return lock.close() ? outcome : Outcome::clipboard_restore_failed;
+    if (!platform.empty_clipboard() || (original && !platform.write_unicode(*original)))
+      return Outcome::clipboard_restore_failed;
+    return lock.close() ? outcome : Outcome::clipboard_restore_failed;
+  } catch (...) {
+    // Enumeration and text reads allocate in production. Keep their failures
+    // typed as restoration failures, with the clipboard lock released by RAII.
     return Outcome::clipboard_restore_failed;
-  return lock.close() ? outcome : Outcome::clipboard_restore_failed;
+  }
 }
 }  // namespace
 
@@ -111,7 +122,13 @@ Outcome PastePlatform::insert(const Target& expected, const std::string&,
   std::optional<std::uint32_t> sequence;
   bool closed = false;
   try {
-    if (!write_unicode(unicode)) owned.reset();
+    try {
+      if (!write_unicode(unicode)) owned.reset();
+    } catch (...) {
+      // Failed writes (including exceptions) leave the emptied clipboard
+      // unchanged. Capture that owned-empty state under the original lock.
+      owned.reset();
+    }
     sequence = clipboard_sequence();  // Capture under lock before anyone can copy.
     closed = lock.close();
     if (owned && sequence && closed) {
@@ -132,7 +149,7 @@ Outcome PastePlatform::insert(const Target& expected, const std::string&,
       }();
     }
   } catch (...) {
-    // Guard/input exceptions must not bypass conditional restoration either.
+    // Ownership/guard/input exceptions also reach the one restore path.
     closed = lock.close();
   }
   const auto result = restore(*this, original, owned, sequence, outcome);

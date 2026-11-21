@@ -5,6 +5,23 @@
 
 namespace caret {
 namespace {
+// Read handles belong to Windows; only unlock them, never free them.
+struct GlobalMemoryLock {
+  HGLOBAL memory;
+  void* data;
+  explicit GlobalMemoryLock(HGLOBAL handle) : memory(handle), data(GlobalLock(handle)) {}
+  ~GlobalMemoryLock() { if (data) GlobalUnlock(memory); }
+  GlobalMemoryLock(const GlobalMemoryLock&) = delete;
+  GlobalMemoryLock& operator=(const GlobalMemoryLock&) = delete;
+};
+struct OwnedGlobalMemory {
+  HGLOBAL memory;
+  explicit OwnedGlobalMemory(std::size_t bytes) : memory(GlobalAlloc(GMEM_MOVEABLE, bytes)) {}
+  ~OwnedGlobalMemory() { if (memory) GlobalFree(memory); }
+  OwnedGlobalMemory(const OwnedGlobalMemory&) = delete;
+  OwnedGlobalMemory& operator=(const OwnedGlobalMemory&) = delete;
+  void release() { memory = nullptr; }  // SetClipboardData transferred ownership.
+};
 std::string handle(HWND window) {
   std::ostringstream out;
   out << "0x" << std::hex << reinterpret_cast<std::uintptr_t>(window);
@@ -94,13 +111,13 @@ bool Win32Platform::read_plain_text(std::u16string& text) {
   const HANDLE memory = GetClipboardData(CF_UNICODETEXT);
   if (!memory) return false;
   const auto units = GlobalSize(memory) / sizeof(char16_t);
-  const auto* data = static_cast<const char16_t*>(GlobalLock(memory));
+  GlobalMemoryLock lock(memory);
+  const auto* data = static_cast<const char16_t*>(lock.data);
   if (!data) return false;
   std::size_t length = 0;
   while (length < units && data[length] != 0) ++length;
   const bool terminated = length < units;
   if (terminated) text.assign(data, length);
-  GlobalUnlock(memory);
   return terminated;
 }
 bool Win32Platform::empty_clipboard() { return EmptyClipboard() != FALSE; }
@@ -112,15 +129,16 @@ bool Win32Platform::close_clipboard() { return CloseClipboard() != FALSE; }
 bool Win32Platform::write_unicode(const std::u16string& text) {
   static_assert(sizeof(wchar_t) == sizeof(char16_t));
   const auto bytes = (text.size() + 1) * sizeof(char16_t);
-  HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE, bytes);
-  if (!memory) return false;
-  void* destination = GlobalLock(memory);
-  if (!destination) { GlobalFree(memory); return false; }
-  std::memcpy(destination, text.c_str(), bytes);
-  GlobalUnlock(memory);
-  const bool written = SetClipboardData(CF_UNICODETEXT, memory) != nullptr;
-  if (!written) GlobalFree(memory);  // Success transfers ownership to the OS.
-  return written;
+  OwnedGlobalMemory allocation(bytes);
+  if (!allocation.memory) return false;
+  {
+    GlobalMemoryLock lock(allocation.memory);
+    if (!lock.data) return false;
+    std::memcpy(lock.data, text.c_str(), bytes);
+  }  // Unlock before transferring ownership, even on an exception.
+  if (!SetClipboardData(CF_UNICODETEXT, allocation.memory)) return false;
+  allocation.release();
+  return true;
 }
 unsigned Win32Platform::send_input(std::span<const KeyEvent> events) {
   std::vector<INPUT> inputs(events.size());

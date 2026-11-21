@@ -46,8 +46,9 @@ class PastePlatform : public Platform {
   virtual std::uint64_t now_ms() = 0;
   virtual void wait_ms(unsigned duration) = 0;
   // Clipboard operations require an open lock (except sequence). Each failure
-  // is injectable. No method retries. Failed empty/write must leave the current
-  // contents unchanged; empty is separate so a failed write remains owned-empty.
+  // is injectable. No method retries. Failed empty/write (false or exception)
+  // must leave the current contents unchanged; empty is separate so a failed
+  // write remains owned-empty. Close is attempted once, even if it throws.
   virtual bool open_clipboard() = 0;
   virtual bool clipboard_formats(std::vector<std::uint32_t>& formats) = 0;
   virtual bool read_plain_text(std::u16string& text) = 0;
