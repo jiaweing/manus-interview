@@ -26,7 +26,7 @@ test("same-origin signal upgrade", async ({ page }) => {
         ws.onerror = () => reject(new Error("ws error"));
       }),
   );
-  expect(result.url).toBe(`wss://localhost:3443/signal`);
+  expect(result.url).toBe(`wss://localhost:${process.env.PUBLIC_PORT ?? "3443"}/signal`);
   expect(JSON.parse(result.first)).toEqual({ type: "ready" });
   // the bootstrap endpoint accepts nothing: any payload closes the socket
   expect(result.closedOnPayload).toBe(true);

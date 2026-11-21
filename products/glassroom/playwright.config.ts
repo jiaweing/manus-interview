@@ -1,12 +1,15 @@
 import { defineConfig } from "@playwright/test";
 
+const PUBLIC_PORT = process.env.PUBLIC_PORT ?? "3443";
+const BASE_URL = `https://localhost:${PUBLIC_PORT}`;
+
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: false,
   workers: 1,
   reporter: [["list"], ["html", { open: "never", outputFolder: "evidence/playwright-report" }]],
   use: {
-    baseURL: "https://localhost:3443",
+    baseURL: BASE_URL,
     ignoreHTTPSErrors: true,
     trace: "retain-on-failure",
   },
@@ -25,7 +28,7 @@ export default defineConfig({
     ? undefined
     : {
         command: "bun run dev:https",
-        url: "https://localhost:3443",
+        url: BASE_URL,
         ignoreHTTPSErrors: true,
         reuseExistingServer: true,
         timeout: 120_000,
