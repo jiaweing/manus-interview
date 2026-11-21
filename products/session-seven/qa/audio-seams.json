@@ -1,0 +1,106 @@
+{
+  "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
+  "method": "analytical only; no human listening",
+  "endpointsZero": true,
+  "boundaries": [
+    {
+      "frame": 0,
+      "seconds": 0,
+      "sample": 0,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.06500244140625,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.05206298828125,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 180,
+      "seconds": 6,
+      "sample": 288000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.24798583984375,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.208221435546875,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 420,
+      "seconds": 14,
+      "sample": 672000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.25408935546875,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.2452850341796875,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 660,
+      "seconds": 22,
+      "sample": 1056000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.2252197265625,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.1789093017578125,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 900,
+      "seconds": 30,
+      "sample": 1440000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.262359619140625,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.243408203125,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 1140,
+      "seconds": 38,
+      "sample": 1824000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.211761474609375,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.196014404296875,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 1380,
+      "seconds": 46,
+      "sample": 2208000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.317779541015625,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.2734527587890625,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 1620,
+      "seconds": 54,
+      "sample": 2592000,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0.22198486328125,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0.2081756591796875,
+      "clickCount": 0,
+      "pass": true
+    },
+    {
+      "frame": 1799,
+      "seconds": 59.96666666666667,
+      "sample": 2878400,
+      "windowSamplesEachSide": 480,
+      "maxSampleStep": 0,
+      "boundarySampleStep": 0,
+      "maxImpulseResidual": 0,
+      "clickCount": 0,
+      "pass": true
+    }
+  ]
+}

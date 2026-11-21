@@ -1,0 +1,25 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/audio-mix.test.js:
+(pass) locked cue alignment and deterministic mix > exactly six illustrative cues at product-local frame 120, with exact sample starts [163.82ms]
+(pass) locked cue alignment and deterministic mix > mix has exact zero fade endpoints and unchanged stereo sample count [150.43ms]
+(pass) locked cue alignment and deterministic mix > mixing/mastering twice produces identical bytes matching the committed hash [41674.95ms]
+(pass) locked cue alignment and deterministic mix > soft limiter is odd, transparent below knee, bounded and continuous [0.35ms]
+(pass) BS.1770-4 calibration and gates > 997Hz peak -20dBFS stereo is -20.0 LUFS +/-0.1 and -20 dBTP +/-0.1 [475.42ms]
+(pass) BS.1770-4 calibration and gates > EBU case 1: 20s 1000Hz peak -23dBFS stereo is -23 LUFS +/-0.1 [78.74ms]
+(pass) BS.1770-4 calibration and gates > one active channel is 3.0103 LU below the two-channel reference [20.08ms]
+(pass) BS.1770-4 calibration and gates > EBU cases 3/4: quiet and below-absolute-gate tails are excluded [936.01ms]
+(pass) BS.1770-4 calibration and gates > silence, below-absolute gate and incomplete blocks do not become finite loudness [27.54ms]
+(pass) BS.1770-4 calibration and gates > EBU true-peak case 15: 12000Hz phase 0deg [87.04ms]
+(pass) BS.1770-4 calibration and gates > EBU true-peak case 16: 12000Hz phase 45deg [76.05ms]
+(pass) BS.1770-4 calibration and gates > EBU true-peak case 17: 8000Hz phase 60deg [73.31ms]
+(pass) BS.1770-4 calibration and gates > EBU true-peak case 18: 6000Hz phase 67.5deg [89.17ms]
+(pass) BS.1770-4 calibration and gates > EBU true-peak case 19: 12000Hz phase 45deg [74.04ms]
+(pass) frozen film-master routing > film selector returns pinned mastered WAV; legacy source selection remains unchanged [406.18ms]
+(pass) frozen film-master routing > master hash and source provenance mismatches fail closed [388.25ms]
+
+ 16 pass
+ 0 fail
+ 110 expect() calls
+Ran 16 tests across 1 file. [44.75s]
+exitCode=0

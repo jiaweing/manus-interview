@@ -1,0 +1,4 @@
+$ bun apps/video/scripts/master-audio.js
+PASS audio-master durationSeconds=60 sampleRate=48000 channels=2 samplesPerChannel=2880000
+integratedLufs=-13.9820 truePeakDbtp=-1.5107 networkRequests=0
+blipFrames=300,540,780,1020,1260,1500 sha256=a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b

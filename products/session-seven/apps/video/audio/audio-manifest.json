@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
   "source": "js-fallback",
-  "path": "audio/fallback.wav",
-  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "path": "audio/master.wav",
+  "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
   "hashes": {
     "fallback": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
-    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0"
+    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0",
+    "mastered": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b"
   },
   "reason": "no accepted provider cache",
   "networkRequests": 0,
@@ -22,5 +23,50 @@
     "maxAbsDriftFrames": 0.1,
     "toleranceFrames": 1
   },
-  "providerStatus": "No accepted provider cache; offline fallback; provider access not checked here"
+  "providerStatus": "No accepted provider cache; offline fallback; provider access not checked here",
+  "processing": "js-fallback + blips + master",
+  "selectedInput": {
+    "schemaVersion": 1,
+    "source": "js-fallback",
+    "path": "audio/fallback.wav",
+    "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+    "hashes": {
+      "fallback": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+      "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0"
+    },
+    "reason": "no accepted provider cache",
+    "networkRequests": 0,
+    "sampleFormat": {
+      "sampleRate": 48000,
+      "channels": 2,
+      "bitsPerSample": 16,
+      "samplesPerChannel": 2880000,
+      "durationSeconds": 60
+    },
+    "timingReview": {
+      "method": "160-sample stereo energy-flux; strongest-rise 10% foot",
+      "measuredDownbeats": 30,
+      "maxAbsDriftFrames": 0.1,
+      "toleranceFrames": 1
+    },
+    "providerStatus": "No accepted provider cache; offline fallback; provider access not checked here"
+  },
+  "mastered": {
+    "path": "audio/master.wav",
+    "metadataPath": "audio/master.meta.json",
+    "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
+    "sourceSha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+    "source": "js-fallback + blips + master",
+    "blipFrames": [
+      300,
+      540,
+      780,
+      1020,
+      1260,
+      1500
+    ],
+    "blipLabel": "Illustrative action blips, not native product sounds",
+    "integratedLufs": -13.98198533391803,
+    "truePeakDbtp": -1.5106767963089827
+  }
 }

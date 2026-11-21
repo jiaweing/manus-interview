@@ -1,11 +1,12 @@
 {
   "status": "pass",
   "source": "js-fallback",
-  "path": "audio/fallback.wav",
-  "sha256": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
+  "path": "audio/master.wav",
+  "sha256": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b",
   "hashes": {
     "fallback": "81d19d2fd2cff0d4d9e855bd6f7d1f4721ee35e92a8b94a9744fd947536861f6",
-    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0"
+    "decodedPcm": "1f1ea339420ae715f396ff00b880bb3a2d272cd657f1bb71475e16c4acd6c6d0",
+    "mastered": "a161af7bea664c35690b308000f2253fad79f5d0aa6aed2ea3133f391fb92d7b"
   },
   "reason": "no accepted provider cache",
   "networkRequests": 0,
@@ -26,12 +27,12 @@
     "bitsPerSample": 16,
     "samplesPerChannel": 2880000,
     "durationSeconds": 60,
-    "rms": 0.0740625852621091,
-    "peak": 0.5338134765625,
-    "dc": 0.0004408911493089464,
-    "variance": 0.005485072150701641,
+    "rms": 0.17839169422632295,
+    "peak": 0.839019775390625,
+    "dc": 0.000927521440717909,
+    "variance": 0.03182273627291492,
     "clippedFraction": 0,
-    "energyRange": 0.13858543202804866,
+    "energyRange": 0.5056321941956413,
     "timing": {
       "method": "160-sample stereo energy-flux; strongest-rise 10% foot",
       "samplesPerFrame": 1600,
@@ -46,7 +47,7 @@
           "detectedSample": 160,
           "driftSamples": 160,
           "driftFrames": 0.1,
-          "energyFlux": 0.023311025390285074
+          "energyFlux": 0.13637755418458253
         },
         {
           "expectedSample": 96000,
@@ -54,7 +55,7 @@
           "detectedSample": 96000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.027007809275528406
+          "energyFlux": 0.12931239587487653
         },
         {
           "expectedSample": 192000,
@@ -62,7 +63,7 @@
           "detectedSample": 192000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04400526483368594
+          "energyFlux": 0.21856430637999444
         },
         {
           "expectedSample": 288000,
@@ -70,7 +71,7 @@
           "detectedSample": 288000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03905173056555216
+          "energyFlux": 0.20280792708508666
         },
         {
           "expectedSample": 384000,
@@ -78,7 +79,7 @@
           "detectedSample": 384000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03569242387020492
+          "energyFlux": 0.18262588393408807
         },
         {
           "expectedSample": 480000,
@@ -86,7 +87,7 @@
           "detectedSample": 480000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04219070786930388
+          "energyFlux": 0.18284154289576696
         },
         {
           "expectedSample": 576000,
@@ -94,7 +95,7 @@
           "detectedSample": 576000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.043988851511676294
+          "energyFlux": 0.2183389453537529
         },
         {
           "expectedSample": 672000,
@@ -102,7 +103,7 @@
           "detectedSample": 672000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03901338583818868
+          "energyFlux": 0.20292783109034648
         },
         {
           "expectedSample": 768000,
@@ -110,7 +111,7 @@
           "detectedSample": 768000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03567195964278652
+          "energyFlux": 0.18264240503194745
         },
         {
           "expectedSample": 864000,
@@ -118,7 +119,7 @@
           "detectedSample": 864000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04217061560193543
+          "energyFlux": 0.18456848124478714
         },
         {
           "expectedSample": 960000,
@@ -126,7 +127,7 @@
           "detectedSample": 960000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.044001712148019616
+          "energyFlux": 0.2183877731338725
         },
         {
           "expectedSample": 1056000,
@@ -134,7 +135,7 @@
           "detectedSample": 1056000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03902256927831331
+          "energyFlux": 0.2028602976366528
         },
         {
           "expectedSample": 1152000,
@@ -142,7 +143,7 @@
           "detectedSample": 1152000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03565188590291657
+          "energyFlux": 0.1826960265650997
         },
         {
           "expectedSample": 1248000,
@@ -150,7 +151,7 @@
           "detectedSample": 1248000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04223711938539053
+          "energyFlux": 0.1828826072989614
         },
         {
           "expectedSample": 1344000,
@@ -158,7 +159,7 @@
           "detectedSample": 1344000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04398997458774831
+          "energyFlux": 0.21836059278721237
         },
         {
           "expectedSample": 1440000,
@@ -166,7 +167,7 @@
           "detectedSample": 1440000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03901927232509482
+          "energyFlux": 0.20287358443747514
         },
         {
           "expectedSample": 1536000,
@@ -174,7 +175,7 @@
           "detectedSample": 1536000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03565438928053481
+          "energyFlux": 0.1824799615205848
         },
         {
           "expectedSample": 1632000,
@@ -182,7 +183,7 @@
           "detectedSample": 1632000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04217916008783504
+          "energyFlux": 0.1823893670065445
         },
         {
           "expectedSample": 1728000,
@@ -190,7 +191,7 @@
           "detectedSample": 1728000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04398987734457478
+          "energyFlux": 0.21853589956008365
         },
         {
           "expectedSample": 1824000,
@@ -198,7 +199,7 @@
           "detectedSample": 1824000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03901625232247172
+          "energyFlux": 0.2029372705786954
         },
         {
           "expectedSample": 1920000,
@@ -206,7 +207,7 @@
           "detectedSample": 1920000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03564966753910995
+          "energyFlux": 0.18252217761764766
         },
         {
           "expectedSample": 2016000,
@@ -214,7 +215,7 @@
           "detectedSample": 2016000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04220326299255249
+          "energyFlux": 0.18647724988695694
         },
         {
           "expectedSample": 2112000,
@@ -222,7 +223,7 @@
           "detectedSample": 2112000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.04398747240193186
+          "energyFlux": 0.2184850861129235
         },
         {
           "expectedSample": 2208000,
@@ -230,7 +231,7 @@
           "detectedSample": 2208000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03904390220268397
+          "energyFlux": 0.2029142388913897
         },
         {
           "expectedSample": 2304000,
@@ -238,7 +239,7 @@
           "detectedSample": 2304000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.03565671233372997
+          "energyFlux": 0.18246754916908675
         },
         {
           "expectedSample": 2400000,
@@ -246,7 +247,7 @@
           "detectedSample": 2400000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.042238837757031425
+          "energyFlux": 0.1780854600729072
         },
         {
           "expectedSample": 2496000,
@@ -254,7 +255,7 @@
           "detectedSample": 2496000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.043999753239040734
+          "energyFlux": 0.218393003976962
         },
         {
           "expectedSample": 2592000,
@@ -262,7 +263,7 @@
           "detectedSample": 2592000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.02357482367224295
+          "energyFlux": 0.1126520368852653
         },
         {
           "expectedSample": 2688000,
@@ -270,7 +271,7 @@
           "detectedSample": 2688000,
           "driftSamples": 0,
           "driftFrames": 0,
-          "energyFlux": 0.01107485954416916
+          "energyFlux": 0.06696707698574755
         },
         {
           "expectedSample": 2784000,
@@ -278,11 +279,13 @@
           "detectedSample": 2784160,
           "driftSamples": 160,
           "driftFrames": 0.1,
-          "energyFlux": 0.0009640786462114192
+          "energyFlux": 0.005828795309935235
         }
       ],
       "maxAbsDriftFrames": 0.1
-    }
+    },
+    "integratedLufs": -13.98198533391803,
+    "truePeakDbtp": -1.5106767963089827
   },
   "providerMeasurements": null,
   "review": "JS fallback selected: no accepted provider cache; 30 measured downbeats within one video frame. No provider success claimed."

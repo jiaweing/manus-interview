@@ -2,6 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {sha256, validateCandidate} from './cache.js';
+import {BLIP_FRAMES, BLIP_LABEL} from './blips.js';
 
 export const DEFAULT_FALLBACK_DIR = fileURLToPath(new URL('../../audio/', import.meta.url));
 export const DEFAULT_CACHE_DIR = join(DEFAULT_FALLBACK_DIR, 'cache');
@@ -25,6 +26,33 @@ export function hasApprovalRecord(metadata) {
  * unaudited bytes when both frozen choices are unavailable or invalid.
  */
 export async function selectAudio({cacheDir = DEFAULT_CACHE_DIR, fallbackDir = DEFAULT_FALLBACK_DIR, hashes = {}} = {}) {
+  // Master pins opt in to frozen FILM selection. Unpinned callers remain #165
+  // cache/source inspection, so accepted provider fixtures and fallback tests
+  // retain their contract. Never substitute a fresh provider for this film lock.
+  if (hashes.mastered) {
+    const {mastered, ...inputHashes} = hashes;
+    const input = await selectAudio({cacheDir, fallbackDir, hashes: inputHashes});
+    // This film's master is explicitly based on the fallback, not provider output.
+    const fallbackInput = input.source === 'js-fallback' ? input : await selectAudio({
+      cacheDir: join(fallbackDir, 'master-source-no-provider'), fallbackDir,
+      hashes: {fallback: hashes.fallback},
+    });
+    const path = join(fallbackDir, 'master.wav');
+    const bytes = await readFile(path);
+    const meta = JSON.parse(await readFile(join(fallbackDir, 'master.meta.json'), 'utf8'));
+    const hash = sha256(bytes);
+    if (!hashPattern.test(mastered) || hash !== mastered || meta.sha256 !== hash) throw new Error('Frozen master hash mismatch');
+    if (meta.source !== 'js-fallback + blips + master' || meta.sourceSha256 !== fallbackInput.sha256 ||
+        JSON.stringify(meta.blipFrames) !== JSON.stringify(BLIP_FRAMES) || meta.blipLabel !== BLIP_LABEL ||
+        !Number.isFinite(meta.integratedLufs) || meta.integratedLufs < -15 || meta.integratedLufs > -13 ||
+        !Number.isFinite(meta.truePeakDbtp) || meta.truePeakDbtp > -1) throw new Error('Frozen master provenance/levels invalid');
+    const validation = validateCandidate(bytes, {mimeType: 'audio/wav'});
+    if (!validation.accepted) throw new Error(`Frozen master invalid: ${validation.reason}`);
+    return {...fallbackInput, path, sha256: hash, processing: meta.source,
+      hashes: {...fallbackInput.hashes, mastered: hash},
+      measurements: {...validation.measurements, integratedLufs: meta.integratedLufs, truePeakDbtp: meta.truePeakDbtp},
+      blipFrames: meta.blipFrames, blipLabel: meta.blipLabel};
+  }
   let reason = 'no accepted provider cache';
   let providerMeasurements = null;
   let metadata;
@@ -90,4 +118,14 @@ export async function selectAudio({cacheDir = DEFAULT_CACHE_DIR, fallbackDir = D
   return {source: 'js-fallback', path: fallbackPath, sha256: hash,
     hashes: {fallback: hash, decodedPcm: sha256(validation.pcmBytes)}, reason, networkRequests: 0,
     measurements: validation.measurements, providerMeasurements};
+}
+
+/** Hero render entrypoint: loads film pins; filesystem only, no generation. */
+export async function selectFilmAudio({fallbackDir = DEFAULT_FALLBACK_DIR, cacheDir = DEFAULT_CACHE_DIR,
+  manifestPath = join(fallbackDir, 'audio-manifest.json')} = {}) {
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  if (manifest.schemaVersion !== 1 || !hashPattern.test(manifest.hashes?.mastered ?? '') ||
+      manifest.mastered?.sha256 !== manifest.hashes.mastered || manifest.sha256 !== manifest.hashes.mastered ||
+      manifest.path !== 'audio/master.wav') throw new Error('Frozen film master manifest invalid');
+  return selectAudio({fallbackDir, cacheDir, hashes: manifest.hashes});
 }
