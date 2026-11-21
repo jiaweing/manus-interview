@@ -1,6 +1,6 @@
-# Stack: one command, eight independent scaffolds
+# Stack: one command, seven independent scaffolds
 
-The user's directive is the same stack for consistency, run through the Better-T-Stack CLI, with **each product as its own scaffold** (not one mega scaffold, because these are eight unrelated projects), and **Bun** as runtime and package manager.
+The user's directive is the same stack for consistency, run through the Better-T-Stack CLI, with **each product as its own scaffold** (not one mega scaffold, because these are seven unrelated projects), and **Bun** as runtime and package manager.
 
 ```bash
 bun create better-t-stack@latest <name> \
@@ -32,14 +32,13 @@ Using the same scaffold does not mean wiring every part into every product. Unus
 
 | Product | Used in MVP | Hand-added | Dormant |
 | --- | --- | --- | --- |
-| 01 Caret | Next (landing/docs), Hono (STT/LLM proxy) | Electron `apps/desktop`, Win32 helper | native, Polar, wxt |
-| 02 Switch Snatch | Next (client), Hono + Bun WebSockets (server) | Game logic | Polar, wxt, native, Mongo (optional history) |
-| 03 Patchbay | Hono (local API), Next (local UI), Bun CLI | Plugin kernel, bundled plugins | Mongo, auth, Polar, wxt, native |
-| 04 Sidekick | WXT, Hono proxy, Better Auth + Mongo, Next | `entrypoints/sidepanel/` | Polar, native |
-| 05 TetherTerm | Hono (MCP HTTP endpoint) | stdio entrypoint, PTY manager | Next (optional dashboard), auth, Mongo, Polar, native, wxt |
-| 06 Glassroom | Next (crypto client), Hono (signaling) | Handshake and crypto code | evlog must be locked down; auth, Mongo, Polar, native, wxt |
-| 07 Almost | Next (browser-local) | Dexie/IndexedDB data layer | Auth, Mongo, native, Polar until stretch |
-| 08 Session Seven | Next (preview page) | Remotion `apps/video` | Auth, Mongo, Polar, native, wxt |
+| 01 Caret | Next (minimal), Hono (not required by the trimmed PRD) | Electron `apps/desktop`, Win32 helper | Everything else |
+| 02 Flopside | Next (lobby + 2.5D table client), Hono + Bun WebSockets (authoritative poker server) | Poker engine, redaction | Mongo, auth, Polar, wxt, native |
+| 03 Patchbay | Bun CLI and kernel in `apps/server` | Plugin kernel, two plugins, conformance fixture | Next (UI cut), Mongo, auth, Polar, wxt, native |
+| 04 Sidekick | WXT (`apps/extension`), Hono proxy with static token | `entrypoints/sidepanel/` | Next, Mongo, Better Auth, Polar, native |
+| 05 TetherTerm | Hono (Streamable HTTP MCP endpoint), Bun PTY | stdio entrypoint, session manager | Next, auth, Mongo, Polar, native, wxt |
+| 06 Glassroom | Next (crypto + WebRTC client), Hono (encrypted signaling) | Handshake and crypto code | evlog must be locked down; auth, Mongo, Polar, native, wxt |
+| 07 Session Seven | Next (optional preview) | Remotion `apps/video` | Auth, Mongo, Polar, native, wxt |
 
 ## Known conflicts the stack introduces
 

@@ -1,14 +1,14 @@
 # Sidekick — Chrome Agent PRD
 
-Builder: Jia Wei Ng. Delivery: one Manus Studio session, approximately 8–12 focused hours. Release: unpacked extension plus model proxy; stretch goals are excluded from the demo commitment.
+Builder: Jia Wei Ng. Delivery: 5.5 focused hours. Release: unpacked WXT extension and authenticated Hono proxy.
 
 ## 1. Overview (one-paragraph pitch, product name suggestion, target user)
 
-**Sidekick** turns natural-language requests into visible, supervised browser actions beside the current page. It reads relevant content, finds indexed controls, clicks links, scrolls, fills ordinary forms, and manages tabs, then reports evidence rather than simply claiming completion. Target users are researchers and operations workers doing repetitive, low-stakes web tasks. The MVP prioritizes transparency and two reliable real-site workflows over universal autonomy.
+**Sidekick** accepts natural-language tasks in a Chrome Side Panel and performs supervised browser actions. Researchers and operations workers can read, find, scroll, click, fill ordinary forms, and open/switch tabs while seeing intent, execution, and verified results. Delivery covers two real-site tasks, not universal autonomy.
 
 ## 2. Problem statement and the original brief
 
-Chatbots explain websites without doing the work; blind automation acts without revealing intent. Build a native Chrome companion bridging understanding and execution while leaving consequential decisions with the user. Track mandatory outcomes and named technical considerations below; a consideration requires an explicit decision, not necessarily adoption.
+Bridge website understanding and execution without hiding automation. Preserve the brief’s checklist; technical considerations require decisions, not adoption of every technology.
 
 - [ ] **R1:** Deliver a working Chrome extension.
 - [ ] **R2:** Accept natural-language tasks inside the Side Panel.
@@ -34,191 +34,121 @@ Chatbots explain websites without doing the work; blind automation acts without 
 
 ## 3. Goals and non-goals
 
-Ship Wikipedia research with a reference tab, and form preparation on `https://httpbin.org/forms/post`. Support three consecutive browser mutations without manual target selection. Make execution and final evidence judge-visible.
+Demonstrate Wikipedia research with a reference tab and dummy-form preparation at `https://httpbin.org/forms/post`. Complete three consecutive actions without manual target selection; make progress and evidence visible.
 
-Exclude arbitrary-site guarantees, purchases, messaging, account changes, CAPTCHA bypass, authentication, uploads/downloads, background runs, and Web Store approval. Cross-origin frames, closed shadow roots, canvas controls, PDF viewers, and trusted-event-only widgets are unsupported. Never execute arbitrary model-generated JavaScript.
+**Explicitly out of scope:** arbitrary-site guarantees, workflow libraries, checkpoints/history/export, accounts/Better Auth, databases, payments, analytics/dashboards, web pages, extra providers/platforms, screenshot/debugger control, templates, animations, background runs, uploads/downloads, messaging, authentication, CAPTCHA bypass, and Web Store submission. Support ordinary top-frame DOM controls only; no iframe, shadow-root, canvas, or PDF control.
 
 ## 4. Target users and key user stories (with acceptance criteria)
 
-**U1 — Researcher:** “Find Ada Lovelace’s published work, scroll to the relevant section, and open a reference.” Acceptance: read the live article; show a matching passage; execute three actions; link the verified reference tab.
+**U1 — Researcher:** “Find Ada Lovelace’s published work, scroll there, and open a reference.” Acceptance: consecutive actions, live passage evidence, and verified reference tab.
 
-**U2 — Operations worker:** “Fill this example form, then ask before submitting.” Acceptance: three fields visibly match supplied values; submission requires specific confirmation; rejection leaves it unsubmitted.
+**U2 — Operations worker:** “Fill three example fields, then ask before submitting.” Acceptance: dummy values match locally; confirmation names destination and outbound fields; rejection prevents submission.
 
-**U3 — Cautious user:** “Let me inspect and interrupt automation.” Acceptance: each action has preview/status; Stop prevents later dispatches; unsupported or unverifiable outcomes never appear as success.
+**U3 — Cautious user:** “Show your steps and let me stop.” Acceptance: about-to-do, doing, and success/failure per action; Stop prevents later dispatches; uncertain completion is Unverified.
 
 ## 5. Core user flows (step-by-step, include edge cases)
 
-**Research:** (1) Click the toolbar icon to open the panel. (2) Accept disclosure that relevant page text leaves the browser. (3) Enter a task. (4) Capture the active tab, permitted metadata, relevant text, and indexed elements. (5) Review an editable plan and click Run. (6) Preview, execute, observe, and replan one tool at a time. (7) Open a validated reference; request origin access before reading a new site. (8) Show verified passage/tab evidence.
+**Research:** Open panel → disclose provider-bound page text → enter task → observe selected tab/indexed elements → show plan and Run → preview/execute/re-observe one action at a time → open/switch reference → show evidence.
 
-**Form:** (1) Open the public form and provide dummy values. (2) Review planned fields. (3) Fill using native value setters and input/change events. (4) Verify values locally. (5) Separately confirm destination, submit button, and outbound fields. (6) Approve or cancel. (7) Inspect the response; missing receipt means Unverified.
+**Form:** Supply dummy values on httpbin → fill three fields → verify locally → preview submission → approve/reject → verify response if approved; missing evidence means Unverified.
 
-**Recovery:** Stale indexes trigger re-observation, never guessed clicks. Missing origin access pauses behind Allow this site. Closing the target ends the run. Unexpected user tab switching pauses; agent-driven switching is tracked separately. Stop aborts model requests and prevents later actions, but cannot undo a dispatched click. Reopening the panel shows an interrupted checkpoint and requires restart without replaying mutations.
+**Recovery:** Re-observe stale indexes; never guess. Missing origin access pauses for permission. Closed targets or unexpected user tab switches stop execution. Network failure never replays mutations. Panel closure interrupts; reopening starts fresh. Stop cannot undo dispatched actions.
 
 ## 6. Functional requirements (prioritized P0/P1/P2, each with ID)
 
-**P0-F1 — Panel/context:** Prompt, target-tab chip, connectivity, consent, plan, and Run. Capture current-window tab IDs/titles/origins; send only selected tab metadata. Covers R1–R3, R9–R10, R14.
+All retained requirements are P0; no P1/P2 work.
 
-**P0-F2 — Observation:** Inject a packaged isolated-world content script. Return relevant rendered text and indexed links, buttons, inputs, selects, headings, and labels, with visibility, enabled state, bounding boxes, and snapshot identity. Covers R4, R11–R13.
-
-**P0-F3 — Execution:** Bounded observation, tool call, validation, preview, execution, and re-observation. Support read/find, scroll, click, fill/select, and open/switch/close tab. One action per model turn. Covers R5, R15–R16.
-
-**P0-F4 — Control:** Timeline: Planned, Awaiting approval, Running, Observed, Failed, Skipped. Show target outline and cancellable 800-ms preview before mutations. Keep Stop sticky. Covers R6–R7, R17–R19.
-
-**P0-F5 — Safety:** Deterministic checks precede execution. Auto-allow reads, scrolling, validated navigation links, ordinary fills, and requested tab opening/switching. Confirm submits, unknown buttons, cross-origin navigation, and tab closure. Block password/payment/file/hidden-field editing, non-HTTP(S) destinations, and forbidden tasks. Covers R17, R21.
-
-**P0-F6 — Completion:** Fresh observations must satisfy structured predicates. Show Success, Partial, Failed, Stopped, or Unverified with passage, field-check result, destination, or receipt. Covers R8, R20.
-
-**P1-F7 — Stretch:** Same-origin iframe/open-shadow traversal, local templates, sanitized trace export, and consented additional-tab reading.
-
-**P2-F8 — Stretch:** Screenshot grounding and optional debugger-based trusted input behind a separate permission explanation. Neither changes MVP scope.
+- **P0-F1 — Panel/context:** Input, selected-tab label, token configuration, disclosure, plan, Run, timeline, Stop. Observe selected-tab metadata only. Covers R1–R3, R9–R10, R14.
+- **P0-F2 — Observation:** Packaged content script returns rendered text and indexed visible/enabled controls, headings, and labels with snapshot/document identity. Covers R4, R11–R13.
+- **P0-F3 — Tools:** Read/find, scroll, click, fill, open/switch tab; one validated action per turn, then fresh observation. Covers R5, R15–R16.
+- **P0-F4 — Control:** About to do, Doing, Success/Failure, Awaiting confirmation, Stopped. Stop remains available; no timed animation or editable-plan UI. Covers R6–R7, R17–R19.
+- **P0-F5 — Safety:** Confirm consequential submissions or actions with unclear consequences. Routine navigation, reads, scrolling, ordinary fills, and requested tab operations need no confirmation. Block password/payment/file/hidden-field editing, non-HTTP(S) URLs, and model-generated JavaScript. Covers R17, R21.
+- **P0-F6 — Completion:** Fresh evidence establishes Success; otherwise explain Failed, Stopped, or Unverified. Covers R8, R20.
 
 ## 7. Non-functional requirements (latency, reliability, privacy/security, performance, accessibility as relevant)
 
-Targets: panel opens within one second; local observation/action under 500 ms at p95; model turn under eight seconds at p95. Cap runs at 15 model turns and 120 active seconds, excluding approval waits. Navigation/model deadlines: ten/twenty seconds. Stop acknowledgment: under 250 ms; no later tool dispatch.
+Bound runs to 15 turns/120 active seconds, excluding approvals. Model deadline: 20 seconds. Stop aborts requests and invalidates queued actions. Cap snapshots at 20,000 characters/300 controls; mark truncation and allow targeted search. Retry reads once, never uncertain mutations.
 
-Cap snapshots at 20,000 characters and 300 controls; mark truncation and allow targeted text search. Avoid full-DOM serialization and continuous scanning. Retry reads once; never replay uncertain mutations. Require eight successful runs out of ten across designated workflows and zero unapproved submissions in safety tests.
-
-Exclude cookies, storage, passwords, hidden DOM, and existing sensitive field values from model payloads. Verify filled values locally. Keep credentials server-side; disable content telemetry and proxy body logging. Use session-only checkpoints, Clear session, TLS, proxy authentication/rate limits, and bundled executable code. Disclose provider retention.
-
-Panel controls must be keyboard reachable, labelled, and usable at 320-pixel width. Use polite live announcements and text statuses; respect reduced-motion preferences.
+Exclude cookies, storage, passwords, hidden DOM, and existing sensitive values from payloads. Verify fills locally. Keep provider keys server-side; disable body logging. Require HTTPS, token authentication, and request limits. Runs are memory-only. Disclose provider retention before real-data use. Controls must be labelled, keyboard reachable, and usable at 320-pixel width.
 
 ## 8. Proposed architecture and tech stack (include an ASCII or mermaid diagram, key technical decisions with rationale, and rejected alternatives)
 
-Use **WXT** (the "Next-gen Web Extension Framework", wxt.dev; confirmed by the `wxt` addon in the user's Better-T-Stack command) with TypeScript, React, Chrome MV3 APIs, Zod, `bun test`, and a Node/Express HTTPS proxy with OpenAI GPT-4.1 mini tool calling.
-
-**Framework decision (WXT):** WXT is Vite-based and file-system-entrypoint driven, so `entrypoints/background.ts`, `entrypoints/sidepanel/` (React), and `entrypoints/content.ts` replace a hand-written build setup. It generates `manifest.json` from config (permissions: `sidePanel`, `tabs`, `activeTab`, `scripting`, `storage`; `side_panel.default_path`), gives dev-mode HMR and auto-reload of the unpacked extension in a managed Chrome instance, provides typed `browser.*` APIs, and builds a store-ready zip with `wxt zip`. Rejected: hand-rolled Vite + CRXJS (more manual manifest and HMR work), Plasmo (heavier, more opinionated). Risk: WXT's side-panel entrypoint conventions must be checked against the current WXT version in the first hour.
+Use Better-T-Stack with **Bun**, TypeScript, React, **WXT**, Zod, `bun test`, and **Hono**. Choose the scaffold’s **Google Gemini** integration only; fix one model server-side, without a provider picker.
 
 ```text
-User -> React Side Panel [planner, policy, timeline, AbortController]
-             | chrome.scripting / chrome.tabs
-             v
-       Isolated content script <-> live page DOM
-             |
-       chrome.storage.session [checkpoints]
-
-Side Panel -- authenticated HTTPS --> Node proxy --> LLM
-MV3 worker: toolbar setup only; no agent loop
+React Side Panel: loop, policy, timeline, Stop
+    | chrome.scripting / chrome.tabs
+    v
+Packaged content script <-> page DOM
+Side Panel -- HTTPS + static token --> Hono --> Gemini
+MV3 worker: toolbar/panel setup only
 ```
 
-Keep orchestration/fetches in the visible panel because MV3 workers may terminate after 30 seconds idle and lose globals.[2] Native panels have Chrome API access; configure toolbar opening with `setPanelBehavior`. Minimum Chrome 116 accommodates gesture-bound `sidePanel.open` if needed.[1]
+Add WXT’s sidepanel entrypoint and generated MV3 manifest. Orchestrate in the visible panel; no background continuation. Use isolated `chrome.scripting` execution and a DOM-derived, accessibility-inspired indexed snapshot. Reject debugger, screenshot grounding, and native messaging.
 
-Use isolated-world `chrome.scripting` with temporary `activeTab` access.[3] Same-origin navigation retains access; chat submission alone does not grant it. New origins need an explicit permission-request button.[4] Request `tabs` for titles/URLs, not because tab creation requires it.[5]
-
-Choose a DOM-derived accessibility-inspired snapshot, not a complete accessibility tree. Keep indexed element references in the content script; revalidate document/target before action. Reject debugger/CDP for MVP: Accessibility/Input domains are available, but attachment and DevTools-triggered detachment add complexity.[6] Reject Playwright/native messaging because controlling the existing browser needs extra setup. Reject screenshot-only control because DOM grounding is cheaper and verifiable.
-
-Deploy the proxy at reachable HTTPS; keep provider keys in backend environment variables. Paste a short-lived server-issued demo bearer token into settings, stored in `storage.session`. Authenticate independently of CORS, allow the configured extension origin, fix provider/model, and cap spend. Studio produces downloadable `dist/`; judges load it unpacked into their Chrome. Localhost is development-only.
+Permissions: `sidePanel`, `activeTab`, `scripting`, `tabs`, `storage`; store only the demo token in session storage. Configure proxy access and user-granted demo-site access. Validate document/element identity before execution. Hono checks a server-configured static bearer token and request limits independently of CORS. No account service.
 
 ## 9. Data model / protocol / API surface (concrete: message schemas, tool signatures, manifest format, etc. as relevant)
-
-The manifest is generated by WXT from `wxt.config.ts`. Substitute the deployed proxy origin through a WXT/Vite env variable at build time; bundle executable assets.
-
-```json
-{
-  "manifest_version": 3,
-  "name": "Sidekick",
-  "version": "0.1.0",
-  "minimum_chrome_version": "116",
-  "permissions": ["sidePanel", "activeTab", "scripting", "storage", "tabs"],
-  "host_permissions": ["https://PROXY_HOST/*"],
-  "optional_host_permissions": ["https://*/*", "http://*/*"],
-  "background": {"service_worker": "worker.js", "type": "module"},
-  "action": {"default_title": "Open Sidekick"},
-  "side_panel": {"default_path": "sidepanel.html"}
-}
-```
 
 ```typescript
 type Snapshot = {
   snapshotId: string; documentToken: string; tabId: number;
   url: string; title: string; text: string; truncated: boolean;
   elements: {index: number; role: string; name: string;
-    tag: string; inputType?: string; href?: string;
-    visible: boolean; enabled: boolean;
-    rect: {x: number; y: number; width: number; height: number}}[];
+    inputType?: string; href?: string; enabled: boolean}[];
 };
 type Action = {
   runId: string; actionId: string; tabId: number;
   snapshotId: string; documentToken: string;
   tool: string; args: Record<string, unknown>; preview: string;
 };
-type Outcome = {
-  actionId: string; ok: boolean; code: string;
-  evidence?: {url: string; excerpt?: string; predicatePassed?: boolean};
-};
 ```
 
-Tools: `observe(tabId, query?)`, `findText(query)`, `scroll(direction, pixels)`, `click(index)`, `fill(index, value)`, `select(index, value)`, `openTab(url)`, `switchTab(tabId)`, `closeTab(tabId)`, `finish(predicateIds, summary)`. DOM tools require the Action envelope. Clamp scroll distance, validate URLs, reject unknown tools/arguments. Only the extension executes browser tools.
+Tools: `observe(tabId, query?)`, `findText(query)`, `scroll(direction, pixels)`, `click(index)`, `fill(index, value)`, `openTab(url)`, `switchTab(tabId)`, `finish(summary)`. Validate arguments/destinations and clamp scrolling; only the extension executes tools.
 
-Authenticated `POST /v1/agent/turn` accepts `{runId, goal, history, snapshot, tools}`; returns `{assistantMessage, toolCall?}`. Preserve provider tool-call IDs and matching results. States: idle → planning → executing ↔ awaitingApproval → verifying → terminal.
-
-Approvals bind action ID, argument hash, origin, document token, and snapshot ID; expire after 60 seconds and invalidate on relevant target changes. Predicates: `textPresent`, `fieldEquals`, `tabExists`, `receiptPresent`. Store values locally; send redacted verification results. A model summary cannot satisfy a predicate.
+Authenticated `POST /v1/agent/turn`: goal, current-run messages/tool results, snapshot → assistant text and at most one tool call. Preserve matching tool-call IDs. Approvals bind arguments, origin, and document/snapshot identity; target changes invalidate approval. Verify text presence, local field equality, tab destination, or submission response; send redacted check results, not sensitive values.
 
 ## 10. Risks, open questions, and mitigations
 
-**Brittleness:** Synthetic input may fail on custom widgets. Verify values, stop on mismatch, and use ordinary top-frame demo controls. Preflight alternate public pages; never substitute fake execution.
+Sites/controls may change: preflight both tasks, verify each action, and stop on mismatch. Fills can trigger autosave; use dummy data.
 
-**Prompt injection:** Page text is untrusted data, not policy or user authority. Delimit observations; refuse instructions to reveal secrets or redirect tasks. Enforce allowlists, destination checks, sensitive-input blocks, and confirmation outside the LLM. Semantic detection is imperfect; conservative confirmation limits harm without guaranteeing immunity.
+Treat page text as untrusted data: delimit observations, reject instructions changing the user’s goal or requesting secrets, and enforce checks outside the model. These simple rules do not guarantee prompt-injection immunity.
 
-**Completion:** Click success is not task success. Require fresh evidence and honest partial/unverified labels. Filling can trigger site autosave before submission; disclose this and demo with dummy data.
-
-**Deployment:** Resolve HTTPS, extension origin, tokens, and unpacked loading first. Expire demo tokens after the event and enforce quotas against leakage.
-
-Questions for Jia Wei: Is unpacked installation acceptable? Can you supply reachable HTTPS hosting and provider budget? Which two tasks matter most? Defaults: unpacked, capped proxy, Wikipedia research, httpbin dummy-form preparation. Store approval is off the critical path.
+Questions: Is unpacked installation acceptable? Can reachable HTTPS hosting and a Gemini budget/token be supplied? Defaults: unpacked and the two named tasks. Resolve hosting first.
 
 ## 11. Success metrics and a demo script (exactly how a judge would verify each requirement in under 5 minutes)
 
-Preflight outside the timer: load `dist/`, configure token, verify sites/proxy, and open Wikipedia’s search page. Prepare a public page with malicious visible instructions; it supplements real-site execution.
+Preflight installation, token, proxy, and sites outside the timer. Pass: both acceptances, safety tests, and under-five-minute completion; no analytics implementation.
 
-1. **0:00–0:25:** Open toolbar panel; show manifest/source summary: MV3, sidePanel, permissions, indexed content script, no debugger. Show masked token/key-free bundle. Verify R1, R9–R13, R16.
-2. **0:25–1:45:** Enter “Find Ada Lovelace, scroll to her published work, read the passage, and open a reference in a new tab.” Inspect plan, tab chip, snapshot, and timeline; run. Verify live search/fill or navigation, click, scroll, reading, tab creation, and fresh evidence. Verify R2–R7, R12, R14–R15, R18.
-3. **1:45–3:10:** On httpbin, request three dummy fields filled, then submission. Check fields and destination/data confirmation; reject. No submission occurs. Request scrolling; press Stop during preview; no subsequent action executes. Verify R5, R17, R19.
-4. **3:10–4:05:** Request an absent passage; expect unsuccessful/unverified status. Compare successful research evidence with the live page. Verify R8, R20.
-5. **4:05–4:45:** Request harmless lookup on the injection page despite instructions to disclose secrets and submit elsewhere. Inspect sanitized observation/policy refusal; no secret or unrelated action occurs. Verify R21. Use remaining seconds to show cancelled form and terminal statuses.
-
-Record action count, runtime, approvals, outcomes, and local redacted evidence. Pass: both workflows meet acceptance, safety checks block unintended mutations, and judging finishes within five minutes.
+1. **0:00–0:30:** Open panel; show manifest, indexed snapshot, proxy configuration, debugger exclusion. Covers R1, R9–R13, R16.
+2. **0:30–2:15:** Enter Wikipedia task. Show plan/statuses; read, click/scroll, open/switch reference; compare evidence with live page. Covers R2–R8, R14–R15, R18, R20.
+3. **2:15–3:45:** Fill three httpbin fields; inspect confirmation and reject submission. Start scrolling; press Stop before dispatch; verify no later action. Covers R5, R17, R19.
+4. **3:45–4:45:** Show passing tests for stale indexes, malformed tools, network failure, Stop, denied submission, and injected page instructions. Uncertain outcomes must not be Success. Covers R8, R20–R21 without a third task.
 
 ## 12. Milestones and build plan (ordered tasks that can be handed to a coding agent, with MVP cut line)
 
-1. **Hour 0–1:** Scaffold with the Better-T-Stack scaffold (WXT React template, `apps/extension`) plus the proxy; configure the generated manifest in `wxt.config.ts`; document unpacked install; prove authenticated HTTPS model connectivity.
-2. **Hour 1–3:** Build observation/index map and typed executor; manually test live read, click, scroll, fill, and tabs before LLM integration.
-3. **Hour 3–5:** Implement single-tool loop, budgets/deadlines, fresh snapshots, navigation recovery, and session checkpoints.
-4. **Hour 5–7:** Add plan approval, preview, safety, Stop, timeline, verification. Unit-test stale targets, denied approval, cancellation, malformed calls.
-5. **Hour 7–10:** Rehearse sites; test injection/network failure; tune extraction; finish keyboard accessibility/onboarding.
-6. **Hour 10–12:** Package artifacts/README; perform ten workflow runs; record timed demo.
+1. **0–0.75 hours:** Scaffold once; add panel/manifest; prove authenticated HTTPS connectivity.
+2. **0.75–2 hours:** Build snapshots/index validation; manually exercise tools.
+3. **2–3.25 hours:** Connect single-tool loop, budgets, re-observation, failure handling.
+4. **3.25–4.5 hours:** Add timeline, confirmation, Stop, evidence checks, safety/error tests.
+5. **4.5–5.5 hours:** Rehearse both tasks twice, check keyboard controls, package installation instructions, time demo.
 
-**MVP cut line:** All P0 requirements, two real-site flows, stop/confirmation tests, and reachable proxy pass. Cut polish before safety/verification. Attempt P1 only afterward; no P2 during the committed session.
+**MVP cut line:** All P0s, both real-site tasks, passing safety/error tests, and reachable proxy. Report unmet acceptance honestly if time slips; never replace safety/evidence with claimed success. No post-cut-line features.
 
 ## 13. Promo-video hooks (3-5 shots/moments from this product that would look great in a promo video)
 
-- Plain English becomes a concise plan beside the live browser.
-- Search fills, an article opens, and the page scrolls as the timeline advances.
-- A reference tab opens; the result quotes the observed passage.
-- Three fields fill, then “Approve submission” proves the agent knows when to stop.
-- Stop turns the next pending action into Skipped; the browser stays still.
-
-**References**
-
-[1]: https://developer.chrome.com/docs/extensions/reference/api/sidePanel "Chrome Side Panel API"
-[2]: https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle "Extension service worker lifecycle"
-[3]: https://developer.chrome.com/docs/extensions/reference/api/scripting "Chrome Scripting API"
-[4]: https://developer.chrome.com/docs/extensions/develop/concepts/activeTab "Chrome activeTab permission"
-[5]: https://developer.chrome.com/docs/extensions/reference/api/tabs "Chrome Tabs API"
-[6]: https://developer.chrome.com/docs/extensions/reference/api/debugger "Chrome Debugger API"
+- Plain English becomes visible steps beside the article.
+- A reference tab opens with verified passage evidence.
+- Fields fill; submission waits for confirmation; Stop prevents the next action.
 
 ## Appendix A: UI Design System (user directive)
 
-Style: clean, minimal, black and white, shadcn/ui look and feel, with **no borders**.
+Clean, minimal, black-and-white shadcn/ui style, **no borders**. Black `#000000`, white `#FFFFFF`, neutral greys only; states use labels, weight, fill inversion.
 
-- **Palette:** pure black `#000000`, white `#FFFFFF`, and a neutral grey ramp (`#FAFAFA`, `#F4F4F5`, `#E4E4E7`, `#71717A`, `#18181B`) for surfaces and text. No accent colour. State is conveyed by weight, fill inversion (black on white or white on black), icons and labels, never by hue alone.
-- **No borders:** no `border`, `outline` or divider lines on cards, inputs, buttons, tables or panels. Separate elements with whitespace, a subtle surface tone (`#F4F4F5` on white) and, when elevation is needed, a very soft shadow. Focus rings are replaced by a 2px offset shadow-ring in `#18181B`, which keeps keyboard focus visible and accessible.
-- **Components:** shadcn/ui primitives (Button, Input, Card, Dialog, Tabs, Sheet, Tooltip, Badge, Switch, Toast) with Tailwind and Radix, restyled with border-width 0. Radius 10px (`--radius: 0.625rem`).
-- **Typography:** Geist or Inter, 14px base, tight tracking on headings, two weights (400 and 600).
-- **Motion:** 150ms ease-out opacity and translate only. Respect `prefers-reduced-motion`.
-- **Dark mode:** an inverted pair (`#000` background, `#FAFAFA` text) with the same no-border rule.
-- **Accessibility:** contrast of at least 7:1 for body text. Because borders are absent, every interactive control needs a distinct filled surface or a visible hover and focus state. Verify this in the demo checklist.
+No borders, outlines, or dividers. Separate controls with whitespace/grey surfaces; use an offset shadow-ring for keyboard focus. Required shadcn/ui/Radix primitives use Tailwind, border-width 0, radius 10px. Geist or Inter, 14px, weights 400/600. Body-text contrast at least 7:1; distinct interactive surfaces. No animation or dark-mode build work.
 
 ## Appendix B: Scaffold (Better-T-Stack, one scaffold per project)
 
-Run `scaffold/04-sidekick.sh` from a workspace folder outside this repo. It creates `sidekick/` as its own independent project and git repo, using the same Better-T-Stack command as every other product (user directive: same stack for consistency, never one mega scaffold). The command was validated against the live CLI on 2026-11-21. **Where this appendix conflicts with Section 8, this appendix wins.** Bun is the package manager and runtime throughout: `bun install`, `bun run`, `bunx`, and `bun test` for unit tests (replacing any npm, pnpm, npx or Vitest reference elsewhere in this PRD; Playwright stays for browser end-to-end tests).
+Run `scaffold/04-sidekick.sh` outside this repo for independent `sidekick/`: **one scaffold per project**, never a mega scaffold. Preserve Better-T-Stack + Bun: `bun install`, `bun run`, `bunx`, `bun test`.
 
-`apps/extension` is the WXT project (React template). The scaffold ships popup, background and content entrypoints only, so `entrypoints/sidepanel/` and the `sidePanel` permission are hand-added in hour one. `apps/server` Hono replaces the PRD's Express proxy, with Better Auth + MongoDB issuing per-user tokens so the proxy is not an open relay. `apps/web` is landing/sign-in/options. The generated `ai` example uses Vercel AI SDK with Google Gemini; the PRD named OpenAI GPT-4.1 mini, so the provider is an open decision (a one-line swap). Dormant: Polar, native-uniwind.
+Use `apps/extension` WXT/React; add `entrypoints/sidepanel/` and permission. Use `apps/server` Hono with static-token authentication and Gemini only. Remove unused Better Auth, MongoDB, web pages, Polar, and native-uniwind wiring from the runnable MVP. This appendix governs stack conflicts.

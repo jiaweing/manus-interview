@@ -6,8 +6,8 @@ This thread ended at scoping and discovery. No product code has been written. Ev
 
 | Item | Location |
 | --- | --- |
-| Eight PRDs, each ~2,300-2,700 words with 13 sections, requirement checklist, demo script, milestones, promo-video hooks | `docs/prds/` |
-| UI design system appendix (clean, minimal, black and white, shadcn style, **no borders**) | Appendix A of PRDs 01-07 |
+| Seven PRDs, each ~1,600-1,700 words, trimmed to the main brief requirements only (13 sections, requirement checklist, demo script, short milestones) | `docs/prds/` |
+| UI design system appendix (clean, minimal, black and white, shadcn style, **no borders**) | Appendix A of PRDs 01-06 |
 | Scaffold appendix (same stack, one scaffold each, Bun) | Appendix B of every PRD |
 | Per-product scaffold scripts | `scaffold/` |
 | Stack findings and what was verified | `docs/stack.md` |
@@ -18,17 +18,18 @@ This thread ended at scoping and discovery. No product code has been written. Ev
 | # | Problem | Product | One line |
 | --- | --- | --- | --- |
 | 01 | Desktop voice input | Caret | Global shortcut, speak, polished text inserted at the caret on Windows |
-| 02 | Multiplayer web game | Switch Snatch | 60-second two-player heist with shared flippable vault exits |
+| 02 | Multiplayer web game | Flopside | Simple 2.5D multiplayer Texas Hold'em, play money, hidden cards enforced by the server |
 | 03 | Local harness with plugins | Patchbay | Zero-built-in-tools kernel; plugins add everything (inspired by Pi, DeepSeek Harness, Herdr) |
 | 04 | Chrome side-panel agent | Sidekick | Transparent, supervised browser agent built with WXT |
 | 05 | MCP terminal controller | TetherTerm | Persistent PTY sessions for agents with cursor-based reads and screen snapshots |
 | 06 | P2P encrypted chat | Glassroom | Two-person E2EE chat with a live "what the server sees" inspector |
-| 07 | Bring your own idea | Almost | A private museum of unfinished creative projects with one small restart each |
-| 08 | Promo video | Session Seven | ~80s, pure-JavaScript (Remotion), cartoon 2.5D flat style, music via OpenRouter |
+| 07 | Promo video | Session Seven | 60s hero film for the six products, pure-JavaScript (Remotion), cartoon 2.5D flat style, music via OpenRouter |
 
 ## Decisions the user made in this thread
 
+0. Scope: only the main brief requirements, nothing else (all PRDs trimmed accordingly). Problem 7 (bring your own idea) is parked in `docs/parked/` and not built, scaffolded, or shown in the video.
 1. UI: clean minimal black and white, shadcn style, no borders.
+2. Game: simple 2.5D poker (replaced the original heist concept).
 2. Promo video: purely JavaScript code, authored with Claude Opus 5.5, cartoon 2.5D flat art style, music generated through OpenRouter.
 3. Problem 3: take inspiration from Pi, DeepSeek Harness and Herdr plugin systems.
 4. Chrome extension: WXT.
@@ -44,13 +45,13 @@ This thread ended at scoping and discovery. No product code has been written. Ev
 | Dependency install and boot of a scaffold | Not verified here | Run the scripts on the build machine |
 | Per-PRD open questions | Listed in Section 10 of each PRD (for example Caret: cloud STT acceptable? Windows demo machine; TetherTerm: run in Studio or on the laptop; Sidekick: model provider and budget) | Answers |
 | Gemini vs OpenAI | The scaffold's `ai` example defaults to Google Gemini; PRDs named OpenAI models | Pick one provider per product |
-| Problem 7 ideation | "Almost" was chosen by an eight-candidate scored ideation log inside PRD 07. The brief requires ideation to be visible in Manus Studio | Confirm the pick |
+| Poker twist | The user floated "poker with a twist". Plain Hold'em is in scope; no twist was invented | Decide the twist, or keep plain |
 
 ## Build natively in Manus, or from scratch?
 
 Manus can build web apps, games and slides itself, and it has a video-generation workflow, so this is a real choice. Recommendation, by product:
 
-- **Switch Snatch (game):** keep the networking, game rules and server hand-written (the brief requires a truly networked product). Manus's web-development hosting is worth a short spike for deployment only, because the PRD's biggest unknown is whether published WebSocket ingress works. Note that Manus web projects come with their own managed project template, which conflicts with the Better-T-Stack scaffold; if the spike says yes, deploy the built app rather than regenerate it.
+- **Flopside (game):** keep the networking, game rules and server hand-written (the brief requires a truly networked product). Manus's web-development hosting is worth a short spike for deployment only, because the PRD's biggest unknown is whether published WebSocket ingress works. Note that Manus web projects come with their own managed project template, which conflicts with the Better-T-Stack scaffold; if the spike says yes, deploy the built app rather than regenerate it.
 - **Session Seven (video):** keep the pure-JavaScript Remotion path the user specified. Manus's own video tooling is FFmpeg or generative-model based, which breaks the "purely JavaScript code" constraint. Use Manus only as the authoring environment.
 - **Everything else:** from scratch with the scaffold, since none of them are standard web apps (desktop app, extension, MCP server, E2EE client, plugin kernel).
 
@@ -59,4 +60,4 @@ Manus can build web apps, games and slides itself, and it has a video-generation
 1. Answer the open questions above.
 2. Run `scaffold/NN-*.sh` for the products being built (each in its own folder and repo), with a TTY.
 3. For each product, follow the PRD's Section 12 milestones, MVP cut line first.
-4. Build order suggestion: 05 TetherTerm and 03 Patchbay (their output is also useful tooling), then 04, 06, 01, 02, 07, and 08 last because it needs footage-equivalent mock-ups of the others.
+4. Build order suggestion: 05 TetherTerm and 03 Patchbay (their output is also useful tooling), then 04, 06, 01, 02, and 07 last because it needs faithful mock-ups of the others. Work is tracked in GitHub Issues and the project board (see README).
