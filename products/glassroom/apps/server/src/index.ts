@@ -72,7 +72,7 @@ function sameOrigin(req: Request): boolean {
     return false;
   }
   try {
-    return new URL(origin).host === host;
+    return origin === `https://${host}`;
   } catch {
     return false;
   }

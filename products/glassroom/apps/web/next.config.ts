@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   compress: false,
   poweredByHeader: false,
   reactStrictMode: true,
+  // Privacy: never log request URLs (they can carry room ids).
+  logging: { incomingRequests: false },
 };
 
 export default nextConfig;

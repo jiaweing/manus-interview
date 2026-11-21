@@ -44,7 +44,7 @@ const env = {
 
 const nextPort = process.env.NEXT_INTERNAL_PORT ?? "3001";
 const next = Bun.spawn(
-  ["bun", "run", "next", mode, "--port", nextPort, "--hostname", "127.0.0.1"],
+  ["bun", "--bun", "run", "next", mode, "--port", nextPort, "--hostname", "127.0.0.1"],
   {
   cwd: join(root, "apps/web"),
   env,

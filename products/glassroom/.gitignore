@@ -63,3 +63,6 @@ temp
 test-results/
 evidence/playwright-report/
 .env
+
+.env*
+!.env.example
