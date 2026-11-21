@@ -1,0 +1,7 @@
+Command: bun run --cwd apps/web check-types
+Working directory: products/glassroom
+PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
+
+$ tsc --noEmit
+
+Exit code: 0

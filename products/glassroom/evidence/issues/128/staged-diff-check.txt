@@ -1,0 +1,5 @@
+Command: git diff --cached --check
+Working directory: repository root
+
+
+Exit code: 0

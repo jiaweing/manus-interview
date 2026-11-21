@@ -1,0 +1,6 @@
+Command: git diff --check
+Working directory: products/glassroom
+PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
+
+
+Exit code: 0

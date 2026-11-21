@@ -1,0 +1,11 @@
+Command: bunx tsc --ignoreConfig --noEmit --target esnext --module esnext --moduleResolution bundler --lib esnext,dom --strict --types bun --skipLibCheck tests/unit/signaling-crypto.test.ts
+Working directory: products/glassroom
+PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
+
+tests/unit/signaling-crypto.test.ts(114,4): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(expected: KeyAlgorithm): void', gave the following error.
+    Object literal may only specify known properties, and 'length' does not exist in type 'KeyAlgorithm'.
+  Overload 2 of 2, '(expected: NoInfer<KeyAlgorithm>): void', gave the following error.
+    Object literal may only specify known properties, and 'length' does not exist in type 'KeyAlgorithm'.
+
+Exit code: 2
