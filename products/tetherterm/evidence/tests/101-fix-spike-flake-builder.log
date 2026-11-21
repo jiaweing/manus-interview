@@ -1,0 +1,2533 @@
+PTY spike deterministic process observation
+BASE=c9aba59e8c9aa236d4c66283945a17b6ff190d9b
+BUN=1.4.5
+Install: bun install --frozen-lockfile exited 0 (1371 packages installed).
+
+COMMAND: bunx ultracite fix apps/server/test/pty-spike.test.ts
+apps/server/test/pty-spike.test.ts:54:9 lint/style/useDestructuring ━━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    52 │ 		return (await procFields(pid))[0] === "Z";
+    53 │ 	} catch (error) {
+  > 54 │ 		const code = (error as NodeJS.ErrnoException).code;
+       │ 		      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    55 │ 		// After signaling, Linux can reap the process between opening and reading
+    56 │ 		// stat. ESRCH proves disappearance here, but must fail live-state checks.
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+Checked 1 file in 124ms. Fixed 1 file.
+Found 1 error.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+EXIT: 1
+
+=== Verification 2026-11-21T15:50:16Z, HEAD=c9aba59e8c9aa236d4c66283945a17b6ff190d9b ===
+
+TARGETED RUN 1/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76111 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.09ms]
+python3 PID=PGID=SID=TPGID=76118 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.22ms]
+bash GROUP=76120 GRANDCHILD=76123 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.85ms]
+bash GROUP=76124 GRANDCHILD=76128 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.10ms]
+python3 GROUP=76129 GRANDCHILD=76131 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.19ms]
+python3 GROUP=76132 GRANDCHILD=76134 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.67ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [337.00ms]
+EXIT: 0
+
+TARGETED RUN 2/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76152 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.84ms]
+python3 PID=PGID=SID=TPGID=76159 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.94ms]
+bash GROUP=76161 GRANDCHILD=76164 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.02ms]
+bash GROUP=76165 GRANDCHILD=76169 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.21ms]
+python3 GROUP=76170 GRANDCHILD=76172 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.59ms]
+python3 GROUP=76173 GRANDCHILD=76175 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.67ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [298.00ms]
+EXIT: 0
+
+TARGETED RUN 3/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76193 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.29ms]
+python3 PID=PGID=SID=TPGID=76200 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.30ms]
+bash GROUP=76202 GRANDCHILD=76205 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.65ms]
+bash GROUP=76206 GRANDCHILD=76210 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.69ms]
+python3 GROUP=76211 GRANDCHILD=76213 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [74.12ms]
+python3 GROUP=76214 GRANDCHILD=76216 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.78ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [332.00ms]
+EXIT: 0
+
+TARGETED RUN 4/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76234 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [79.93ms]
+python3 PID=PGID=SID=TPGID=76241 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [67.62ms]
+bash GROUP=76243 GRANDCHILD=76246 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [45.11ms]
+bash GROUP=76247 GRANDCHILD=76250 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.84ms]
+python3 GROUP=76251 GRANDCHILD=76254 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.47ms]
+python3 GROUP=76255 GRANDCHILD=76257 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.26ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [357.00ms]
+EXIT: 0
+
+TARGETED RUN 5/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76274 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.87ms]
+python3 PID=PGID=SID=TPGID=76281 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.27ms]
+bash GROUP=76283 GRANDCHILD=76286 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.17ms]
+bash GROUP=76287 GRANDCHILD=76291 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.06ms]
+python3 GROUP=76292 GRANDCHILD=76294 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.81ms]
+python3 GROUP=76295 GRANDCHILD=76297 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.37ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [331.00ms]
+EXIT: 0
+
+TARGETED RUN 6/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76314 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.99ms]
+python3 PID=PGID=SID=TPGID=76321 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.70ms]
+bash GROUP=76323 GRANDCHILD=76326 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.20ms]
+bash GROUP=76327 GRANDCHILD=76331 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.53ms]
+python3 GROUP=76332 GRANDCHILD=76334 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.17ms]
+python3 GROUP=76335 GRANDCHILD=76337 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.50ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [357.00ms]
+EXIT: 0
+
+TARGETED RUN 7/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76355 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.97ms]
+python3 PID=PGID=SID=TPGID=76362 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.88ms]
+bash GROUP=76364 GRANDCHILD=76367 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.79ms]
+bash GROUP=76368 GRANDCHILD=76372 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.97ms]
+python3 GROUP=76373 GRANDCHILD=76375 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.21ms]
+python3 GROUP=76376 GRANDCHILD=76378 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.05ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [325.00ms]
+EXIT: 0
+
+TARGETED RUN 8/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76396 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.81ms]
+python3 PID=PGID=SID=TPGID=76403 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.30ms]
+bash GROUP=76405 GRANDCHILD=76408 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.29ms]
+bash GROUP=76409 GRANDCHILD=76413 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.25ms]
+python3 GROUP=76414 GRANDCHILD=76416 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.67ms]
+python3 GROUP=76417 GRANDCHILD=76419 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.14ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [326.00ms]
+EXIT: 0
+
+TARGETED RUN 9/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76436 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.41ms]
+python3 PID=PGID=SID=TPGID=76443 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.45ms]
+bash GROUP=76445 GRANDCHILD=76448 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.74ms]
+bash GROUP=76449 GRANDCHILD=76453 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.83ms]
+python3 GROUP=76454 GRANDCHILD=76456 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.90ms]
+python3 GROUP=76457 GRANDCHILD=76459 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.80ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [309.00ms]
+EXIT: 0
+
+TARGETED RUN 10/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76476 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.14ms]
+python3 PID=PGID=SID=TPGID=76483 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.50ms]
+bash GROUP=76485 GRANDCHILD=76488 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.86ms]
+bash GROUP=76489 GRANDCHILD=76493 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.34ms]
+python3 GROUP=76494 GRANDCHILD=76496 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.01ms]
+python3 GROUP=76497 GRANDCHILD=76499 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.99ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [324.00ms]
+EXIT: 0
+
+TARGETED RUN 11/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76517 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.99ms]
+python3 PID=PGID=SID=TPGID=76524 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.42ms]
+bash GROUP=76526 GRANDCHILD=76529 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.70ms]
+bash GROUP=76530 GRANDCHILD=76534 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.41ms]
+python3 GROUP=76535 GRANDCHILD=76537 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.75ms]
+python3 GROUP=76538 GRANDCHILD=76540 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.93ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [321.00ms]
+EXIT: 0
+
+TARGETED RUN 12/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76557 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.96ms]
+python3 PID=PGID=SID=TPGID=76564 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.58ms]
+bash GROUP=76566 GRANDCHILD=76569 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.29ms]
+bash GROUP=76570 GRANDCHILD=76574 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.54ms]
+python3 GROUP=76575 GRANDCHILD=76577 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.37ms]
+python3 GROUP=76578 GRANDCHILD=76580 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.91ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [312.00ms]
+EXIT: 0
+
+TARGETED RUN 13/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76598 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.80ms]
+python3 PID=PGID=SID=TPGID=76605 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.08ms]
+bash GROUP=76607 GRANDCHILD=76610 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.18ms]
+bash GROUP=76611 GRANDCHILD=76615 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.18ms]
+python3 GROUP=76616 GRANDCHILD=76618 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.06ms]
+python3 GROUP=76619 GRANDCHILD=76621 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.10ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [311.00ms]
+EXIT: 0
+
+TARGETED RUN 14/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76639 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.47ms]
+python3 PID=PGID=SID=TPGID=76646 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.37ms]
+bash GROUP=76649 GRANDCHILD=76652 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.64ms]
+bash GROUP=76653 GRANDCHILD=76656 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.47ms]
+python3 GROUP=76658 GRANDCHILD=76660 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.89ms]
+python3 GROUP=76661 GRANDCHILD=76663 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.52ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [330.00ms]
+EXIT: 0
+
+TARGETED RUN 15/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76681 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.69ms]
+python3 PID=PGID=SID=TPGID=76688 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.25ms]
+bash GROUP=76690 GRANDCHILD=76693 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.95ms]
+bash GROUP=76694 GRANDCHILD=76698 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.63ms]
+python3 GROUP=76699 GRANDCHILD=76701 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.09ms]
+python3 GROUP=76702 GRANDCHILD=76704 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.02ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [299.00ms]
+EXIT: 0
+
+TARGETED RUN 16/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76721 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.47ms]
+python3 PID=PGID=SID=TPGID=76728 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.72ms]
+bash GROUP=76730 GRANDCHILD=76733 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.94ms]
+bash GROUP=76734 GRANDCHILD=76737 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.14ms]
+python3 GROUP=76739 GRANDCHILD=76741 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.69ms]
+python3 GROUP=76742 GRANDCHILD=76744 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [45.33ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [313.00ms]
+EXIT: 0
+
+TARGETED RUN 17/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76762 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.94ms]
+python3 PID=PGID=SID=TPGID=76769 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.24ms]
+bash GROUP=76771 GRANDCHILD=76774 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.16ms]
+bash GROUP=76775 GRANDCHILD=76779 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.66ms]
+python3 GROUP=76780 GRANDCHILD=76782 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.50ms]
+python3 GROUP=76783 GRANDCHILD=76785 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.68ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [310.00ms]
+EXIT: 0
+
+TARGETED RUN 18/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76802 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.37ms]
+python3 PID=PGID=SID=TPGID=76809 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.84ms]
+bash GROUP=76811 GRANDCHILD=76814 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.83ms]
+bash GROUP=76815 GRANDCHILD=76818 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.87ms]
+python3 GROUP=76820 GRANDCHILD=76822 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.77ms]
+python3 GROUP=76823 GRANDCHILD=76825 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.16ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [282.00ms]
+EXIT: 0
+
+TARGETED RUN 19/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76843 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.17ms]
+python3 PID=PGID=SID=TPGID=76850 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.97ms]
+bash GROUP=76852 GRANDCHILD=76855 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.90ms]
+bash GROUP=76856 GRANDCHILD=76860 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [34.13ms]
+python3 GROUP=76861 GRANDCHILD=76863 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.06ms]
+python3 GROUP=76864 GRANDCHILD=76866 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.91ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [294.00ms]
+EXIT: 0
+
+TARGETED RUN 20/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76883 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.29ms]
+python3 PID=PGID=SID=TPGID=76890 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.74ms]
+bash GROUP=76892 GRANDCHILD=76895 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.06ms]
+bash GROUP=76896 GRANDCHILD=76900 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.60ms]
+python3 GROUP=76901 GRANDCHILD=76903 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.84ms]
+python3 GROUP=76904 GRANDCHILD=76906 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.11ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [291.00ms]
+EXIT: 0
+
+TARGETED RUN 21/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76924 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.52ms]
+python3 PID=PGID=SID=TPGID=76935 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.06ms]
+bash GROUP=76939 GRANDCHILD=76942 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.76ms]
+bash GROUP=76943 GRANDCHILD=76946 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.69ms]
+python3 GROUP=76948 GRANDCHILD=76950 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.11ms]
+python3 GROUP=76951 GRANDCHILD=76953 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.28ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [266.00ms]
+EXIT: 0
+
+TARGETED RUN 22/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=76971 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.12ms]
+python3 PID=PGID=SID=TPGID=76978 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.01ms]
+bash GROUP=76980 GRANDCHILD=76983 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.79ms]
+bash GROUP=76984 GRANDCHILD=76987 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.27ms]
+python3 GROUP=76989 GRANDCHILD=76991 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.18ms]
+python3 GROUP=76992 GRANDCHILD=76994 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.53ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [287.00ms]
+EXIT: 0
+
+TARGETED RUN 23/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77012 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.70ms]
+python3 PID=PGID=SID=TPGID=77019 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [54.37ms]
+bash GROUP=77021 GRANDCHILD=77024 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.74ms]
+bash GROUP=77025 GRANDCHILD=77028 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.78ms]
+python3 GROUP=77030 GRANDCHILD=77032 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [54.01ms]
+python3 GROUP=77033 GRANDCHILD=77035 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.61ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [289.00ms]
+EXIT: 0
+
+TARGETED RUN 24/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77053 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.87ms]
+python3 PID=PGID=SID=TPGID=77060 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.99ms]
+bash GROUP=77062 GRANDCHILD=77065 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.50ms]
+bash GROUP=77066 GRANDCHILD=77069 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [41.95ms]
+python3 GROUP=77070 GRANDCHILD=77073 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.72ms]
+python3 GROUP=77074 GRANDCHILD=77076 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.77ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [309.00ms]
+EXIT: 0
+
+TARGETED RUN 25/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77094 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.76ms]
+python3 PID=PGID=SID=TPGID=77101 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [61.96ms]
+bash GROUP=77103 GRANDCHILD=77106 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.67ms]
+bash GROUP=77107 GRANDCHILD=77111 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.68ms]
+python3 GROUP=77112 GRANDCHILD=77114 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.66ms]
+python3 GROUP=77115 GRANDCHILD=77117 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [54.67ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [298.00ms]
+EXIT: 0
+
+TARGETED RUN 26/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77135 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.08ms]
+python3 PID=PGID=SID=TPGID=77142 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.89ms]
+bash GROUP=77144 GRANDCHILD=77147 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.22ms]
+bash GROUP=77148 GRANDCHILD=77151 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.58ms]
+python3 GROUP=77153 GRANDCHILD=77155 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.47ms]
+python3 GROUP=77156 GRANDCHILD=77158 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.46ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [297.00ms]
+EXIT: 0
+
+TARGETED RUN 27/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77175 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.35ms]
+python3 PID=PGID=SID=TPGID=77182 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.11ms]
+bash GROUP=77184 GRANDCHILD=77187 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.57ms]
+bash GROUP=77188 GRANDCHILD=77191 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.62ms]
+python3 GROUP=77193 GRANDCHILD=77195 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.90ms]
+python3 GROUP=77196 GRANDCHILD=77198 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.80ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [301.00ms]
+EXIT: 0
+
+TARGETED RUN 28/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77216 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.97ms]
+python3 PID=PGID=SID=TPGID=77223 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.92ms]
+bash GROUP=77225 GRANDCHILD=77228 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [32.59ms]
+bash GROUP=77229 GRANDCHILD=77232 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.79ms]
+python3 GROUP=77234 GRANDCHILD=77236 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.61ms]
+python3 GROUP=77237 GRANDCHILD=77239 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.53ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [289.00ms]
+EXIT: 0
+
+TARGETED RUN 29/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77257 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.86ms]
+python3 PID=PGID=SID=TPGID=77264 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.48ms]
+bash GROUP=77266 GRANDCHILD=77269 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.77ms]
+bash GROUP=77271 GRANDCHILD=77275 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.37ms]
+python3 GROUP=77276 GRANDCHILD=77278 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.42ms]
+python3 GROUP=77279 GRANDCHILD=77281 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.47ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [278.00ms]
+EXIT: 0
+
+TARGETED RUN 30/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77299 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.46ms]
+python3 PID=PGID=SID=TPGID=77306 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.01ms]
+bash GROUP=77308 GRANDCHILD=77311 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.91ms]
+bash GROUP=77312 GRANDCHILD=77315 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.78ms]
+python3 GROUP=77317 GRANDCHILD=77319 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [62.61ms]
+python3 GROUP=77320 GRANDCHILD=77322 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.73ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [313.00ms]
+EXIT: 0
+
+LOOP SUMMARY: 30/30 passed; 180/180 tests; exit 0
+
+COMMAND: bun run check
+$ ultracite check
+Checked 54 files in 161ms. No fixes applied.
+EXIT: 0
+
+COMMAND: bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT: 0
+
+COMMAND: bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [13.76ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.41ms]
+(pass) spawn failure closes its terminal and propagates the error [1.30ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [14.18ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.69ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.45ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.36ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.34ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.27ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.46ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.34ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.39ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.36ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.34ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.40ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) malformed or incorrect Authorization: basic [0.45ms]
+(pass) malformed or incorrect Authorization: empty [0.17ms]
+(pass) malformed or incorrect Authorization: short [0.12ms]
+(pass) malformed or incorrect Authorization: long [0.09ms]
+(pass) malformed or incorrect Authorization: duplicate [0.07ms]
+(pass) malformed or incorrect Authorization: extra-field [0.08ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.10ms]
+(pass) unapproved Host absent denies a valid bearer [0.26ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.12ms]
+(pass) unapproved Host localhost denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.08ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.08ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.10ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.16ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.30ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.41ms]
+(pass) unapproved present Origin null denies a valid bearer [0.30ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.22ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.16ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.11ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [1.74ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.25ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.71ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.24ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.23ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.27ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.21ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.17ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.14ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.23ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [4.16ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.63ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.53ms]
+(pass) malformed JSON is denied before MCP body parsing [0.36ms]
+(pass) URL-only token credential never authenticates [0.27ms]
+(pass) URL-only access_token credential never authenticates [0.13ms]
+(pass) URL-only bearer credential never authenticates [0.11ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.59ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.87ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.28ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.15ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.12ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.07ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.12ms]
+
+apps/server/test/unit/session-retention.test.ts:
+(pass) five-minute automatic expiry cancels timers and closes only the expired record [1.29ms]
+(pass) clock-driven lazy expiry also clears a not-yet-fired native timer [0.08ms]
+(pass) sixteen-record cap evicts oldest exited records, never running or terminating [0.47ms]
+(pass) cap ordering follows actual exits, not creation order, including equal-clock ties [0.45ms]
+(pass) retention ignores non-exited or unregistered records and never disposes a live record [0.22ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.92ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.30ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.21ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.52ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.22ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.27ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [2.31ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.90ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.39ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.36ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.31ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.48ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.14ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.51ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.73ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.64ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.65ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.31ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.26ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.25ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.57ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.23ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.05ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.72ms]
+
+ 177 pass
+ 0 fail
+ 1119 expect() calls
+Ran 177 tests across 4 files. [279.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=77420 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.61ms]
+python3 PID=PGID=SID=TPGID=77427 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.19ms]
+bash GROUP=77429 GRANDCHILD=77432 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.59ms]
+bash GROUP=77433 GRANDCHILD=77437 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.23ms]
+python3 GROUP=77438 GRANDCHILD=77440 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.63ms]
+python3 GROUP=77441 GRANDCHILD=77443 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [54.68ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [231.96ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [167.20ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [190.49ms]
+TetherTerm MCP listening on http://127.0.0.1:43953/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [31.45ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.96ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [227.78ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [249.54ms]
+TetherTerm MCP listening on http://127.0.0.1:35909/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [10.46ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [175.60ms]
+
+apps/server/test/integration/requirements-policy.test.ts:
+R17 non-allowlisted executable: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > non-allowlisted executable: POLICY_DENIED, zero spawns/processes/records, capacity preserved [22.61ms]
+R17 non-allowlisted command name: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > non-allowlisted command name: POLICY_DENIED, zero spawns/processes/records, capacity preserved [10.97ms]
+R17 relative executable that exists inside root: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > relative executable that exists inside root: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.14ms]
+R17 traversal outside root: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > traversal outside root: POLICY_DENIED, zero spawns/processes/records, capacity preserved [10.52ms]
+R17 symlink escape: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > symlink escape: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.65ms]
+R17 prefix-sharing sibling: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > prefix-sharing sibling: POLICY_DENIED, zero spawns/processes/records, capacity preserved [11.54ms]
+R17 symlink plus traversal: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > symlink plus traversal: POLICY_DENIED, zero spawns/processes/records, capacity preserved [17.33ms]
+R17 relative cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > relative cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [15.41ms]
+R17 missing cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > missing cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [15.97ms]
+R17 file cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > file cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.23ms]
+R17 credential-bearing executable: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > credential-bearing executable: POLICY_DENIED, zero spawns/processes/records, capacity preserved [9.93ms]
+R17 credential-bearing cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > credential-bearing cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [10.73ms]
+(pass) R17 allowed command and root cwd reach a real PTY with canonical metadata [9.06ms]
+(pass) R17 allowed command and nested cwd reach a real PTY with canonical metadata [11.04ms]
+(pass) R17 allowed command and inside-link cwd reach a real PTY with canonical metadata [8.19ms]
+R17 env CUSTOM_BEARER: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured CUSTOM_BEARER; diagnostics stay clean [13.18ms]
+R17 env LANG: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured LANG; diagnostics stay clean [12.77ms]
+R17 env TERM: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured TERM; diagnostics stay clean [10.75ms]
+(pass) R17 credentials deliberately echoed by a PTY stay in memory, never application logs [7.51ms]
+(pass) R17 actual http.ts startup failure excludes credentials from all application/addon output [205.49ms]
+(pass) R17 actual stdio.ts startup failure excludes credentials from all application/addon output [200.38ms]
+(pass) R17 actual stdio launcher protocol and startup diagnostics exclude credentials/addon settings [287.11ms]
+(pass) R17 actual authenticated HTTP launcher and SDK discovery exclude credentials from diagnostics [306.77ms]
+R17 OWN_PID_PS checked=59 live_processes=0
+
+apps/server/test/integration/session-exit-retention.test.ts:
+(pass) five-minute automatic expiry cancels timers and closes only the expired record [1.26ms]
+(pass) clock-driven lazy expiry also clears a not-yet-fired native timer [0.16ms]
+(pass) sixteen-record cap evicts oldest exited records, never running or terminating [0.54ms]
+(pass) cap ordering follows actual exits, not creation order, including equal-clock ties [0.61ms]
+(pass) retention ignores non-exited or unregistered records and never disposes a live record [0.25ms]
+(pass) quiet real PTY stays running across silence and retention-clock advances [10.53ms]
+(pass) real PTY exit 7 preserves final output and summary until exact five-minute expiry [5.76ms]
+(pass) real PTY signal exit records actual SIGTERM rather than guessing from silence [3.92ms]
+(pass) actual exit frees a live slot while the exited ID remains visible [14.56ms]
+(pass) real registry cap evicts oldest exited IDs on create while preserving running IDs [48.06ms]
+OWN_PID_PS checked=77693,77694,77695,77696,77697,77698,77699,77700,77701,77702,77703,77704,77705,77706,77707,77708,77709,77710,77711,77712,77713,77714,77715,77716,77717
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [4.93ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [5.11ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [3.41ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.34ms]
+(pass) terminating sessions still occupy the four live slots [3.13ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.64ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [3.20ms]
+(pass) a new server process cannot recognize the previous process's UUID [162.41ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [6.73ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [3.46ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.50ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.86ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [1.29ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [3.54ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [2.29ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [1.38ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.99ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.93ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.85ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.74ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [6.32ms]
+OWN_PID_PS checked=77719,77720,77721,77722,77723,77724,77725,77726,77727,77728,77729,77730,77731,77732,77733,77734,77735,77736,77748,77749,77761,77762,77763,77764,77765,77766,77767,77768,77769,77770,77771,77772,77773,77774,77775
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.91ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [14.96ms]
+
+apps/server/test/integration/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [54.39ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [47.48ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [39.46ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [30.93ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [32.66ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [36.91ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [39.60ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [28.94ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [34.43ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [39.30ms]
+(pass) invalid cols null rejects create and resize before touching PTY [34.14ms]
+(pass) invalid cols array rejects create and resize before touching PTY [31.17ms]
+(pass) invalid cols object rejects create and resize before touching PTY [41.32ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [39.39ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [35.97ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [36.51ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [35.47ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [40.50ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [39.66ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [40.03ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [39.60ms]
+(pass) invalid rows null rejects create and resize before touching PTY [36.95ms]
+(pass) invalid rows array rejects create and resize before touching PTY [42.92ms]
+(pass) invalid rows object rejects create and resize before touching PTY [33.80ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [36.64ms]
+(pass) resize requires both dimensions and never supplies creation defaults [24.48ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [31.28ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [30.36ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [30.75ms]
+(pass) failed native resize does not publish new dimensions [29.05ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+apps/server/test/integration/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [1.93ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.14ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.07ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.36ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [1.37ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [13.19ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.37ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.19ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.29ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.26ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.08ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.33ms]
+(pass) fake PTY: sessions have independent queues [0.23ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [19.43ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [64.60ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [14.99ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [13.11ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [13.21ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [14.06ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [283.83ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [278.36ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.33ms]
+WRITE_OWN_PID_PS checked=77809,77810,77811,77813,77815,77818,77819,77820,77821
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 130 pass
+ 0 fail
+ 2486 expect() calls
+Ran 130 tests across 10 files. [5.23s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=42937 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [93.42ms]
+(pass) server startup fails clearly when setsid is absent on PATH [76.20ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [83.81ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [77.58ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [82.46ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [73.66ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [79.23ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [90.88ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [78.75ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [90.49ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [76.86ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [81.67ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [94.75ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [167.66ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [159.67ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [149.61ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [184.45ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [159.95ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [185.04ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [151.74ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [188.66ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [188.59ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [165.67ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [174.52ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [152.38ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [163.59ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [158.45ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [182.83ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [194.55ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [163.85ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [137.77ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [90.22ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [4.22s]
+EXIT: 0
+
+FINAL SUMMARY: loop 30/30; check=0; check-types=0; test=0
+COMMAND: git diff --check
+EXIT: 0
+
+COMMAND: git commit (requested author and message)
+[tetherterm/fix-spike-flake f686095] test(tetherterm): make pty spike process observation deterministic
+ 2 files changed, 1337 insertions(+), 38 deletions(-)
+ create mode 100644 products/tetherterm/evidence/tests/101-fix-spike-flake-builder.log
+EXIT: 0
+
+COMMAND: git fetch origin && git rebase origin/main
+From https://github.com/jiaweing/manus-interview
+   c9aba59..4b4722f  main       -> origin/main
+Rebasing (1/1)[KSuccessfully rebased and updated refs/heads/tetherterm/fix-spike-flake.
+EXIT: 0
+## [32mtetherterm/fix-spike-flake[m
+
+COMMAND: bun install --frozen-lockfile (post-rebase)
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.82s]
+EXIT: 0
+
+=== Verification 2026-11-21T15:51:25Z, HEAD=1b6d5a0e643af52d2a41168fbe9f40fa78bed6f9 ===
+
+TARGETED RUN 1/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78499 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.90ms]
+python3 PID=PGID=SID=TPGID=78506 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [53.77ms]
+bash GROUP=78509 GRANDCHILD=78512 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.01ms]
+bash GROUP=78517 GRANDCHILD=78520 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.28ms]
+python3 GROUP=78522 GRANDCHILD=78524 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.37ms]
+python3 GROUP=78525 GRANDCHILD=78527 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.39ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [314.00ms]
+EXIT: 0
+
+TARGETED RUN 2/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78545 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.50ms]
+python3 PID=PGID=SID=TPGID=78552 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.31ms]
+bash GROUP=78554 GRANDCHILD=78557 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.71ms]
+bash GROUP=78558 GRANDCHILD=78562 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.40ms]
+python3 GROUP=78563 GRANDCHILD=78565 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.87ms]
+python3 GROUP=78566 GRANDCHILD=78568 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.80ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [324.00ms]
+EXIT: 0
+
+TARGETED RUN 3/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78586 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.58ms]
+python3 PID=PGID=SID=TPGID=78593 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.21ms]
+bash GROUP=78595 GRANDCHILD=78598 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.59ms]
+bash GROUP=78599 GRANDCHILD=78603 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.41ms]
+python3 GROUP=78604 GRANDCHILD=78606 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.20ms]
+python3 GROUP=78607 GRANDCHILD=78609 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.29ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [331.00ms]
+EXIT: 0
+
+TARGETED RUN 4/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78627 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.65ms]
+python3 PID=PGID=SID=TPGID=78634 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.06ms]
+bash GROUP=78636 GRANDCHILD=78639 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.70ms]
+bash GROUP=78640 GRANDCHILD=78644 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.36ms]
+python3 GROUP=78645 GRANDCHILD=78647 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.96ms]
+python3 GROUP=78648 GRANDCHILD=78650 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.52ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [310.00ms]
+EXIT: 0
+
+TARGETED RUN 5/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78667 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.80ms]
+python3 PID=PGID=SID=TPGID=78674 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.59ms]
+bash GROUP=78676 GRANDCHILD=78679 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [45.24ms]
+bash GROUP=78680 GRANDCHILD=78684 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [43.93ms]
+python3 GROUP=78685 GRANDCHILD=78687 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [64.22ms]
+python3 GROUP=78688 GRANDCHILD=78690 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [65.32ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [358.00ms]
+EXIT: 0
+
+TARGETED RUN 6/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78707 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.88ms]
+python3 PID=PGID=SID=TPGID=78714 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.73ms]
+bash GROUP=78716 GRANDCHILD=78719 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.47ms]
+bash GROUP=78720 GRANDCHILD=78723 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.66ms]
+python3 GROUP=78725 GRANDCHILD=78727 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.23ms]
+python3 GROUP=78728 GRANDCHILD=78730 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.27ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [338.00ms]
+EXIT: 0
+
+TARGETED RUN 7/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78748 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.81ms]
+python3 PID=PGID=SID=TPGID=78755 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.25ms]
+bash GROUP=78757 GRANDCHILD=78760 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.64ms]
+bash GROUP=78761 GRANDCHILD=78765 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.07ms]
+python3 GROUP=78766 GRANDCHILD=78768 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.64ms]
+python3 GROUP=78769 GRANDCHILD=78771 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.79ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [323.00ms]
+EXIT: 0
+
+TARGETED RUN 8/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78789 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.84ms]
+python3 PID=PGID=SID=TPGID=78796 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.32ms]
+bash GROUP=78798 GRANDCHILD=78801 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.73ms]
+bash GROUP=78802 GRANDCHILD=78806 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.83ms]
+python3 GROUP=78807 GRANDCHILD=78809 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.24ms]
+python3 GROUP=78810 GRANDCHILD=78812 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.29ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [321.00ms]
+EXIT: 0
+
+TARGETED RUN 9/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78829 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.11ms]
+python3 PID=PGID=SID=TPGID=78836 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.02ms]
+bash GROUP=78838 GRANDCHILD=78841 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.08ms]
+bash GROUP=78842 GRANDCHILD=78846 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.98ms]
+python3 GROUP=78847 GRANDCHILD=78849 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.23ms]
+python3 GROUP=78850 GRANDCHILD=78852 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.71ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [310.00ms]
+EXIT: 0
+
+TARGETED RUN 10/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78870 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.22ms]
+python3 PID=PGID=SID=TPGID=78877 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.67ms]
+bash GROUP=78879 GRANDCHILD=78882 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.24ms]
+bash GROUP=78883 GRANDCHILD=78887 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.57ms]
+python3 GROUP=78888 GRANDCHILD=78890 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.20ms]
+python3 GROUP=78891 GRANDCHILD=78893 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.15ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [319.00ms]
+EXIT: 0
+
+TARGETED RUN 11/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78911 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [58.20ms]
+python3 PID=PGID=SID=TPGID=78918 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.62ms]
+bash GROUP=78920 GRANDCHILD=78923 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.97ms]
+bash GROUP=78924 GRANDCHILD=78927 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.91ms]
+python3 GROUP=78929 GRANDCHILD=78931 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.66ms]
+python3 GROUP=78932 GRANDCHILD=78934 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [54.20ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [317.00ms]
+EXIT: 0
+
+TARGETED RUN 12/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78951 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.42ms]
+python3 PID=PGID=SID=TPGID=78958 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.07ms]
+bash GROUP=78960 GRANDCHILD=78963 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.03ms]
+bash GROUP=78964 GRANDCHILD=78968 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [41.91ms]
+python3 GROUP=78969 GRANDCHILD=78971 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.09ms]
+python3 GROUP=78972 GRANDCHILD=78974 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.38ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [323.00ms]
+EXIT: 0
+
+TARGETED RUN 13/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=78991 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.14ms]
+python3 PID=PGID=SID=TPGID=78998 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.23ms]
+bash GROUP=79000 GRANDCHILD=79003 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.56ms]
+bash GROUP=79004 GRANDCHILD=79008 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.86ms]
+python3 GROUP=79009 GRANDCHILD=79011 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.00ms]
+python3 GROUP=79012 GRANDCHILD=79014 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.14ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [313.00ms]
+EXIT: 0
+
+TARGETED RUN 14/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79031 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.01ms]
+python3 PID=PGID=SID=TPGID=79038 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.99ms]
+bash GROUP=79040 GRANDCHILD=79043 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.81ms]
+bash GROUP=79044 GRANDCHILD=79048 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.23ms]
+python3 GROUP=79049 GRANDCHILD=79051 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.00ms]
+python3 GROUP=79052 GRANDCHILD=79054 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [45.13ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [317.00ms]
+EXIT: 0
+
+TARGETED RUN 15/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79072 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.99ms]
+python3 PID=PGID=SID=TPGID=79079 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.26ms]
+bash GROUP=79081 GRANDCHILD=79084 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.57ms]
+bash GROUP=79085 GRANDCHILD=79089 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.12ms]
+python3 GROUP=79090 GRANDCHILD=79092 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.99ms]
+python3 GROUP=79093 GRANDCHILD=79095 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.11ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [323.00ms]
+EXIT: 0
+
+TARGETED RUN 16/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79112 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.37ms]
+python3 PID=PGID=SID=TPGID=79119 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.45ms]
+bash GROUP=79121 GRANDCHILD=79124 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.60ms]
+bash GROUP=79125 GRANDCHILD=79129 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.31ms]
+python3 GROUP=79130 GRANDCHILD=79132 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.50ms]
+python3 GROUP=79133 GRANDCHILD=79135 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.23ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [341.00ms]
+EXIT: 0
+
+TARGETED RUN 17/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79153 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.87ms]
+python3 PID=PGID=SID=TPGID=79160 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [51.99ms]
+bash GROUP=79162 GRANDCHILD=79165 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.67ms]
+bash GROUP=79166 GRANDCHILD=79170 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.26ms]
+python3 GROUP=79171 GRANDCHILD=79173 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.84ms]
+python3 GROUP=79174 GRANDCHILD=79176 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.68ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [333.00ms]
+EXIT: 0
+
+TARGETED RUN 18/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79193 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [78.93ms]
+python3 PID=PGID=SID=TPGID=79200 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.52ms]
+bash GROUP=79202 GRANDCHILD=79205 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.69ms]
+bash GROUP=79206 GRANDCHILD=79210 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [60.62ms]
+python3 GROUP=79211 GRANDCHILD=79213 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [67.95ms]
+python3 GROUP=79215 GRANDCHILD=79217 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [65.03ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [393.00ms]
+EXIT: 0
+
+TARGETED RUN 19/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79235 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [67.04ms]
+python3 PID=PGID=SID=TPGID=79242 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [53.67ms]
+bash GROUP=79244 GRANDCHILD=79247 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.75ms]
+bash GROUP=79248 GRANDCHILD=79252 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.02ms]
+python3 GROUP=79253 GRANDCHILD=79255 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.07ms]
+python3 GROUP=79256 GRANDCHILD=79258 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.84ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [338.00ms]
+EXIT: 0
+
+TARGETED RUN 20/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79275 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.89ms]
+python3 PID=PGID=SID=TPGID=79282 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.18ms]
+bash GROUP=79284 GRANDCHILD=79287 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.21ms]
+bash GROUP=79288 GRANDCHILD=79292 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.54ms]
+python3 GROUP=79293 GRANDCHILD=79295 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.78ms]
+python3 GROUP=79296 GRANDCHILD=79298 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.22ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [335.00ms]
+EXIT: 0
+
+TARGETED RUN 21/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79316 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [67.80ms]
+python3 PID=PGID=SID=TPGID=79323 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.26ms]
+bash GROUP=79325 GRANDCHILD=79328 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.15ms]
+bash GROUP=79329 GRANDCHILD=79333 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.87ms]
+python3 GROUP=79334 GRANDCHILD=79336 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.98ms]
+python3 GROUP=79337 GRANDCHILD=79339 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.48ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [328.00ms]
+EXIT: 0
+
+TARGETED RUN 22/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79357 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.73ms]
+python3 PID=PGID=SID=TPGID=79364 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.60ms]
+bash GROUP=79366 GRANDCHILD=79369 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.50ms]
+bash GROUP=79370 GRANDCHILD=79373 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.49ms]
+python3 GROUP=79375 GRANDCHILD=79377 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.78ms]
+python3 GROUP=79378 GRANDCHILD=79380 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [55.69ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [324.00ms]
+EXIT: 0
+
+TARGETED RUN 23/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79398 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [57.37ms]
+python3 PID=PGID=SID=TPGID=79405 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.48ms]
+bash GROUP=79407 GRANDCHILD=79410 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.93ms]
+bash GROUP=79411 GRANDCHILD=79415 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [43.09ms]
+python3 GROUP=79416 GRANDCHILD=79418 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [53.54ms]
+python3 GROUP=79419 GRANDCHILD=79422 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.87ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [324.00ms]
+EXIT: 0
+
+TARGETED RUN 24/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79445 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [67.02ms]
+python3 PID=PGID=SID=TPGID=79452 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.37ms]
+bash GROUP=79454 GRANDCHILD=79457 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.74ms]
+bash GROUP=79458 GRANDCHILD=79461 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.05ms]
+python3 GROUP=79463 GRANDCHILD=79465 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [54.26ms]
+python3 GROUP=79466 GRANDCHILD=79468 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.49ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [325.00ms]
+EXIT: 0
+
+TARGETED RUN 25/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79486 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.85ms]
+python3 PID=PGID=SID=TPGID=79493 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.41ms]
+bash GROUP=79495 GRANDCHILD=79498 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.71ms]
+bash GROUP=79499 GRANDCHILD=79503 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.08ms]
+python3 GROUP=79504 GRANDCHILD=79506 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.40ms]
+python3 GROUP=79507 GRANDCHILD=79509 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.42ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [312.00ms]
+EXIT: 0
+
+TARGETED RUN 26/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79527 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.27ms]
+python3 PID=PGID=SID=TPGID=79534 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.72ms]
+bash GROUP=79536 GRANDCHILD=79539 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.78ms]
+bash GROUP=79540 GRANDCHILD=79544 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [44.30ms]
+python3 GROUP=79545 GRANDCHILD=79547 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.79ms]
+python3 GROUP=79548 GRANDCHILD=79550 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [54.18ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [323.00ms]
+EXIT: 0
+
+TARGETED RUN 27/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79568 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [66.52ms]
+python3 PID=PGID=SID=TPGID=79575 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.45ms]
+bash GROUP=79577 GRANDCHILD=79580 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.53ms]
+bash GROUP=79581 GRANDCHILD=79584 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.12ms]
+python3 GROUP=79586 GRANDCHILD=79588 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [54.69ms]
+python3 GROUP=79589 GRANDCHILD=79591 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [63.44ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [337.00ms]
+EXIT: 0
+
+TARGETED RUN 28/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79609 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [65.29ms]
+python3 PID=PGID=SID=TPGID=79616 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.99ms]
+bash GROUP=79618 GRANDCHILD=79621 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.85ms]
+bash GROUP=79622 GRANDCHILD=79625 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.30ms]
+python3 GROUP=79627 GRANDCHILD=79629 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [63.14ms]
+python3 GROUP=79630 GRANDCHILD=79632 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [64.21ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [344.00ms]
+EXIT: 0
+
+TARGETED RUN 29/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79650 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [68.74ms]
+python3 PID=PGID=SID=TPGID=79657 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.28ms]
+bash GROUP=79659 GRANDCHILD=79662 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [44.14ms]
+bash GROUP=79663 GRANDCHILD=79667 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.28ms]
+python3 GROUP=79668 GRANDCHILD=79670 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [56.11ms]
+python3 GROUP=79671 GRANDCHILD=79673 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.93ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [327.00ms]
+EXIT: 0
+
+TARGETED RUN 30/30
+
+COMMAND: bun test apps/server/test/pty-spike.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79691 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [56.82ms]
+python3 PID=PGID=SID=TPGID=79698 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.38ms]
+bash GROUP=79700 GRANDCHILD=79703 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.73ms]
+bash GROUP=79704 GRANDCHILD=79707 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.52ms]
+python3 GROUP=79709 GRANDCHILD=79711 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.73ms]
+python3 GROUP=79712 GRANDCHILD=79714 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [52.84ms]
+
+ 6 pass
+ 0 fail
+ 94 expect() calls
+Ran 6 tests across 1 file. [304.00ms]
+EXIT: 0
+
+LOOP SUMMARY: 30/30 passed; 180/180 tests; exit 0
+
+COMMAND: bun run check
+$ ultracite check
+Checked 54 files in 228ms. No fixes applied.
+EXIT: 0
+
+COMMAND: bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT: 0
+
+COMMAND: bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [15.67ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.02ms]
+(pass) spawn failure closes its terminal and propagates the error [1.11ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.60ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.60ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.40ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.42ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.40ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.43ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.51ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.24ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.39ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.35ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [4.72ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.57ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.34ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.36ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.43ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) malformed or incorrect Authorization: basic [0.46ms]
+(pass) malformed or incorrect Authorization: empty [0.20ms]
+(pass) malformed or incorrect Authorization: short [0.17ms]
+(pass) malformed or incorrect Authorization: long [0.18ms]
+(pass) malformed or incorrect Authorization: duplicate [0.14ms]
+(pass) malformed or incorrect Authorization: extra-field [0.16ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.14ms]
+(pass) unapproved Host absent denies a valid bearer [0.39ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.17ms]
+(pass) unapproved Host localhost denies a valid bearer [0.13ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.13ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.12ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.16ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.16ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.19ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.15ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.17ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.14ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.29ms]
+(pass) unapproved present Origin null denies a valid bearer [0.21ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.15ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.13ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [1.73ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.76ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.25ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.27ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.21ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.27ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.18ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.21ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.18ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.30ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [5.63ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.62ms]
+(pass) malformed JSON is denied before MCP body parsing [0.49ms]
+(pass) URL-only token credential never authenticates [0.26ms]
+(pass) URL-only access_token credential never authenticates [0.10ms]
+(pass) URL-only bearer credential never authenticates [0.10ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.58ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.92ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.26ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.19ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.11ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.11ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+
+apps/server/test/unit/session-retention.test.ts:
+(pass) five-minute automatic expiry cancels timers and closes only the expired record [0.80ms]
+(pass) clock-driven lazy expiry also clears a not-yet-fired native timer [0.07ms]
+(pass) sixteen-record cap evicts oldest exited records, never running or terminating [0.38ms]
+(pass) cap ordering follows actual exits, not creation order, including equal-clock ties [0.32ms]
+(pass) retention ignores non-exited or unregistered records and never disposes a live record [0.18ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.77ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.24ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.15ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.43ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.22ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.24ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.23ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.34ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.10ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [1.75ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.93ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [1.87ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.42ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.37ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.19ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.04ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.61ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.16ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.05ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.59ms]
+
+ 177 pass
+ 0 fail
+ 1119 expect() calls
+Ran 177 tests across 4 files. [235.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=79807 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [57.14ms]
+python3 PID=PGID=SID=TPGID=79814 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.47ms]
+bash GROUP=79816 GRANDCHILD=79819 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [34.20ms]
+bash GROUP=79820 GRANDCHILD=79823 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [43.36ms]
+python3 GROUP=79825 GRANDCHILD=79827 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [57.68ms]
+python3 GROUP=79828 GRANDCHILD=79830 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [53.34ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [199.80ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [225.62ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [263.75ms]
+TetherTerm MCP listening on http://127.0.0.1:33115/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [48.96ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [6.98ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [270.82ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [261.53ms]
+TetherTerm MCP listening on http://127.0.0.1:39817/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [8.37ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [177.44ms]
+
+apps/server/test/integration/requirements-policy.test.ts:
+R17 non-allowlisted executable: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > non-allowlisted executable: POLICY_DENIED, zero spawns/processes/records, capacity preserved [20.53ms]
+R17 non-allowlisted command name: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > non-allowlisted command name: POLICY_DENIED, zero spawns/processes/records, capacity preserved [10.73ms]
+R17 relative executable that exists inside root: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > relative executable that exists inside root: POLICY_DENIED, zero spawns/processes/records, capacity preserved [13.76ms]
+R17 traversal outside root: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > traversal outside root: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.62ms]
+R17 symlink escape: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > symlink escape: POLICY_DENIED, zero spawns/processes/records, capacity preserved [9.83ms]
+R17 prefix-sharing sibling: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > prefix-sharing sibling: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.42ms]
+R17 symlink plus traversal: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > symlink plus traversal: POLICY_DENIED, zero spawns/processes/records, capacity preserved [14.63ms]
+R17 relative cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > relative cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [12.26ms]
+R17 missing cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > missing cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [9.73ms]
+R17 file cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > file cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [14.00ms]
+R17 credential-bearing executable: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > credential-bearing executable: POLICY_DENIED, zero spawns/processes/records, capacity preserved [11.28ms]
+R17 credential-bearing cwd: denied_spawn=0 new_session=0 new_process=0 available_slots=4
+(pass) R17 denied manager creates precede every native spawn > credential-bearing cwd: POLICY_DENIED, zero spawns/processes/records, capacity preserved [11.05ms]
+(pass) R17 allowed command and root cwd reach a real PTY with canonical metadata [8.95ms]
+(pass) R17 allowed command and nested cwd reach a real PTY with canonical metadata [7.92ms]
+(pass) R17 allowed command and inside-link cwd reach a real PTY with canonical metadata [7.82ms]
+R17 env CUSTOM_BEARER: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured CUSTOM_BEARER; diagnostics stay clean [9.30ms]
+R17 env LANG: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured LANG; diagnostics stay clean [6.54ms]
+R17 env TERM: real_TTY=true credential_names=ABSENT sentinel_matches=0 diagnostic_matches=0
+(pass) R17 real PTY env excludes credentials and configured TERM; diagnostics stay clean [7.57ms]
+(pass) R17 credentials deliberately echoed by a PTY stay in memory, never application logs [4.59ms]
+(pass) R17 actual http.ts startup failure excludes credentials from all application/addon output [148.60ms]
+(pass) R17 actual stdio.ts startup failure excludes credentials from all application/addon output [151.90ms]
+(pass) R17 actual stdio launcher protocol and startup diagnostics exclude credentials/addon settings [186.99ms]
+(pass) R17 actual authenticated HTTP launcher and SDK discovery exclude credentials from diagnostics [202.42ms]
+R17 OWN_PID_PS checked=59 live_processes=0
+
+apps/server/test/integration/session-exit-retention.test.ts:
+(pass) five-minute automatic expiry cancels timers and closes only the expired record [0.89ms]
+(pass) clock-driven lazy expiry also clears a not-yet-fired native timer [0.11ms]
+(pass) sixteen-record cap evicts oldest exited records, never running or terminating [0.40ms]
+(pass) cap ordering follows actual exits, not creation order, including equal-clock ties [0.46ms]
+(pass) retention ignores non-exited or unregistered records and never disposes a live record [0.17ms]
+(pass) quiet real PTY stays running across silence and retention-clock advances [8.83ms]
+(pass) real PTY exit 7 preserves final output and summary until exact five-minute expiry [4.82ms]
+(pass) real PTY signal exit records actual SIGTERM rather than guessing from silence [4.16ms]
+(pass) actual exit frees a live slot while the exited ID remains visible [10.56ms]
+(pass) real registry cap evicts oldest exited IDs on create while preserving running IDs [51.35ms]
+OWN_PID_PS checked=80081,80082,80083,80084,80085,80086,80087,80088,80089,80090,80091,80092,80093,80094,80095,80096,80097,80098,80099,80100,80101,80102,80103,80104,80105
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [4.45ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [4.99ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [3.31ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.11ms]
+(pass) terminating sessions still occupy the four live slots [2.65ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.18ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [2.48ms]
+(pass) a new server process cannot recognize the previous process's UUID [182.10ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.79ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [2.89ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.35ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.18ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.79ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.97ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.91ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [2.49ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [1.07ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.99ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [1.17ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.96ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [5.00ms]
+OWN_PID_PS checked=80107,80108,80109,80110,80111,80112,80113,80114,80115,80116,80117,80118,80119,80120,80121,80122,80123,80124,80136,80137,80149,80150,80151,80152,80153,80154,80155,80156,80157,80158,80159,80160,80161,80162,80163
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.50ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.53ms]
+
+apps/server/test/integration/terminal-resize.test.ts:
+RESIZE child=120x40 SIGWINCH=true result=status=list=120x40
+(pass) live resize changes child size, delivers SIGWINCH and updates result/status/list [41.46ms]
+(pass) inclusive 1x1 boundary is accepted for create and live resize [43.62ms]
+(pass) inclusive 240x80 boundary is accepted for create and live resize [40.36ms]
+(pass) invalid cols zero rejects create and resize before touching PTY [39.93ms]
+(pass) invalid cols negative rejects create and resize before touching PTY [31.69ms]
+(pass) invalid cols fractional rejects create and resize before touching PTY [39.19ms]
+(pass) invalid cols NaN rejects create and resize before touching PTY [36.22ms]
+(pass) invalid cols infinity rejects create and resize before touching PTY [35.26ms]
+(pass) invalid cols numeric string rejects create and resize before touching PTY [34.18ms]
+(pass) invalid cols boolean rejects create and resize before touching PTY [30.90ms]
+(pass) invalid cols null rejects create and resize before touching PTY [30.48ms]
+(pass) invalid cols array rejects create and resize before touching PTY [35.13ms]
+(pass) invalid cols object rejects create and resize before touching PTY [33.44ms]
+(pass) invalid cols over-limit rejects create and resize before touching PTY [29.24ms]
+(pass) invalid rows zero rejects create and resize before touching PTY [38.64ms]
+(pass) invalid rows negative rejects create and resize before touching PTY [30.38ms]
+(pass) invalid rows fractional rejects create and resize before touching PTY [29.10ms]
+(pass) invalid rows NaN rejects create and resize before touching PTY [39.17ms]
+(pass) invalid rows infinity rejects create and resize before touching PTY [38.95ms]
+(pass) invalid rows numeric string rejects create and resize before touching PTY [39.57ms]
+(pass) invalid rows boolean rejects create and resize before touching PTY [39.11ms]
+(pass) invalid rows null rejects create and resize before touching PTY [39.07ms]
+(pass) invalid rows array rejects create and resize before touching PTY [37.14ms]
+(pass) invalid rows object rejects create and resize before touching PTY [42.94ms]
+(pass) invalid rows over-limit rejects create and resize before touching PTY [41.06ms]
+(pass) resize requires both dimensions and never supplies creation defaults [34.86ms]
+(pass) unknown IDs return NOT_FOUND without invoking any native resize [29.92ms]
+(pass) actual exited sessions return NOT_RUNNING without native resize, even with stale running state [33.88ms]
+(pass) terminating sessions return NOT_RUNNING without native resize [34.10ms]
+(pass) failed native resize does not publish new dimensions [31.38ms]
+RESIZE_CLEANUP checked=30 no live owned processes
+
+apps/server/test/integration/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [2.59ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.18ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.05ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.08ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.06ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.52ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [1.90ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [21.34ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.53ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.40ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.39ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.33ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.10ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.43ms]
+(pass) fake PTY: sessions have independent queues [0.31ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [20.96ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [60.66ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [13.16ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [12.35ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [14.35ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [14.90ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [274.71ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [278.52ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.35ms]
+WRITE_OWN_PID_PS checked=80197,80198,80199,80201,80203,80206,80207,80208,80209
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 130 pass
+ 0 fail
+ 2486 expect() calls
+Ran 130 tests across 10 files. [5.03s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=45583 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [102.54ms]
+(pass) server startup fails clearly when setsid is absent on PATH [69.24ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [84.88ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [68.92ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [68.15ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [70.15ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [65.18ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [60.12ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [78.07ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [65.64ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [73.08ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [67.53ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [59.28ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [132.32ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [151.22ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [145.98ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [159.87ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [130.61ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [143.42ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [131.08ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [141.01ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [139.06ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [131.18ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [170.57ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [138.66ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [128.36ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [145.03ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [150.75ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [162.83ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [180.28ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [149.16ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [92.11ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.68s]
+EXIT: 0
+
+FINAL SUMMARY: loop 30/30; check=0; check-types=0; test=0
+
+DELIVERY SUMMARY: post-rebase targeted loop 30/30, 180/180 tests, 94 assertions/run; two loops total 60/60, 360/360 tests. Full suite 177 unit + 130 integration + 32 e2e = 339/339. Frozen install, check, check-types, test, diff --check all exit 0. Initial formatter exited 1 on useDestructuring; corrected before all verification. No production code changed; no original behavioral assertions removed.
