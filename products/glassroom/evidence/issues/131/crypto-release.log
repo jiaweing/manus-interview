@@ -1,0 +1,67 @@
+bun test v1.4.5 (a7733435c)
+
+tests/unit/data-envelope.test.ts:
+(pass) authenticated data envelopes > four encrypted body variants [14.69ms]
+(pass) authenticated data envelopes > concurrent unique sequences [8.70ms]
+(pass) authenticated data envelopes > specified IV bytes [3.46ms]
+(pass) authenticated data envelopes > direction separation [2.63ms]
+(pass) authenticated data envelopes > authenticated envelope fields [2.17ms]
+(pass) authenticated data envelopes > tamper rejected [2.12ms]
+(pass) authenticated data envelopes > duplicate rejected [2.29ms]
+(pass) authenticated data envelopes > failed authentication preserves receive sequence [2.21ms]
+(pass) authenticated data envelopes > malformed and over-cap rejection [7.17ms]
+(pass) authenticated data envelopes > counter exhaustion [2.22ms]
+(pass) authenticated data envelopes > full uint64 receive boundary [1.64ms]
+(pass) authenticated data envelopes > strict encrypted body validation and UTF-8 message bound [20.45ms]
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [5.20ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [3.49ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [1.50ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [2.95ms]
+
+tests/unit/handshake-crypto.test.ts:
+(pass) ephemeral session handshake > creator-first canonical transcript [1.23ms]
+(pass) ephemeral session handshake > matching fingerprint [1.19ms]
+(pass) ephemeral session handshake > directional and purpose separation [3.98ms]
+(pass) ephemeral session handshake > room binding [1.61ms]
+(pass) ephemeral session handshake > role binding [1.05ms]
+(pass) ephemeral session handshake > public-key binding [1.00ms]
+(pass) ephemeral session handshake > nonce binding [0.74ms]
+(pass) ephemeral session handshake > invalid HMAC [0.89ms]
+(pass) ephemeral session handshake > fresh session material [1.68ms]
+(pass) ephemeral session handshake > no private material in envelopes [1.20ms]
+(pass) ephemeral session handshake > both local and peer confirmations are required [0.91ms]
+(pass) ephemeral session handshake > malformed and unknown envelope fields fail closed [4.47ms]
+(pass) ephemeral session handshake > one-shot derivation, copied envelopes, and teardown [0.90ms]
+(pass) ephemeral session handshake > teardown cannot resurrect an in-flight handshake [0.78ms]
+
+tests/unit/signaling-crypto.test.ts:
+(pass) invitation-authenticated signaling > same-secret round trip [4.83ms]
+(pass) invitation-authenticated signaling > directional key separation [0.82ms]
+(pass) invitation-authenticated signaling > wrong secret [0.54ms]
+(pass) invitation-authenticated signaling > AAD mismatch [0.97ms]
+(pass) invitation-authenticated signaling > ciphertext tamper [0.71ms]
+(pass) invitation-authenticated signaling > replay rejected [1.20ms]
+(pass) invitation-authenticated signaling > failed authentication preserves counter [1.25ms]
+(pass) invitation-authenticated signaling > counter exhaustion closes [1.08ms]
+(pass) invitation-authenticated signaling > invalid encodings do not release plaintext or consume receive state [8.86ms]
+(pass) invitation-authenticated signaling > concurrent sends use unique counters and concurrent receives reject duplicate [4.58ms]
+(pass) invitation-authenticated signaling > room salt separation [1.10ms]
+(pass) invitation-authenticated signaling > uint64 boundary is validated without floating point rounding [0.90ms]
+(pass) invitation-authenticated signaling > invalid initialization and oversized plaintext are redacted [0.99ms]
+(pass) invitation-authenticated signaling > queued plaintext and envelope inputs are snapshotted [0.60ms]
+
+tests/unit/crypto-release.test.ts:
+(pass) cross-module crypto release invariants > confirmed two-role session [10.34ms]
+(pass) cross-module crypto release invariants > both transcript confirmations gate session access in either arrival order [2.74ms]
+(pass) cross-module crypto release invariants > wrong secret never authenticates [1.61ms]
+(pass) cross-module crypto release invariants > unauthenticated signaling and replay never advance handshake trust [6.57ms]
+(pass) cross-module crypto release invariants > substitution never authenticates [5.79ms]
+(pass) cross-module crypto release invariants > mixed-body nonce uniqueness [7.27ms]
+(pass) cross-module crypto release invariants > fresh-room key separation [12.93ms]
+(pass) cross-module crypto release invariants > session tamper, reflection, and replay release no body or verification control [6.87ms]
+(pass) cross-module crypto release invariants > 4 KiB UTF-8 message limit after confirmed handshake [35.72ms]
+
+ 53 pass
+ 0 fail
+ 2149 expect() calls
+Ran 53 tests across 4 files. [271.00ms]
