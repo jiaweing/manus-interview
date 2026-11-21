@@ -1,0 +1,167 @@
+$ bun test apps/video/tests
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/authoring-model.test.js:
+(pass) authoring model gate (fake transport only) > catalog present + exactly one scoped completion produces verified metadata [2.90ms]
+(pass) authoring model gate (fake transport only) > missing catalog model blocks without sending chat, even with a key [0.51ms]
+(pass) authoring model gate (fake transport only) > no key still checks catalog, records blocker and sends zero chat requests [13.34ms]
+(pass) authoring model gate (fake transport only) > no key + missing model truthfully records both independent blockers [0.53ms]
+(pass) authoring model gate (fake transport only) > product .env key works unchanged; all saved/output fields redact echoed key [2.89ms]
+(pass) authoring model gate (fake transport only) > HTTP denial and thrown transport errors redact keys without retries [1.41ms]
+(pass) authoring model gate (fake transport only) > malformed, truncated, or substitute-model responses cannot pass [1.26ms]
+(pass) authoring model gate (fake transport only) > malformed catalog records failure and cannot authorize a completion [0.31ms]
+(pass) authoring model gate (fake transport only) > tiny parser handles comments, whitespace, quotes and export without expansion [0.88ms]
+(pass) authoring model gate (fake transport only) > other provider environment variables are never a substitute [1.22ms]
+(pass) authoring model gate (fake transport only) > nothing in apps/video/src imports the authoring verifier (directly or transitively) [12.59ms]
+
+apps/video/tests/openrouter-adapter.test.js:
+(pass) zero-request fail-closed preflight > no-key selects fallback without transport [0.80ms]
+(pass) zero-request fail-closed preflight > unvalidated-contract selects fallback without transport [0.03ms]
+(pass) zero-request fail-closed preflight > missing-rights selects fallback without transport [0.03ms]
+(pass) zero-request fail-closed preflight > missing-budget selects fallback without transport
+(pass) zero-request fail-closed preflight > JSON approval cannot override the unvalidated production contract [0.11ms]
+(pass) zero-request fail-closed preflight > access approval is mandatory [0.02ms]
+(pass) zero-request fail-closed preflight > wrong/unsupported models do not request [0.04ms]
+(pass) zero-request fail-closed preflight > invalid and nonnumeric budgets do not request [0.06ms]
+(pass) zero-request fail-closed preflight > default config, empty and whitespace keys skip [0.17ms]
+(pass) documented contract mapping > records fetched docs, retrieval date, exact sample and response path [0.06ms]
+(pass) documented contract mapping > uses exact PRD prompt and only documented fields; reserves total budget [2.00ms]
+(pass) documented contract mapping > accepts arbitrary byte splits and LF SSE, ignores text/transcript metadata [0.57ms]
+(pass) documented contract mapping > usage is numeric allowlisted, not raw provider metadata [0.46ms]
+(pass) documented contract mapping > reported cost above reserved ceiling rejects [0.41ms]
+(pass) deadlines, retry and fallback outcomes > AbortController deadline is exactly 120000ms, including stalled transport; max two attempts [0.86ms]
+(pass) deadlines, retry and fallback outcomes > deadline includes a stalled SSE body, not just response headers [0.56ms]
+(pass) deadlines, retry and fallback outcomes > transient failures stop after one retry [0.27ms]
+(pass) deadlines, retry and fallback outcomes > one retry can produce a candidate within the total approved ceiling [0.33ms]
+(pass) deadlines, retry and fallback outcomes > denial 401 is fallback with no retry or error-body disclosure [0.20ms]
+(pass) deadlines, retry and fallback outcomes > denial 402 is fallback with no retry or error-body disclosure [0.09ms]
+(pass) deadlines, retry and fallback outcomes > denial 403 is fallback with no retry or error-body disclosure [0.04ms]
+(pass) deadlines, retry and fallback outcomes > unsupported HTTP generation response is fallback [0.47ms]
+(pass) deadlines, retry and fallback outcomes > non-streaming JSON is not misrepresented as accepted audio [0.14ms]
+(pass) deadlines, retry and fallback outcomes > invalid JSON returns malformed-response fallback [0.24ms]
+(pass) deadlines, retry and fallback outcomes > empty audio returns malformed-response fallback [0.24ms]
+(pass) deadlines, retry and fallback outcomes > truncated stream returns malformed-response fallback [0.12ms]
+(pass) deadlines, retry and fallback outcomes > invalid base64 returns malformed-response fallback [0.08ms]
+(pass) deadlines, retry and fallback outcomes > wrong audio type returns malformed-response fallback [0.05ms]
+(pass) deadlines, retry and fallback outcomes > SSE error with denied access discards arbitrary error text [0.24ms]
+(pass) deadlines, retry and fallback outcomes > missing dependencies and malformed configuration never throw [0.26ms]
+(pass) credential exclusion and cache handoff > transport exception with sentinel never rejects or logs sensitive text [0.51ms]
+(pass) credential exclusion and cache handoff > redacts Bearer, OpenRouter/key patterns and exact arbitrary credentials [0.25ms]
+(pass) credential exclusion and cache handoff > credential echo in generated bytes is rejected rather than cached [0.34ms]
+(pass) credential exclusion and cache handoff > candidate-sink interface never fabricates acceptance [0.14ms]
+(pass) credential exclusion and cache handoff > script hands candidate bytes and safe metadata to the named sink; QA is redacted [0.94ms]
+(pass) credential exclusion and cache handoff > sink exceptions also become redacted fallback outcomes [0.37ms]
+(pass) credential exclusion and cache handoff > no-key script entry point returns skipped with zero injected requests [0.50ms]
+(pass) credential exclusion and cache handoff > real Bun command has exit zero and no fetch calls when key is unset [19.81ms]
+(pass) credential exclusion and cache handoff > no render path or other non-music src file imports/reexports the adapter [2.36ms]
+(pass) credential exclusion and cache handoff > importing adapter triggers no network calls [0.99ms]
+
+apps/video/tests/timeline.test.js:
+(pass) locked timeline > accepts the namespace and scenes-only JSON contract [2.16ms]
+(pass) locked timeline > owns fixed beat values, readiness labels and recursively frozen illustration data [0.38ms]
+(pass) locked timeline > scene lookup respects every end-exclusive cut and rejects outside/noninteger frames [0.40ms]
+(pass) locked timeline > rejects missing product with MISSING_PRODUCT [0.62ms]
+(pass) locked timeline > rejects one-frame gap with GAP [0.54ms]
+(pass) locked timeline > rejects caption outside interval with CAPTION_OUT_OF_SCENE [0.35ms]
+(pass) locked timeline > rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE [0.24ms]
+(pass) locked timeline > rejects duplicate product with DUPLICATE_PRODUCT [0.23ms]
+(pass) locked timeline > rejects overlap with OVERLAP [0.29ms]
+(pass) locked timeline > rejects wrong duration with WRONG_DURATION [0.26ms]
+(pass) locked timeline > rejects over-long line with CAPTION_LINE_LENGTH [0.18ms]
+(pass) locked timeline > rejects three lines with CAPTION_LINES [0.19ms]
+(pass) locked timeline > rejects bad status with INVALID_STATUS [0.16ms]
+(pass) locked timeline > rejects each changed beat constant and total frame count [0.65ms]
+(pass) locked timeline > rejects short key-text holds, missing PRDs, changed captions and framing status [0.80ms]
+(pass) locked timeline > requires purpose-specific truthful claims and concept qualification [0.32ms]
+(pass) locked timeline > audits unsupported wording in both claims and captions [2.28ms]
+(pass) locked timeline > allows prototype only with a nonblank auditable reference, never out-of-scope promises [0.36ms]
+(pass) locked timeline > malformed records return named violations without throwing [0.39ms]
+$ bun run validate:timeline
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js
+exitCode=0
+(pass) real CLI verification with temporary fixtures > default command prints the exact PASS line and exits zero [25.64ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/missing-product.json
+FAIL timeline: WRONG_SCENE_COUNT Expected 8 scenes, received 7.
+FAIL timeline: MISSING_PRODUCT Missing Caret.
+FAIL timeline: MISSING_SCENE Missing caret.
+FAIL timeline: WRONG_SCENE_ORDER flopside is not in the prescribed position 1.
+FAIL timeline: GAP flopside starts at 420; previous end is 180.
+FAIL timeline: WRONG_SCENE_ORDER patchbay is not in the prescribed position 2.
+FAIL timeline: WRONG_SCENE_ORDER sidekick is not in the prescribed position 3.
+FAIL timeline: WRONG_SCENE_ORDER tetherterm is not in the prescribed position 4.
+FAIL timeline: WRONG_SCENE_ORDER glassroom is not in the prescribed position 5.
+FAIL timeline: WRONG_SCENE_ORDER outro is not in the prescribed position 6.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1560, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/missing-product.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects missing product with MISSING_PRODUCT and exit 1 [23.91ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/one-frame-gap.json
+FAIL timeline: WRONG_SCENE_INTERVAL caret must start at bar 4 and span 4 bars.
+FAIL timeline: WRONG_BEAT_VALUES caret requires positive whole bars and a one-based startBar.
+FAIL timeline: WRONG_DURATION caret must span 240 frames.
+FAIL timeline: GAP flopside starts at 420; previous end is 419.
+FAIL timeline: WRONG_DURATION Timeline must continuously cover [0,1800); summed duration=1799, final end=1800.
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/one-frame-gap.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects one-frame gap with GAP and exit 1 [30.59ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/caption-outside-interval.json
+FAIL timeline: CAPTION_OUT_OF_SCENE caret caption must stay inside [180,420) with integer end-exclusive frames.
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/caption-outside-interval.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects caption outside interval with CAPTION_OUT_OF_SCENE and exit 1 [29.43ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/prototype-without-evidence.json
+FAIL timeline: PROTOTYPE_WITHOUT_EVIDENCE caret prototype requires a nonempty evidenceRef.
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/prototype-without-evidence.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > --file rejects prototype without evidence with PROTOTYPE_WITHOUT_EVIDENCE and exit 1 [26.14ms]
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/valid.json
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/valid.json"
+exitCode=0
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/valid.js
+PASS timeline: 6 products, 8 scenes, 1800 frames
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/valid.js"
+exitCode=0
+(pass) real CLI verification with temporary fixtures > accepts a JavaScript fixture module and valid scenes-only JSON [44.21ms]
+$ bun run validate:timeline --unknown
+FAIL timeline: INVALID_ARGUMENTS Expected --file <path.json|.js>.
+$ bun apps/video/scripts/validate-timeline.js --unknown
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/invalid.json
+FAIL timeline: INVALID_FILE JSON Parse error: Unexpected identifier "not"
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/invalid.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+$ bun run validate:timeline --file /tmp/session-seven-timeline-iyA2fC/missing.json
+FAIL timeline: INVALID_FILE ENOENT: no such file or directory, open '/tmp/session-seven-timeline-iyA2fC/missing.json'
+$ bun apps/video/scripts/validate-timeline.js --file "/tmp/session-seven-timeline-iyA2fC/missing.json"
+error: script "validate:timeline" exited with code 1
+exitCode=1
+(pass) real CLI verification with temporary fixtures > invalid input and arguments fail without a passing line [63.63ms]
+
+apps/video/tests/synth.test.js:
+(pass) fallback PCM WAV > canonical RIFF/WAVE PCM header, byte rate and exact 60-second sample counts [0.59ms]
+(pass) fallback PCM WAV > PCM interleaves left/right little-endian with explicit quantization [0.53ms]
+(pass) fallback PCM WAV > Float64 accumulation, stereo content and at least 3 dBFS headroom [22.17ms]
+(pass) fallback PCM WAV > startup and ending have zero PCM samples, not clicks [0.48ms]
+(pass) score, oscillators and envelopes > exports percussion, triangle bass, square melody and repeating chord voice [0.23ms]
+(pass) score, oscillators and envelopes > every note has an ADSR-ish envelope with exact zero endpoints [14.96ms]
+(pass) score, oscillators and envelopes > 120 BPM downbeats and beat-3 kicks are integer-aligned to the video beat grid [1.10ms]
+(pass) score, oscillators and envelopes > C-major repeating progression, sparse melody, and a short intro build [3.22ms]
+(pass) score, oscillators and envelopes > bars 28–30 resolve to tonic only, thin percussion and decay to silence [3.09ms]
+(pass) offline determinism and frozen fallback > same seed produces byte-identical WAV twice in-process [1853.31ms]
+(pass) offline determinism and frozen fallback > changing only the seed changes percussion and WAV bytes [4433.40ms]
+(pass) offline determinism and frozen fallback > frozen WAV and metadata match the generator, prompt and exact format [108.03ms]
+(pass) offline determinism and frozen fallback > source has no network, clock or unseeded randomness; core has no Node APIs or dependencies [0.60ms]
+
+ 90 pass
+ 0 fail
+ 62824 expect() calls
+Ran 90 tests across 4 files. [8.56s]
+exit=0

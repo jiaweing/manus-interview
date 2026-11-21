@@ -50,3 +50,7 @@ Builder test result: **13 pass, 0 fail, 62,410 assertions**. Exact commands, exi
 ![Viewed full-track spectrogram](fallback-spectrogram.png)
 
 **Review decision:** analytical evidence supports instrumental percussion, triangle bass, sparse square melody/chord accompaniment, the locked beat grid, and final tonic resolution/fade. No human listening, independent verifier acceptance, cross-runtime byte identity, or final-master loudness compliance is claimed.
+
+## Post-rebase integration self-check
+
+After `git fetch origin && git rebase origin/main`, the complete command `bun test apps/video/tests` exited 0: **90 pass, 0 fail, 62,824 assertions across four files**. Output is retained in `fallback-full-suite.txt`. This is still a builder self-check, not independent issue verification.
