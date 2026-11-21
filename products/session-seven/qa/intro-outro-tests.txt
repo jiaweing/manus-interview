@@ -1,0 +1,24 @@
+$ bun test apps/video/tests/intro-outro.test.js
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/intro-outro.test.js:
+(pass) #156 intro and independent credited outro > named components retain exact 180-frame timeline intervals [1.24ms]
+(pass) #156 intro and independent credited outro > exactly six correctly spelled names, no duplicates, same scenery-card style [0.74ms]
+(pass) #156 intro and independent credited outro > all 360 frames have fixed exact captions, no readiness or Illustrated UI labels [3.82ms]
+(pass) #156 intro and independent credited outro > each entrance starts on a beat, no action blips, settled holds exceed 60 frames [3.91ms]
+(pass) #156 intro and independent credited outro > all cards stay in the illustration area and visibly separated at every frame [11.12ms]
+(pass) #156 intro and independent credited outro > frame helpers are deterministic when called repeatedly or out of order [0.27ms]
+(pass) #156 intro and independent credited outro > both scenes use shared Pip and primitives, with no interface/status/connection or runtime patterns [1.18ms]
+Intro/outro real still smoke: 12.797s
+PNG ../../../../../../tmp/s7-intro-outro-smoke-dWsucI/frame-0000.png frame=0
+PNG ../../../../../../tmp/s7-intro-outro-smoke-dWsucI/frame-0150.png frame=150
+PNG ../../../../../../tmp/s7-intro-outro-smoke-dWsucI/frame-1799.png frame=1799
+TIMING bundle=3.466s renders=7.397s total=11.956s concurrency=1
+STILLS ok count=3
+(pass) #156 intro and independent credited outro > real pinned-Chromium smoke: opening, assembled intro and credited last frame within 90s [12798.51ms]
+
+ 8 pass
+ 0 fail
+ 19115 expect() calls
+Ran 8 tests across 1 file. [13.16s]
+EXIT_CODE=0
