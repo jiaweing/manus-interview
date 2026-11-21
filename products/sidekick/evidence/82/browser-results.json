@@ -1,0 +1,36 @@
+{
+  "ariaRoleRegressionCases": [
+    "textbox ",
+    "textbox searchbox",
+    "combobox listbox",
+    "option ",
+    " \tTeXtBoX\n SeArChBoX ",
+    "unknown textbox",
+    "button textbox",
+    "unknown article textbox",
+    "searchbox textbox",
+    "listbox option",
+    "slider spinbutton",
+    "spinbutton slider"
+  ],
+  "bounds": {
+    "controls": 300,
+    "textCharacters": 20000,
+    "truncated": true
+  },
+  "browser": "headed /usr/bin/chromium via xvfb-run",
+  "browserReportedAutoSkipped": true,
+  "documentRotationOnReload": true,
+  "freshTargetId": "late",
+  "hiddenLayout": {
+    "contentVisibility": "hidden",
+    "height": 60,
+    "innerText": "",
+    "width": 600
+  },
+  "providerCalls": 0,
+  "providerSerializationChecked": true,
+  "result": "PASS",
+  "secretExclusions": 21,
+  "targetedControls": 1
+}

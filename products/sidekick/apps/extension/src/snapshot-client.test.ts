@@ -97,6 +97,25 @@ describe("panel snapshot access flow", () => {
 			},
 		});
 	});
+	test("targeted queries are forwarded only to the selected top frame", async () => {
+		const { api, calls, snapshot } = fixture(undefined, true);
+		expect(await observeTab(7, api, "published work")).toEqual({
+			snapshot,
+			status: "ready",
+		});
+		expect(calls[2]).toEqual({
+			operation: "message",
+			value: {
+				message: {
+					query: "published work",
+					tabId: 7,
+					type: "sidekick:observe",
+				},
+				options: { frameId: 0 },
+				tabId: 7,
+			},
+		});
+	});
 	test("unsupported origins, forged broad permissions and protected URLs never request access", async () => {
 		await Promise.all(
 			[
