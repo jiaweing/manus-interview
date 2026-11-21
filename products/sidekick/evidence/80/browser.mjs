@@ -1,0 +1,142 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { chromium } from '../../apps/extension/node_modules/playwright/index.mjs';
+import { fileURLToPath } from 'node:url';
+const root=fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'');
+const out=`${root}/evidence/80`;
+const ext=`${root}/apps/extension/.output/chrome-mv3`;
+const pause=(ms=300)=>new Promise(r=>setTimeout(r,ms));
+const desktop=(...args)=>execFileSync('xdotool',args,{encoding:'utf8'});
+const capture=name=>execFileSync('ffmpeg',['-loglevel','error','-y','-f','x11grab','-video_size','1440x1000','-i',process.env.DISPLAY,'-frames:v','1',`${out}/${name}.png`]);
+const profile=fs.mkdtempSync('/tmp/sidekick80-chromium-');
+const context=await chromium.launchPersistentContext(profile,{executablePath:'/usr/bin/chromium',headless:false,viewport:null,ignoreDefaultArgs:['--disable-extensions','--enable-automation'],args:[`--disable-extensions-except=${ext}`,`--load-extension=${ext}`,'--no-sandbox','--disable-dev-shm-usage','--no-first-run','--no-default-browser-check','--window-size=1440,1000','--window-position=0,0','--remote-debugging-port=18980']});
+const errors=[];
+let socket;
+try {
+ const worker=context.serviceWorkers()[0]||await context.waitForEvent('serviceworker');
+ const id=new URL(worker.url()).host;
+ const page=context.pages()[0];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('chrome://extensions');
+ const toggle=page.locator('extensions-toolbar #devMode');
+ if(await toggle.getAttribute('aria-pressed')!=='true') await toggle.click();
+ const info=await page.evaluate(async id=>{const i=(await chrome.developerPrivate.getExtensionsInfo({includeDisabled:true,includeTerminated:true})).find(i=>i.id===id); return {state:i.state,runtimeErrors:i.runtimeErrors,manifestErrors:i.manifestErrors};},id);
+ assert.deepEqual(info.runtimeErrors,[]); assert.deepEqual(info.manifestErrors,[]);
+ await page.screenshot({path:`${out}/extension-loaded.png`});
+ // Use a local ordinary HTTP page with known metadata; do not read real private data.
+ const server=await import('node:http');
+ const fixture=server.createServer((req,res)=>res.end('<!doctype html><meta charset="UTF-8"><title>Ada Lovelace — selected-tab fixture</title><h1>Selected page</h1><p>Non-sensitive context fixture. Panel should only query metadata.</p>')).listen(18981,'127.0.0.1');
+ await page.goto('http://127.0.0.1:18981/selected-page');
+ await pause(); capture('before-toolbar');
+ desktop('mousemove','1327','62','click','1'); await pause(500); capture('toolbar-menu');
+ // Pin the sole extension through the real Chromium toolbar menu.
+ desktop('mousemove','1257','204','click','1'); await pause();
+ desktop('mousemove','980','110','click','1'); await pause();
+ capture('pinned-toolbar');
+ desktop('mousemove','1293','62','click','1'); await pause(1200);
+ capture('real-sidepanel-desktop');
+ const contexts=await worker.evaluate(async()=> (await chrome.runtime.getContexts({})).map(c=>({type:c.contextType,url:c.documentUrl})));
+ assert(contexts.some(c=>c.type==='SIDE_PANEL'),'Toolbar must open actual SIDE_PANEL');
+ const targets=await (await fetch('http://localhost:18980/json/list')).json();
+ const target=targets.find(t=>t.url===`chrome-extension://${id}/sidepanel.html`);
+ assert(target,'Actual side panel must expose a Chromium page target');
+ socket=new WebSocket(target.webSocketDebuggerUrl);
+ await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
+ let seq=0;
+ const pending=new Map();
+ let modelRequests=0;
+ const onMessage=({data})=>{const m=JSON.parse(data); if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);} else if(m.method==='Network.requestWillBeSent'&&m.params.request.url.includes('/v1/agent/turn')) modelRequests++;};
+ socket.addEventListener('message',onMessage);
+ const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
+ const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ const key=async(key,code,virtual,modifiers=0)=>{const text=key===' '?' ':key==='Enter'?'\r':undefined;await send('Input.dispatchKeyEvent',{type:'keyDown',key,code,text,unmodifiedText:text,windowsVirtualKeyCode:virtual,nativeVirtualKeyCode:virtual,modifiers});await send('Input.dispatchKeyEvent',{type:'keyUp',key,code,windowsVirtualKeyCode:virtual,nativeVirtualKeyCode:virtual,modifiers});await pause(80);};
+ const tab=shift=>key('Tab','Tab',9,shift?8:0);
+ const snap=async name=>{const s=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});fs.writeFileSync(`${out}/${name}.png`,Buffer.from(s.data,'base64'));};
+ await send('Runtime.enable'); await send('Network.enable');
+ await send('Emulation.setDeviceMetricsOverride',{width:320,height:800,deviceScaleFactor:1,mobile:false});
+ await pause(500);
+ const metadata=await evaluate(`({title:document.querySelector('[aria-labelledby="context-heading"] .surface p').textContent,url:document.querySelector('[aria-labelledby="context-heading"] .surface p:last-child').textContent,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})`);
+ assert.equal(metadata.title,'Ada Lovelace — selected-tab fixture'); assert.equal(metadata.url,'http://127.0.0.1:18981/selected-page');assert.equal(metadata.width,320);assert(metadata.scrollWidth<=320);
+ await evaluate('document.activeElement.blur(); window.scrollTo(0,0)');
+ const focus=()=>evaluate(`(()=>{const e=document.activeElement,s=getComputedStyle(e),r=e.getBoundingClientRect();return {id:e.id||e.textContent.trim(),tag:e.tagName,focusVisible:e.matches(':focus-visible'),boxShadow:s.boxShadow,outlineWidth:s.outlineWidth,borderWidths:[s.borderTopWidth,s.borderRightWidth,s.borderBottomWidth,s.borderLeftWidth],x:r.x,y:r.y,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight}})()`);
+ // Configure and acknowledge using only keyboard events in the real side panel.
+ await tab(); let f=await focus(); assert.equal(f.id,'disclosure-accepted'); await key(' ','Space',32);
+ await tab(); f=await focus(); assert.equal(f.id,'demo-token');
+ await snap('panel-320-disclosure-focused-input');
+ await send('Input.insertText',{text:'test-token-not-secret'}); await pause();
+ await tab();f=await focus();assert.equal(f.id,'Save token');await key('Enter','Enter',13);await pause(500);
+ console.log('Sanitized gate state:',await evaluate(`({accepted:document.querySelector('#disclosure-accepted').getAttribute('aria-checked'),tokenStatus:document.querySelector('#token-status').textContent,draftLength:document.querySelector('#demo-token').value.length,ready:document.querySelector('main').dataset.requestReady})`));
+ assert.equal(await evaluate('document.querySelector("main").dataset.requestReady'),'true');
+ assert.equal(await evaluate('document.querySelector("#demo-token").value'),'');
+ // Make Save enabled again; cover all six enabled controls in both directions.
+ assert.equal((await focus()).id,'demo-token');
+ await send('Input.insertText',{text:'test-token-not-secret'});await pause();
+ await tab(true); assert.equal((await focus()).id,'disclosure-accepted');
+ const forward=[];
+ for(let i=0;i<6;i++){if(i)await tab();const f=await focus();forward.push(f);console.log('Keyboard focus:',JSON.stringify(f));assert(f.focusVisible);assert.notEqual(f.boxShadow,'none');assert(f.x>=4&&f.x+f.width<=f.viewportWidth-4);assert(f.y>=0&&f.y+f.height<=f.viewportHeight);assert.deepEqual(f.borderWidths,['0px','0px','0px','0px']);assert.equal(f.outlineWidth,'0px');}
+ assert.deepEqual(forward.map(f=>f.id),['disclosure-accepted','demo-token','Save token','Clear token','task','Observe page']);
+ const reverse=[];
+ for(let i=0;i<5;i++){await tab(true);const f=await focus();reverse.push(f);assert(f.focusVisible);assert.notEqual(f.boxShadow,'none');}
+ assert.deepEqual(reverse.map(f=>f.id),['task','Clear token','Save token','demo-token','disclosure-accepted']);
+ await tab(); await tab(); await tab(); await tab(); // focus task, screenshot shows entire narrow shell
+ await send('Input.insertText',{text:'Research the non-sensitive fixture'});
+ await pause();
+ await snap('panel-320-task-focused');
+ const ax=await send('Accessibility.getFullAXTree');
+ const names=ax.nodes.filter(n=>!n.ignored&&['button','checkbox','textbox'].includes(n.role?.value)).map(n=>({role:n.role.value,name:n.name?.value||'',disabled:n.properties?.find(p=>p.name==='disabled')?.value?.value||false}));
+ assert(names.every(n=>n.name));
+ const storage=await evaluate(`(async()=>{const session=await chrome.storage.session.get(null),local=await chrome.storage.local.get(null),sync=await chrome.storage.sync.get(null);return {session:Object.fromEntries(Object.keys(session).map(k=>[k,'[REDACTED]'])),localKeys:Object.keys(local),syncKeys:Object.keys(sync),pageLocalStorageKeys:Object.keys(localStorage),pageSessionStorageKeys:Object.keys(sessionStorage)};})()`);
+ assert.deepEqual(Object.keys(storage.session),['sidekickDemoToken']);assert.deepEqual(storage.localKeys,[]);assert.deepEqual(storage.syncKeys,[]);
+ const measurements=await evaluate(`(()=>{
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const rgba=color=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=color;ctx.fillRect(0,0,1,1);return Array.from(ctx.getImageData(0,0,1,1).data);};
+ const lum=c=>{const a=c.slice(0,3).map(v=>v/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);return .2126*a[0]+.7152*a[1]+.0722*a[2];};
+ const visible=e=>{const r=e.getBoundingClientRect();return r.width&&r.height;};
+ const all=[...document.querySelectorAll('body,body *')].filter(visible);
+ const invalid=[];const colors=new Set();
+ for(const e of all){const s=getComputedStyle(e);for(const prop of ['borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','outlineWidth'])if(s[prop]!=='0px')invalid.push({tag:e.tagName,id:e.id,prop,value:s[prop]});if(s.animationName!=='none'||s.transitionDuration!=='0s')invalid.push({tag:e.tagName,id:e.id,animation:s.animationName,transition:s.transitionDuration}); colors.add(s.color);colors.add(s.backgroundColor);}
+ const text=[...document.querySelectorAll('p,h1,h2,label,button,input,textarea')].filter(visible).map(e=>{const s=getComputedStyle(e);let p=e,bg;while(p){const c=getComputedStyle(p).backgroundColor;if(rgba(c)[3]){bg=c;break;}p=p.parentElement;}bg=bg||'rgb(255,255,255)';const fg=rgba(s.color),back=rgba(bg),a=lum(fg),b=lum(back);return {element:e.id||e.tagName.toLowerCase(),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,color:s.color,background:bg,fgRGB:fg.slice(0,3),bgRGB:back.slice(0,3),contrast:(Math.max(a,b)+.05)/(Math.min(a,b)+.05)};});
+ const radii=[...document.querySelectorAll('.surface,.field,button')].filter(visible).map(e=>({element:e.id||e.textContent.trim(),radius:getComputedStyle(e).borderRadius}));
+ return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,visibleElements:all.length,invalid,text,radii,colors:[...colors].map(color=>({css:color,rgba:rgba(color)})),fontLoaded:document.fonts.check('14px Inter'),minimumContrast:Math.min(...text.map(t=>t.contrast))};
+ })()`);
+ fs.writeFileSync(`${out}/computed-styles.json`,JSON.stringify(measurements,null,2)+'\n');
+ console.log('Computed summary:',JSON.stringify({minimumContrast:measurements.minimumContrast,fontLoaded:measurements.fontLoaded,invalid:measurements.invalid,text:measurements.text.map(t=>({element:t.element,font:t.font,size:t.size,weight:t.weight,contrast:t.contrast}))}));
+ assert.deepEqual(measurements.invalid,[]);assert(measurements.minimumContrast>=7);assert(measurements.fontLoaded);assert(measurements.text.every(t=>t.font.includes('Inter')&&t.size==='14px'&&['400','600'].includes(t.weight)));assert(measurements.radii.every(r=>r.radius==='10px'));assert(measurements.colors.every(({rgba:c})=>c[0]===c[1]&&c[1]===c[2]));
+ fs.writeFileSync(`${out}/computed-styles.json`,JSON.stringify(measurements,null,2)+'\n');
+ fs.writeFileSync(`${out}/keyboard-and-storage.json`,JSON.stringify({actualSidePanel:true,metadata,forward,reverse,accessibleNames:names,storage,modelRequests},null,2)+'\n');
+ // Desktop-width rendering is the same actual side-panel target, not a mock page.
+ await send('Emulation.setDeviceMetricsOverride',{width:720,height:1100,deviceScaleFactor:1,mobile:false});await pause();
+ assert.equal(await evaluate('innerWidth'),720);assert(await evaluate('document.documentElement.scrollWidth')<=720,'Desktop must not overflow horizontally');
+ await snap('panel-desktop-720');
+ // Use the actual Chrome panel close button and toolbar icon to reopen.
+ await send('Emulation.clearDeviceMetricsOverride');
+ socket.close();socket=null;
+ desktop('mousemove','1415','106','click','1');await pause(700);
+ const closedContexts=await worker.evaluate(async()=>await chrome.runtime.getContexts({contextTypes:['SIDE_PANEL']}));
+ assert.equal(closedContexts.length,0,'Closing the actual side panel must destroy its document');
+ desktop('mousemove','1293','62','click','1');await pause(900);
+ const reopenedTargets=await (await fetch('http://localhost:18980/json/list')).json();
+ const reopenedTarget=reopenedTargets.find(t=>t.url===`chrome-extension://${id}/sidepanel.html`);
+ assert(reopenedTarget,'Toolbar must reopen the actual panel');
+ socket=new WebSocket(reopenedTarget.webSocketDebuggerUrl);
+ await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
+ socket.addEventListener('message',onMessage);
+ await send('Runtime.enable');await send('Network.enable');await pause(400);
+ const reopened=await evaluate(`({tokenStatus:document.querySelector('#token-status').textContent,task:document.querySelector('#task').value,tokenDraftLength:document.querySelector('#demo-token').value.length,accepted:document.querySelector('#disclosure-accepted').getAttribute('aria-checked'),ready:document.querySelector('main').dataset.requestReady})`);
+ assert.equal(reopened.tokenStatus,'Token configured for this browser session.');
+ assert.equal(reopened.task,'');assert.equal(reopened.tokenDraftLength,0);assert.equal(reopened.accepted,'false');assert.equal(reopened.ready,'false');
+ await evaluate('document.activeElement.blur();window.scrollTo(0,0)');
+ await tab();assert.equal((await focus()).id,'disclosure-accepted');
+ await tab();assert.equal((await focus()).id,'demo-token');
+ await tab();assert.equal((await focus()).id,'Clear token');await key('Enter','Enter',13);await pause(400);
+ const cleared=await evaluate(`(async()=>({tokenStatus:document.querySelector('#token-status').textContent,sessionKeys:Object.keys(await chrome.storage.session.get(null)),ready:document.querySelector('main').dataset.requestReady}))()`);
+ assert.equal(cleared.tokenStatus,'Token cleared from this browser session.');assert.deepEqual(cleared.sessionKeys,[]);assert.equal(cleared.ready,'false');
+ capture('reopened-panel-token-cleared');
+ fs.writeFileSync(`${out}/reopening.json`,JSON.stringify({closedPanelDocument:true,reopened,cleared},null,2)+'\n');
+ const result={headed:true,executable:'/usr/bin/chromium',browserVersion:context.browser()?.version(),extensionId:id,actualSidePanel:true,contexts,metadata,extensionErrors:info,minimumContrast:measurements.minimumContrast,allComputedBorderWidths:'0px',allComputedOutlineWidths:'0px',font:'Inter 14px / 400,600',radius:'10px',animations:'none',forwardTabOrder:forward.map(f=>f.id),reverseTabOrder:reverse.map(f=>f.id),modelRequests,pageErrors:errors};
+ fs.writeFileSync(`${out}/browser-result.json`,JSON.stringify(result,null,2)+'\n');
+ assert.equal(modelRequests,0);assert.deepEqual(errors,[]);
+ console.log(JSON.stringify(result,null,2));
+ fixture.close();
+} finally { if(socket)socket.close();await context.close(); }
