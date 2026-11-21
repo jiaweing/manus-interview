@@ -5,6 +5,12 @@ import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
 import {
+	dimensionsSchema,
+	type ResizeSessionRequest,
+	type ResizeSessionResult,
+	resizeSession,
+} from "./resize";
+import {
 	type PtyHandle,
 	type Session,
 	type SessionState,
@@ -15,9 +21,9 @@ import {
 export const MAX_LIVE_SESSIONS = 4;
 export const DEFAULT_RUNTIME_MS = 15 * 60 * 1000;
 
-const limitsSchema = z.object({
-	cols: z.number().int().min(1).max(240).default(80),
-	rows: z.number().int().min(1).max(80).default(24),
+const limitsSchema = dimensionsSchema.extend({
+	cols: dimensionsSchema.shape.cols.default(80),
+	rows: dimensionsSchema.shape.rows.default(24),
 	timeoutMs: z.number().int().positive().default(DEFAULT_RUNTIME_MS),
 });
 
@@ -148,6 +154,13 @@ export class SessionManager {
 			throw new TerminalError("NOT_FOUND", "Session was not found");
 		}
 		return session;
+	}
+
+	resize(
+		sessionId: string,
+		request: ResizeSessionRequest
+	): ResizeSessionResult {
+		return resizeSession(this.get(sessionId), request);
 	}
 
 	status(sessionId: string): SessionSummary {
