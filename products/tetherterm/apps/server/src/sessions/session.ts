@@ -1,4 +1,5 @@
 import type { spawnPty } from "../pty/spawn";
+import type { OutputRing } from "./ring";
 
 export type SessionState = "running" | "terminating" | "exited";
 export type PtyHandle = ReturnType<typeof spawnPty>;
@@ -15,12 +16,13 @@ export interface SessionSummary {
 
 /**
  * In-memory, transport-independent record. The PTY handle is deliberately not
- * part of a summary. Later services can attach a ring/write queue/waiters here,
+ * part of a summary. Later services can attach a write queue/waiters here,
  * use dimensions for resize, and use runtimeDeadline for termination scheduling.
- * This issue counts bytes only: it neither retains nor persists terminal data.
+ * Output is retained only in the bounded in-memory ring, never persisted.
  */
 export interface Session extends SessionSummary {
 	readonly createdAt: number;
+	readonly output: OutputRing;
 	readonly pty: PtyHandle;
 	receivedBytes: number;
 	readonly runtimeDeadline: number;

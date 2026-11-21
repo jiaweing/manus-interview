@@ -1,0 +1,1634 @@
+
+[2026-11-21T15:26:31Z] $ bun test apps/server/test/output-ring.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [2.70ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.87ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.19ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [1.95ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.45ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.88ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.06ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [1.08ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.45ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.02ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [1.44ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [0.72ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.51ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.46ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.38ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [0.39ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.37ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [39.25ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [4.52ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [3.95ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [2.44ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [2.87ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [3.39ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [2.33ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [1.37ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [0.44ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.84ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [1.01ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [1.39ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.39ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.36ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [0.84ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [12.11ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [0.77ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [0.47ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [1.18ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.31ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.18ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.02ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [50.95ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [30.41ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [27.79ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [29.25ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [29.15ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [28.77ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [32.04ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [298.18ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [29.40ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [1.11ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.76ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.50ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.58ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.50ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.58ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [0.87ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.51ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.06ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.05ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.82ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > non-string cursors are not coerced [3.28ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [1.58ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 255 matches standard replacement decoding [1.50ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 128 matches standard replacement decoding [1.59ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 192,175 matches standard replacement decoding [1.62ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 237,160,128 matches standard replacement decoding [1.54ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.04ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 226,130,97 matches standard replacement decoding [1.16ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.49ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.48ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [0.43ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > replacement expansion respects encoded budgets while advancing raw bytes only [8.72ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > incomplete suffix is withheld until finish, then one replacement consumes the raw prefix [0.77ms]
+
+ 77 pass
+ 0 fail
+ 49841 expect() calls
+Ran 77 tests across 1 file. [716.00ms]
+EXIT_CODE=0
+
+[2026-11-21T15:26:32Z] $ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+test/integration/output-ring.test.ts(46,49): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1b'.
+test/integration/output-ring.test.ts(46,63): error TS1487: Octal escape sequences are not allowed. Use the syntax '\x1b'.
+EXIT_CODE=2
+
+[2026-11-21T15:26:47Z] $ bun run check
+$ ultracite check
+apps/server/src/sessions/ring.ts:107:19 lint/suspicious/noBitwiseOperators ━━━━━━━━━━
+
+  × Unexpected use of '&'.
+  
+    105 │ 				break;
+    106 │ 			}
+  > 107 │ 			const length = unit & 7;
+        │ 			               ^^^^^^^^
+    108 │ 			const encoded = unit > REPLACEMENT_FLAG ? 3 : length;
+    109 │ 			if (encodedLength + encoded > limit) {
+  
+  i Did you mean && instead? If you want to use the bitwise operator, consider suppressing this diagnostic.
+  
+
+apps/server/src/sessions/ring.ts:149:10 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━
+
+  × Excessive complexity of 23 detected (max: 20).
+  
+    147 │ 	}
+    148 │ 
+  > 149 │ 	private acceptByte(byte: number, index: number): void {
+        │ 	        ^^^^^^^^^^
+    150 │ 		if (this.pendingLength > 0) {
+    151 │ 			const min = this.pendingLength === 1 ? this.secondMin : 0x80;
+  
+  i Please refactor this function to reduce its complexity score from 23 to the max allowed complexity 20.
+  
+
+apps/server/src/sessions/ring.ts:173:44 lint/style/noNestedTernary ━━━━━━━━━━━━━
+
+  × Do not nest ternary expressions.
+  
+    171 │ 		this.pendingIndex = index;
+    172 │ 		this.pendingLength = 1;
+  > 173 │ 		this.expectedLength = byte <= 0xdf ? 2 : byte <= 0xef ? 3 : 4;
+        │ 		                                         ^^^^^^^^^^^^^^^^^^^^
+    174 │ 		this.secondMin = byte === 0xe0 ? 0xa0 : byte === 0xf0 ? 0x90 : 0x80;
+    175 │ 		this.secondMax = byte === 0xed ? 0x9f : byte === 0xf4 ? 0x8f : 0xbf;
+  
+  i Nesting ternary expressions can make code more difficult to understand.
+  
+  i Convert nested ternary expression into if-else statements or separate the conditions to make the logic easier to understand.
+  
+
+apps/server/src/sessions/ring.ts:174:43 lint/style/noNestedTernary ━━━━━━━━━━━━━
+
+  × Do not nest ternary expressions.
+  
+    172 │ 		this.pendingLength = 1;
+    173 │ 		this.expectedLength = byte <= 0xdf ? 2 : byte <= 0xef ? 3 : 4;
+  > 174 │ 		this.secondMin = byte === 0xe0 ? 0xa0 : byte === 0xf0 ? 0x90 : 0x80;
+        │ 		                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    175 │ 		this.secondMax = byte === 0xed ? 0x9f : byte === 0xf4 ? 0x8f : 0xbf;
+    176 │ 	}
+  
+  i Nesting ternary expressions can make code more difficult to understand.
+  
+  i Convert nested ternary expression into if-else statements or separate the conditions to make the logic easier to understand.
+  
+
+apps/server/src/sessions/ring.ts:175:43 lint/style/noNestedTernary ━━━━━━━━━━━━━
+
+  × Do not nest ternary expressions.
+  
+    173 │ 		this.expectedLength = byte <= 0xdf ? 2 : byte <= 0xef ? 3 : 4;
+    174 │ 		this.secondMin = byte === 0xe0 ? 0xa0 : byte === 0xf0 ? 0x90 : 0x80;
+  > 175 │ 		this.secondMax = byte === 0xed ? 0x9f : byte === 0xf4 ? 0x8f : 0xbf;
+        │ 		                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    176 │ 	}
+    177 │ }
+  
+  i Nesting ternary expressions can make code more difficult to understand.
+  
+  i Convert nested ternary expression into if-else statements or separate the conditions to make the logic easier to understand.
+  
+
+apps/server/src/sessions/ring.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     73  73 │     finish(): void {
+     74  74 │       if (this.pendingLength > 0) {
+     75     │ - → → → this.units[this.pendingIndex]·=
+     76     │ - → → → → REPLACEMENT_FLAG·+·this.pendingLength;
+         75 │ + → → → this.units[this.pendingIndex]·=·REPLACEMENT_FLAG·+·this.pendingLength;
+     77  76 │         this.pendingLength = 0;
+     78  77 │       }
+    ······· │ 
+     83  82 │       const requested = this.parseCursor(cursor);
+     84  83 │       if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0) {
+     85     │ - → → → throw·new·TerminalError("LIMIT",·"maxBytes·must·be·a·positive·safe·integer");
+         84 │ + → → → throw·new·TerminalError(
+         85 │ + → → → → "LIMIT",
+         86 │ + → → → → "maxBytes·must·be·a·positive·safe·integer"
+         87 │ + → → → );
+     86  88 │       }
+     87  89 │       const limit = Math.min(maxBytes, MAX_READ_BYTES);
+    ······· │ 
+     95  97 │         !(this.pendingLength > 0 && start === pendingStart)
+     96  98 │       ) {
+     97     │ - → → → throw·new·TerminalError("BAD_CURSOR",·"Cursor·is·not·a·character·boundary");
+         99 │ + → → → throw·new·TerminalError(
+        100 │ + → → → → "BAD_CURSOR",
+        101 │ + → → → → "Cursor·is·not·a·character·boundary"
+        102 │ + → → → );
+     98 103 │       }
+     99 104 │       let rawLength = 0;
+    ······· │ 
+    142 147 │         (cursor.length === head.length && cursor > head)
+    143 148 │       ) {
+    144     │ - → → → throw·new·TerminalError("BAD_CURSOR",·"Cursor·must·be·a·decimal·byte·offset·at·or·before·head");
+        149 │ + → → → throw·new·TerminalError(
+        150 │ + → → → → "BAD_CURSOR",
+        151 │ + → → → → "Cursor·must·be·a·decimal·byte·offset·at·or·before·head"
+        152 │ + → → → );
+    145 153 │       }
+    146 154 │       return BigInt(cursor);
+  
+
+apps/server/test/integration/output-ring.test.ts:103:8 lint/correctness/noUnsafeFinally ━━━━━━━━━━
+
+  × Unsafe usage of 'throw'.
+  
+    101 │ 					} catch (error) {
+    102 │ 						if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
+  > 103 │ 							throw error;
+        │ 							^^^^^^^^^^^^
+    104 │ 						}
+    105 │ 						pty.child.kill("SIGKILL");
+  
+  i 'throw' in 'finally' overwrites the control flow statements inside 'try' and 'catch'.
+  
+
+apps/server/test/integration/output-ring.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     14  14 │         promise,
+     15  15 │         new Promise<never>((_resolve, reject) => {
+     16     │ - → → → → timer·=·setTimeout(()·=>·reject(new·Error("Output·fixture·timed·out")),·4000);
+         16 │ + → → → → timer·=·setTimeout(
+         17 │ + → → → → → ()·=>·reject(new·Error("Output·fixture·timed·out")),
+         18 │ + → → → → → 4000
+         19 │ + → → → → );
+     17  20 │         }),
+     18  21 │       ]);
+    ······· │ 
+     43  46 │       const created = await manager.create({
+     44  47 │         args: [
+     45     │ - → → → → "--noprofile",·"--norc",·"-c",
+         48 │ + → → → → "--noprofile",
+         49 │ + → → → → "--norc",
+         50 │ + → → → → "-c",
+     46  51 │           "test -t 0 && test -t 1 || exit 99; printf '\\033[31mready漢\\033[0m'; exec sleep 60",
+     47  52 │         ],
+    ······· │ 
+     55  60 │       while (Date.now() < deadline) {
+     56  61 │         // biome-ignore lint/performance/noAwaitInLoops: Poll only the owned PTY for actual exec/read readiness.
+     57     │ - → → → const·command·=·await·readFile(`/proc/${session.pty.child.pid}/cmdline`,·"utf8");
+     58     │ - → → → if·(command·===·"sleep\u000060\u0000"·&&·session.output.read("0").output·===·expected)·{
+         62 │ + → → → const·command·=·await·readFile(
+         63 │ + → → → → `/proc/${session.pty.child.pid}/cmdline`,
+         64 │ + → → → → "utf8"
+         65 │ + → → → );
+         66 │ + → → → if·(
+         67 │ + → → → → command·===·"sleep\u000060\u0000"·&&
+         68 │ + → → → → session.output.read("0").output·===·expected
+         69 │ + → → → )·{
+     59  70 │           ready = true;
+     60  71 │           break;
+    ······· │ 
+     73  84 │         state: "running",
+     74  85 │       });
+     75     │ - → → expect(session.receivedBytes).toBe(new·TextEncoder().encode(expected).byteLength);
+         86 │ + → → expect(session.receivedBytes).toBe(
+         87 │ + → → → new·TextEncoder().encode(expected).byteLength
+         88 │ + → → );
+     76  89 │       for (let count = 0; count < 100; count += 1) {
+     77     │ - → → → const·quiet·=·manager.read({·cursor:·result.nextCursor,·sessionId:·created.sessionId·});
+         90 │ + → → → const·quiet·=·manager.read({
+         91 │ + → → → → cursor:·result.nextCursor,
+         92 │ + → → → → sessionId:·created.sessionId,
+         93 │ + → → → });
+     78  94 │         expect(quiet).not.toBeInstanceOf(Promise);
+     79  95 │         expect(quiet.output).toBe("");
+    ······· │ 
+     83  99 │       expect(session.pty.child.exitCode).toBeNull();
+     84 100 │       session.state = "terminating";
+     85     │ - → → expect(manager.read({·cursor:·"0",·sessionId:·created.sessionId·}).state).toBe("terminating");
+        101 │ + → → expect(
+        102 │ + → → → manager.read({·cursor:·"0",·sessionId:·created.sessionId·}).state
+        103 │ + → → ).toBe("terminating");
+     86 104 │       expect(() => manager.read({ cursor: "0", sessionId: "missing" })).toThrow(
+     87 105 │         expect.objectContaining({ code: "NOT_FOUND" })
+     88 106 │       );
+     89     │ - → → expect(()·=>·manager.read({·cursor:·"-1",·sessionId:·created.sessionId·})).toThrow(
+     90     │ - → → → expect.objectContaining({·code:·"BAD_CURSOR"·})
+     91     │ - → → );
+        107 │ + → → expect(()·=>
+        108 │ + → → → manager.read({·cursor:·"-1",·sessionId:·created.sessionId·})
+        109 │ + → → ).toThrow(expect.objectContaining({·code:·"BAD_CURSOR"·}));
+     92 110 │       process.kill(-session.pty.child.pid, "SIGKILL");
+     93 111 │       await bounded(session.pty.child.exited);
+     94     │ - → → expect(manager.read({·cursor:·"0",·sessionId:·created.sessionId·}).state).toBe("exited");
+        112 │ + → → expect(
+        113 │ + → → → manager.read({·cursor:·"0",·sessionId:·created.sessionId·}).state
+        114 │ + → → ).toBe("exited");
+     95 115 │     } finally {
+     96 116 │       try {
+    ······· │ 
+    111 131 │             pty.terminal.close();
+    112 132 │           }
+    113     │ - → → → → const·probe·=·Bun.spawn(["ps",·"-o",·"pid=,stat=",·"-p",·String(pty.child.pid)],·{
+    114     │ - → → → → → stderr:·"pipe",·stdout:·"pipe",
+    115     │ - → → → → });
+        133 │ + → → → → const·probe·=·Bun.spawn(
+        134 │ + → → → → → ["ps",·"-o",·"pid=,stat=",·"-p",·String(pty.child.pid)],
+        135 │ + → → → → → {
+        136 │ + → → → → → → stderr:·"pipe",
+        137 │ + → → → → → → stdout:·"pipe",
+        138 │ + → → → → → }
+        139 │ + → → → → );
+    116 140 │           try {
+    117 141 │             const output = await bounded(new Response(probe.stdout).text());
+    118 142 │             expect([0, 1]).toContain(await bounded(probe.exited));
+    119 143 │             expect(output.trim()).toBe("");
+    120     │ - → → → → → console.log(`OUTPUT_RING_OWN_PID_PS·pid=${pty.child.pid}·no·process·remains`);
+        144 │ + → → → → → console.log(
+        145 │ + → → → → → → `OUTPUT_RING_OWN_PID_PS·pid=${pty.child.pid}·no·process·remains`
+        146 │ + → → → → → );
+    121 147 │           } finally {
+    122 148 │             if (probe.exitCode === null) {
+  
+
+apps/server/test/output-ring.test.ts:360:10 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    358 │ 		while (cursor !== ring.headCursor) {
+    359 │ 			const result = ring.read(cursor);
+  > 360 │ 			const length = result.output.length;
+        │ 			      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    361 │ 			expect(result.output).toBe("�".repeat(length));
+    362 │ 			expect(encode(result.output).byteLength).toBeLessThanOrEqual(MAX_READ_BYTES);
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/test/output-ring.test.ts:42:3 lint/style/noParameterAssign ━━━━━━━━━━
+
+  × Assigning a function parameter is confusing.
+  
+    40 │ 		}
+    41 │ 		expect(result.nextCursor).not.toBe(cursor);
+  > 42 │ 		cursor = result.nextCursor;
+       │ 		^^^^^^
+    43 │ 	}
+    44 │ 	throw new Error("Read made no bounded progress");
+  
+  i The parameter is declared here:
+  
+    30 │ }
+    31 │ 
+  > 32 │ function drain(ring: OutputRing, cursor = "0", budget = MAX_READ_BYTES): string {
+       │                                  ^^^^^^
+    33 │ 	const outputs: string[] = [];
+    34 │ 	for (let reads = 0; reads < OUTPUT_RING_CAPACITY; reads += 1) {
+  
+  i Developers usually expect function parameters to be readonly. To align with this expectation, use a local variable instead.
+  
+
+apps/server/test/output-ring.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     30  30 │   }
+     31  31 │   
+     32     │ - function·drain(ring:·OutputRing,·cursor·=·"0",·budget·=·MAX_READ_BYTES):·string·{
+         32 │ + function·drain(
+         33 │ + → ring:·OutputRing,
+         34 │ + → cursor·=·"0",
+         35 │ + → budget·=·MAX_READ_BYTES
+         36 │ + ):·string·{
+     33  37 │     const outputs: string[] = [];
+     34  38 │     for (let reads = 0; reads < OUTPUT_RING_CAPACITY; reads += 1) {
+    ······· │ 
+     71  75 │     test("incremental append/read returns no duplicates or loss", () => {
+     72  76 │       const ring = new OutputRing();
+     73     │ - → → const·pieces·=·["hello",·"·é·",·"漢字",·"🙂",·"\u001b[31mred\u001b[0m",·"\n"];
+         77 │ + → → const·pieces·=·[
+         78 │ + → → → "hello",
+         79 │ + → → → "·é·",
+         80 │ + → → → "漢字",
+         81 │ + → → → "🙂",
+         82 │ + → → → "\u001b[31mred\u001b[0m",
+         83 │ + → → → "\n",
+         84 │ + → → ];
+     74  85 │       const outputs: string[] = [];
+     75  86 │       let cursor = "0";
+    ······· │ 
+    102 113 │     test("BOM, NUL, CRLF and ANSI are preserved byte for byte", () => {
+    103 114 │       const ring = new OutputRing();
+    104     │ - → → const·text·=·"\ufeff\u0000\r\n\u001b[31;1mé🙂\u001b[0m\u001b]0;title\u0007\u001b[2J\u001b[H";
+        115 │ + → → const·text·=
+        116 │ + → → → "\ufeff\u0000\r\n\u001b[31;1mé🙂\u001b[0m\u001b]0;title\u0007\u001b[2J\u001b[H";
+    105 117 │       for (const byte of encode(text)) {
+    106 118 │         ring.append(new Uint8Array([byte]));
+    ······· │ 
+    170 182 │   describe("bounded reads", () => {
+    171 183 │     for (const character of ["é", "漢", "🙂"]) {
+    172     │ - → → for·(let·available·=·1;·available·<·encode(character).byteLength;·available·+=·1)·{
+        184 │ + → → for·(
+        185 │ + → → → let·available·=·1;
+        186 │ + → → → available·<·encode(character).byteLength;
+        187 │ + → → → available·+=·1
+        188 │ + → → )·{
+    173 189 │         test(`${character} crossing 64-KiB cap with ${available} bytes left`, () => {
+    174 190 │           const ring = new OutputRing();
+    ······· │ 
+    210 226 │     });
+    211 227 │   
+    212     │ - → for·(const·maxBytes·of·[0,·-1,·1.5,·Number.NaN,·Number.POSITIVE_INFINITY,·Number.MAX_SAFE_INTEGER·+·1])·{
+        228 │ + → for·(const·maxBytes·of·[
+        229 │ + → → 0,
+        230 │ + → → -1,
+        231 │ + → → 1.5,
+        232 │ + → → Number.NaN,
+        233 │ + → → Number.POSITIVE_INFINITY,
+        234 │ + → → Number.MAX_SAFE_INTEGER·+·1,
+        235 │ + → ])·{
+    213 236 │       test(`invalid read budget ${maxBytes} returns LIMIT`, () => {
+    214 237 │         expect(() => new OutputRing().read("0", maxBytes)).toThrow(
+    ······· │ 
+    249 272 │           const ring = new OutputRing();
+    250 273 │           const width = encode(character).byteLength;
+    251     │ - → → → → ring.append(encode(`${character}${"a".repeat(OUTPUT_RING_CAPACITY·-·width)}`));
+        274 │ + → → → → ring.append(
+        275 │ + → → → → → encode(`${character}${"a".repeat(OUTPUT_RING_CAPACITY·-·width)}`)
+        276 │ + → → → → );
+    252 277 │           ring.append(encode("b".repeat(lost)));
+    253 278 │           expect(ring.oldestCursor).toBe(String(width));
+    ······· │ 
+    299 324 │   
+    300 325 │   describe("invalid cursors", () => {
+    301     │ - → for·(const·cursor·of·["",·"·",·"-1",·"-0",·"1.0",·"1.5",·"1e1",·"+1",·"01",·"00",·"0x1",·"1\n",·"NaN",·"Infinity",·"9007199254740993",·"9".repeat(10_000)])·{
+        326 │ + → for·(const·cursor·of·[
+        327 │ + → → "",
+        328 │ + → → "·",
+        329 │ + → → "-1",
+        330 │ + → → "-0",
+        331 │ + → → "1.0",
+        332 │ + → → "1.5",
+        333 │ + → → "1e1",
+        334 │ + → → "+1",
+        335 │ + → → "01",
+        336 │ + → → "00",
+        337 │ + → → "0x1",
+        338 │ + → → "1\n",
+        339 │ + → → "NaN",
+        340 │ + → → "Infinity",
+        341 │ + → → "9007199254740993",
+        342 │ + → → "9".repeat(10_000),
+        343 │ + → ])·{
+    302 344 │       test(`malformed/huge cursor ${cursor.slice(0, 24)} returns BAD_CURSOR`, () => {
+    303 345 │         const ring = new OutputRing();
+    ······· │ 
+    318 360 │       for (const character of ["é", "漢", "🙂"]) {
+    319 361 │         ring.append(encode(character));
+    320     │ - → → → for·(let·interior·=·1;·interior·<·encode(character).byteLength;·interior·+=·1)·{
+        362 │ + → → → for·(
+        363 │ + → → → → let·interior·=·1;
+        364 │ + → → → → interior·<·encode(character).byteLength;
+        365 │ + → → → → interior·+=·1
+        366 │ + → → → )·{
+    321 367 │           badCursor(ring, String(start + interior));
+    322 368 │         }
+    ······· │ 
+    329 375 │   describe("invalid UTF-8: replacement display, raw byte cursors", () => {
+    330 376 │     for (const bytes of [
+    331     │ - → → [0xff],·[0x80],·[0xc0,·0xaf],·[0xed,·0xa0,·0x80],
+    332     │ - → → [0xf4,·0x90,·0x80,·0x80],·[0xe2,·0x82,·0x61],·[0xf0,·0x9f,·0x61],
+    333     │ - → → [0xe0,·0x80,·0x61],·[0xf0,·0x80,·0x80,·0x80],
+        377 │ + → → [0xff],
+        378 │ + → → [0x80],
+        379 │ + → → [0xc0,·0xaf],
+        380 │ + → → [0xed,·0xa0,·0x80],
+        381 │ + → → [0xf4,·0x90,·0x80,·0x80],
+        382 │ + → → [0xe2,·0x82,·0x61],
+        383 │ + → → [0xf0,·0x9f,·0x61],
+        384 │ + → → [0xe0,·0x80,·0x61],
+        385 │ + → → [0xf0,·0x80,·0x80,·0x80],
+    334 386 │     ]) {
+    335 387 │       test(`invalid sequence ${bytes.join(",")} matches standard replacement decoding`, () => {
+    ······· │ 
+    343 395 │         expect(result.output).toBe(new TextDecoder().decode(raw));
+    344 396 │         expect(result.nextCursor).toBe(String(raw.byteLength));
+    345     │ - → → → expect(encode(result.output).byteLength).toBeLessThanOrEqual(MAX_READ_BYTES);
+        397 │ + → → → expect(encode(result.output).byteLength).toBeLessThanOrEqual(
+        398 │ + → → → → MAX_READ_BYTES
+        399 │ + → → → );
+    346 400 │         expect(ring.retainedBytes).toBe(raw.byteLength);
+    347 401 │       });
+    ······· │ 
+    360 414 │         const length = result.output.length;
+    361 415 │         expect(result.output).toBe("�".repeat(length));
+    362     │ - → → → expect(encode(result.output).byteLength).toBeLessThanOrEqual(MAX_READ_BYTES);
+        416 │ + → → → expect(encode(result.output).byteLength).toBeLessThanOrEqual(
+        417 │ + → → → → MAX_READ_BYTES
+        418 │ + → → → );
+    363 419 │         expect(BigInt(result.nextCursor)).toBe(BigInt(cursor) + BigInt(length));
+    364 420 │         expect(length).toBeGreaterThan(0);
+  
+
+Checked 45 files in 162ms. No fixes applied.
+Found 11 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "check" exited with code 1
+EXIT_CODE=1
+
+[2026-11-21T15:27:37Z] $ bunx ultracite fix apps/server/src/sessions/ring.ts apps/server/test/output-ring.test.ts apps/server/test/unit/output-ring.test.ts apps/server/test/integration/output-ring.test.ts
+Checked 4 files in 136ms. Fixed 3 files.
+EXIT_CODE=0
+
+[2026-11-21T15:27:38Z] $ bun run check
+$ ultracite check
+Checked 45 files in 144ms. No fixes applied.
+EXIT_CODE=0
+
+[2026-11-21T15:27:39Z] $ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+[2026-11-21T15:27:42Z] $ bun test apps/server/test/integration/output-ring.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/integration/output-ring.test.ts:
+OUTPUT_RING_OWN_PID_PS pid=49063 no process remains
+(pass) session ring captures pre-registration/native data and reads a quiet running PTY synchronously [32.39ms]
+
+ 1 pass
+ 0 fail
+ 411 expect() calls
+Ran 1 test across 1 file. [86.00ms]
+EXIT_CODE=0
+
+[2026-11-21T15:28:31Z] $ bunx ultracite fix apps/server/test/output-ring.test.ts
+Checked 1 file in 143ms. Fixed 1 file.
+EXIT_CODE=0
+
+[2026-11-21T15:28:32Z] $ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [3.12s]
+EXIT_CODE=0
+
+[2026-11-21T15:28:35Z] $ bun test apps/server/test/output-ring.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [2.92ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.63ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.13ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [1.46ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.68ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.86ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.08ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [0.90ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.39ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [0.91ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [1.47ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [0.65ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.53ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.39ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.04ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [1.20ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.40ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [39.33ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [4.53ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [4.72ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [2.33ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [2.72ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [3.38ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [2.41ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [1.28ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [0.47ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.86ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [0.74ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [1.27ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.36ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.31ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [0.77ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [11.47ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [0.72ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [0.53ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [1.02ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.29ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.78ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.02ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [60.87ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [30.56ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [27.04ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [27.56ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [29.39ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [31.02ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [29.50ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [290.45ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [27.02ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [1.23ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.62ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.65ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.49ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.53ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.52ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [0.80ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.46ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.63ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.07ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.06ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.06ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.06ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.07ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.69ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [0.54ms]
+(pass) invalid cursors > non-string cursors are not coerced [3.37ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [1.72ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 255 matches standard replacement decoding [1.52ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 128 matches standard replacement decoding [1.37ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 192,175 matches standard replacement decoding [1.35ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 237,160,128 matches standard replacement decoding [1.42ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.06ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 226,130,97 matches standard replacement decoding [1.02ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.46ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.42ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [0.43ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > replacement expansion respects encoded budgets while advancing raw bytes only [8.00ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > incomplete suffix is withheld until finish, then one replacement consumes the raw prefix [0.77ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [21.20ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [57.47ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [29.31ms]
+
+ 80 pass
+ 0 fail
+ 76143 expect() calls
+Ran 80 tests across 1 file. [798.00ms]
+EXIT_CODE=0
+
+[2026-11-21T15:28:36Z] $ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [9.99ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.63ms]
+(pass) spawn failure closes its terminal and propagates the error [1.03ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [0.99ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.55ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.37ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.35ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.43ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.41ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.56ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.27ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.38ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.43ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.48ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) malformed or incorrect Authorization: basic [0.31ms]
+(pass) malformed or incorrect Authorization: empty [0.12ms]
+(pass) malformed or incorrect Authorization: short [0.11ms]
+(pass) malformed or incorrect Authorization: long [0.08ms]
+(pass) malformed or incorrect Authorization: duplicate [0.08ms]
+(pass) malformed or incorrect Authorization: extra-field [0.12ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.13ms]
+(pass) unapproved Host absent denies a valid bearer [0.26ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.15ms]
+(pass) unapproved Host localhost denies a valid bearer [0.15ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.15ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.15ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.10ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.14ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.21ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.10ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.19ms]
+(pass) unapproved present Origin null denies a valid bearer [0.14ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.10ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.07ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.06ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.10ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [1.45ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.19ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.15ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.21ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.12ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.11ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.10ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.13ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [6.69ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.52ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.47ms]
+(pass) malformed JSON is denied before MCP body parsing [0.33ms]
+(pass) URL-only token credential never authenticates [0.24ms]
+(pass) URL-only access_token credential never authenticates [0.10ms]
+(pass) URL-only bearer credential never authenticates [0.08ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.52ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.82ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.24ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.12ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.09ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.13ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.09ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.11ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.08ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.10ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.62ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.20ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.12ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.40ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.07ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.21ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.31ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.08ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.40ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.54ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.36ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.41ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.16ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.22ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.14ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.04ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.04ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.34ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.15ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.11ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [2.66ms]
+
+apps/server/test/unit/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [2.90ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.88ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.20ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [2.63ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.44ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.93ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.06ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [1.41ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.33ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.56ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [0.75ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [1.17ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.56ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.39ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.74ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [1.02ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.42ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [77.32ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [6.30ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [3.93ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [3.81ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [3.97ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [5.68ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [5.00ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [1.02ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [0.04ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.03ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [0.03ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [0.28ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.59ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [1.92ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [0.46ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [12.04ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [1.61ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [1.60ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [1.31ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.51ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [1.95ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.50ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [40.60ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [32.40ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [27.10ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [28.67ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [28.50ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [27.25ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [27.89ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [295.44ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [27.73ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [0.50ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.44ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.63ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [0.22ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.89ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.41ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.45ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.37ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.46ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [0.43ms]
+(pass) invalid cursors > non-string cursors are not coerced [5.45ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [1.31ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 255 matches standard replacement decoding [0.72ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 128 matches standard replacement decoding [0.41ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 192,175 matches standard replacement decoding [0.43ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 237,160,128 matches standard replacement decoding [0.39ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.47ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 226,130,97 matches standard replacement decoding [0.41ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.49ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.51ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [0.45ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > replacement expansion respects encoded budgets while advancing raw bytes only [8.23ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > incomplete suffix is withheld until finish, then one replacement consumes the raw prefix [1.60ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [22.22ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [58.54ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [27.64ms]
+
+ 252 pass
+ 0 fail
+ 77194 expect() calls
+Ran 252 tests across 4 files. [1018.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=51912 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [55.20ms]
+python3 PID=PGID=SID=TPGID=51919 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.30ms]
+bash GROUP=51921 GRANDCHILD=51924 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.43ms]
+bash GROUP=51925 GRANDCHILD=51928 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.57ms]
+python3 GROUP=51929 GRANDCHILD=51932 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.09ms]
+python3 GROUP=51933 GRANDCHILD=51935 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.12ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [196.51ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [203.60ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [209.39ms]
+TetherTerm MCP listening on http://127.0.0.1:43563/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [33.43ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.59ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [188.16ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [215.88ms]
+TetherTerm MCP listening on http://127.0.0.1:41295/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [6.65ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [154.71ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [7.72ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.57ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [5.21ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [8.84ms]
+(pass) terminating sessions still occupy the four live slots [9.21ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [11.69ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [4.35ms]
+(pass) a new server process cannot recognize the previous process's UUID [138.80ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [6.48ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [5.30ms]
+(pass) injected clock records finite default and explicit runtime deadlines [3.00ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.18ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.76ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [2.56ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.95ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.82ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.51ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.49ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.51ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.43ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [11.32ms]
+OWN_PID_PS checked=52073,52074,52075,52076,52077,52078,52079,52080,52081,52082,52083,52084,52085,52086,52087,52088,52089,52090,52102,52103,52115,52116,52117,52118,52119,52120,52121,52122,52123,52124,52125,52126,52127,52128,52129
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.80ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.56ms]
+
+apps/server/test/integration/output-ring.test.ts:
+OUTPUT_RING_OWN_PID_PS pid=52133 no process remains
+(pass) session ring captures pre-registration/native data and reads a quiet running PTY synchronously [19.45ms]
+
+ 39 pass
+ 0 fail
+ 1602 expect() calls
+Ran 39 tests across 7 files. [1.89s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=43665 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [89.87ms]
+(pass) server startup fails clearly when setsid is absent on PATH [69.83ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [76.77ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [73.36ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [65.20ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [68.42ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [58.98ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [65.41ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [67.02ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [79.32ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [75.19ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [57.33ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [66.97ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [138.52ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [141.79ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [147.92ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [148.16ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [139.24ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [148.41ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [149.50ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [153.36ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [150.16ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [137.63ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [127.87ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [127.52ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [123.34ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [135.09ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [120.33ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [119.06ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [123.45ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [122.28ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [98.28ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.48s]
+EXIT_CODE=0
+
+[2026-11-21T15:28:43Z] $ bun run check
+$ ultracite check
+Checked 45 files in 128ms. No fixes applied.
+EXIT_CODE=0
+
+[2026-11-21T15:28:43Z] $ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+[2026-11-21T15:28:46Z] $ git diff --check
+EXIT_CODE=0
+
+[2026-11-21T15:29:49Z] $ bun test apps/server/test/output-ring.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [2.91ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [3.22ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.13ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [1.80ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.52ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.22ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.07ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [0.93ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.38ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.44ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [1.40ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [0.95ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.61ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.49ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.05ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [4.33ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [1.08ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [47.15ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [6.17ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [6.70ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [3.15ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [2.32ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [2.30ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [3.50ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [0.66ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [1.22ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [1.21ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [1.49ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [0.40ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.45ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.75ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [1.30ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [11.31ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [0.66ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [1.12ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [0.37ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.18ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.03ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.31ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [42.80ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [28.68ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [33.89ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [31.34ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [32.80ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [36.24ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [31.28ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [322.21ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [29.30ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [0.62ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.07ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [2.82ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.51ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.52ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [0.95ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.70ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.05ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.05ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [1.16ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.52ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.54ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.58ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.57ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [1.76ms]
+(pass) invalid cursors > non-string cursors are not coerced [4.61ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [0.39ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 255 matches standard replacement decoding [0.33ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 128 matches standard replacement decoding [0.60ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 192,175 matches standard replacement decoding [0.03ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 237,160,128 matches standard replacement decoding [0.05ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.03ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 226,130,97 matches standard replacement decoding [0.86ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.58ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.60ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [1.43ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > replacement expansion respects encoded budgets while advancing raw bytes only [10.93ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > incomplete suffix is withheld until finish, then one replacement consumes the raw prefix [1.97ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [20.16ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [69.30ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [29.66ms]
+
+ 80 pass
+ 0 fail
+ 76143 expect() calls
+Ran 80 tests across 1 file. [871.00ms]
+EXIT_CODE=0
+
+[2026-11-21T15:29:50Z] $ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [10.90ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.99ms]
+(pass) spawn failure closes its terminal and propagates the error [1.20ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.11ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.41ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.34ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.33ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.32ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) malformed or incorrect Authorization: basic [0.33ms]
+(pass) malformed or incorrect Authorization: empty [0.12ms]
+(pass) malformed or incorrect Authorization: short [0.12ms]
+(pass) malformed or incorrect Authorization: long [0.10ms]
+(pass) malformed or incorrect Authorization: duplicate [0.08ms]
+(pass) malformed or incorrect Authorization: extra-field [0.12ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.08ms]
+(pass) unapproved Host absent denies a valid bearer [0.25ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.11ms]
+(pass) unapproved Host localhost denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.09ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.09ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.11ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.10ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.07ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.19ms]
+(pass) unapproved present Origin null denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [0.08ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.11ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.13ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.12ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [1.44ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.21ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.15ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.18ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.12ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.10ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.12ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [5.10ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.57ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.56ms]
+(pass) malformed JSON is denied before MCP body parsing [0.47ms]
+(pass) URL-only token credential never authenticates [0.34ms]
+(pass) URL-only access_token credential never authenticates [0.16ms]
+(pass) URL-only bearer credential never authenticates [0.14ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.78ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [1.12ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.35ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.15ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.13ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.21ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.16ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.14ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.17ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.15ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.18ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.16ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.14ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.70ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.22ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.13ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.44ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.08ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.39ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.08ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.38ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.57ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.44ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.36ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.17ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.35ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.16ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.03ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [3.46ms]
+
+apps/server/test/unit/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [1.82ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.56ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.14ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [2.61ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.42ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.84ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.11ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [1.07ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.34ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.45ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [0.72ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [1.24ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.50ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.46ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.71ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [1.09ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.36ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [43.16ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [4.61ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [2.53ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [2.69ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [3.88ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [3.47ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [2.53ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [0.22ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [0.03ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.22ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [0.54ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [1.29ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [1.88ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.98ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [1.23ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [11.52ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [1.61ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [1.46ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [1.28ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [1.28ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.45ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.46ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [40.78ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [28.04ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [28.12ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [47.58ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [30.83ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [29.22ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [31.92ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [333.62ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [27.48ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [0.63ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.65ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.44ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.62ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [2.32ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.47ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.47ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.50ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.44ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.55ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.32ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.93ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [0.56ms]
+(pass) invalid cursors > non-string cursors are not coerced [6.02ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [2.05ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 255 matches standard replacement decoding [1.67ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 128 matches standard replacement decoding [0.64ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 192,175 matches standard replacement decoding [0.52ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 237,160,128 matches standard replacement decoding [0.54ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.53ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 226,130,97 matches standard replacement decoding [0.49ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.59ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.64ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [0.65ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > replacement expansion respects encoded budgets while advancing raw bytes only [12.13ms]
+(pass) invalid UTF-8: replacement display, raw byte cursors > incomplete suffix is withheld until finish, then one replacement consumes the raw prefix [0.78ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [25.21ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [78.71ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [27.63ms]
+
+ 252 pass
+ 0 fail
+ 77194 expect() calls
+Ran 252 tests across 4 files. [1062.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=52938 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.74ms]
+python3 PID=PGID=SID=TPGID=52945 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.37ms]
+bash GROUP=52947 GRANDCHILD=52950 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.58ms]
+bash GROUP=52951 GRANDCHILD=52954 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [23.54ms]
+python3 GROUP=52955 GRANDCHILD=52958 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [43.48ms]
+python3 GROUP=52959 GRANDCHILD=52961 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.08ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [195.39ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [170.47ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [203.70ms]
+TetherTerm MCP listening on http://127.0.0.1:45051/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [45.25ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.48ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [230.17ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [234.01ms]
+TetherTerm MCP listening on http://127.0.0.1:34391/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [8.33ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [160.39ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [9.09ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [2.76ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [7.37ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [7.26ms]
+(pass) terminating sessions still occupy the four live slots [11.85ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.80ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [4.45ms]
+(pass) a new server process cannot recognize the previous process's UUID [131.69ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.85ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [4.32ms]
+(pass) injected clock records finite default and explicit runtime deadlines [4.82ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.25ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.78ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.57ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.72ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.67ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.56ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.85ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.68ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [11.36ms]
+OWN_PID_PS checked=53087,53088,53089,53090,53091,53092,53093,53094,53095,53096,53097,53098,53099,53100,53101,53102,53103,53104,53116,53117,53129,53130,53131,53132,53133,53134,53135,53136,53137,53138,53139,53140,53141,53142,53143
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.72ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.58ms]
+
+apps/server/test/integration/output-ring.test.ts:
+OUTPUT_RING_OWN_PID_PS pid=53147 no process remains
+(pass) session ring captures pre-registration/native data and reads a quiet running PTY synchronously [19.84ms]
+
+ 39 pass
+ 0 fail
+ 1602 expect() calls
+Ran 39 tests across 7 files. [1.90s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=43611 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [85.58ms]
+(pass) server startup fails clearly when setsid is absent on PATH [68.07ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [68.84ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [63.78ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [63.12ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [67.13ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [55.07ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [55.90ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [67.78ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [60.48ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [60.90ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [64.72ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [69.28ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [127.38ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [139.85ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [127.98ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [124.75ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [121.63ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [129.91ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [126.79ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [133.20ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [127.65ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [123.05ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [130.67ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [122.06ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [116.11ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [150.08ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [120.71ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [117.85ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [117.05ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [119.50ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [70.52ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.22s]
+EXIT_CODE=0
+
+[2026-11-21T15:29:56Z] $ bun run check
+$ ultracite check
+Checked 45 files in 150ms. No fixes applied.
+EXIT_CODE=0
+
+[2026-11-21T15:29:57Z] $ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+[2026-11-21T15:30:00Z] $ git diff --check
+EXIT_CODE=0

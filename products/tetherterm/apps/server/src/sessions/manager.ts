@@ -4,6 +4,7 @@ import type { Environment, ServerConfig } from "../config";
 import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
+import { OutputRing, type OutputRingRead } from "./ring";
 import {
 	type WriteSessionRequest,
 	type WriteSessionResult,
@@ -46,6 +47,12 @@ export interface CreateSessionResult {
 	cursor: string;
 	sessionId: string;
 	state: SessionState;
+}
+
+export interface ReadSessionRequest {
+	cursor: string;
+	maxBytes?: number;
+	sessionId: string;
 }
 
 export interface SessionClock {
@@ -99,6 +106,7 @@ export class SessionManager {
 		this.liveSlots += 1;
 		let session: Session | undefined;
 		let receivedBytes = 0;
+		const output = new OutputRing();
 		let { executable, cwd } = request;
 		let pty: PtyHandle;
 		try {
@@ -108,7 +116,7 @@ export class SessionManager {
 					...request,
 					cols: limits.data.cols,
 					onData(bytes) {
-						// Buffering will attach here; never log terminal output.
+						output.append(bytes);
 						receivedBytes += bytes.byteLength;
 						if (session) {
 							session.receivedBytes = receivedBytes;
@@ -136,6 +144,7 @@ export class SessionManager {
 			executable,
 			exitCode: null,
 			id: randomUUID(),
+			output,
 			pty,
 			receivedBytes,
 			runtimeDeadline,
@@ -164,6 +173,14 @@ export class SessionManager {
 			throw new TerminalError("NOT_FOUND", "Session was not found");
 		}
 		return session;
+	}
+
+	read(request: ReadSessionRequest): OutputRingRead & { state: SessionState } {
+		const session = this.get(request.sessionId);
+		return {
+			...session.output.read(request.cursor, request.maxBytes),
+			state: session.state,
+		};
 	}
 
 	resize(
