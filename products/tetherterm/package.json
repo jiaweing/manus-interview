@@ -1,6 +1,7 @@
 {
   "name": "tetherterm",
   "private": true,
+  "type": "module",
   "workspaces": {
     "packages": [
       "apps/*",
@@ -8,7 +9,7 @@
     ],
     "catalog": {
       "zod": "^4.6.7",
-      "@types/bun": "^1.4.4",
+      "@types/bun": "1.4.5",
       "varlock": "1.25.0",
       "better-auth": "1.7.22",
       "evlog": "^2.35.1",
@@ -27,18 +28,24 @@
       "@better-auth/expo": "1.7.22"
     }
   },
-  "type": "module",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "check-types": "turbo run check-types",
-    "dev:native": "turbo run dev -F native --",
-    "dev:web": "turbo run dev -F web --",
-    "dev:server": "turbo run dev -F server --",
-    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
-    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    "build": "bun run --cwd apps/server build",
     "check": "ultracite check",
-    "fix": "ultracite fix"
+    "check-types": "bun run --cwd apps/server check-types",
+    "dev": "bun run --cwd apps/server dev",
+    "dev:server": "bun run --cwd apps/server dev",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    "fix": "ultracite fix",
+    "postinstall": "bun run env:generate",
+    "start": "bun run --cwd apps/server start",
+    "test": "bun run test:unit && bun run test:integration && bun run test:e2e",
+    "test:e2e": "bun test ./apps/server/test/e2e",
+    "test:integration": "bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration",
+    "test:unit": "bun test ./apps/server/test/unit",
+    "verify:coverage": "bun test --coverage ./apps/server/test"
+  },
+  "overrides": {
+    "@next/env": "npm:@varlock/nextjs-integration@2.0.1"
   },
   "dependencies": {
     "zod": "catalog:"
@@ -52,8 +59,8 @@
     "ultracite": "8.0.0",
     "varlock": "catalog:"
   },
-  "overrides": {
-    "@next/env": "npm:@varlock/nextjs-integration@2.0.1"
-  },
-  "packageManager": "bun@1.4.5"
+  "packageManager": "bun@1.4.5",
+  "engines": {
+    "bun": "1.4.5"
+  }
 }

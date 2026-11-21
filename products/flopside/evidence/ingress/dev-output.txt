@@ -1,0 +1,17 @@
+COMMAND=WEB_PORT=3282 SERVER_PORT=3283 bun run dev
+$ bun run scripts/run-apps.ts dev
+Flopside server listening at http://127.0.0.1:3283/ (development)
+▲ Next.js 16.4.6 (Turbopack)
+- Local:         http://127.0.0.1:3282
+- Network:       http://127.0.0.1:3282
+✓ Ready in 372ms
+✓ Running next.config.ts took 81ms
+
+ GET / 200 in 332ms (next.js: 136ms, application-code: 196ms)
+ GET / 200 in 51ms (next.js: 2ms, application-code: 49ms)
+Flopside ingress {"bootMarker":"8153dbd9-173f-4ced-bf75-7a8d27096397","connections":1}
+Flopside ingress {"bootMarker":"8153dbd9-173f-4ced-bf75-7a8d27096397","connections":0}
+Flopside ingress {"bootMarker":"8153dbd9-173f-4ced-bf75-7a8d27096397","connections":1}
+Flopside ingress {"bootMarker":"8153dbd9-173f-4ced-bf75-7a8d27096397","connections":0}
+[?25h
+EXIT_CODE=0

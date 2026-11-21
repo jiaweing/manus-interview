@@ -12,6 +12,7 @@
       "**",
       "!**/.next",
       "!**/dist",
+      "!**/out",
       "!**/.turbo",
       "!**/.nx",
       "!**/dev-dist",
@@ -32,7 +33,7 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "tab"
+    "indentStyle": "space"
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
@@ -41,12 +42,6 @@
       "preset": "recommended",
       "correctness": {
         "useExhaustiveDependencies": "info"
-      },
-      "nursery": {
-        "useTailwindSortedClasses": {
-          "level": "warn",
-          "fix": "safe"
-        }
       },
       "style": {
         "noParameterAssign": "error",

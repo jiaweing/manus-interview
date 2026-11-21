@@ -7,19 +7,11 @@
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/index.mjs",
-    "env:generate": "varlock codegen"
+    "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "@ai-sdk/devtools": "^1.0.73",
-    "@ai-sdk/google": "^4.0.118",
-    "@tetherterm/auth": "workspace:*",
-    "@tetherterm/db": "workspace:*",
-    "ai": "catalog:",
-    "better-auth": "catalog:",
-    "evlog": "catalog:",
-    "hono": "^4.13.18",
-    "varlock": "catalog:",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "hono": "4.13.18",
     "zod": "catalog:"
   },
   "devDependencies": {

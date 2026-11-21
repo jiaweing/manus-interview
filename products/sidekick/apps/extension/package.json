@@ -5,11 +5,11 @@
   "description": "Sidekick: supervised Chrome side-panel agent",
   "type": "module",
   "scripts": {
-    "dev": "wxt --port 5555",
     "build": "wxt build",
-    "zip": "wxt zip",
+    "dev": "wxt --port 5555",
     "postinstall": "wxt prepare",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "zip": "wxt zip"
   },
   "dependencies": {
     "react": "^19.2.4",

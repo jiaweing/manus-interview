@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "patchbay": "bun run --no-env-file src/cli.ts",
+    "build": "tsdown",
+    "check-types": "tsc --noEmit",
+    "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run dist/index.mjs",
+    "env:generate": "varlock codegen"
+  },
+  "dependencies": {
+    "@ai-sdk/devtools": "^1.0.73",
+    "@ai-sdk/google": "^4.0.118",
+    "@patchbay/auth": "workspace:*",
+    "@patchbay/db": "workspace:*",
+    "ai": "catalog:",
+    "better-auth": "catalog:",
+    "evlog": "catalog:",
+    "hono": "^4.13.18",
+    "varlock": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@patchbay/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "tsdown": "^0.23.7",
+    "typescript": "^6.0.3"
+  }
+}

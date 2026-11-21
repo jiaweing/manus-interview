@@ -1,0 +1,76 @@
+$ bun --version
+1.4.5
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1405 installs across 1551 packages (no changes) [2.10s]
+EXIT=0
+
+$ bun run check-types
+$ turbo run check-types
+
+Attention:
+Turborepo now collects completely anonymous telemetry regarding usage.
+This information is used to shape the Turborepo roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://turborepo.dev/docs/telemetry
+
+
+   • turbo 2.11.13
+   • Packages in scope: @patchbay/auth, @patchbay/config, @patchbay/db, @patchbay/ui, extension, fumadocs, native, server, web
+   • Running check-types in 9 packages
+   • Remote caching disabled, using shared worktree cache
+
+native:check-types: cache miss, executing 9f4998c57c2cfe57
+@patchbay/ui:check-types: cache miss, executing d611a3fd3e74fe90
+@patchbay/db:check-types: cache miss, executing 53e0dd0378f8d7a9
+native:check-types: $ tsc --noEmit
+@patchbay/db:check-types: $ tsc --noEmit
+@patchbay/ui:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing 3189f9f20f8c567c
+web:check-types: $ tsc --noEmit
+@patchbay/auth:check-types: cache miss, executing ebbffadf2d264f14
+@patchbay/auth:check-types: $ tsc --noEmit
+server:check-types: cache miss, executing d199f95e40ab04b5
+server:check-types: $ tsc --noEmit
+
+ Tasks:    6 successful, 6 total
+Cached:    0 cached, 6 total
+  Time:    11.408s 
+
+EXIT=0
+
+$ git rev-parse --show-toplevel
+/home/ubuntu/wt/i52-scaffold
+
+$ find . -name .git (excluding node_modules)
+
+$ bun run --cwd apps/fumadocs dev (raw scaffold, before CLI code)
+$ next dev --port=4000
+BOOT_POLL=1: URLError
+⚠️  [varlock] No .env files found in /home/ubuntu/wt/i52-scaffold/products/patchbay/apps/fumadocs, so no env values were loaded or validated.
+   Run `varlock init` to create a .env.schema file, or run from the directory that contains it.
+   This will be an error in the next major version. Set _VARLOCK_ALLOW_EMPTY_CONFIG=1 to allow running with an empty config.
+▲ Next.js 16.4.6 (Turbopack)
+- Local:         http://localhost:4000
+- Network:       http://169.254.0.21:4000
+✓ Ready in 911ms
+ℹ️ [varlock] change detected in .env.schema; file contents unchanged, skipping next reload.
+✓ Running next.config.mjs took 380ms
+[MDX] started dev server
+
+BOOT_POLL=2: TimeoutError
+○ Compiling / ...
+ GET / 200 in 1128ms (next.js: 650ms, proxy.ts: 9ms, application-code: 469ms)
+[MDX] closing dev server
+[?25h
+GET http://localhost:4000/ STATUS=200, HTML_BYTES=21056
+RAW_SCAFFOLD_HTTP_BOOT=PASS
+Generated app stopped after smoke check; it is not part of the Patchbay CLI.

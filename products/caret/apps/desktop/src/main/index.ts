@@ -1,9 +1,13 @@
 import { app, BrowserWindow } from "electron";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { createOverlayWindow } from "./overlay";
 import { installOverlayFixture } from "./overlay-fixture";
+import { registerCaretIpc } from "./register-ipc";
+import { guardRenderer, RENDERER_PRIVILEGES } from "./renderer-security";
+import { launchCaretTray } from "./tray-runtime";
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   const overlay = createOverlayWindow();
   const win = new BrowserWindow({
     width: 480,
@@ -11,25 +15,25 @@ function createWindow(): void {
     show: false,
     webPreferences: {
       preload: join(import.meta.dirname, "../preload/index.cjs"),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true,
+      ...RENDERER_PRIVILEGES,
     },
   });
-  win.once("closed", () => overlay.dispose());
+  const rendererPath = join(import.meta.dirname, "../renderer/index.html");
+  guardRenderer(win.webContents);
+  const boundary = registerCaretIpc(win.webContents, pathToFileURL(rendererPath).href);
+  win.once("closed", () => {
+    boundary.dispose();
+    overlay.dispose();
+  });
   win.once("ready-to-show", () => win.show());
-  if (process.env.ELECTRON_RENDERER_URL) {
-    win.loadURL(process.env.ELECTRON_RENDERER_URL);
-  } else {
-    win.loadFile(join(import.meta.dirname, "../renderer/index.html"));
-  }
+  // Even development uses the bundled renderer, never an environment-provided URL.
+  win.loadFile(rendererPath);
+  return win;
 }
 
-app.whenReady().then(() => {
-  if (!app.isPackaged && process.argv.includes("--fixture-overlay")) {
-    installOverlayFixture();
-  } else {
-    createWindow();
-  }
-});
-app.on("window-all-closed", () => app.quit());
+if (!app.isPackaged && process.argv.includes("--fixture-overlay")) {
+  app.whenReady().then(installOverlayFixture);
+  app.on("window-all-closed", () => app.quit());
+} else {
+  launchCaretTray(createWindow);
+}

@@ -1,0 +1,14 @@
+$ WEB_PORT=3270 SERVER_PORT=3271 bun run start
+$ bun run scripts/run-apps.ts start
+Flopside server listening at http://127.0.0.1:3271/
+▲ Next.js 16.4.6
+- Local:         http://127.0.0.1:3270
+- Network:       http://127.0.0.1:3270
+✓ Ready in 164ms
+✓ Running next.config.ts took 40ms
+$ curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3270/
+200
+EXIT_CODE=0
+$ curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3271/
+200
+EXIT_CODE=0
