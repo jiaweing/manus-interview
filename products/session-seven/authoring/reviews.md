@@ -40,7 +40,7 @@ The code in this run was authored by Manus swarm agents, not `anthropic/claude-o
 ## #152 — Authoring access verifier and review format
 
 - **Issue:** #152, verify Claude Opus 5.5 access through OpenRouter and record reviewed authoring patches.
-- **PR:** pending builder PR URL.
+- **PR:** https://github.com/jiaweing/manus-interview/pull/190 (Refs #152; blocked prerequisite remains open).
 - **Files:** `apps/video/scripts/authoring-verify-model.js`, `apps/video/tests/authoring-model.test.js`, root `package.json`, `authoring/model-record.json`, this ledger, `qa/authoring-model.txt`, `qa/authoring-blocker.txt`, `qa/authoring-model-tests.txt`.
 - **Author kind:** authored by Manus swarm agent builder #152, not by anthropic/claude-opus-5.5 (access blocked: no OPENROUTER_API_KEY).
 - **Request reference:** none; the no-key real run sends zero chat requests. Fake-transport test hashes/generation ids are test fixtures, not provider-access evidence.
