@@ -1,0 +1,18 @@
+$ tsc --noEmit
+src/rooms.test.ts(41,7): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(43,12): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(44,24): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(46,26): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(47,11): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(47,41): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(48,16): error TS18046: 'json' is of type 'unknown'.
+src/rooms.test.ts(107,11): error TS18046: 'created.json' is of type 'unknown'.
+src/rooms.test.ts(109,19): error TS18046: 'created.json' is of type 'unknown'.
+src/rooms.test.ts(113,11): error TS18046: 'joined.json' is of type 'unknown'.
+src/rooms.test.ts(140,10): error TS18046: 'created.json' is of type 'unknown'.
+src/rooms.test.ts(142,18): error TS18046: 'created.json' is of type 'unknown'.
+src/rooms.test.ts(146,10): error TS18046: 'joined.json' is of type 'unknown'.
+src/rooms.test.ts(273,10): error TS18046: 'first.json' is of type 'unknown'.
+src/rooms.test.ts(274,10): error TS18046: 'second.json' is of type 'unknown'.
+src/rooms.test.ts(276,34): error TS18046: 'first.json' is of type 'unknown'.
+src/rooms.test.ts(428,10): error TS18046: 'joined.json' is of type 'unknown'.

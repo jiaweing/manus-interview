@@ -1,0 +1,23 @@
+$ biome check --write .
+apps/server/src/rooms.test.ts:43:7 lint/suspicious/noUnnecessaryConditions ━━━━━━━━━━
+
+  × This condition is always truthy.
+  
+    41 │ 			expect(serialized.includes(token)).toBe(false);
+    42 │ 		}
+  > 43 │ 		if (json.seat) {
+       │ 		    ^^^^^^^^^
+    44 │ 			expect(
+    45 │ 				typeof json.seat.token === "string" &&
+  
+  i The value's type can never be falsy, so this check is redundant.
+  
+
+Checked 41 files in 299ms. Fixed 1 file.
+Found 1 error.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+error: script "fix" exited with code 1

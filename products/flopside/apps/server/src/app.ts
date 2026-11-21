@@ -1,14 +1,22 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { createIngressProbe } from "./ingress-probe";
+import { createRoomRoutes } from "./room-routes";
+import { RoomStore } from "./rooms";
 
 interface AppOptions {
 	allowedOrigins?: string[];
+	roomStore?: RoomStore;
 	webRoot?: string;
 }
 
-export function createApp({ allowedOrigins = [], webRoot }: AppOptions = {}) {
+export function createApp({
+	allowedOrigins = [],
+	roomStore = new RoomStore(),
+	webRoot,
+}: AppOptions = {}) {
 	const application = new Hono();
+	application.route("/api/rooms", createRoomRoutes(roomStore));
 	application.get(
 		"/api/ws",
 		async (c, next) => {
