@@ -1,0 +1,22 @@
+{
+  "outcome": "skipped",
+  "reason": "no-key",
+  "attempts": 0,
+  "sources": [
+    "https://openrouter.ai/docs/guides/overview/multimodal/audio",
+    "https://openrouter.ai/google/lyria-3-pro-preview/llms.txt",
+    "https://openrouter.ai/collections/audio-models",
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/api/v1/models/google/lyria-3-pro-preview/endpoints",
+    "https://openrouter.ai/docs/guides/routing/provider-selection"
+  ],
+  "checkedAt": "2026-11-21T14:07:47.398Z",
+  "costApproval": {
+    "totalBudgetUsd": null,
+    "accessApproved": false,
+    "rightsApproved": false,
+    "contractValidated": false
+  },
+  "networkRequests": 0,
+  "smokeTest": "not run: no key"
+}

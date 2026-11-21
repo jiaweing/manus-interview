@@ -41,7 +41,8 @@
     "fix": "ultracite fix",
     "video:studio": "bun run --cwd apps/video studio",
     "verify:toolchain": "bun apps/video/scripts/verify-toolchain.js",
-    "validate:timeline": "bun apps/video/scripts/validate-timeline.js"
+    "validate:timeline": "bun apps/video/scripts/validate-timeline.js",
+    "music:generate": "bun apps/video/scripts/music-generate.js"
   },
   "dependencies": {
     "zod": "catalog:"
