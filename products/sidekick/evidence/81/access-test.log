@@ -1,0 +1,14 @@
+bun test v1.4.5 (a7733435c)
+
+apps/extension/src/snapshot-client.test.ts:
+(pass) panel snapshot access flow > missing optional permission pauses without injecting or prompting automatically [0.79ms]
+(pass) panel snapshot access flow > an explicit user gesture requests only the exact allowed origin synchronously [0.23ms]
+(pass) panel snapshot access flow > granted origin uses the existing isolated frame-0 packaged descriptor then frame-0 messaging [0.18ms]
+(pass) panel snapshot access flow > unsupported origins, forged broad permissions and protected URLs never request access [0.31ms]
+(pass) panel snapshot access flow > permission denial can be surfaced without any injection [0.15ms]
+(pass) panel snapshot access flow > closed/protected tabs and malformed content responses return a clear pause [0.16ms]
+
+ 6 pass
+ 0 fail
+ 26 expect() calls
+Ran 6 tests across 1 file. [8.00ms]

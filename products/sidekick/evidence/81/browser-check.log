@@ -1,0 +1,5 @@
+PASS local fixture: 15 indexed original targets, excluded boundaries, repeat injection, snapshot/document rotation
+PASS missing-origin pause and user-gesture Allow access button (native approval outcome not asserted)
+PASS Chromium permissions.contains confirms exactly scoped optional demo origins
+PASS wikipedia: 1459 indexed elements, 74042 rendered characters
+PASS httpbin: 25 indexed elements, 181 rendered characters

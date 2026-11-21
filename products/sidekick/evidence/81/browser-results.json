@@ -1,0 +1,31 @@
+{
+  "localFixtureOrigin": "http://localhost:43943",
+  "permissionGrant": "disposable-profile-only",
+  "productionManifestUnchanged": true,
+  "localFixture": {
+    "documentRotationOnReload": true,
+    "indexedElements": 15,
+    "liveMap": "all 15 original DOM targets",
+    "result": "PASS",
+    "snapshotRotation": true
+  },
+  "missingAccess": {
+    "nativePermissionRequestClicked": true,
+    "note": "Native approval completion is not asserted; explicit profile grant is used below. Pause UI uses a test-only selected-tab adapter.",
+    "result": "PASS"
+  },
+  "wikipedia": {
+    "indexedElements": 1459,
+    "renderedCharacters": 74042,
+    "result": "PASS",
+    "title": "Ada Lovelace - Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/Ada_Lovelace"
+  },
+  "httpbin": {
+    "indexedElements": 25,
+    "renderedCharacters": 181,
+    "result": "PASS",
+    "title": "",
+    "url": "https://httpbin.org/forms/post"
+  }
+}

@@ -1,4 +1,5 @@
 import { defineContentScript } from "wxt/utils/define-content-script";
+import { installSnapshotObserver } from "../src/page/observer";
 
 export default defineContentScript({
 	allFrames: false,
@@ -6,7 +7,7 @@ export default defineContentScript({
 		if (window.top !== window) {
 			throw new Error("Sidekick supports top-frame injection only");
 		}
-		// Snapshot handling is added separately; this entrypoint does not run an agent.
+		installSnapshotObserver();
 	},
 	noScriptStartedPostMessage: true,
 	// Omitting matches prevents WXT from granting required demo host permissions.
