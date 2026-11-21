@@ -1,0 +1,5 @@
+PASS control: all-in BB=10 is not covered by SB=5, so SB owes 5 and then runs out
+ACTUAL SHORT BB {"status":"showdown","street":"river","actor":null,"boardCards":5,"legal":{"actions":[],"callAmount":0,"canRaise":false,"maxTotalTo":null,"minTotalTo":null},"stacks":[0,394],"contributions":[0,0]}
+FOLD CONSEQUENCE {"accepted":false,"status":"showdown","nonFolded":["bb","sb"]}
+
+Exact verifier script run from engine package context; exit=0

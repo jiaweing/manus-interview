@@ -38,6 +38,38 @@ function canAct(seat: SeatState): boolean {
 	return seat.inHand && !seat.folded && !seat.allIn && seat.stack > 0;
 }
 
+function bettingLevels(state: MatchState) {
+	const fundedCount = state.public.seats.filter(canAct).length;
+	const actualBet = state.public.seats.reduce(
+		(maximum, seat) =>
+			seat.inHand && !seat.folded
+				? Math.max(maximum, seat.streetContribution)
+				: maximum,
+		0
+	);
+	return {
+		actualBet,
+		// Preserve the nominal bring-in only while opponents can create a side pot.
+		callBet:
+			fundedCount > 1
+				? Math.max(actualBet, state.public.currentBet)
+				: actualBet,
+		fundedCount,
+	};
+}
+
+function awaitsAction(
+	seat: SeatState,
+	actualBet: number,
+	fundedCount: number
+): boolean {
+	return (
+		canAct(seat) &&
+		((fundedCount > 1 && !seat.actedThisRound) ||
+			seat.streetContribution < actualBet)
+	);
+}
+
 function hasRaiseRight(state: MatchState, seat: SeatState): boolean {
 	return (
 		!seat.actedThisRound ||
@@ -70,7 +102,11 @@ export function legalActions(
 		return none;
 	}
 	const { currentBet, lastFullRaiseIncrement, seats } = state.public;
-	const outstanding = Math.max(0, currentBet - seat.streetContribution);
+	const { actualBet, callBet, fundedCount } = bettingLevels(state);
+	if (!awaitsAction(seat, actualBet, fundedCount)) {
+		return none;
+	}
+	const outstanding = Math.max(0, callBet - seat.streetContribution);
 	const maximum = seat.streetContribution + seat.stack;
 	// No dry-side-pot wagers against opponents who can no longer bet.
 	const canRaise =
@@ -93,7 +129,7 @@ export function legalActions(
 			type: currentBet === 0 ? "bet" : "raise",
 		});
 	}
-	if (maximum <= currentBet || canRaise) {
+	if (seat.stack <= outstanding || canRaise) {
 		actions.push({
 			maxTotalTo: maximum,
 			minTotalTo: maximum,
@@ -131,7 +167,8 @@ function completeHand(
  * Close completed rounds and run out when no further betting is possible.
  * applyAction calls this automatically. Also call after startNextHand to resolve
  * hands with blind-only all-ins; dealing's lower-level API preserves its order contract.
- * A sole funded contender still gets a turn if it owes a call. Chips are NEVER settled.
+ * A sole funded contender acts only if an actual live wager is outstanding.
+ * The nominal bring-in never creates a dry-side-pot call. Chips are NEVER settled.
  */
 export function progressBetting(
 	state: MatchState,
@@ -146,41 +183,47 @@ export function progressBetting(
 	if (contenders.length === 1) {
 		return completeHand(state, "folded");
 	}
-	const eligible = state.public.seats.filter(canAct);
-	const noBettingPossible =
-		eligible.length === 0 ||
-		(eligible.length === 1 &&
-			(eligible[0] as SeatState).streetContribution >= state.public.currentBet);
-	if (noBettingPossible) {
+	const { actualBet, fundedCount } = bettingLevels(state);
+	const pending = state.public.seats.filter((seat) =>
+		awaitsAction(seat, actualBet, fundedCount)
+	);
+	if (fundedCount <= 1 && pending.length === 0) {
 		let runout = state;
 		while (runout.public.street !== "river") {
 			runout = advanceStreet(runout);
 		}
 		return completeHand(runout, "showdown");
 	}
-	const roundComplete = eligible.every(
-		(seat) =>
-			seat.actedThisRound && seat.streetContribution === state.public.currentBet
-	);
-	if (roundComplete) {
+	if (pending.length === 0) {
 		return state.public.street === "river"
 			? completeHand(state, "showdown")
 			: advanceStreet(state);
+	}
+	let { actor } = state.public;
+	if (
+		afterIndex !== undefined ||
+		actor === null ||
+		!pending.includes(state.public.seats[actor] as SeatState)
+	) {
+		actor = nextActor(
+			state,
+			afterIndex ??
+				(state.public.street === "preflop"
+					? state.public.bigBlindIndex
+					: state.public.dealerIndex)
+		);
+		while (
+			actor !== null &&
+			!pending.includes(state.public.seats[actor] as SeatState)
+		) {
+			actor = nextActor(state, actor);
+		}
 	}
 	return {
 		...state,
 		public: {
 			...state.public,
-			actor:
-				afterIndex === undefined
-					? (state.public.actor ??
-						nextActor(
-							state,
-							state.public.street === "preflop"
-								? state.public.bigBlindIndex
-								: state.public.dealerIndex
-						))
-					: nextActor(state, afterIndex),
+			actor,
 		},
 	};
 }

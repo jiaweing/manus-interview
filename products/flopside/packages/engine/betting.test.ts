@@ -27,6 +27,18 @@ function match(count = 4): MatchState {
 	);
 }
 
+function nextHand(stacks: number[]): MatchState {
+	const settled = match(stacks.length);
+	for (const [index, stack] of stacks.entries()) {
+		Object.assign(seatAt(settled, index), {
+			handContribution: 0,
+			stack,
+			streetContribution: 0,
+		});
+	}
+	return startNextHand(settled, fullDeck);
+}
+
 function seatAt(state: MatchState, index: number): SeatState {
 	const seat = state.public.seats[index];
 	if (!seat) {
@@ -183,6 +195,46 @@ function assertClosure(state: MatchState, index: number) {
 		assert.equal(wrongTurn.error.code, "NOT_YOUR_TURN");
 	}
 	assert.equal(JSON.stringify(state), before);
+}
+
+/** Rule oracle, not just descriptor/reducer consistency: a covered sole seat never acts. */
+function assertBettingDecision(state: MatchState) {
+	const live = state.public.seats.filter((seat) => seat.inHand && !seat.folded);
+	const actualBet = Math.max(...live.map((seat) => seat.streetContribution));
+	const funded = live.filter((seat) => !seat.allIn && seat.stack > 0);
+	if (state.public.handStatus !== "playing") {
+		assert.equal(state.public.actor, null);
+		for (let index = 0; index < state.public.seats.length; index += 1) {
+			assert.equal(legalActions(state, index).actions.length, 0);
+		}
+		return;
+	}
+	assert.ok(live.length > 1);
+	assert.ok(funded.length > 0);
+	assert.notEqual(state.public.actor, null);
+	const index = state.public.actor as number;
+	const actor = seatAt(state, index);
+	assert.ok(funded.includes(actor));
+	const legal = legalActions(state, index);
+	if (funded.length === 1) {
+		const outstanding = Math.max(0, actualBet - actor.streetContribution);
+		assert.ok(outstanding > 0, "A covered sole funded contender must run out");
+		assert.equal(legal.callAmount, Math.min(outstanding, actor.stack));
+		assert.equal(legal.canRaise, false);
+		assert.equal(
+			legal.actions.some((action) => action.type === "allin"),
+			actor.stack <= outstanding
+		);
+	} else {
+		assert.ok(!actor.actedThisRound || actor.streetContribution < actualBet);
+		assert.equal(
+			legal.callAmount,
+			Math.min(
+				actor.stack,
+				Math.max(0, state.public.currentBet - actor.streetContribution)
+			)
+		);
+	}
 }
 
 describe("total-to wagers and authoritative legality", () => {
@@ -523,6 +575,167 @@ describe("turn order, round completion and unsettled hand endings", () => {
 		expect(seatAt(state, 1).stack).toBe(160);
 	});
 
+	for (const bigBlind of [1, 3]) {
+		test(`heads-up BB ${bigBlind}/SB 5 is already covered: no decision, immediate runout`, () => {
+			const initial = nextHand([bigBlind, 400 - bigBlind]);
+			expect(initial.public.bigBlindIndex).toBe(0);
+			expect(initial.public.currentBet).toBe(10);
+			expect(
+				initial.public.seats.map((seat) => seat.streetContribution)
+			).toEqual([bigBlind, 5]);
+			// Even an unnormalized hand cannot advertise/accept a phantom fold.
+			expect(types(initial, 1)).toEqual([]);
+			rejected(initial, { type: "fold" }, 1);
+			const before = JSON.stringify(initial);
+			const state = progressBetting(initial);
+			expect(JSON.stringify(initial)).toBe(before);
+			expect(state.public.handStatus).toBe("showdown");
+			expect(state.public.street).toBe("river");
+			expect(state.public.actor).toBeNull();
+			expect(state.public.board).toHaveLength(5);
+			expect(state.public.seats.map((seat) => seat.handContribution)).toEqual([
+				bigBlind,
+				5,
+			]);
+			expect(seatAt(state, 1).stack).toBe(395 - bigBlind);
+			expect(chips(state)).toBe(400);
+			for (const index of [0, 1]) {
+				expect(legalActions(state, index)).toEqual({
+					actions: [],
+					callAmount: 0,
+					canRaise: false,
+					maxTotalTo: null,
+					minTotalTo: null,
+				});
+				for (const type of ACTION_TYPES) {
+					rejected(state, { type }, index, "NOT_YOUR_TURN");
+				}
+			}
+		});
+	}
+
+	for (const bigBlind of [7, 10]) {
+		test(`heads-up all-in BB ${bigBlind}/SB 5 calls only ${bigBlind - 5} actual chips`, () => {
+			let state = progressBetting(nextHand([bigBlind, 400 - bigBlind]));
+			expect(state.public.actor).toBe(1);
+			expect(state.public.handStatus).toBe("playing");
+			expect(legalActions(state, 1)).toEqual({
+				actions: [{ type: "fold" }, { type: "call" }],
+				callAmount: bigBlind - 5,
+				canRaise: false,
+				maxTotalTo: null,
+				minTotalTo: null,
+			});
+			rejected(state, { type: "allin" });
+			rejected(state, { totalTo: 20, type: "raise" });
+			state = play(state, { type: "call" });
+			expect(state.public.seats.map((seat) => seat.handContribution)).toEqual([
+				bigBlind,
+				bigBlind,
+			]);
+			expect(seatAt(state, 1).stack).toBe(400 - 2 * bigBlind);
+			expect(state.public.handStatus).toBe("showdown");
+			expect(state.public.street).toBe("river");
+			expect(state.public.actor).toBeNull();
+		});
+	}
+
+	test("BB 7/SB 5 offers all-in only for an actual short or exact call, never nominal excess", () => {
+		for (const smallBlindStack of [6, 7, 9]) {
+			let state = progressBetting(nextHand([7, smallBlindStack]));
+			expect(legalActions(state, 1).callAmount).toBe(
+				Math.min(2, smallBlindStack - 5)
+			);
+			expect(types(state)).toEqual(
+				smallBlindStack <= 7 ? ["fold", "call", "allin"] : ["fold", "call"]
+			);
+			if (smallBlindStack > 7) {
+				rejected(state, { type: "allin" });
+			}
+			state = play(state, { type: smallBlindStack <= 7 ? "allin" : "call" });
+			expect(seatAt(state, 1).handContribution).toBe(
+				Math.min(7, smallBlindStack)
+			);
+			expect(state.public.handStatus).toBe("showdown");
+			expect(state.public.actor).toBeNull();
+		}
+	});
+
+	for (const count of [3, 4]) {
+		test(`${count} seats: covered SB runs out after other funded seats fold against BB 3`, () => {
+			const stacks = count === 3 ? [3, 200, 397] : [200, 200, 397, 3];
+			let state = progressBetting(nextHand(stacks));
+			expect(state.public.bigBlindIndex).toBe(count === 3 ? 0 : 3);
+			expect(state.public.smallBlindIndex).toBe(2);
+			// Two or more funded contenders still use the nominal multiway bring-in.
+			expect(legalActions(state, state.public.actor as number).callAmount).toBe(
+				10
+			);
+			for (let fold = 0; fold < count - 2; fold += 1) {
+				state = play(state, { type: "fold" });
+			}
+			expect(state.public.handStatus).toBe("showdown");
+			expect(state.public.street).toBe("river");
+			expect(state.public.actor).toBeNull();
+			expect(seatAt(state, 2).handContribution).toBe(5);
+			expect(seatAt(state, 2).stack).toBe(392);
+			expect(types(state, 2)).toEqual([]);
+			rejected(state, { type: "fold" }, 2, "NOT_YOUR_TURN");
+		});
+
+		test(`${count} seats: BB 7 plus a shorter all-in leaves SB 5 owing only 2`, () => {
+			const stacks = count === 3 ? [7, 1, 592] : [1, 200, 592, 7];
+			let state = progressBetting(nextHand(stacks));
+			state = play(state, { type: "allin" });
+			if (count === 4) {
+				state = play(state, { type: "fold" });
+			}
+			expect(state.public.actor).toBe(2);
+			expect(legalActions(state, 2).callAmount).toBe(2);
+			expect(types(state)).toEqual(["fold", "call"]);
+			state = play(state, { type: "call" });
+			expect(state.public.handStatus).toBe("showdown");
+			expect(state.public.actor).toBeNull();
+			expect(seatAt(state, 2).handContribution).toBe(7);
+			expect(seatAt(state, 2).stack).toBe(585);
+		});
+	}
+
+	test("multiway BB 3 retains nominal bring-in and funded SB's voluntary option", () => {
+		let state = progressBetting(nextHand([3, 200, 397]));
+		state = play(state, { type: "call" });
+		expect(state.public.actor).toBe(2);
+		expect(legalActions(state, 2).callAmount).toBe(5);
+		expect(legalActions(state, 2).minTotalTo).toBe(20);
+		state = play(state, { type: "call" });
+		expect(state.public.handStatus).toBe("playing");
+		expect(state.public.street).toBe("flop");
+		expect(state.public.actor).toBe(2);
+	});
+
+	test("multiway actor selection skips an already-acted covered funded seat", () => {
+		const initial = nextHand([3, 200, 397]);
+		Object.assign(seatAt(initial, 2), {
+			actedThisRound: true,
+			handContribution: 10,
+			lastActedBet: 10,
+			stack: 387,
+			streetContribution: 10,
+		});
+		initial.public.actor = 2;
+		expect(types(initial, 2)).toEqual([]);
+		rejected(initial, { type: "fold" }, 2);
+		for (const afterIndex of [undefined, 1]) {
+			const state = progressBetting(initial, afterIndex);
+			expect(state.public.actor).toBe(1);
+			expect(legalActions(state, 1).callAmount).toBe(10);
+			expect(types(state, 2)).toEqual([]);
+			const flopState = play(state, { type: "call" });
+			expect(flopState.public.street).toBe("flop");
+			expect(flopState.public.actor).toBe(2);
+		}
+	});
+
 	test("all-in runout retains unmatched contributions for #32 refunds", () => {
 		let state = match(2);
 		seatAt(state, 1).stack = 15;
@@ -572,18 +785,51 @@ describe("turn order, round completion and unsettled hand endings", () => {
 
 describe("seeded property play", () => {
 	for (const count of [2, 3, 4]) {
-		test(`${count} seats: 1500 random legal hands, exhaustive offered wagers and adjacent rejections`, () => {
+		test(`${count} seats: 1500 random-stack hands, short-blind rule oracle and exhaustive wagers`, () => {
 			const rng = seeded(31_000 + count);
 			let turns = 0;
+			let shortBlindHands = 0;
+			let coveredRunouts = 0;
 			for (let hand = 0; hand < 1500; hand += 1) {
 				const initial = match(count);
-				// Inject shuffled decks and varied settled stacks, including short blinds.
-				for (const seat of initial.public.seats) {
-					seat.stack = 1 + boundedIndex(200, rng);
+				// Mix broad stacks, short blinds with funded opponents, and all-short tables.
+				const bigBlindIndex = count === 4 ? 3 : 0;
+				const smallBlindIndex = count === 2 ? 1 : 2;
+				for (const [index, seat] of initial.public.seats.entries()) {
+					let range = hand % 3 === 2 ? 10 : 200;
+					if (hand % 3 === 1 && index === bigBlindIndex) {
+						range = 10;
+					} else if (hand % 3 === 1 && index === smallBlindIndex) {
+						range = 15;
+					}
+					seat.stack = 1 + boundedIndex(range, rng);
+					seat.handContribution = 0;
+					seat.streetContribution = 0;
 				}
-				let state = progressBetting(
-					startNextHand(initial, () => shuffleDeck(fullDeck(), rng))
+				const dealt = startNextHand(initial, () =>
+					shuffleDeck(fullDeck(), rng)
 				);
+				if (
+					seatAt(dealt, bigBlindIndex).streetContribution < 10 ||
+					seatAt(dealt, smallBlindIndex).streetContribution < 5
+				) {
+					shortBlindHands += 1;
+				}
+				const funded = dealt.public.seats.filter((seat) => !seat.allIn);
+				const actualBet = Math.max(
+					...dealt.public.seats.map((seat) => seat.streetContribution)
+				);
+				let state = progressBetting(dealt);
+				if (
+					funded.length === 0 ||
+					(funded.length === 1 &&
+						(funded[0] as SeatState).streetContribution >= actualBet)
+				) {
+					assert.equal(state.public.handStatus, "showdown");
+					assert.equal(state.public.street, "river");
+					coveredRunouts += 1;
+				}
+				assertBettingDecision(state);
 				const total = chips(state);
 				let steps = 0;
 				while (state.public.handStatus === "playing") {
@@ -605,6 +851,7 @@ describe("seeded property play", () => {
 					assert.equal(result.ok, true);
 					({ state } = result);
 					assert.equal(chips(state), total);
+					assertBettingDecision(state);
 					for (const seat of state.public.seats) {
 						assert.ok(Number.isSafeInteger(seat.stack) && seat.stack >= 0);
 						assert.ok(Number.isSafeInteger(seat.handContribution));
@@ -624,6 +871,13 @@ describe("seeded property play", () => {
 				);
 				if (state.public.handStatus === "showdown") {
 					assert.equal(state.public.board.length, 5);
+					if (
+						state.public.seats.filter(
+							(seat) => seat.inHand && !seat.folded && !seat.allIn
+						).length <= 1
+					) {
+						coveredRunouts += 1;
+					}
 				} else {
 					assert.equal(
 						state.public.seats.filter((seat) => seat.inHand && !seat.folded)
@@ -633,6 +887,8 @@ describe("seeded property play", () => {
 				}
 			}
 			assert.ok(turns > 1500);
+			assert.ok(shortBlindHands > 500);
+			assert.ok(coveredRunouts > 0);
 		}, 120_000);
 	}
 });
