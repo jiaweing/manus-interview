@@ -1,0 +1,5 @@
+$ bun run --cwd apps/server dev
+$ bun run --hot src/index.ts
+Started development server: http://localhost:8787
+error: script "dev" was terminated by signal SIGTERM (Polite quit request)
+error: script "dev:server" was terminated by signal SIGTERM (Polite quit request)

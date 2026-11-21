@@ -1,0 +1,11 @@
+$ bun run --hot src/index.ts
+
+🚨🚨🚨  Configuration is currently invalid  🚨🚨🚨
+
+❓ POLAR_ACCESS_TOKEN*  🔐sensitive
+   └ undefined
+   - Value is required but is currently empty
+❓ GOOGLE_GENERATIVE_AI_API_KEY*  🔐sensitive
+   └ undefined
+   - Value is required but is currently empty
+error: script "dev" exited with code 1

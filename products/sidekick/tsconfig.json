@@ -1,0 +1,3 @@
+{
+  "extends": "@sidekick/config/tsconfig.base.json"
+}

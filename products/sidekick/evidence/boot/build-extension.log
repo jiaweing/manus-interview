@@ -1,0 +1,22 @@
+$ bun run --cwd apps/extension build
+$ wxt build
+
+WXT 0.21.5
+ℹ Building chrome-mv3 for production with Vite 8.3.8
+[?25l⠋ Preparing...[K⠋ [1/3] background[K⠙ [1/3] background[K⠙ [2/3] content[K⠙ [3/3] popup[K⠹ [3/3] popup[K⠸ [3/3] popup[K⠼ [3/3] popup[K[K[?25h[K[?25h✔ Built extension in 544 ms
+  ├─ .output/chrome-mv3/manifest.json               444 B    
+  ├─ .output/chrome-mv3/popup.html                  457 B    
+  ├─ .output/chrome-mv3/background.js               556 B    
+  ├─ .output/chrome-mv3/chunks/popup-BeNUWAo9.js    220.83 kB
+  ├─ .output/chrome-mv3/content-scripts/content.js  3.42 kB  
+  ├─ .output/chrome-mv3/assets/popup-B7rtVY_E.css   1.59 kB  
+  ├─ .output/chrome-mv3/assets/react-CqE24J1b.svg   4.13 kB  
+  ├─ .output/chrome-mv3/icon/128.png                3.07 kB  
+  ├─ .output/chrome-mv3/icon/16.png                 559 B    
+  ├─ .output/chrome-mv3/icon/32.png                 916 B    
+  ├─ .output/chrome-mv3/icon/48.png                 1.33 kB  
+  ├─ .output/chrome-mv3/icon/96.png                 2.37 kB  
+  └─ .output/chrome-mv3/wxt.svg                     1.07 kB  
+Σ Total size: 240.74 kB                           
+✔ Finished in 1.356 s
+exit 0
