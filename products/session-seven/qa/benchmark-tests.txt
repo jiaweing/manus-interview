@@ -1,0 +1,17 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/benchmark.test.js:
+(pass) benchmark pure helpers (no renderer or Chromium) > 240-frame measurement projects to all 1800 frames [0.14ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > invalid measurement values are rejected [0.19ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > report helper produces qa/benchmark.json shape in a temporary fixture [1.79ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > saved real QA report has the same contract, without re-rendering [0.36ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > comparison retains c2 as the conservative baseline and records both runs [0.09ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > six-hour window uses the supplied clock, clamps expired windows, and compares estimates [0.66ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > fixture copies the locked two-line Caret caption and cannot pollute the Hero registry [2.23ms]
+(pass) benchmark pure helpers (no renderer or Chromium) > caption/labels and interface text keep at least 4.5:1 contrast [0.43ms]
+
+ 8 pass
+ 0 fail
+ 63 expect() calls
+Ran 8 tests across 1 file. [59.00ms]
+benchmarkTestExitCode=0

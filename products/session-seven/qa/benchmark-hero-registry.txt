@@ -1,0 +1,26 @@
+▲ [WARNING] Cannot find base config file "@session-seven/config/tsconfig.base.json" [tsconfig.json]
+
+    ../../tsconfig.json:2:13:
+      2 │   "extends": "@session-seven/config/tsconfig.base.json"
+        ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+🧹 Webpack config change detected. Clearing cache... 
+Bundling code        ━                  6%
+Bundling code        ━━━╸               21%
+Bundling code        ━━━━━╸             32%
+Bundling code        ━━━━━━━╸           43%
+Bundling code        ━━━━━━━━╸          49%
+Bundling code        ━━━━━━━━━━━╸       65%
+Bundling code        ━━━━━━━━━━━━╸      70%
+Bundling code        ━━━━━━━━━━━━━╸     75%
+Bundling code        ━━━━━━━━━━━━━━     80%
+Bundling code        ━━━━━━━━━━━━━━━    85%
+Bundling code        ━━━━━━━━━━━━━━━━   91%
+Bundling code        ━━━━━━━━━━━━━━━━━╸ 98%
+Bundling code        ━━━━━━━━━━━━━━━━━━ 100%
+Bundled code         ━━━━━━━━━━━━━━━━━━ 29493ms
+⚡️ Cached bundle. Subsequent renders will be faster.
+
+The following compositions are available:
+
+Hero    30      1920x1080      1800 (60.00 sec)
