@@ -1,0 +1,123 @@
+evidence/overlay/initial-lint-output.txt:4: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/initial-lint-output.txt:11: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/initial-lint-output.txt:13: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/initial-lint-output.txt:146: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/initial-lint-output.txt:151: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/repository-lint-output.txt:5: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/repository-lint-output.txt:12: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/repository-lint-output.txt:14: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/repository-lint-output.txt:147: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/repository-lint-output.txt:152: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:4: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:6: trailing whitespace.
+[32m+[m[32m     80 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:14: trailing whitespace.
+[32m+[m[32m    135 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:16: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:18: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:20: trailing whitespace.
+[32m+[m[32m     80 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:28: trailing whitespace.
+[32m+[m[32m    135 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:30: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:32: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:37: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:44: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:46: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:48: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:53: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:63: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:65: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:70: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:82: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:84: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:89: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:96: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:99: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:104: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:111: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:113: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:118: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:130: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:132: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:137: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:140: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:145: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:149: trailing whitespace.
+[32m+[m[32m    13 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:151: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:153: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:158: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:165: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:167: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:172: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:178: trailing whitespace.
+[32m+[m[32m    65 │[m[41m [m
+evidence/overlay/scoped-lint-fixes-output.txt:179: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:181: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-fixes-output.txt:188: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:4: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:6: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:8: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:10: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:15: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:17: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:19: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:21: trailing whitespace.
+[32m+[m[41m  [m
+evidence/overlay/scoped-lint-initial-output.txt:26: trailing whitespace.
+[32m+[m[41m  [m
+DIFF_CACHED_CHECK_EXIT=2

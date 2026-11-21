@@ -1,0 +1,4 @@
+$ tsc --noEmit -p tsconfig.json
+src/renderer/overlay/main.tsx(1,8): error TS2882: Cannot find module or type declarations for side-effect import of '@fontsource/inter/latin-400.css'.
+src/renderer/overlay/main.tsx(2,8): error TS2882: Cannot find module or type declarations for side-effect import of '@fontsource/inter/latin-600.css'.
+src/renderer/overlay/main.tsx(6,8): error TS2882: Cannot find module or type declarations for side-effect import of './overlay.css'.
