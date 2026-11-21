@@ -1,0 +1,7 @@
+Command: bunx biome check --config-path=.issue-129-biome.json apps/web/src/lib/crypto/handshake.ts tests/unit/handshake-crypto.test.ts
+Working directory: products/glassroom
+PUBLIC_PORT=4129 NEXT_INTERNAL_PORT=5129
+
+Checked 2 files in 370ms. No fixes applied.
+
+Exit code: 0

@@ -1,0 +1,9 @@
+Command: bun install --frozen-lockfile
+Working directory: products/glassroom
+PUBLIC_PORT=4129 NEXT_INTERNAL_PORT=5129
+
+bun install v1.4.5 (a7733435c)
+
+Checked 327 installs across 393 packages (no changes) [149.00ms]
+
+Exit code: 0
