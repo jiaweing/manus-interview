@@ -5,6 +5,11 @@ import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
 import {
+	type WriteSessionRequest,
+	type WriteSessionResult,
+	writeSessionInput,
+} from "./input";
+import {
 	dimensionsSchema,
 	type ResizeSessionRequest,
 	type ResizeSessionResult,
@@ -166,6 +171,10 @@ export class SessionManager {
 		request: ResizeSessionRequest
 	): ResizeSessionResult {
 		return resizeSession(this.get(sessionId), request);
+	}
+
+	async write(request: WriteSessionRequest): Promise<WriteSessionResult> {
+		return await writeSessionInput(this.get(request.sessionId), request);
 	}
 
 	status(sessionId: string): SessionSummary {

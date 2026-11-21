@@ -1,0 +1,1017 @@
+
+$ bun test apps/server/test/terminal-write.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [4.14ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.13ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.06ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.05ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.39ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [2.14ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [26.90ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.47ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.17ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.29ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.29ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.08ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.33ms]
+(pass) fake PTY: sessions have independent queues [0.24ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [23.38ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [56.21ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [12.43ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [12.20ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [12.60ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [14.95ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [227.93ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [226.86ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.31ms]
+WRITE_OWN_PID_PS checked=44283,44284,44285,44287,44289,44292,44293,44294,44301
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 29 pass
+ 0 fail
+ 95 expect() calls
+Ran 29 tests across 1 file. [706.00ms]
+EXIT_CODE=0
+
+$ bunx biome check --write apps/server/src/sessions/input.ts apps/server/test/terminal-write.test.ts apps/server/test/integration/terminal-write.test.ts
+# Terminal Full Output
+# Terminal: sub-job_d2lrYO9k-format108
+# Command: export PATH=$HOME/.bun/bin:$PATH; bunx biome check --write apps/server/src/sessions/input.ts apps/server/test/terminal-write.test.ts apps/server/test/integration/terminal-write.test.ts
+# PID: 1151
+# Timestamp: 2026-11-21_15-25-01.778333
+# Original Length: 24593 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~$ [0mexport PATH=$HOME/.bun/bin:$PATH; bunx biome check --write apps/server/src/sessions/input.ts apps/server/test/terminal-write.test.ts apps/server/test/integration/terminal-write.test.ts
+[0mapps/server/test/terminal-write.test.ts[0m[0m:[0m[0m383[0m[0m:[0m[0m37[0m[0m [0m[0mlint/suspicious/noTemplateCurlyInString[0m[0m [0m[0m━━━━━━━━━━
+[0m[0m[0m[0m  [0m[0m[1m[31m✖[0m[0m [0m[0m[31mUnexpected template string placeholder.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m381 │ [0m[0m	[0m[0m	[0m[0mp[0m[0mr[0m[0mi[0m[0mn[0m[0mt[0m[0mf[0m[0m [0m[0m'[0m[0mH[0m[0mI[0m[0mD[0m[0mD[0m[0mE[0m[0mN[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m:[0m[0m'
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m382 │ [0m[0m	[0m[0m	[0m[0mI[0m[0mF[0m[0mS[0m[0m=[0m[0m [0m[0mr[0m[0me[0m[0ma[0m[0md[0m[0m [0m[0m-[0m[0mr[0m[0m [0m[0m-[0m[0ms[0m[0m [0m[0ma[0m[0mn[0m[0ms[0m[0mw[0m[0me[0m[0mr
+[0m[0m[0m[0m  [0m[0m[1m[31m>[0m[0m [0m[0m[1m383 │ [0m[0m	[0m[0m	[0m[0mp[0m[0mr[0m[0mi[0m[0mn[0m[0mt[0m[0mf[0m[0m [0m[0m'[0m[0m\[0m[0mn[0m[0mH[0m[0mI[0m[0mD[0m[0mD[0m[0mE[0m[0mN[0m[0m_[0m[0mL[0m[0mE[0m[0mN[0m[0mG[0m[0mT[0m[0mH[0m[0m:[0m[0m%[0m[0ms[0m[0m\[0m[0mn[0m[0m'[0m[0m [0m[0m"[0m[0m$[0m[0m{[0m[0m"[0m[0m$[0m[0m{[0m[0m#[0m[0ma[0m[0mn[0m[0ms[0m[0mw[0m[0me[0m[0mr[0m[0m}[0m[0m"[0m[0m}[0m[0m"
+[0m[0m[0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m[1m   │ [0m[0m	[0m[0m	[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m384 │ [0m[0m	[0m[0m`[0m[0m)
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m385 │ [0m[0m	[0m[0m)[0m[0m;
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m[1m[34mℹ[0m[0m [0m[0m[34mTurn the string into a template string.
+[0m[0m[0m[0m  
+[0m[0m[0m[0mapps/server/test/terminal-write.test.ts[0m[0m:[0m[0m118[0m[0m:[0m[0m25[0m[0m [0m[0mlint/style/useConsistentBuiltinInstantiation[0m[0m [0m[0m[30m[47m FIXABLE [0m[0m [0m[0m━━━━━━━━━━
+[0m[0m[0m[0m  [0m[0m[1m[31m✖[0m[0m [0m[0m[31mUse [0m[0m[1m[31mnew Array()[0m[0m[31m instead of [0m[0m[1m[31mArray()[0m[0m[31m.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m116 │ [0m[0m	[0m[0m}[0m[0m)[0m[0m;
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m117 │ [0m[0m	[0m[0me[0m[0mx[0m[0mp[0m[0me[0m[0mc[0m[0mt[0m[0m(
+[0m[0m[0m[0m  [0m[0m[1m[31m>[0m[0m [0m[0m[1m118 │ [0m[0m	[0m[0m	[0m[0ma[0m[0mw[0m[0ma[0m[0mi[0m[0mt[0m[0m [0m[0mf[0m[0m.[0m[0mw[0m[0mr[0m[0mi[0m[0mt[0m[0me[0m[0m([0m[0m{[0m[0m [0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m([0m[0m"[0m[0mT[0m[0mA[0m[0mB[0m[0m"[0m[0m)[0m[0m [0m[0m}[0m[0m)
+[0m[0m[0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m[1m   │ [0m[0m	[0m[0m	[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m119 │ [0m[0m	[0m[0m)[0m[0m.[0m[0mt[0m[0mo[0m[0mM[0m[0ma[0m[0mt[0m[0mc[0m[0mh[0m[0mO[0m[0mb[0m[0mj[0m[0me[0m[0mc[0m[0mt[0m[0m([0m[0m{[0m[0m [0m[0ma[0m[0mc[0m[0mc[0m[0me[0m[0mp[0m[0mt[0m[0me[0m[0md[0m[0mB[0m[0my[0m[0mt[0m[0me[0m[0ms[0m[0m:[0m[0m [0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m}[0m[0m)[0m[0m;
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m120 │ [0m[0m	[0m[0mc[0m[0mo[0m[0mn[0m[0ms[0m[0mt[0m[0m [0m[0ma[0m[0mc[0m[0mc[0m[0me[0m[0mp[0m[0mt[0m[0me[0m[0md[0m[0mL[0m[0mo[0m[0mg[0m[0m [0m[0m=[0m[0m [0m[0mf[0m[0m.[0m[0ml[0m[0mo[0m[0mg[0m[0m.[0m[0ms[0m[0ml[0m[0mi[0m[0mc[0m[0me[0m[0m([0m[0m)[0m[0m;
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m[1m[34mℹ[0m[0m [0m[0m[34mUnsafe fix: Add [0m[0m[1m[34mnew[0m[0m[34m keyword.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m116[0m[0m [0m[0m[1m116[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m}[0m[0m)[0m[0m;
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m117[0m[0m [0m[0m[1m117[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0me[0m[0mx[0m[0mp[0m[0me[0m[0mc[0m[0mt[0m[0m(
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m118[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m │ [0m[0m[31m-[0m[0m [0m[0m[2m[31m→ [0m[0m[2m[31m→ [0m[0m[31ma[0m[0m[31mw[0m[0m[31ma[0m[0m[31mi[0m[0m[31mt[0m[0m[2m[31m·[0m[0m[31mf[0m[0m[31m.[0m[0m[31mw[0m[0m[31mr[0m[0m[31mi[0m[0m[31mt[0m[0m[31me[0m[0m[31m([0m[0m[31m{[0m[0m[2m[31m·[0m[0m[31mk[0m[0m[31me[0m[0m[31my[0m[0m[31ms[0m[0m[31m:[0m[0m[2m[31m·[0m[0m[31mA[0m[0m[31mr[0m[0m[31mr[0m[0m[31ma[0m[0m[31my[0m[0m[1m[31m<[0m[0m[1m[31mT[0m[0m[1m[31me[0m[0m[1m[31mr[0m[0m[1m[31mm[0m[0m[1m[31mi[0m[0m[1m[31mn[0m[0m[1m[31ma[0m[0m[1m[31ml[0m[0m[1m[31mK[0m[0m[1m[31me[0m[0m[1m[31my[0m[0m[1m[31m>[0m[0m[31m([0m[0m[31mM[0m[0m[31mA[0m[0m[31mX[0m[0m[31m_[0m[0m[31mI[0m[0m[31mN[0m[0m[31mP[0m[0m[31mU[0m[0m[31mT[0m[0m[31m_[0m[0m[31mB[0m[0m[31mY[0m[0m[31mT[0m[0m[31mE[0m[0m[31mS[0m[0m[31m)[0m[0m[31m.[0m[0m[31mf[0m[0m[31mi[0m[0m[31ml[0m[0m[31ml[0m[0m[31m([0m[0m[31m"[0m[0m[31mT[0m[0m[31mA[0m[0m[31mB[0m[0m[31m"[0m[0m[31m)[0m[0m[2m[31m·[0m[0m[31m}[0m[0m[31m)
+[0m[0m[0m[0m  [0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m118[0m[0m[1m │ [0m[0m[32m+[0m[0m [0m[0m[2m[32m→ [0m[0m[2m[32m→ [0m[0m[32ma[0m[0m[32mw[0m[0m[32ma[0m[0m[32mi[0m[0m[32mt[0m[0m[2m[32m·[0m[0m[32mf[0m[0m[32m.[0m[0m[32mw[0m[0m[32mr[0m[0m[32mi[0m[0m[32mt[0m[0m[32me[0m[0m[32m([0m[0m[32m{[0m[0m[2m[32m·[0m[0m[32mk[0m[0m[32me[0m[0m[32my[0m[0m[32ms[0m[0m[32m:[0m[0m[2m[32m·[0m[0m[1m[32mn[0m[0m[1m[32me[0m[0m[1m[32mw[0m[0m[1m[2m[32m·[0m[0m[32mA[0m[0m[32mr[0m[0m[32mr[0m[0m[32ma[0m[0m[32my[0m[0m[32m([0m[0m[32mM[0m[0m[32mA[0m[0m[32mX[0m[0m[32m_[0m[0m[32mI[0m[0m[32mN[0m[0m[32mP[0m[0m[32mU[0m[0m[32mT[0m[0m[32m_[0m[0m[32mB[0m[0m[32mY[0m[0m[32mT[0m[0m[32mE[0m[0m[32mS[0m[0m[32m)[0m[0m[32m.[0m[0m[32mf[0m[0m[32mi[0m[0m[32ml[0m[0m[32ml[0m[0m[32m([0m[0m[32m"[0m[0m[32mT[0m[0m[32mA[0m[0m[32mB[0m[0m[32m"[0m[0m[32m)[0m[0m[2m[32m·[0m[0m[32m}[0m[0m[32m)
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m119[0m[0m [0m[0m[1m119[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m)[0m[0m.[0m[0mt[0m[0mo[0m[0mM[0m[0ma[0m[0mt[0m[0mc[0m[0mh[0m[0mO[0m[0mb[0m[0mj[0m[0me[0m[0mc[0m[0mt[0m[0m([0m[0m{[0m[0m [0m[0ma[0m[0mc[0m[0mc[0m[0me[0m[0mp[0m[0mt[0m[0me[0m[0md[0m[0mB[0m[0my[0m[0mt[0m[0me[0m[0ms[0m[0m:[0m[0m [0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m}[0m[0m)[0m[0m;
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m120[0m[0m [0m[0m[1m120[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0mc[0m[0mo[0m[0mn[0m[0ms[0m[0mt[0m[0m [0m[0ma[0m[0mc[0m[0mc[0m[0me[0m[0mp[0m[0mt[0m[0me[0m[0md[0m[0mL[0m[0mo[0m[0mg[0m[0m [0m[0m=[0m[0m [0m[0mf[0m[0m.[0m[0ml[0m[0mo[0m[0mg[0m[0m.[0m[0ms[0m[0ml[0m[0mi[0m[0mc[0m[0me[0m[0m([0m[0m)[0m[0m;
+[0m[0m[0m[0m  
+[0m[0m[0m[0mapps/server/test/terminal-write.test.ts[0m[0m:[0m[0m124[0m[0m:[0m[0m11[0m[0m [0m[0mlint/style/useConsistentBuiltinInstantiation[0m[0m [0m[0m[30m[47m FIXABLE [0m[0m [0m[0m━━━━━━━━━━
+[0m[0m[0m[0m  [0m[0m[1m[31m✖[0m[0m [0m[0m[31mUse [0m[0m[1m[31mnew Array()[0m[0m[31m instead of [0m[0m[1m[31mArray()[0m[0m[31m.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m122 │ [0m[0m	[0m[0m	[0m[0m{[0m[0m [0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m:[0m[0m [0m[0m"[0m[0ma[0m[0m"[0m[0m.[0m[0mr[0m[0me[0m[0mp[0m[0me[0m[0ma[0m[0mt[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m123 │ [0m[0m	[0m[0m	[0m[0m{[0m[0m [0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m:[0m[0m [0m[0m`[0m[0m$[0m[0m{[0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m}[0m[0ma[0m[0m`[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m[1m[31m>[0m[0m [0m[0m[1m124 │ [0m[0m	[0m[0m	[0m[0m{[0m[0m [0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m([0m[0m"[0m[0mT[0m[0mA[0m[0mB[0m[0m"[0m[0m)[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m[1m   │ [0m[0m	[0m[0m	[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m125 │ [0m[0m	[0m[0m	[0m[0m{
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m126 │ [0m[0m	[0m[0m	[0m[0m	[0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0ma[0m[0mt[0m[0mh[0m[0m.[0m[0mf[0m[0ml[0m[0mo[0m[0mo[0m[0mr[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m/[0m[0m [0m[0m3[0m[0m)[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m(
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m[1m[34mℹ[0m[0m [0m[0m[34mUnsafe fix: Add [0m[0m[1m[34mnew[0m[0m[34m keyword.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m122[0m[0m [0m[0m[1m122[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m{[0m[0m [0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m:[0m[0m [0m[0m"[0m[0ma[0m[0m"[0m[0m.[0m[0mr[0m[0me[0m[0mp[0m[0me[0m[0ma[0m[0mt[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m123[0m[0m [0m[0m[1m123[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m{[0m[0m [0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m:[0m[0m [0m[0m`[0m[0m$[0m[0m{[0m[0mt[0m[0me[0m[0mx[0m[0mt[0m[0m}[0m[0ma[0m[0m`[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m124[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m │ [0m[0m[31m-[0m[0m [0m[0m[2m[31m→ [0m[0m[2m[31m→ [0m[0m[31m{[0m[0m[2m[31m·[0m[0m[31mk[0m[0m[31me[0m[0m[31my[0m[0m[31ms[0m[0m[31m:[0m[0m[2m[31m·[0m[0m[31mA[0m[0m[31mr[0m[0m[31mr[0m[0m[31ma[0m[0m[31my[0m[0m[1m[31m<[0m[0m[1m[31mT[0m[0m[1m[31me[0m[0m[1m[31mr[0m[0m[1m[31mm[0m[0m[1m[31mi[0m[0m[1m[31mn[0m[0m[1m[31ma[0m[0m[1m[31ml[0m[0m[1m[31mK[0m[0m[1m[31me[0m[0m[1m[31my[0m[0m[1m[31m>[0m[0m[31m([0m[0m[31mM[0m[0m[31mA[0m[0m[31mX[0m[0m[31m_[0m[0m[31mI[0m[0m[31mN[0m[0m[31mP[0m[0m[31mU[0m[0m[31mT[0m[0m[31m_[0m[0m[31mB[0m[0m[31mY[0m[0m[31mT[0m[0m[31mE[0m[0m[31mS[0m[0m[2m[31m·[0m[0m[31m+[0m[0m[2m[31m·[0m[0m[31m1[0m[0m[31m)[0m[0m[31m.[0m[0m[31mf[0m[0m[31mi[0m[0m[31ml[0m[0m[31ml[0m[0m[31m([0m[0m[31m"[0m[0m[31mT[0m[0m[31mA[0m[0m[31mB[0m[0m[31m"[0m[0m[31m)[0m[0m[2m[31m·[0m[0m[31m}[0m[0m[31m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m124[0m[0m[1m │ [0m[0m[32m+[0m[0m [0m[0m[2m[32m→ [0m[0m[2m[32m→ [0m[0m[32m{[0m[0m[2m[32m·[0m[0m[32mk[0m[0m[32me[0m[0m[32my[0m[0m[32ms[0m[0m[32m:[0m[0m[2m[32m·[0m[0m[1m[32mn[0m[0m[1m[32me[0m[0m[1m[32mw[0m[0m[1m[2m[32m·[0m[0m[32mA[0m[0m[32mr[0m[0m[32mr[0m[0m[32ma[0m[0m[32my[0m[0m[32m([0m[0m[32mM[0m[0m[32mA[0m[0m[32mX[0m[0m[32m_[0m[0m[32mI[0m[0m[32mN[0m[0m[32mP[0m[0m[32mU[0m[0m[32mT[0m[0m[32m_[0m[0m[32mB[0m[0m[32mY[0m[0m[32mT[0m[0m[32mE[0m[0m[32mS[0m[0m[2m[32m·[0m[0m[32m+[0m[0m[2m[32m·[0m[0m[32m1[0m[0m[32m)[0m[0m[32m.[0m[0m[32mf[0m[0m[32mi[0m[0m[32ml[0m[0m[32ml[0m[0m[32m([0m[0m[32m"[0m[0m[32mT[0m[0m[32mA[0m[0m[32mB[0m[0m[32m"[0m[0m[32m)[0m[0m[2m[32m·[0m[0m[32m}[0m[0m[32m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m125[0m[0m [0m[0m[1m125[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m{
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m126[0m[0m [0m[0m[1m126[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0ma[0m[0mt[0m[0mh[0m[0m.[0m[0mf[0m[0ml[0m[0mo[0m[0mo[0m[0mr[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m/[0m[0m [0m[0m3[0m[0m)[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m(
+[0m[0m[0m[0m  
+[0m[0m[0m[0mapps/server/test/terminal-write.test.ts[0m[0m:[0m[0m126[0m[0m:[0m[0m10[0m[0m [0m[0mlint/style/useConsistentBuiltinInstantiation[0m[0m [0m[0m[30m[47m FIXABLE [0m[0m [0m[0m━━━━━━━━━━
+[0m[0m[0m[0m  [0m[0m[1m[31m✖[0m[0m [0m[0m[31mUse [0m[0m[1m[31mnew Array()[0m[0m[31m instead of [0m[0m[1m[31mArray()[0m[0m[31m.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m124 │ [0m[0m	[0m[0m	[0m[0m{[0m[0m [0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m([0m[0m"[0m[0mT[0m[0mA[0m[0mB[0m[0m"[0m[0m)[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m125 │ [0m[0m	[0m[0m	[0m[0m{
+[0m[0m[0m[0m  [0m[0m[1m[31m>[0m[0m [0m[0m[1m126 │ [0m[0m	[0m[0m	[0m[0m	[0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0ma[0m[0mt[0m[0mh[0m[0m.[0m[0mf[0m[0ml[0m[0mo[0m[0mo[0m[0mr[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m/[0m[0m [0m[0m3[0m[0m)[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m(
+[0m[0m[0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m[1m   │ [0m[0m	[0m[0m	[0m[0m	[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^[0m[0m[1m[31m^
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m127 │ [0m[0m	[0m[0m	[0m[0m	[0m[0m	[0m[0m"[0m[0mA[0m[0mR[0m[0mR[0m[0mO[0m[0mW[0m[0m_[0m[0mU[0m[0mP[0m[0m"
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m128 │ [0m[0m	[0m[0m	[0m[0m	[0m[0m)[0m[0m,
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m[1m[34mℹ[0m[0m [0m[0m[34mUnsafe fix: Add [0m[0m[1m[34mnew[0m[0m[34m keyword.
+[0m[0m[0m[0m  
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m124[0m[0m [0m[0m[1m124[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m{[0m[0m [0m[0mk[0m[0me[0m[0my[0m[0ms[0m[0m:[0m[0m [0m[0mA[0m[0mr[0m[0mr[0m[0ma[0m[0my[0m[0m<[0m[0mT[0m[0me[0m[0mr[0m[0mm[0m[0mi[0m[0mn[0m[0ma[0m[0ml[0m[0mK[0m[0me[0m[0my[0m[0m>[0m[0m([0m[0mM[0m[0mA[0m[0mX[0m[0m_[0m[0mI[0m[0mN[0m[0mP[0m[0mU[0m[0mT[0m[0m_[0m[0mB[0m[0mY[0m[0mT[0m[0mE[0m[0mS[0m[0m [0m[0m+[0m[0m [0m[0m1[0m[0m)[0m[0m.[0m[0mf[0m[0mi[0m[0ml[0m[0ml[0m[0m([0m[0m"[0m[0mT[0m[0mA[0m[0mB[0m[0m"[0m[0m)[0m[0m [0m[0m}[0m[0m,
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m125[0m[0m [0m[0m[1m125[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m{
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m126[0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m │ [0m[0m[31m-[0m[0m [0m[0m[2m[31m→ [0m[0m[2m[31m→ [0m[0m[2m[31m→ [0m[0m[31mk[0m[0m[31me[0m[0m[31my[0m[0m[31ms[0m[0m[31m:[0m[0m[2m[31m·[0m[0m[31mA[0m[0m[31mr[0m[0m[31mr[0m[0m[31ma[0m[0m[31my[0m[0m[1m[31m<[0m[0m[1m[31mT[0m[0m[1m[31me[0m[0m[1m[31mr[0m[0m[1m[31mm[0m[0m[1m[31mi[0m[0m[1m[31mn[0m[0m[1m[31ma[0m[0m[1m[31ml[0m[0m[1m[31mK[0m[0m[1m[31me[0m[0m[1m[31my[0m[0m[1m[31m>[0m[0m[31m([0m[0m[31mM[0m[0m[31ma[0m[0m[31mt[0m[0m[31mh[0m[0m[31m.[0m[0m[31mf[0m[0m[31ml[0m[0m[31mo[0m[0m[31mo[0m[0m[31mr[0m[0m[31m([0m[0m[31mM[0m[0m[31mA[0m[0m[31mX[0m[0m[31m_[0m[0m[31mI[0m[0m[31mN[0m[0m[31mP[0m[0m[31mU[0m[0m[31mT[0m[0m[31m_[0m[0m[31mB[0m[0m[31mY[0m[0m[31mT[0m[0m[31mE[0m[0m[31mS[0m[0m[2m[31m·[0m[0m[31m/[0m[0m[2m[31m·[0m[0m[31m3[0m[0m[31m)[0m[0m[2m[31m·[0m[0m[31m+[0m[0m[2m[31m·[0m[0m[31m1[0m[0m[31m)[0m[0m[31m.[0m[0m[31mf[0m[0m[31mi[0m[0m[31ml[0m[0m[31ml[0m[0m[31m(
+[0m[0m[0m[0m  [0m[0m  [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m[1m126[0m[0m[1m │ [0m[0m[32m+[0m[0m [0m[0m[2m[32m→ [0m[0m[2m[32m→ [0m[0m[2m[32m→ [0m[0m[32mk[0m[0m[32me[0m[0m[32my[0m[0m[32ms[0m[0m[32m:[0m[0m[2m[32m·[0m[0m[1m[32mn[0m[0m[1m[32me[0m[0m[1m[32mw[0m[0m[1m[2m[32m·[0m[0m[32mA[0m[0m[32mr[0m[0m[32mr[0m[0m[32ma[0m[0m[32my[0m[0m[32m([0m[0m[32mM[0m[0m[32ma[0m[0m[32mt[0m[0m[32mh[0m[0m[32m.[0m[0m[32mf[0m[0m[32ml[0m[0m[32mo[0m[0m[32mo[0m[0m[32mr[0m[0m[32m([0m[0m[32mM[0m[0m[32mA[0m[0m[32mX[0m[0m[32m_[0m[0m[32mI[0m[0m[32mN[0m[0m[32mP[0m[0m[32mU[0m[0m[32mT[0m[0m[32m_[0m[0m[32mB[0m[0m[32mY[0m[0m[32mT[0m[0m[32mE[0m[0m[32mS[0m[0m[2m[32m·[0m[0m[32m/[0m[0m[2m[32m·[0m[0m[32m3[0m[0m[32m)[0m[0m[2m[32m·[0m[0m[32m+[0m[0m[2m[32m·[0m[0m[32m1[0m[0m[32m)[0m[0m[32m.[0m[0m[32mf[0m[0m[32mi[0m[0m[32ml[0m[0m[32ml[0m[0m[32m(
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m127[0m[0m [0m[0m[1m127[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m"[0m[0mA[0m[0mR[0m[0mR[0m[0mO[0m[0mW[0m[0m_[0m[0mU[0m[0mP[0m[0m"
+[0m[0m[0m[0m  [0m[0m  [0m[0m[1m128[0m[0m [0m[0m[1m128[0m[0m[1m │ [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m [0m[0m)[0m[0m,
+[0m[0m[0m[0m  
+[0m[0m[0m[0m[33mSkipped [0m[0m[33m6[0m[0m[33m suggested fixes.
+[0m[0m[34mIf you wish to apply the suggested (unsafe) fixes, use the command [0m[0m[1m[34mbiome check --write --unsafe
+[0m[0m[34mChecked 3 files in 183[0m[0m[2m[34mms[0m[0m[34m.[0m[0m[34m Fixed [0m[0m[34m2[0m[0m[34m [0m[0m[34mfiles[0m[0m[34m.
+[0m[0m[0m[0m[31mFound [0m[0m[31m4[0m[0m[31m errors.
+[0m[0mcheck[0m[0m [0m[0m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[0m[0m[0m[0m  [0m[0m[1m[31m✖[0m[0m [0m[0m[31mSome [0m[0m[1m[31merrors[0m[0m[31m were emitted while [0m[0m[1m[31mapplying fixes[0m[0m[31m.
+[0m[0m[0m[0m  
+[32mubuntu@sandbox:~/wt/108/products/tetherterm$ [0m
+EXIT_CODE=1
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ bunx biome check --write apps/server/src/sessions/input.ts apps/server/test/terminal-write.test.ts apps/server/test/integration/terminal-write.test.ts
+Checked 3 files in 143ms. Fixed 1 file.
+EXIT_CODE=0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [3.57s]
+EXIT_CODE=0
+
+$ bun test apps/server/test/terminal-write.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [3.08ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.11ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.14ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.14ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.05ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.33ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [2.71ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [16.41ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.42ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.17ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.26ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.29ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.14ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.40ms]
+(pass) fake PTY: sessions have independent queues [0.25ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [27.24ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [56.76ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [15.27ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [15.53ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [13.43ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [13.15ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [276.10ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [273.83ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.30ms]
+WRITE_OWN_PID_PS checked=46550,46551,46553,46559,46561,46564,46565,46566,46567
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 29 pass
+ 0 fail
+ 95 expect() calls
+Ran 29 tests across 1 file. [786.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [11.55ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.74ms]
+(pass) spawn failure closes its terminal and propagates the error [0.86ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.01ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.42ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.26ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.31ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.25ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.24ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.30ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.27ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.20ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.23ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.23ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.25ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.31ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.32ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.24ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.17ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.33ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.13ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) malformed or incorrect Authorization: basic [0.38ms]
+(pass) malformed or incorrect Authorization: empty [0.16ms]
+(pass) malformed or incorrect Authorization: short [0.14ms]
+(pass) malformed or incorrect Authorization: long [0.14ms]
+(pass) malformed or incorrect Authorization: duplicate [0.13ms]
+(pass) malformed or incorrect Authorization: extra-field [0.15ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.14ms]
+(pass) unapproved Host absent denies a valid bearer [0.33ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.18ms]
+(pass) unapproved Host localhost denies a valid bearer [0.14ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.13ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.13ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.11ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.12ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.14ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.12ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.11ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.13ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.26ms]
+(pass) unapproved present Origin null denies a valid bearer [0.15ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.20ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.21ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [1.19ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.21ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.19ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.22ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.50ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.18ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.18ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.22ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [2.92ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.23ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.12ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.09ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [1.94ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [0.91ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.68ms]
+(pass) malformed JSON is denied before MCP body parsing [0.47ms]
+(pass) URL-only token credential never authenticates [0.36ms]
+(pass) URL-only access_token credential never authenticates [0.15ms]
+(pass) URL-only bearer credential never authenticates [0.15ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.73ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [1.21ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.30ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.21ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.17ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.14ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.17ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.16ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.13ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.20ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.15ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.16ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [2.04ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.31ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.17ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.49ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.10ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.20ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.18ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.21ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.25ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.49ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.12ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.54ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.71ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.52ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.44ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.24ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [1.89ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.34ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.77ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.90ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.25ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.06ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.81ms]
+
+ 172 pass
+ 0 fail
+ 1051 expect() calls
+Ran 172 tests across 3 files. [202.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=46606 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [57.28ms]
+python3 PID=PGID=SID=TPGID=46613 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [63.36ms]
+bash GROUP=46615 GRANDCHILD=46618 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [33.49ms]
+bash GROUP=46619 GRANDCHILD=46622 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.26ms]
+python3 GROUP=46624 GRANDCHILD=46626 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.18ms]
+python3 GROUP=46627 GRANDCHILD=46629 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [31.93ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [171.02ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [170.55ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [178.31ms]
+TetherTerm MCP listening on http://127.0.0.1:34549/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [36.21ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.36ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [187.72ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [214.20ms]
+TetherTerm MCP listening on http://127.0.0.1:40523/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [7.83ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [152.29ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [6.96ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [1.51ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [2.39ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.85ms]
+(pass) terminating sessions still occupy the four live slots [5.56ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [8.51ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [4.39ms]
+(pass) a new server process cannot recognize the previous process's UUID [154.06ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [3.94ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [5.20ms]
+(pass) injected clock records finite default and explicit runtime deadlines [2.36ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.58ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.97ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.59ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [0.49ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [1.16ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.71ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.75ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.57ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.58ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [7.37ms]
+OWN_PID_PS checked=46754,46755,46756,46757,46758,46759,46760,46761,46762,46763,46764,46765,46766,46767,46768,46769,46770,46771,46783,46784,46796,46797,46798,46799,46800,46801,46802,46803,46804,46805,46806,46807,46808,46809,46810
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [5.81ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [13.39ms]
+
+apps/server/test/integration/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [1.65ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.12ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.05ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.23ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.33ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [1.29ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [12.37ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.37ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.22ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.29ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.27ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.09ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.34ms]
+(pass) fake PTY: sessions have independent queues [0.20ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [19.51ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [62.11ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [12.81ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [12.12ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [12.53ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [13.15ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [274.07ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [280.64ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.31ms]
+WRITE_OWN_PID_PS checked=46814,46815,46816,46818,46820,46823,46824,46825,46826
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 67 pass
+ 0 fail
+ 1286 expect() calls
+Ran 67 tests across 7 files. [2.49s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=37569 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [89.67ms]
+(pass) server startup fails clearly when setsid is absent on PATH [63.81ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [57.03ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [66.06ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [65.59ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [70.64ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [59.60ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [65.05ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [68.85ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [66.24ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [61.13ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [70.18ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [64.89ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [129.41ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [143.04ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [138.42ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [140.99ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [134.73ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [139.45ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [153.73ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [167.32ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [151.43ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [163.11ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [160.75ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [165.86ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [142.19ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [174.94ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [136.46ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [141.87ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [138.13ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [145.92ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [91.65ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.65s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 44 files in 187ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+$ git fetch origin
+EXIT_CODE=0
+
+$ git rebase origin/main
+error: cannot rebase: You have unstaged changes.
+error: Please commit or stash them.
+EXIT_CODE=1
+$ git fetch origin && git rebase origin/main
+Current branch tetherterm/108-writes-keys is up to date.
+EXIT_CODE=0
+
+$ bun test apps/server/test/terminal-write.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [3.39ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.11ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.05ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.03ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.28ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [1.83ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [19.37ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.68ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.23ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.41ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.26ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.11ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.43ms]
+(pass) fake PTY: sessions have independent queues [0.28ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [26.61ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [52.10ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [13.79ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [16.60ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [12.72ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [13.43ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [272.49ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [274.90ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.27ms]
+WRITE_OWN_PID_PS checked=48960,48961,48962,48964,48966,48969,48970,48971,48972
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 29 pass
+ 0 fail
+ 95 expect() calls
+Ran 29 tests across 1 file. [781.00ms]
+EXIT_CODE=0
+
+$ bun run test
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [13.56ms]
+(pass) missing setsid fails clearly before allocating a PTY [0.63ms]
+(pass) spawn failure closes its terminal and propagates the error [0.62ms]
+
+apps/server/test/unit/http-guard.test.ts:
+(pass) GET /mcp: missing bearer denies before handler, transport, and spawn [1.06ms]
+(pass) GET /mcp: incorrect bearer denies before handler, transport, and spawn [0.44ms]
+(pass) GET /mcp/: missing bearer denies before handler, transport, and spawn [0.29ms]
+(pass) GET /mcp/: incorrect bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /: missing bearer denies before handler, transport, and spawn [0.18ms]
+(pass) GET /: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) GET /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) GET /missing: incorrect bearer denies before handler, transport, and spawn [0.28ms]
+(pass) GET /spawn-probe: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) GET /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /mcp: missing bearer denies before handler, transport, and spawn [0.19ms]
+(pass) POST /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) POST /mcp/: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) POST /mcp/: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) POST /: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) POST /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /missing: missing bearer denies before handler, transport, and spawn [0.21ms]
+(pass) POST /missing: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) POST /spawn-probe: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) POST /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.18ms]
+(pass) DELETE /mcp: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /mcp: incorrect bearer denies before handler, transport, and spawn [0.22ms]
+(pass) DELETE /mcp/: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) DELETE /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) DELETE /: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: missing bearer denies before handler, transport, and spawn [0.15ms]
+(pass) DELETE /missing: incorrect bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /spawn-probe: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) DELETE /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /mcp: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /mcp: incorrect bearer denies before handler, transport, and spawn [0.15ms]
+(pass) OPTIONS /mcp/: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) OPTIONS /mcp/: incorrect bearer denies before handler, transport, and spawn [0.17ms]
+(pass) OPTIONS /: missing bearer denies before handler, transport, and spawn [0.16ms]
+(pass) OPTIONS /: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) OPTIONS /missing: missing bearer denies before handler, transport, and spawn [0.20ms]
+(pass) OPTIONS /missing: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) OPTIONS /spawn-probe: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) OPTIONS /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) PUT /mcp: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /mcp: incorrect bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /mcp/: missing bearer denies before handler, transport, and spawn [0.14ms]
+(pass) PUT /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PUT /: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PUT /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PUT /missing: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) PUT /missing: incorrect bearer denies before handler, transport, and spawn [0.19ms]
+(pass) PUT /spawn-probe: missing bearer denies before handler, transport, and spawn [0.13ms]
+(pass) PUT /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /mcp: missing bearer denies before handler, transport, and spawn [0.28ms]
+(pass) PATCH /mcp: incorrect bearer denies before handler, transport, and spawn [0.16ms]
+(pass) PATCH /mcp/: missing bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /mcp/: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: missing bearer denies before handler, transport, and spawn [0.09ms]
+(pass) PATCH /: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) PATCH /missing: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /missing: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /spawn-probe: missing bearer denies before handler, transport, and spawn [0.08ms]
+(pass) PATCH /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp: missing bearer denies before handler, transport, and spawn [0.24ms]
+(pass) HEAD /mcp: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /mcp/: missing bearer denies before handler, transport, and spawn [0.11ms]
+(pass) HEAD /mcp/: incorrect bearer denies before handler, transport, and spawn [0.10ms]
+(pass) HEAD /: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /: incorrect bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /missing: missing bearer denies before handler, transport, and spawn [0.12ms]
+(pass) HEAD /missing: incorrect bearer denies before handler, transport, and spawn [0.09ms]
+(pass) HEAD /spawn-probe: missing bearer denies before handler, transport, and spawn [0.07ms]
+(pass) HEAD /spawn-probe: incorrect bearer denies before handler, transport, and spawn [0.08ms]
+(pass) malformed or incorrect Authorization: basic [0.29ms]
+(pass) malformed or incorrect Authorization: empty [0.11ms]
+(pass) malformed or incorrect Authorization: short [0.08ms]
+(pass) malformed or incorrect Authorization: long [0.10ms]
+(pass) malformed or incorrect Authorization: duplicate [0.08ms]
+(pass) malformed or incorrect Authorization: extra-field [0.11ms]
+(pass) malformed or incorrect Authorization: different-case-token [0.08ms]
+(pass) unapproved Host absent denies a valid bearer [0.26ms]
+(pass) unapproved Host attacker.example.com denies a valid bearer [0.11ms]
+(pass) unapproved Host localhost denies a valid bearer [0.08ms]
+(pass) unapproved Host 127.0.0.1 denies a valid bearer [0.09ms]
+(pass) unapproved Host [::1] denies a valid bearer [0.08ms]
+(pass) unapproved Host localhost:1 denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.1:1 denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com:443 denies a valid bearer [0.11ms]
+(pass) unapproved Host launcher.example.com.attacker.test denies a valid bearer [0.08ms]
+(pass) unapproved Host launcher.example.com,attacker.test denies a valid bearer [0.09ms]
+(pass) unapproved Host 127.0.0.2:0 denies a valid bearer [0.08ms]
+(pass) unapproved present Origin empty denies a valid bearer [0.17ms]
+(pass) unapproved present Origin null denies a valid bearer [0.11ms]
+(pass) unapproved present Origin https://attacker.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin http://launcher.example.com denies a valid bearer [0.09ms]
+(pass) unapproved present Origin https://launcher.example.com/ denies a valid bearer [1.23ms]
+(pass) unapproved present Origin https://launcher.example.com.attacker.test denies a valid bearer [0.14ms]
+(pass) unapproved present Origin http://localhost:1 denies a valid bearer [0.12ms]
+(pass) unapproved present Origin https://launcher.example.com https://attacker.test denies a valid bearer [0.13ms]
+(pass) approved ipv4 Host and absent Origin reach the handler [0.45ms]
+(pass) approved ipv4 Host and approved Origin reach the handler [0.18ms]
+(pass) approved localhost Host and absent Origin reach the handler [0.12ms]
+(pass) approved localhost Host and approved Origin reach the handler [0.13ms]
+(pass) approved ipv6 Host and absent Origin reach the handler [0.15ms]
+(pass) approved ipv6 Host and approved Origin reach the handler [0.17ms]
+(pass) approved tunnel Host and absent Origin reach the handler [0.11ms]
+(pass) approved tunnel Host and approved Origin reach the handler [0.15ms]
+(pass) configured random 32-byte hex token authenticates with case-insensitive Bearer scheme [4.57ms]
+(pass) configured random 32-byte base64 token authenticates with case-insensitive Bearer scheme [2.84ms]
+(pass) configured random 32-byte base64url token authenticates with case-insensitive Bearer scheme [0.57ms]
+(pass) malformed JSON is denied before MCP body parsing [0.38ms]
+(pass) URL-only token credential never authenticates [0.23ms]
+(pass) URL-only access_token credential never authenticates [0.10ms]
+(pass) URL-only bearer credential never authenticates [0.10ms]
+(pass) denied credential and terminal-content sentinels never appear in diagnostics [0.51ms]
+(pass) downstream errors and exceptions cannot echo credentials in responses or logs [0.77ms]
+(pass) GET /mcp: valid bearer with unapproved Host never reaches the transport [0.20ms]
+(pass) GET /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) POST /mcp: valid bearer with unapproved Host never reaches the transport [0.09ms]
+(pass) POST /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) DELETE /mcp: valid bearer with unapproved Host never reaches the transport [0.10ms]
+(pass) DELETE /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Host never reaches the transport [0.15ms]
+(pass) OPTIONS /mcp: valid bearer with unapproved Origin never reaches the transport [0.09ms]
+(pass) PUT /mcp: valid bearer with unapproved Host never reaches the transport [0.07ms]
+(pass) PUT /mcp: valid bearer with unapproved Origin never reaches the transport [0.07ms]
+(pass) PATCH /mcp: valid bearer with unapproved Host never reaches the transport [0.11ms]
+(pass) PATCH /mcp: valid bearer with unapproved Origin never reaches the transport [0.13ms]
+(pass) HEAD /mcp: valid bearer with unapproved Host never reaches the transport [0.14ms]
+(pass) HEAD /mcp: valid bearer with unapproved Origin never reaches the transport [0.15ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.79ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.24ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.13ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.40ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.12ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.07ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.16ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.11ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.19ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.13ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.29ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.08ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.38ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.49ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.62ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.34ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.11ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [7.60ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.43ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.56ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.12ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.43ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.20ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.05ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.52ms]
+
+ 172 pass
+ 0 fail
+ 1051 expect() calls
+Ran 172 tests across 3 files. [217.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=49009 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [68.05ms]
+python3 PID=PGID=SID=TPGID=49016 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [52.85ms]
+bash GROUP=49018 GRANDCHILD=49021 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [24.85ms]
+bash GROUP=49022 GRANDCHILD=49025 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [34.02ms]
+python3 GROUP=49027 GRANDCHILD=49030 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [55.58ms]
+python3 GROUP=49031 GRANDCHILD=49035 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.32ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [176.69ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [164.28ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [233.44ms]
+TetherTerm MCP listening on http://127.0.0.1:41647/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [42.32ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.30ms]
+
+apps/server/test/integration/http-guard.test.ts:
+(pass) real HTTP launcher: official SDK rejects without Authorization and authenticates initialization and subsequent discovery [222.57ms]
+(pass) real launcher socket: all methods and unknown routes reject credentials, Host, Origin and URL-only authentication; stdout/stderr never contain sentinels [221.89ms]
+TetherTerm MCP listening on http://127.0.0.1:37393/mcp
+(pass) HTTP is loopback-bound and Host allowlist uses the actual ephemeral bound port, not configured zero [10.65ms]
+(pass) stdio remains owner-trusted: official SDK initializes and discovers with no token or tunnel environment [210.16ms]
+
+apps/server/test/integration/session-registry.test.ts:
+(pass) unique UUID sessions return the PRD create result and exact summary fields [6.40ms]
+(pass) summary uses policy-approved canonical cwd and snapshots cannot mutate sessions [3.37ms]
+(pass) a sequential fifth live create returns typed LIMIT before spawning [5.16ms]
+CAP spawnCalls=4 activePtyCount=4 rejected=4 noFifthSpawn=true
+(pass) concurrent creates reserve exactly four active PTYs and never spawn a fifth [3.83ms]
+(pass) terminating sessions still occupy the four live slots [6.86ms]
+(pass) quiet-running status/list are synchronous and never wait on child exit [10.57ms]
+(pass) unknown IDs return typed NOT_FOUND and a new registry starts empty [5.31ms]
+(pass) a new server process cannot recognize the previous process's UUID [160.20ms]
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+TetherTerm POLICY_DENIED: terminal request rejected by policy
+(pass) failed concurrent policy checks release every reservation and spawn nothing [8.60ms]
+TetherTerm: approved terminal could not be started
+(pass) spawn failure releases its reservation without registering a session [4.16ms]
+(pass) injected clock records finite default and explicit runtime deadlines [3.62ms]
+(pass) invalid limits {"cols":0} fail before PTY allocation [1.33ms]
+(pass) invalid limits {"cols":241} fail before PTY allocation [0.88ms]
+(pass) invalid limits {"rows":81} fail before PTY allocation [0.97ms]
+(pass) invalid limits {"rows":1.5} fail before PTY allocation [1.28ms]
+(pass) invalid limits {"timeoutMs":0} fail before PTY allocation [0.90ms]
+(pass) invalid limits {"timeoutMs":-1} fail before PTY allocation [0.76ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.65ms]
+(pass) invalid limits {"timeoutMs":null} fail before PTY allocation [0.81ms]
+(pass) invalid limits {"timeoutMs":9007199254740991} fail before PTY allocation [0.72ms]
+(pass) actual child exit updates summary and frees capacity without blocking observers [7.38ms]
+OWN_PID_PS checked=49277,49278,49280,49281,49282,49283,49285,49287,49288,49289,49290,49292,49293,49294,49295,49296,49297,49298,49314,49319,49333,49334,49335,49336,49337,49338,49339,49340,49341,49342,49343,49344,49345,49346,49347
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [7.38ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [5.30ms]
+
+apps/server/test/integration/terminal-write.test.ts:
+(pass) fake PTY: ENTER writes its exact defined byte sequence [2.01ms]
+(pass) fake PTY: TAB writes its exact defined byte sequence [0.13ms]
+(pass) fake PTY: ESC writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: BACKSPACE writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_UP writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_DOWN writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_LEFT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: ARROW_RIGHT writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_C writes its exact defined byte sequence [0.02ms]
+(pass) fake PTY: CTRL_D writes its exact defined byte sequence [0.04ms]
+(pass) fake PTY: text preserves UTF-8, counts bytes, and supports explicit empty input [0.47ms]
+(pass) fake PTY: both/neither, unsupported keys and invalid types write zero bytes [1.28ms]
+(pass) fake PTY: 16384-byte text/key boundaries and multibyte overflow are exact [14.45ms]
+(pass) fake PTY: concurrent requests preserve submission order and snapshot keys [0.43ms]
+(pass) fake PTY: short acceptance is reported without suffix resend or duplicate retry [0.28ms]
+(pass) fake PTY: uncertain error is sanitized, never retried, and does not poison queue [0.79ms]
+(pass) fake PTY: terminating rejects immediately and rejects already queued requests [0.42ms]
+(pass) fake PTY: exited rejects immediately and rejects already queued requests [0.08ms]
+(pass) fake PTY: closed handle or actual exited child rejects despite stale running state [0.36ms]
+(pass) fake PTY: sessions have independent queues [0.27ms]
+(pass) real Bash: answer read confirmation and hidden-input prompts using text and ENTER [22.65ms]
+(pass) real Python REPL: UTF-8 text and ENTER evaluate a command; CTRL_D exits [63.65ms]
+(pass) real cat: text/ENTER echo and CTRL_D EOF exit; exited writes return NOT_RUNNING [16.22ms]
+(pass) real cat -v: arrows, ESC and TAB preserve their bytes [16.18ms]
+(pass) real od: every key produces the defined raw PTY byte sequence [17.12ms]
+(pass) real Bash: CTRL_C interrupts foreground sleep without killing the server [18.35ms]
+(pass) real PTY: exact 16 KiB Unicode submission survives backpressure; over-cap adds no bytes [280.98ms]
+(pass) real PTY: concurrent near-cap writes arrive in order without interleaving or duplicates [277.87ms]
+(pass) encoder can be reused by adapters without allocating a PTY [0.40ms]
+WRITE_OWN_PID_PS checked=49352,49355,49365,49368,49370,49373,49374,49376,49409
+WRITE_OWN_PID_PS: no recorded process remains
+
+ 67 pass
+ 0 fail
+ 1286 expect() calls
+Ran 67 tests across 7 files. [2.73s]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=36401 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [92.08ms]
+(pass) server startup fails clearly when setsid is absent on PATH [70.21ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [92.27ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [88.43ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [79.31ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [70.11ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [80.97ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [87.48ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [62.97ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [84.29ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [67.07ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [63.16ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [65.82ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [141.11ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [165.44ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [184.86ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [184.25ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [187.84ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [169.94ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [173.60ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [170.24ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [193.86ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [145.57ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [152.96ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [188.33ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [135.95ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [128.39ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [153.40ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [135.50ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [159.64ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [157.57ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [80.71ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [4.03s]
+EXIT_CODE=0
+
+$ bun run check
+$ ultracite check
+Checked 44 files in 207ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run check-types
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
