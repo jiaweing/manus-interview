@@ -1,0 +1,26 @@
+bun test v1.4.5 (a7733435c)
+
+packages/engine/deadline.test.ts:
+(pass) authoritative injected-clock deadlines > 11999ms is early; exactly 12000ms folds once and settles heads-up [3.09ms]
+(pass) authoritative injected-clock deadlines > multiway late expiry starts the next actor at expiry time plus 12000 [0.34ms]
+(pass) authoritative injected-clock deadlines > disconnection/resume and public view/JSON cloning cannot extend a deadline [0.60ms]
+(pass) authoritative injected-clock deadlines > timeout during preflop BB option folds rather than the legal check [0.35ms]
+(pass) authoritative injected-clock deadlines > postflop check-available actor also auto-folds [0.53ms]
+(pass) authoritative injected-clock deadlines > stale callback after accepted action cannot fold the next or repeated actor [0.45ms]
+(pass) authoritative injected-clock deadlines > each identity component fences obsolete timers, including prior hands [0.47ms]
+(pass) authoritative injected-clock deadlines > idempotent normalization and illegal actions preserve the turn object [0.28ms]
+(pass) authoritative injected-clock deadlines > all-in, inactive and folded seats never receive a deadline [1.28ms]
+(pass) authoritative injected-clock deadlines > blind-only all-in boundary runs out and settles without phantom deadlines [0.43ms]
+(pass) authoritative injected-clock deadlines > legacy initial assignment and explicit street wrappers time the new actor [0.23ms]
+(pass) authoritative injected-clock deadlines > injected clocks reject invalid or unrepresentable millisecond values [0.30ms]
+(pass) seeded 2-seat timeouts-only: 1000 hands conserve and terminate [198.85ms]
+(pass) seeded 2-seat random-actions/timeouts: 1000 hands conserve and terminate [270.63ms]
+(pass) seeded 3-seat timeouts-only: 1000 hands conserve and terminate [311.30ms]
+(pass) seeded 3-seat random-actions/timeouts: 1000 hands conserve and terminate [468.77ms]
+(pass) seeded 4-seat timeouts-only: 1000 hands conserve and terminate [438.04ms]
+(pass) seeded 4-seat random-actions/timeouts: 1000 hands conserve and terminate [701.08ms]
+
+ 18 pass
+ 0 fail
+ 119 expect() calls
+Ran 18 tests across 1 file. [2.43s]

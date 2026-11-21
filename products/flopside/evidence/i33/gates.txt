@@ -1,0 +1,22 @@
+COMMAND: bun run fix
+EXIT: 0
+
+COMMAND: bun install --frozen-lockfile
+EXIT: 0
+
+COMMAND: bun test packages/engine/deadline.test.ts
+EXIT: 0
+
+COMMAND: bun run lint
+EXIT: 0
+
+COMMAND: bun run typecheck
+EXIT: 0
+
+COMMAND: bun run test
+EXIT: 0
+
+COMMAND: bun run build
+EXIT: 0
+
+GATE_RUN_EXIT: 0

@@ -1,0 +1,2 @@
+$ biome check --write .
+Checked 47 files in 268ms. No fixes applied.

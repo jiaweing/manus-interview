@@ -1,4 +1,5 @@
 import type { Card } from "./cards";
+import type { TurnDeadline } from "./deadline";
 
 export const STARTING_STACK = 200;
 export const BLINDS = { big: 10, small: 5 } as const;
@@ -85,6 +86,8 @@ export interface PublicMatchState {
 	settlement: HandSettlement | null;
 	smallBlindIndex: number;
 	street: Street;
+	/** Clock-aware deadline API sets this; legacy transitions remain untimed. */
+	turn?: TurnDeadline | null;
 }
 
 /** Server-owned only. Never serialize this object to a client or a log. */
