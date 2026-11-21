@@ -1,0 +1,9 @@
+$ bun apps/video/scripts/preview-stills.js --scene tetherterm --frames "1140,1170,1260,1350,1379"
+PNG qa/stills/tetherterm/frame-1140.png frame=1140
+PNG qa/stills/tetherterm/frame-1170.png frame=1170
+PNG qa/stills/tetherterm/frame-1260.png frame=1260
+PNG qa/stills/tetherterm/frame-1350.png frame=1350
+PNG qa/stills/tetherterm/frame-1379.png frame=1379
+TIMING bundle=4.069s renders=15.715s total=23.333s concurrency=1
+STILLS ok count=5
+EXIT_CODE=0
