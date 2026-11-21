@@ -1,0 +1,132 @@
+$ biome check --write .
+apps/server/src/rooms.test.ts:64:8 lint/style/useDestructuring ━━━━━━━━━━━━━━━━━
+
+  × Use object destructuring instead of accessing object properties.
+  
+    62 │ 	const created = await http.post("/api/rooms", { nickname: "Host" });
+    63 │ 	const first = created.json as SeatAdmission;
+  > 64 │ 	const code = first.state.code;
+       │ 	      ^^^^^^^^^^^^^^^^^^^^^^^
+    65 │ 	const admissions = [first];
+    66 │ 	for (let index = 1; index < count; index += 1) {
+  
+  i Object destructuring is more readable and expressive than accessing individual properties.
+  
+  i Replace the property access with object destructuring syntax.
+  
+
+apps/server/src/rooms.test.ts:67:18 lint/performance/noAwaitInLoops ━━━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    65 │ 	const admissions = [first];
+    66 │ 	for (let index = 1; index < count; index += 1) {
+  > 67 │ 		const joined = await http.post(`/api/rooms/${code}/join`, {
+       │ 		               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 68 │ 			nickname: `Player ${index}`,
+  > 69 │ 		});
+       │ 		^^
+    70 │ 		admissions.push(joined.json as SeatAdmission);
+    71 │ 	}
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/src/rooms.test.ts:171:21 lint/performance/noAwaitInLoops ━━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    169 │ 		const fixture = await roomFixture(1, false);
+    170 │ 		for (const path of ["/api/rooms", `/api/rooms/${fixture.code}/join`]) {
+  > 171 │ 			const response = await fixture.app.request(path, {
+        │ 			                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 172 │ 				body: "{",
+  > 173 │ 				method: "POST",
+  > 174 │ 			});
+        │ 			^^
+    175 │ 			assertHttpError(
+    176 │ 				{ json: await response.json(), status: response.status },
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/src/rooms.test.ts:268:47 lint/style/noIncrementDecrement ━━━━━━━━━━━
+
+  × Unexpected use of increment/decrement unary operator.
+  
+    266 │ 		let calls = 0;
+    267 │ 		const http = httpHarness(
+  > 268 │ 			new RoomStore({ codeGenerator: () => codes[calls++] ?? "CCCCCC" })
+        │ 			                                           ^^^^^^^
+    269 │ 		);
+    270 │ 		const first = await http.post("/api/rooms", { nickname: "First" });
+  
+  i The unary ++ and -- operators are subject to automatic semicolon insertion, differences in whitespace can change semantics of source code. Instead use += or -=.
+  
+
+apps/server/src/rooms.test.ts:300:9 lint/style/useDestructuring ━━━━━━━━━━━━━━━━
+
+  × Use array destructuring instead of accessing array elements by index.
+  
+    298 │ 		const fixture = await roomFixture(1, false);
+    299 │ 		const state = fixture.store.getLobby(fixture.code, fixture.hostId);
+  > 300 │ 		const seat = state.seats[0];
+        │ 		      ^^^^^^^^^^^^^^^^^^^^^
+    301 │ 		if (seat) {
+    302 │ 			seat.nickname = "Changed";
+  
+  i Array destructuring is more readable and expressive than accessing individual elements by index.
+  
+  i Replace the array index access with array destructuring syntax.
+  
+
+apps/server/src/rooms.test.ts:461:5 lint/performance/noAwaitInLoops ━━━━━━━━━━━━
+
+  × Avoid using await inside loops.
+  
+    459 │ 		for (const code of ["AAAAAA", "unknown", "123456"]) {
+    460 │ 			assertHttpError(
+  > 461 │ 				await fixture.post(`/api/rooms/${code}/join`, { nickname: "A" }),
+        │ 				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    462 │ 				"ROOM_EXPIRED",
+    463 │ 				404
+  
+  i Using await inside loops might cause performance issues or unintended sequential execution, consider use Promise.all() instead.
+  
+
+apps/server/src/rooms.test.ts:562:10 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    560 │ 		const entrySource = await Bun.file(`${import.meta.dir}/index.ts`).text();
+    561 │ 		const roomSource = await Bun.file(`${import.meta.dir}/rooms.ts`).text();
+  > 562 │ 		expect(/roomStore\s*=\s*new RoomStore\(\)/.test(appSource)).toBe(true);
+        │ 		       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    563 │ 		expect(appSource.includes("deckSource")).toBe(false);
+    564 │ 		expect(entrySource.includes("deckSource")).toBe(false);
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+apps/server/src/rooms.test.ts:565:10 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+  
+    563 │ 		expect(appSource.includes("deckSource")).toBe(false);
+    564 │ 		expect(entrySource.includes("deckSource")).toBe(false);
+  > 565 │ 		expect(/(?:process|Bun)\.env/.test(roomSource)).toBe(false);
+        │ 		       ^^^^^^^^^^^^^^^^^^^^^^
+    566 │ 	});
+    567 │ });
+  
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+  
+
+Checked 41 files in 288ms. Fixed 3 files.
+Found 8 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+  
+
+error: script "fix" exited with code 1

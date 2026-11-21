@@ -1,0 +1,15 @@
+[2026-11-21T14:49:23Z] bun install --frozen-lockfile
+exit=0 output=evidence/i36/install-final.txt
+[2026-11-21T14:49:24Z] bun run lint
+exit=0 output=evidence/i36/lint-final.txt
+[2026-11-21T14:49:25Z] bun run typecheck
+exit=0 output=evidence/i36/typecheck-final.txt
+[2026-11-21T14:49:33Z] bun test apps/server/src/rooms.test.ts
+exit=0 output=evidence/i36/rooms-final.txt
+[2026-11-21T14:49:33Z] env TEST_SERVER_PORT=3361 bun run test
+exit=0 output=evidence/i36/test-final.txt
+[2026-11-21T14:49:37Z] bun run build
+exit=0 output=evidence/i36/build-final.txt
+[2026-11-21T14:49:46Z] env WEB_PORT=3360 bunx playwright test apps/web/tests/ingress.spec.ts --project=chromium
+exit=0 output=evidence/i36/ingress-final.txt
+FINAL_GATE_EXIT=0
