@@ -31,7 +31,11 @@ Append one section per issue using `## #<issue>` headings; do not rewrite anothe
 
 ## Initial accepted patch
 
-There is none yet because access is blocked: no `OPENROUTER_API_KEY` is available. No Claude Opus 5.5 generation, changed-file reference or accepted model-authored patch exists. The release authoring gate is not satisfied. The verifier stores any future scoped response in `qa/authoring-model.txt` as **UNREVIEWED**; it never executes, applies or accepts that response automatically.
+- **Request reference:** `sha256:3e566e9599ce4087b4688e09ea18cb75f07e2936488d19c7bb40685d903b8028` (SHA-256 of the exact scoped request body).
+- **OpenRouter generation id:** `gen-1795276765-osnJ2plgjv4ZfRq6VcBU`, response model `anthropic/claude-opus-5.5`, finish reason `stop` (see `authoring/model-record.json`, `qa/authoring-model.txt`).
+- **Changed-file reference:** `authoring/access-check-scene.js` (access-check fixture; not render code). The model returned a unified diff adding `if (!(frame > 0)) return 0;` and `if (frame >= 30) return 1;` to `entranceProgress`.
+- **Reviewer:** Lead orchestrator (Manus). **Decision: ACCEPTED.** The clamp is correct for negative, NaN and post-entrance frames, is pure and frame-only, and was applied by hand (the verifier never auto-applies output).
+- **Scope of this claim:** this proves model access and one reviewed model-authored patch. It does NOT mean the scene code was authored by Opus; see the next section.
 
 ## Authoring provenance of this run
 
