@@ -23,6 +23,7 @@ export interface SpawnRequest {
 	cwd: string;
 	executable: string;
 	onData: (bytes: Uint8Array) => void;
+	onEof?: () => void;
 	rows: number;
 }
 
@@ -136,6 +137,7 @@ export async function spawnWithPolicy<T = ReturnType<typeof spawnPty>>(
 				config.tokenEnvVar
 			),
 			onData: request.onData,
+			onEof: request.onEof,
 			rows: request.rows,
 		});
 	} catch {

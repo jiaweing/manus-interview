@@ -68,7 +68,7 @@ async function stopPty(pty: PtyHandle): Promise<void> {
 				if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
 					throw error;
 				}
-				// The wrapper may not have exec'd setsid yet; only kill our child.
+				// Group already disappeared; fallback targets only this owned child.
 				pty.child.kill("SIGKILL");
 			}
 		}

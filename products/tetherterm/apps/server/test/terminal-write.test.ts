@@ -13,12 +13,19 @@ import {
 	writeSessionInput,
 } from "../src/sessions/input";
 import { SessionManager } from "../src/sessions/manager";
+import { EXIT_RETENTION_MS } from "../src/sessions/retention";
+import { OutputRing } from "../src/sessions/ring";
 import type { PtyHandle, Session } from "../src/sessions/session";
 
 const encoder = new TextEncoder();
 const whitespacePattern = /\s+/;
 const ownPids = new Set<number>();
-const fixtures: { pty: PtyHandle; root: string }[] = [];
+const fixtures: {
+	clock: { now: number };
+	manager: SessionManager;
+	pty: PtyHandle;
+	root: string;
+}[] = [];
 const vocabulary: { bytes: number[]; key: TerminalKey }[] = [
 	{ bytes: [13], key: "ENTER" },
 	{ bytes: [9], key: "TAB" },
@@ -41,6 +48,7 @@ function fake(write?: (bytes: Uint8Array) => number) {
 		executable: "/fixture/bash",
 		exitCode: null,
 		id: crypto.randomUUID(),
+		output: new OutputRing(),
 		pty: {
 			child: { exitCode: null },
 			terminal: {
@@ -265,8 +273,10 @@ async function real(executable: string, args: string[]) {
 	let output = "";
 	const decoder = new TextDecoder();
 	let handle: PtyHandle | undefined;
+	const clock = { now: 1000 };
 	try {
 		const manager = new SessionManager(await loadConfig("stdio", env), {
+			clock: { now: () => clock.now },
 			env,
 			spawn(options) {
 				handle = spawnPty({
@@ -277,7 +287,7 @@ async function real(executable: string, args: string[]) {
 					},
 				});
 				ownPids.add(handle.child.pid);
-				fixtures.push({ pty: handle, root });
+				fixtures.push({ clock, manager, pty: handle, root });
 				return handle;
 			},
 		});
@@ -318,7 +328,7 @@ async function procLive(pid: number) {
 
 afterEach(async () => {
 	await Promise.all(
-		fixtures.splice(0).map(async ({ pty, root }) => {
+		fixtures.splice(0).map(async ({ clock, manager, pty, root }) => {
 			try {
 				// Clean ordinary descendants even if their session leader already exited.
 				try {
@@ -327,12 +337,15 @@ afterEach(async () => {
 					if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
 						throw error;
 					}
-					// During setup failure setsid may not yet have established its group.
+					// Group already disappeared; fallback targets only this owned child.
 					if (pty.child.exitCode === null) {
 						pty.child.kill("SIGKILL");
 					}
 				}
 				await bounded(pty.child.exited);
+				await bounded(pty.eof);
+				clock.now += EXIT_RETENTION_MS;
+				expect(manager.list().sessions).toHaveLength(0);
 			} finally {
 				pty.terminal.close();
 				await rm(root, { force: true, recursive: true });

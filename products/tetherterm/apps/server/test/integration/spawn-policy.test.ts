@@ -6,6 +6,8 @@ import { loadConfig } from "../../src/config";
 import { spawnWithPolicy } from "../../src/policy";
 import { policyFixture } from "../fixtures/spawn-policy";
 
+const identityPattern = /IDENTITY=\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/;
+
 test("approved real PTY receives literal argv and no server credentials", async () => {
 	const fixture = await policyFixture();
 	const config = await loadConfig("http", fixture.env);
@@ -14,7 +16,8 @@ test("approved real PTY receives literal argv and no server credentials", async 
 	const diagnostics: string[] = [];
 	let output = "";
 	const decoder = new TextDecoder();
-	const { child, terminal } = await spawnWithPolicy(
+	let eofCalls = 0;
+	const { child, eof, terminal } = await spawnWithPolicy(
 		config,
 		{
 			args: [
@@ -22,7 +25,7 @@ test("approved real PTY receives literal argv and no server credentials", async 
 				"--norc",
 				"-c",
 				// biome-ignore lint/suspicious/noTemplateCurlyInString: Literal Bash parameter expansion verifies the child's environment, not JavaScript interpolation.
-				'test -t 0 && test -t 1 || exit 99; test "${CUSTOM_BEARER+x}" != x || exit 90; test "${OPENAI_API_KEY+x}" != x || exit 91; test "${DATABASE_URL+x}" != x || exit 92; test "${NODE_OPTIONS+x}" != x || exit 93; printf \'ARG=%s\\nCWD=%s\\nNO_CREDENTIALS\\n\' "$1" "$PWD"',
+				'test -t 0 && test -t 1 || exit 99; : < /dev/tty || exit 98; printf "IDENTITY="; /usr/bin/ps -o pid=,pgid=,sid=,tpgid= -p $$; test "${CUSTOM_BEARER+x}" != x || exit 90; test "${OPENAI_API_KEY+x}" != x || exit 91; test "${DATABASE_URL+x}" != x || exit 92; test "${NODE_OPTIONS+x}" != x || exit 93; printf \'ARG=%s\nCWD=%s\nNO_CREDENTIALS\n\' "$1" "$PWD"',
 				"probe",
 				literal,
 			],
@@ -31,6 +34,10 @@ test("approved real PTY receives literal argv and no server credentials", async 
 			executable: "bash",
 			onData(bytes) {
 				output += decoder.decode(bytes, { stream: true });
+			},
+			onEof() {
+				eofCalls += 1;
+				output += decoder.decode();
 			},
 			rows: 24,
 		},
@@ -45,8 +52,8 @@ test("approved real PTY receives literal argv and no server credentials", async 
 	);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	try {
-		const exitCode = await Promise.race([
-			child.exited,
+		await Promise.race([
+			Promise.all([child.exited, eof]),
 			new Promise<never>((_resolve, reject) => {
 				timer = setTimeout(
 					() => reject(new Error("policy PTY timed out")),
@@ -54,15 +61,13 @@ test("approved real PTY receives literal argv and no server credentials", async 
 				);
 			}),
 		]);
-		expect(exitCode).toBe(0);
-		const deadline = Date.now() + 5000;
-		while (!output.includes("NO_CREDENTIALS\r\n")) {
-			if (Date.now() >= deadline) {
-				throw new Error("Missing final policy PTY output");
-			}
-			// biome-ignore lint/performance/noAwaitInLoops: Deadline-bounded polling drains the last PTY event after exit.
-			await Bun.sleep(10);
-		}
+		expect(child.exitCode).toBe(0);
+		expect(child.terminal).toBe(terminal);
+		expect(eofCalls).toBe(1);
+		expect(output.match(identityPattern)?.slice(1)).toEqual(
+			Array.from({ length: 4 }, () => String(child.pid))
+		);
+		expect(output).toContain("NO_CREDENTIALS\r\n");
 		expect(output.includes(fixture.token)).toBe(false);
 		expect(output.includes(fixture.credential)).toBe(false);
 		expect(output).toContain(`ARG=${literal}\r\n`);

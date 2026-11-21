@@ -10,6 +10,7 @@ import {
 	DEFAULT_RUNTIME_MS,
 	SessionManager,
 } from "../src/sessions/manager";
+import { EXIT_RETENTION_MS } from "../src/sessions/retention";
 import type { PtyHandle } from "../src/sessions/session";
 
 const uuidPattern =
@@ -17,6 +18,7 @@ const uuidPattern =
 const whitespacePattern = /\s+/;
 const ownPids = new Set<number>();
 interface RegistryFixture {
+	clock: { now: number };
 	config: ServerConfig;
 	control: { failSpawn: boolean; spawnCalls: number };
 	manager: SessionManager;
@@ -64,8 +66,9 @@ async function fixture(now = 1000): Promise<RegistryFixture> {
 		failSpawn: false,
 		spawnCalls: 0,
 	};
+	const clock = { now };
 	const manager = new SessionManager(config, {
-		clock: { now: () => now },
+		clock: { now: () => clock.now },
 		env,
 		spawn(options) {
 			control.spawnCalls += 1;
@@ -79,7 +82,7 @@ async function fixture(now = 1000): Promise<RegistryFixture> {
 			return pty;
 		},
 	});
-	const result = { config, control, manager, observations, ptys, root };
+	const result = { clock, config, control, manager, observations, ptys, root };
 	fixtures.push(result);
 	return result;
 }
@@ -110,7 +113,7 @@ async function cleanup(pty: PtyHandle) {
 				if ((error as NodeJS.ErrnoException).code !== "ESRCH") {
 					throw error;
 				}
-				// setsid may not have run yet. These fixtures exec, never fork.
+				// Group already disappeared; fallback targets only this owned child.
 				pty.child.kill("SIGKILL");
 			}
 		}
@@ -141,6 +144,8 @@ afterEach(async () => {
 		fixtures.splice(0).map(async (item) => {
 			try {
 				await Promise.all(item.ptys.map(cleanup));
+				item.clock.now += EXIT_RETENTION_MS;
+				expect(item.manager.list().sessions).toHaveLength(0);
 			} finally {
 				await rm(item.root, { force: true, recursive: true });
 			}

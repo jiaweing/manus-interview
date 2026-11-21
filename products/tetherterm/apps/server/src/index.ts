@@ -1,7 +1,6 @@
 import { type Environment, loadConfig, type ServerConfig } from "./config";
 import { ConfigurationError } from "./errors";
 import { createGuardedHttpApp } from "./http-guard";
-import { requireSetsid } from "./pty/spawn";
 import { reportStartupFailure } from "./startup";
 
 export function createBootApp(
@@ -18,14 +17,6 @@ export function createBootApp(
 if (import.meta.main) {
 	try {
 		const config = await loadConfig("http");
-		try {
-			requireSetsid();
-		} catch {
-			// biome-ignore lint/style/useErrorCause: Never expose raw platform errors at startup.
-			throw new ConfigurationError(
-				"native PTYs require util-linux setsid on PATH and Linux; install util-linux before starting the server"
-			);
-		}
 		let boundPort = config.port;
 		const app = createBootApp(config, process.env, () => boundPort);
 		const server = Bun.serve({

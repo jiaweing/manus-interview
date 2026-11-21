@@ -1,0 +1,373 @@
+
+=== bun install --frozen-lockfile ===
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1448 installs across 1595 packages (no changes) [2.66s]
+EXIT_CODE=0
+
+=== focused initial bun test apps/server/test/output-ring.test.ts ===
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [3.61ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.64ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.10ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [1.85ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [1.47ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.18ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [0.05ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [0.95ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.31ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.43ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [1.47ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [1.01ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [0.51ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [0.57ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.04ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [1.72ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.94ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [46.35ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [1.89ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [1.90ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [3.51ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [1.33ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [1.84ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [2.28ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [0.20ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [1.05ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.41ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [0.99ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [0.65ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.84ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.38ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [0.32ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [6.70ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [0.67ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [0.70ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [0.84ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.32ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.71ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.29ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [25.68ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [12.25ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [11.00ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [13.85ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [10.50ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [12.36ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [11.04ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [157.64ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [12.46ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [0.58ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.44ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.39ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.59ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.05ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [1.52ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.66ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.76ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.54ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.57ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [1.31ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [1.45ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.84ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [0.45ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [1.30ms]
+(pass) invalid cursors > non-string cursors are not coerced [3.03ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [1.12ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 255 matches standard replacement decoding [0.56ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 128 matches standard replacement decoding [0.43ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 192,175 matches standard replacement decoding [0.38ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 237,160,128 matches standard replacement decoding [0.38ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.39ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 226,130,97 matches standard replacement decoding [0.39ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.41ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.04ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [1.02ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > replacement expansion respects budgets and advances normalized bytes only [5.16ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > incomplete suffix is withheld until EOF, then one replacement adds three bytes exactly once [0.90ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [26.06ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [10.83ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [10.70ms]
+
+ 80 pass
+ 0 fail
+ 89918 expect() calls
+Ran 80 tests across 1 file. [446.00ms]
+EXIT_CODE=0
+
+=== initial bun run check-types ===
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+src/sessions/manager.ts(125,6): error TS2353: Object literal may only specify known properties, and 'onEof' does not exist in type 'SpawnRequest'.
+EXIT_CODE=2
+
+=== combined bun test output-ring and session-exit-retention ===
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/session-exit-retention.test.ts:
+(pass) five-minute automatic expiry cancels timers and closes only the expired record [4.92ms]
+(pass) clock-driven lazy expiry also clears a not-yet-fired native timer [2.40ms]
+(pass) sixteen-record cap evicts oldest exited records, never running or terminating [16.15ms]
+(pass) cap ordering follows actual exits, not creation order, including equal-clock ties [14.30ms]
+(pass) retention ignores non-exited or unregistered records and never disposes a live record [0.22ms]
+(pass) quiet real PTY stays running across silence and retention-clock advances [16.95ms]
+31 | 	try {
+32 | 		return await Promise.race([
+33 | 			promise,
+34 | 			new Promise<never>((_resolve, reject) => {
+35 | 				timer = setTimeout(
+36 | 					() => reject(new Error("PTY fixture timed out")),
+                           ^
+error: PTY fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/session-exit-retention.test.ts:36:23)
+(fail) real PTY exit 7 preserves final output and summary until exact five-minute expiry [4005.00ms]
+(pass) real PTY signal exit records actual SIGTERM rather than guessing from silence [3.79ms]
+(pass) actual exit frees a live slot while the exited ID remains visible [13.22ms]
+31 | 	try {
+32 | 		return await Promise.race([
+33 | 			promise,
+34 | 			new Promise<never>((_resolve, reject) => {
+35 | 				timer = setTimeout(
+36 | 					() => reject(new Error("PTY fixture timed out")),
+                           ^
+error: PTY fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/session-exit-retention.test.ts:36:23)
+(fail) real registry cap evicts oldest exited IDs on create while preserving running IDs [4006.26ms]
+OWN_PID_PS checked=80913,80914,80915,80916,80917,80918,80919,80920,80921,80922
+OWN_PID_PS: no recorded process remains
+
+apps/server/test/output-ring.test.ts:
+(pass) incremental reads and exact UTF-8 byte cursors > empty/quiet reads return synchronously with unchanged cursor [2.56ms]
+(pass) incremental reads and exact UTF-8 byte cursors > incremental append/read returns no duplicates or loss [0.85ms]
+(pass) incremental reads and exact UTF-8 byte cursors > repeated reads are non-consuming snapshots [0.72ms]
+(pass) incremental reads and exact UTF-8 byte cursors > BOM, NUL, CRLF and ANSI are preserved byte for byte [0.59ms]
+(pass) incremental reads and exact UTF-8 byte cursors > append copies caller bytes instead of retaining mutable chunks [0.08ms]
+(pass) fragmented Unicode > é survives chunk split at byte 1 [0.15ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 1 [2.09ms]
+(pass) fragmented Unicode > 漢 survives chunk split at byte 2 [1.18ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 1 [0.91ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 2 [1.55ms]
+(pass) fragmented Unicode > 🙂 survives chunk split at byte 3 [1.45ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 1 [1.42ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 2 [1.09ms]
+(pass) fragmented Unicode > 𐀀 survives chunk split at byte 3 [1.45ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 1 [0.53ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 2 [0.52ms]
+(pass) fragmented Unicode > 􏿿 survives chunk split at byte 3 [0.61ms]
+(pass) fragmented Unicode > one-byte chunks across many mixed Unicode characters [47.60ms]
+(pass) bounded reads > é crossing 64-KiB cap with 1 bytes left [3.53ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 1 bytes left [1.27ms]
+(pass) bounded reads > 漢 crossing 64-KiB cap with 2 bytes left [1.46ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 1 bytes left [1.28ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 2 bytes left [1.27ms]
+(pass) bounded reads > 🙂 crossing 64-KiB cap with 3 bytes left [2.56ms]
+(pass) bounded reads > small byte budget 1 never splits or advances beyond text [1.17ms]
+(pass) bounded reads > small byte budget 2 never splits or advances beyond text [1.24ms]
+(pass) bounded reads > small byte budget 3 never splits or advances beyond text [0.97ms]
+(pass) bounded reads > small byte budget 4 never splits or advances beyond text [1.11ms]
+(pass) bounded reads > small byte budget 5 never splits or advances beyond text [0.66ms]
+(pass) bounded reads > small byte budget 7 never splits or advances beyond text [0.73ms]
+(pass) bounded reads > small byte budget 32 never splits or advances beyond text [0.37ms]
+(pass) bounded reads > small byte budget 65536 never splits or advances beyond text [0.38ms]
+(pass) bounded reads > ASCII reads are capped exactly at 64 KiB and drain without loss [6.20ms]
+(pass) bounded reads > invalid read budget 0 returns LIMIT [0.23ms]
+(pass) bounded reads > invalid read budget -1 returns LIMIT [0.02ms]
+(pass) bounded reads > invalid read budget 1.5 returns LIMIT [1.01ms]
+(pass) bounded reads > invalid read budget NaN returns LIMIT [0.39ms]
+(pass) bounded reads > invalid read budget Infinity returns LIMIT [0.39ms]
+(pass) bounded reads > invalid read budget 9007199254740992 returns LIMIT [0.33ms]
+(pass) overflow and explicit gaps > exactly one MiB survives; oldest/head/stale/future cursors are distinct [25.94ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole é [12.43ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 漢 [11.11ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 漢 [12.36ms]
+(pass) overflow and explicit gaps > overflow by 1 byte(s) evicts whole 🙂 [9.89ms]
+(pass) overflow and explicit gaps > overflow by 2 byte(s) evicts whole 🙂 [11.68ms]
+(pass) overflow and explicit gaps > overflow by 3 byte(s) evicts whole 🙂 [9.69ms]
+(pass) overflow and explicit gaps > a single oversized chunk and repeated wraparound stay bounded [149.26ms]
+(pass) overflow and explicit gaps > fragmented emoji crossing physical wrap survives eviction and completion [9.40ms]
+(pass) invalid cursors > malformed/huge cursor  returns BAD_CURSOR [1.01ms]
+(pass) invalid cursors > malformed/huge cursor   returns BAD_CURSOR [0.81ms]
+(pass) invalid cursors > malformed/huge cursor -1 returns BAD_CURSOR [0.48ms]
+(pass) invalid cursors > malformed/huge cursor -0 returns BAD_CURSOR [0.67ms]
+(pass) invalid cursors > malformed/huge cursor 1.0 returns BAD_CURSOR [0.08ms]
+(pass) invalid cursors > malformed/huge cursor 1.5 returns BAD_CURSOR [0.04ms]
+(pass) invalid cursors > malformed/huge cursor 1e1 returns BAD_CURSOR [2.79ms]
+(pass) invalid cursors > malformed/huge cursor +1 returns BAD_CURSOR [0.57ms]
+(pass) invalid cursors > malformed/huge cursor 01 returns BAD_CURSOR [0.36ms]
+(pass) invalid cursors > malformed/huge cursor 00 returns BAD_CURSOR [0.39ms]
+(pass) invalid cursors > malformed/huge cursor 0x1 returns BAD_CURSOR [0.39ms]
+(pass) invalid cursors > malformed/huge cursor 1
+ returns BAD_CURSOR [0.37ms]
+(pass) invalid cursors > malformed/huge cursor NaN returns BAD_CURSOR [0.41ms]
+(pass) invalid cursors > malformed/huge cursor Infinity returns BAD_CURSOR [0.87ms]
+(pass) invalid cursors > malformed/huge cursor 9007199254740993 returns BAD_CURSOR [1.15ms]
+(pass) invalid cursors > malformed/huge cursor 999999999999999999999999 returns BAD_CURSOR [0.64ms]
+(pass) invalid cursors > non-string cursors are not coerced [3.20ms]
+(pass) invalid cursors > interior offsets of complete 2/3/4-byte characters are rejected [0.60ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 255 matches standard replacement decoding [0.44ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 128 matches standard replacement decoding [0.76ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 192,175 matches standard replacement decoding [0.03ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 237,160,128 matches standard replacement decoding [0.79ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 244,144,128,128 matches standard replacement decoding [0.42ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 226,130,97 matches standard replacement decoding [0.38ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 240,159,97 matches standard replacement decoding [0.39ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 224,128,97 matches standard replacement decoding [0.36ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > invalid sequence 240,128,128,128 matches standard replacement decoding [0.40ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > replacement expansion respects budgets and advances normalized bytes only [4.98ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > replacement-expanding oversized input evicts only whole normalized characters [38.30ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > EOF replacement at full capacity evicts a complete leading multibyte character [13.99ms]
+(pass) invalid UTF-8: normalized replacement bytes and exact cursors > incomplete suffix is withheld until EOF, then one replacement adds three bytes exactly once [0.73ms]
+(pass) differential fragmented/raw-byte coverage > deterministic arbitrary bytes match standard decoding across chunks and budgets [26.33ms]
+(pass) differential fragmented/raw-byte coverage > a gap with too-small budget returns oldest without consuming a character [10.68ms]
+(pass) differential fragmented/raw-byte coverage > overflow landing inside an invalid maximal subpart evicts the whole replacement [10.76ms]
+
+apps/server/test/integration/output-ring.test.ts:
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) session ring captures pre-registration/native data and reads a quiet running PTY synchronously [4035.18ms]
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) real PTY fragmented multibyte output across reads stays incomplete until native continuation callbacks [8039.06ms]
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) real PTY truncated multibyte suffix at EOF becomes one replacement with exact normalized cursor [8006.07ms]
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) real PTY raw 0xFF is stored as U+FFFD and counted as three UTF-8 bytes [8006.18ms]
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) real PTY final data after child exit completes a split character before EOF and remains retained [8029.74ms]
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+23 | 	let timer: ReturnType<typeof setTimeout> | undefined;
+24 | 	try {
+25 | 		return await Promise.race([
+26 | 			promise,
+27 | 			new Promise<never>((_resolve, reject) => {
+28 | 				timer = setTimeout(() => reject(new Error("Output fixture timed out")), 4000);
+                                             ^
+error: Output fixture timed out
+      at <anonymous> (/home/ubuntu/wt/107/products/tetherterm/apps/server/test/integration/output-ring.test.ts:28:41)
+(fail) real PTY signal exit finalizes output without substituting EOF status for actual SIGTERM [8007.74ms]
+
+8 tests failed:
+(fail) real PTY exit 7 preserves final output and summary until exact five-minute expiry [4005.00ms]
+(fail) real registry cap evicts oldest exited IDs on create while preserving running IDs [4006.26ms]
+(fail) session ring captures pre-registration/native data and reads a quiet running PTY synchronously [4035.18ms]
+(fail) real PTY fragmented multibyte output across reads stays incomplete until native continuation callbacks [8039.06ms]
+(fail) real PTY truncated multibyte suffix at EOF becomes one replacement with exact normalized cursor [8006.07ms]
+(fail) real PTY raw 0xFF is stored as U+FFFD and counted as three UTF-8 bytes [8006.18ms]
+(fail) real PTY final data after child exit completes a split character before EOF and remains retained [8029.74ms]
+(fail) real PTY signal exit finalizes output without substituting EOF status for actual SIGTERM [8007.74ms]
+
+ 90 pass
+ 8 fail
+ 90699 expect() calls
+Ran 98 tests across 3 files. [52.76s]
+EXIT_CODE=1
+
+=== bun run check-types ===
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+EXIT_CODE=0
+
+=== bun evidence/probes/107-eof-ownership.ts ===
+reusable-setsid DATA "PID=81184 PGID=81184 SID=81184 TPGID=81184\r\na�"
+reusable-setsid CHILD_EXIT 81184 0 null
+reusable-setsid OBSERVED_AFTER_EXIT {"bytes":47,"nativeEof":false}
+reusable-setsid PTY_EOF 0 null
+inline-setsid DATA "setsid: failed to set the controlling terminal: Operation not permitted\r\n"
+inline-setsid PTY_EOF 1 null
+inline-setsid CHILD_EXIT 81188 0 null
+inline-setsid OBSERVED_AFTER_EXIT {"bytes":73,"nativeEof":true}
+inline-native DATA "PID=81190 PGID=81190 SID=81190 TPGID=81190\r\na�"
+inline-native PTY_EOF 1 null
+inline-native CHILD_EXIT 81190 0 null
+inline-native OBSERVED_AFTER_EXIT {"bytes":47,"nativeEof":true}
+EXIT_CODE=0

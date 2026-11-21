@@ -5,48 +5,43 @@ export interface SpawnPtyOptions {
 	env: Record<string, string>;
 	executable: string;
 	onData: (bytes: Uint8Array) => void;
+	/** PTY stream EOF/read-error, not the subprocess exit code or input drain. */
+	onEof?: () => void;
 	rows: number;
 }
 
-/** Linux's util-linux setsid supplies the session and controlling terminal. */
-export function requireSetsid(path = Bun.env.PATH ?? "", cwd = process.cwd()) {
-	if (process.platform !== "linux") {
-		throw new Error(
-			"TetherTerm native PTYs require Linux and util-linux setsid"
-		);
-	}
-	const setsid = Bun.which("setsid", { cwd, PATH: path });
-	if (!setsid) {
-		throw new Error(
-			"TetherTerm native PTYs require util-linux setsid on PATH; install util-linux before starting the server"
-		);
-	}
-	return setsid;
-}
-
 export function spawnPty(options: SpawnPtyOptions) {
-	const setsid = requireSetsid(options.env.PATH, options.cwd);
-	const terminal = new Bun.Terminal({
-		cols: options.cols,
-		data(_terminal, bytes) {
-			options.onData(bytes);
+	const { promise: eof, resolve: resolveEof } = Promise.withResolvers<void>();
+	let ended = false;
+	// Bun 1.4.5 inline terminals establish setsid+TIOCSCTTY natively on Linux:
+	// child.pid is PID/PGID/SID/TPGID, so negative-PID signals own only this group.
+	// A reusable new Bun.Terminal retains its parent slave descriptor and cannot
+	// report child-stream EOF. Inline ownership releases it without closing output.
+	const child = Bun.spawn([options.executable, ...(options.args ?? [])], {
+		cwd: options.cwd,
+		env: options.env,
+		terminal: {
+			cols: options.cols,
+			data(_terminal, bytes) {
+				options.onData(bytes);
+			},
+			exit() {
+				if (ended) {
+					return;
+				}
+				ended = true;
+				// Native stream completion follows final data, independently of exit
+				// status. Finish consumers synchronously before resolving the promise.
+				options.onEof?.();
+				resolveEof();
+			},
+			rows: options.rows,
 		},
-		rows: options.rows,
 	});
-	try {
-		// Do NOT use detached or setsid -f: the inherited parent pgid differs from
-		// this fresh child pid, so setsid execs in place. child.pid is the sid/pgid.
-		const child = Bun.spawn(
-			[setsid, "-c", options.executable, ...(options.args ?? [])],
-			{
-				cwd: options.cwd,
-				env: options.env,
-				terminal,
-			}
-		);
-		return { child, terminal };
-	} catch (error) {
-		terminal.close();
-		throw error;
+	const { terminal } = child;
+	if (!terminal) {
+		child.kill("SIGKILL");
+		throw new Error("Inline PTY spawn did not provide a terminal");
 	}
+	return { child, eof, terminal };
 }

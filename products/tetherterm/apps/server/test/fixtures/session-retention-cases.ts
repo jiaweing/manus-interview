@@ -5,6 +5,7 @@ import {
 	type RetentionScheduler,
 	SessionRetention,
 } from "../../src/sessions/retention";
+import { OutputRing } from "../../src/sessions/ring";
 import type { PtyHandle, Session } from "../../src/sessions/session";
 
 class ManualClock implements RetentionScheduler {
@@ -58,6 +59,7 @@ function fixture() {
 			executable: "/fixture/executable",
 			exitCode: state === "exited" ? 7 : null,
 			id,
+			output: new OutputRing(),
 			pty,
 			receivedBytes: 0,
 			runtimeDeadline: clock.now + 900_000,
@@ -77,13 +79,14 @@ export function retentionUnitCases(): void {
 	test("five-minute automatic expiry cancels timers and closes only the expired record", () => {
 		const f = fixture();
 		const first = f.add("first");
-		const finalOutput = new TextEncoder().encode("final output\u001b[0m\n");
-		const buffered = Object.assign(first, { finalOutput });
+		first.output.append(new TextEncoder().encode("final output\u001b[0m\n"));
+		first.output.finish();
+		const finalOutput = first.output.read("0");
 		f.clock.advance(1000);
 		f.add("second");
 		f.clock.advance(EXIT_RETENTION_MS - 1001);
-		expect(f.sessions.get(first.id)).toBe(buffered);
-		expect(buffered.finalOutput).toBe(finalOutput);
+		expect(f.sessions.get(first.id)).toBe(first);
+		expect(first.output.read("0")).toEqual(finalOutput);
 		expect(f.closed.size).toBe(0);
 		expect(f.clock.timers.size).toBe(2);
 		f.clock.advance(1);

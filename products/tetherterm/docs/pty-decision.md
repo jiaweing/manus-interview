@@ -1,124 +1,98 @@
-# Native PTY decision — issue #101
+# Native PTY decision — dated amendment for issue #107
 
-## Supported runtime and scope
+## Amendment: 2026-11-22 (+08), Bun 1.4.5
 
-Tested on **Linux x64, Bun 1.4.5 (a7733435c), util-linux setsid 2.39.3**. The root manifest records `packageManager: bun@1.4.5`, `engines.bun: 1.4.5`, and the Bun type catalog is pinned to 1.4.5. `bun.lock` locks the independent product's workspaces and dependencies. Active server runtime dependencies are Hono 4.13.18, the official `@modelcontextprotocol/sdk` 1.32.2, and Zod (resolved 4.6.7).
+**Current decision:** use Bun's **inline terminal option**, `Bun.spawn([executable, ...args], { terminal: { cols, rows, data, exit }, cwd, env })`, through `apps/server/src/pty/spawn.ts`. Do not allocate a reusable `new Bun.Terminal` or wrap the executable in `setsid -c`. This amendment supersedes the original issue #101 decision on terminal ownership and the util-linux dependency, with the Lead's approval.
 
-The existing Better-T-Stack scaffold is reused, not generated again. Per the Lead's recorded path correction, this independent Bun project lives at `products/tetherterm/` in the repository; `git rev-parse --show-toplevel` returns the enclosing repository/worktree root, not a second product Git repository. Prior scaffold evidence is in `evidence/boot/scaffold-boot.md`.
+Validated on **Linux x64, Bun 1.4.5 (a7733435c)**. The manifest and Bun type catalog remain pinned to 1.4.5. Inline spawning establishes the child's new session and controlling terminal natively (setsid + TIOCSCTTY behavior), with **Bun child PID == executable PID == PGID == SID == foreground TPGID**. This removes the Linux-only external `setsid` dependency and its startup/spawn error path. It is **still Linux-validated only; macOS has not been verified**. Removing a dependency is not a cross-platform support claim.
 
-Only `apps/server` is active. Its sole boot-proof route is loopback `GET /healthz`, returning `200 ok`. This route does not expose any terminal or MCP functionality. Authentication is not weakened: the authenticated MCP transports, policy checks, session manager and tools belong to subsequent issues and are not implemented or claimed here.
+The active product stays `apps/server` inside the existing independent Bun project at `products/tetherterm/`. The enclosing repository/worktree is the Git root. Dormant scaffold apps/addons remain unwired. No runtime/dependency migration or authentication relaxation accompanies this change.
 
-## Decision: Bun.Terminal plus setsid -c
+## Original finding and why it was incomplete
 
-Use `apps/server/src/pty/spawn.ts`:
+The original comparison allocated a reusable terminal first and passed that instance to `Bun.spawn`. Plain reusable attachment provided TTY file descriptors but **not a controlling terminal**: `os.tcgetpgrp(0)` raised `ENOTTY` (errno 25), and PGID/SID belonged to the Bun parent. Adding `detached: true` isolated the session/group but still did not assign a controlling terminal. With this reusable form, `setsid -c` correctly supplied the controlling session and foreground group, preserving PID identity. Those observations were valid for **reusable terminal attachment**, not for inline terminal options.
 
-```typescript
-const { child, terminal } = spawnPty({
-  executable,
-  args,
-  cwd,
-  env,
-  cols,
-  rows,
-  onData,
-});
-```
+Issue #107 needed true PTY EOF to flush truncated UTF-8 only after final output. On the pinned runtime, a reusable `new Bun.Terminal` retains the parent-side slave descriptor for reuse: its `exit` callback does not fire when the child and all output writers finish. It fires on explicit `terminal.close()`. Closing at `child.exited`, using input `drain`, or guessing from silence/sleeps/timeouts would lose late output or falsely finalize the ring. None is used as a production EOF mechanism.
 
-The helper allocates a **real `Bun.Terminal`**, attaches it to `Bun.spawn`, and invokes the executable through the util-linux wrapper:
+Inline terminal options give Bun per-subprocess ownership, permitting real native EOF. They **also** establish session and controlling-terminal ownership, so retaining the old `setsid -c` wrapper attempts a second acquisition and prints `setsid: failed to set the controlling terminal: Operation not permitted`. Inline plus wrapper is rejected.
 
-```text
-setsid -c <executable> <args...>
-```
+## Fresh evidence on this machine
 
-`setsid` creates a session and `-c` acquires the attached PTY as that session's controlling terminal. Bun still owns all terminal creation, output callbacks, writes and resize operations. The wrapper is a native Linux utility, not a replacement PTY implementation, pipe transport, Python helper or alternative runtime.
-
-`requireSetsid` resolves an executable `setsid` on PATH before any terminal allocation. The server calls the same dependency check **before listening**. On an unsupported OS or absent `setsid`, startup/spawn throws an actionable error, including “require util-linux setsid on PATH; install util-linux before starting the server”. There is no fallback. Unit and boot tests verify this failure mode using a unique empty PATH directory.
-
-### Why the controlling-terminal check matters
-
-The previous builder's plain `Bun.spawn({ terminal })` spike established TTY stdin/stdout, input/echo, ANSI preservation, dimensions and normal exit, but Python's `os.tcgetpgrp(0)` raised `ENOTTY` (errno 25). A TTY file descriptor alone is **not** proof of a controlling terminal. Plain attachment leaves the child in the parent's session/process group, so sending byte `0x03` does not supply the required foreground-group SIGINT behavior, and `kill(-pgid)` could target the server's group.
-
-The clean comparison probe, committed at `evidence/probes/101-controlling-terminal.ts`, produced the following actual output on the tested runtime (PID values are naturally run-specific):
-
-```text
-plain (Bun subprocess pid=6342, exit=0):
-TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
-PID=6342 PGID=6341 SID=5576 PARENT_PGID=6341 PARENT_SID=5576
-CONTROLLING=false TCGETPGRP_ERRNO=25
-
-detached (Bun subprocess pid=6346, exit=0):
-TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
-PID=6346 PGID=6346 SID=6346 PARENT_PGID=6341 PARENT_SID=5576
-CONTROLLING=false TCGETPGRP_ERRNO=25
-
-setsid -c (Bun subprocess pid=6347, exit=0):
-TTY=True,True SIZE=os.terminal_size(columns=80, lines=24)
-PID=6347 PGID=6347 SID=6347 PARENT_PGID=6341 PARENT_SID=5576
-CONTROLLING=true FOREGROUND_PGID=6347
-```
-
-`detached: true` can create a distinct group/session, as this probe shows, but still does **not** assign the controlling terminal. It is not the fix and is not used by the helper.
-
-The Lead's supplied `/home/ubuntu/swarm/probes/t3.ts` was also executed and its output retained honestly: plain/detached reported `ENOTTY`, wrapped Python reported `^CKI`, and wrapped `bash -c 'sleep 30; echo after:$?'` exited 130. That diagnostic script itself exited 1 because its unconditional delayed input timers wrote to already-closed terminals. The committed clean probe has no such late timers and exits 0; the product spike below is the behavioral acceptance test.
-
-### PID, session and process-group ownership
-
-The helper deliberately uses neither Bun's `detached` option nor `setsid -f`. A freshly spawned child inherits the Bun parent's PGID, which differs from the fresh child's PID. Under util-linux, `setsid` therefore does **not** fork: it creates the session and execs the requested executable in place. `child.pid` is the real executable PID, session leader SID and process-group PGID.
-
-The spike independently verifies `PID == Bun subprocess pid == PGID == SID == foreground PGID` for both Bash and Python, and confirms SID/PGID are distinct from the Bun test parent's. Python also directly asserts `os.tcgetpgrp(0) == os.getpgrp()` and `os.getsid(0) == os.getpid()`. Bash checks `ps`'s controlling-terminal foreground PGID and actually opens `/dev/tty`. **No different leader PID was observed**, so there is no alternate-PID discovery path. Changes to Bun spawn semantics, `detached`, `setsid -f`, or the wrapper require re-running this invariant test before trusting `process.kill(-child.pid, signal)`.
-
-For ordinary descendants that retain the group, negative-PID SIGTERM/SIGKILL reaches the child and its descendants without hitting Bun. Deliberately detached descendants are outside the PRD's supported cleanup boundary. The test considers a descendant terminated when `/proc/<pid>/stat` is absent or records state `Z`; a zombie is already dead, and final orphan reaping is the host init's responsibility, not a claim that `kill(pid, 0)` must immediately fail.
-
-## Rejected alternatives
-
-- **node-pty / Node runtime:** Node's native-addon/runtime and packaging path is outside the mandated Bun delivery. It is not used as a fallback when Bun's PTY semantics need investigation.
-- **Python ptyprocess:** Adds Python runtime/helper lifecycle and packaging outside the required product stack. Python is only an independently inspected child/test fixture here; it does not create or proxy product PTYs.
-- **exec/spawn pipes:** Do not provide a real terminal or controlling-terminal line discipline. They cannot meet isatty, foreground CTRL-C, SIGWINCH and interactive prompt requirements. Pipes used to capture boot/curl diagnostics are not terminal sessions.
-- **Plain terminal attachment or detached attachment alone:** The probes demonstrate the missing controlling-terminal ownership. TTY=true is insufficient.
-
-## Deterministic proof and commands
-
-From `products/tetherterm`, with Bun 1.4.5 on PATH:
+The ownership probe was rerun on 2026-11-21 at 23:59 (+08), before this amendment was written:
 
 ```sh
-bun install
+bun evidence/probes/107-eof-ownership.ts
+```
+
+Actual output (PID values are run-specific):
+
+```text
+reusable-setsid DATA "PID=81406 PGID=81406 SID=81406 TPGID=81406\r\na�"
+reusable-setsid CHILD_EXIT 81406 0 null
+reusable-setsid OBSERVED_AFTER_EXIT {"bytes":47,"nativeEof":false}
+reusable-setsid PTY_EOF 0 null
+inline-setsid DATA "setsid: failed to set the controlling terminal: Operation not permitted\r\n"
+inline-setsid CHILD_EXIT 81410 0 null
+inline-setsid PTY_EOF 1 null
+inline-setsid OBSERVED_AFTER_EXIT {"bytes":73,"nativeEof":true}
+inline-native DATA "PID=81412 PGID=81412 SID=81412 TPGID=81412\r\na�"
+inline-native PTY_EOF 1 null
+inline-native CHILD_EXIT 81412 0 null
+inline-native OBSERVED_AFTER_EXIT {"bytes":47,"nativeEof":true}
+EXIT_CODE=0
+```
+
+The reusable `PTY_EOF` line occurs **only after the probe explicitly closes it**, following `nativeEof:false`. The probe's 100-ms deadline is diagnostic only, never production completion logic. Its per-chunk display decoder is not the production streaming-normalized ring. Native terminal `exit` status `1` here denotes stream EOF/read-error, **not** child exit status: the inline child really exited `0`. The original round-two blocker and output remain historical evidence; the round-three rerun is recorded at `evidence/tests/107-builder-round3.log`.
+
+The amended `evidence/probes/101-controlling-terminal.ts` independently compares all four forms. Fresh round-three output includes:
+
+```text
+plain reusable (Bun subprocess pid=81540, exit=0):
+PID=81540 PGID=81534 SID=81400 PARENT_PGID=81534 PARENT_SID=81400
+CONTROLLING=false TCGETPGRP_ERRNO=25
+
+detached reusable (Bun subprocess pid=81544, exit=0):
+PID=81544 PGID=81544 SID=81544 PARENT_PGID=81534 PARENT_SID=81400
+CONTROLLING=false TCGETPGRP_ERRNO=25
+
+setsid -c reusable (Bun subprocess pid=81545, exit=0):
+PID=81545 PGID=81545 SID=81545 PARENT_PGID=81534 PARENT_SID=81400
+CONTROLLING=true FOREGROUND_PGID=81545
+
+inline native (Bun subprocess pid=81546, exit=0):
+PID=81546 PGID=81546 SID=81546 PARENT_PGID=81534 PARENT_SID=81400
+CONTROLLING=true FOREGROUND_PGID=81546
+```
+
+All four report TTY stdin/stdout and 80×24 dimensions. The inline case also awaits real native EOF. The probe exits `0`. This distinguishes the two APIs rather than overwriting the historical finding.
+
+## Product API, output completion and process groups
+
+`spawnPty({ executable, args, cwd, env, cols, rows, onData, onEof? })` returns `{ child, terminal: child.terminal, eof }`. `terminal.write(...)` and `terminal.resize(cols, rows)` operate on that native child terminal. Inline Bun ownership also owns cleanup on spawn failure; there is no separately allocated reusable terminal to leak.
+
+The native terminal `exit` callback runs after final `data`, invokes `onEof` exactly once, then resolves `eof`. Session creation allocates its ring before spawning and finishes that same production ring synchronously from `onEof`. Child process exit has one separate observer for actual code/signal, state, live-slot release and retention. A same-group descendant may hold the PTY slave and emit final bytes **after session-leader exit**; an input/FIFO handshake integration test proves the ring waits for native EOF, not child exit. See [output-ring.md](output-ring.md) and [session-manager.md](session-manager.md).
+
+Negative-PID signals `process.kill(-child.pid, signal)` target only the child's isolated process group. CTRL_C writes byte `0x03` to the PTY and the line discipline raises foreground-group SIGINT; it is not replaced with a direct process kill. Ordinary descendants retaining the group are covered by cleanup. Deliberately detached descendants are outside the PRD guarantee. A `/proc` entry that is absent or `Z` represents a terminated process; host init owns orphan reaping.
+
+## Behavioral verification
+
+`apps/server/test/pty-spike.test.ts` keeps six real-PTY behavioral tests: Bash and Python interactions, plus SIGTERM/SIGKILL group termination for both. Each interaction proves TTY descriptors, controlling-terminal identity, separate input echo/consumption, resize and real SIGWINCH, CTRL_C (Bash foreground command status 130; Python KeyboardInterrupt), and exit 7. Group cases check grandchild PGID/SID, signal the negative leader PID, observe child signal exit and descendant termination, and prove Bun survives. All six additionally verify the inline `child.terminal` handle and exactly-once native EOF before explicit cleanup closes it.
+
+Native spawn/policy tests assert literal argv, canonical metadata, controlling-session ownership, credential exclusion and EOF. Empty-PATH tests prove a canonical executable can spawn and the authenticated health launcher can boot without `setsid`. Policy denial still occurs before native allocation; no guardrail is bypassed.
+
+From `products/tetherterm`:
+
+```sh
 bun install --frozen-lockfile
-bun evidence/probes/101-controlling-terminal.ts
-bun test apps/server/test/pty-spike.test.ts
-for run in 1 2 3 4 5; do
-  bun test apps/server/test/pty-spike.test.ts || exit
- done
-bun run test
 bun run check
 bun run check-types
-git rev-parse --show-toplevel
+bun run test
+bun evidence/probes/107-eof-ownership.ts
+bun evidence/probes/101-controlling-terminal.ts
 ```
 
-The spike contains **six tests**: a full Bash interaction; a full Python interaction; and SIGTERM/SIGKILL group-termination cases for each executable. Each full interaction asserts TTY stdin/stdout, controlling-terminal/session/group identity, input consumed and separately echoed, resize dimensions and SIGWINCH, CTRL-C behavior, and exit code 7. Bash's actual `sleep 30` is observed running in `/proc` before byte `0x03` is written; it returns 130. Python observes `KeyboardInterrupt`. Group tests launch `sleep 60 & wait` (directly in Bash, through a Bash descendant for Python), verify descendant SID/PGID, signal `-child.pid`, observe child signal exit and descendant termination, and assert Bun remains alive.
+Round-three evidence, including the ten consecutive targeted PTY/ring/EOF runs, is in `evidence/tests/107-builder-round3.log`. Prior issue #101 evidence remains at `evidence/tests/101-builder.log`; its external-wrapper dependency assertions are historical and superseded by this amendment.
 
-All readiness assertions use output/process-state polling with deadlines, not fixed sleeps. Bash can defer a WINCH trap while blocked in `read`, so the test sends the resize-report input before waiting for the trap output. A no-op INT trap keeps the Bash harness alive to report the **foreground sleep's** status; exec children reset caught traps, and sleep is still interrupted by real terminal SIGINT. These harness accommodations do not replace signals with direct `child.kill` calls.
+## Alternatives still excluded
 
-Five consecutive final spike runs passed: **6/6 each, 30/30 total, 90 assertions per run**. One actual run:
-
-```text
-bash PID=PGID=SID=TPGID=6749 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
-python3 PID=PGID=SID=TPGID=6756 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
-bash GROUP=6758 GRANDCHILD=6761 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
-bash GROUP=6762 GRANDCHILD=6765 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
-python3 GROUP=6767 GRANDCHILD=6769 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
-python3 GROUP=6770 GRANDCHILD=6772 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
-6 pass, 0 fail, 90 expect() calls
-```
-
-Root `test` runs unit → integration → e2e sequentially and stops on any failure: **3 unit + 7 integration (including the six-test spike) + 2 e2e = 12 tests**, 108 assertions. The e2e test starts the actual entrypoint with **only PATH and PORT=0**, discovers the bound loopback port, runs actual curl and verifies:
-
-```text
-PORT=46017 ENV=PATH,PORT ONLY; curl /healthz: ok
-HTTP_STATUS=200
-```
-
-No MongoDB, auth/payment settings or AI keys are required. Root `dev`, `start`, `build` and `check-types` target only `apps/server`. Biome/Ultracite excludes dormant web/native/extension/docs/auth/db/ui scaffold directories, coding-agent configuration and `evidence`, while checking all active server source/tests under strict TypeScript. Narrow inline lint explanations cover necessary sequential polling; no behavioral acceptance assertions are disabled.
-
-`src/services.ts`, `src/env.server.ts` and the unused generated server `src/env.ts` are removed. The active server no longer imports Varlock. The original server `.env.schema` remains **only because the dormant db schema imports it**. Root postinstall still successfully generates the dormant web/native/db types, but deliberately does not regenerate server env imports; this does not boot any dormant runtime. Frozen installation remains a clean-clone gate.
-
-All builder verification output, including the original blocker and intermediate corrections, is committed at `evidence/tests/101-builder.log`. The product `.gitignore` explicitly permits `evidence/tests/*.log` despite the scaffold's general `*.log` rule. No credentials or terminal secrets are recorded.
+No node-pty, Node runtime fallback, Python PTY helper, or exec/spawn pipes are used for terminal sessions. Python is an independent child/test fixture, not a creator/proxy of product PTYs. Diagnostic pipes capture only launcher/probe results. A real TTY descriptor without a controlling-terminal check remains insufficient. Neither detached reusable attachment nor reusable attachment with forced-close-at-exit meets this decision.

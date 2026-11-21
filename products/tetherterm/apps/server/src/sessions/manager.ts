@@ -16,6 +16,7 @@ import {
 	resizeSession,
 } from "./resize";
 import { SessionRetention } from "./retention";
+import { OutputRing, type OutputRingRead } from "./ring";
 import {
 	type PtyHandle,
 	type Session,
@@ -46,6 +47,12 @@ export interface CreateSessionResult {
 	cursor: string;
 	sessionId: string;
 	state: SessionState;
+}
+
+export interface ReadSessionRequest {
+	cursor: string;
+	maxBytes?: number;
+	sessionId: string;
 }
 
 export interface SessionClock {
@@ -99,6 +106,7 @@ export class SessionManager {
 		this.liveSlots += 1;
 		let session: Session | undefined;
 		let receivedBytes = 0;
+		const output = new OutputRing();
 		let { executable, cwd } = request;
 		let pty: PtyHandle;
 		try {
@@ -108,11 +116,14 @@ export class SessionManager {
 					...request,
 					cols: limits.data.cols,
 					onData(bytes) {
-						// Buffering will attach here; never log terminal output.
+						output.append(bytes);
 						receivedBytes += bytes.byteLength;
 						if (session) {
 							session.receivedBytes = receivedBytes;
 						}
+					},
+					onEof() {
+						output.finish();
 					},
 					rows: limits.data.rows,
 				},
@@ -136,6 +147,7 @@ export class SessionManager {
 			executable,
 			exitCode: null,
 			id: randomUUID(),
+			output,
 			pty,
 			receivedBytes,
 			runtimeDeadline,
@@ -146,7 +158,12 @@ export class SessionManager {
 		this.sessions.set(record.id, record);
 		this.retention.prune();
 		// Observe actual exit without awaiting it in create/status/list.
+		let exitObserved = false;
 		pty.child.exited.then(() => {
+			if (exitObserved) {
+				return;
+			}
+			exitObserved = true;
 			record.state = "exited";
 			record.exitCode = pty.child.exitCode;
 			record.signal = pty.child.signalCode ?? null;
@@ -164,6 +181,14 @@ export class SessionManager {
 			throw new TerminalError("NOT_FOUND", "Session was not found");
 		}
 		return session;
+	}
+
+	read(request: ReadSessionRequest): OutputRingRead & { state: SessionState } {
+		const session = this.get(request.sessionId);
+		return {
+			...session.output.read(request.cursor, request.maxBytes),
+			state: session.state,
+		};
 	}
 
 	resize(
