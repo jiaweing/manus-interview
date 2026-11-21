@@ -1,0 +1,25 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/tetherterm.test.js:
+(pass) TetherTerm persistent session illustration > registered component retains the shared SceneFrame and locked interval [1.29ms]
+(pass) TetherTerm persistent session illustration > input starts exactly at local 120 and output holds from 180 [0.38ms]
+(pass) TetherTerm persistent session illustration > all 240 frames retain one fixed identifier, all history and one terminal [125.20ms]
+(pass) TetherTerm persistent session illustration > 1170/1260/1350 comparison shows retained history and corresponding input/output [0.21ms]
+(pass) TetherTerm persistent session illustration > frame states are regenerated identically in repeated and shuffled order [3.81ms]
+(pass) TetherTerm persistent session illustration > exact caption and honest labels persist over every local frame [1.96ms]
+(pass) TetherTerm persistent session illustration > native 48px short reading lines fit the illustration without movement [1.27ms]
+(pass) TetherTerm persistent session illustration > source and visible text exclude extra UI, operational claims and impure render code [1.57ms]
+(pass) TetherTerm persistent session illustration > scene-scoped CLI accepts only its end-exclusive absolute frames [0.79ms]
+TetherTerm real still smoke: 73.604s
+PNG ../../../../../../tmp/s7-tetherterm-smoke-NQZ0uo/tetherterm/frame-1170.png frame=1170
+PNG ../../../../../../tmp/s7-tetherterm-smoke-NQZ0uo/tetherterm/frame-1260.png frame=1260
+PNG ../../../../../../tmp/s7-tetherterm-smoke-NQZ0uo/tetherterm/frame-1350.png frame=1350
+TIMING bundle=43.452s renders=22.866s total=72.623s concurrency=1
+STILLS ok count=3
+(pass) TetherTerm persistent session illustration > real pinned-Chromium smoke renders hold/action/result PNGs within 90s [73606.23ms]
+
+ 10 pass
+ 0 fail
+ 3715 expect() calls
+Ran 10 tests across 1 file. [74.37s]
+EXIT_CODE=0
