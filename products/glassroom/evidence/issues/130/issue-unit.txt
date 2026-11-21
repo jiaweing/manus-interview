@@ -1,0 +1,29 @@
+Command: bun test tests/unit/data-envelope.test.ts
+Working directory: /home/ubuntu/wt/b130/products/glassroom
+Started (UTC): 2026-11-21T14:49:18.641504+00:00
+Exit code: 0
+
+bun test v1.4.5 (a7733435c)
+
+tests/unit/data-envelope.test.ts:
+(pass) authenticated data envelopes > four encrypted body variants [14.45ms]
+(pass) authenticated data envelopes > concurrent unique sequences [9.62ms]
+(pass) authenticated data envelopes > specified IV bytes [3.13ms]
+(pass) authenticated data envelopes > direction separation [2.53ms]
+(pass) authenticated data envelopes > authenticated envelope fields [2.44ms]
+(pass) authenticated data envelopes > tamper rejected [2.27ms]
+(pass) authenticated data envelopes > duplicate rejected [1.76ms]
+(pass) authenticated data envelopes > failed authentication preserves receive sequence [2.21ms]
+(pass) authenticated data envelopes > malformed and over-cap rejection [8.81ms]
+(pass) authenticated data envelopes > counter exhaustion [2.40ms]
+(pass) authenticated data envelopes > full uint64 receive boundary [1.85ms]
+(pass) authenticated data envelopes > strict encrypted body validation and UTF-8 message bound [20.38ms]
+(pass) authenticated data envelopes > one-shot ownership, strict room IDs, and disposal without resumption [5.78ms]
+(pass) authenticated data envelopes > snapshots and invalid counter limits [5.58ms]
+(pass) authenticated data envelopes > encryption failure terminates without nonce reuse [2.17ms]
+(pass) authenticated data envelopes > in-flight teardown releases neither ciphertext nor authenticated body [10.84ms]
+
+ 16 pass
+ 0 fail
+ 534 expect() calls
+Ran 16 tests across 1 file. [156.00ms]

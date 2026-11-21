@@ -1,0 +1,4 @@
+Command: git diff --check
+Working directory: /home/ubuntu/wt/b130
+Started (UTC): 2026-11-21T14:49:47.362028+00:00
+Exit code: 0
