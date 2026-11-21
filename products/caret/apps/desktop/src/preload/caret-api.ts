@@ -7,7 +7,7 @@ import {
   IPC_STATUS_CHANNEL,
 } from "../shared/ipc-contract";
 
-// Kept private in preload; contextBridge receives only the four-method facade.
+// Kept private in preload; contextBridge receives only named capabilities.
 export interface PreloadTransport {
   invoke: (
     channel: string,
@@ -30,10 +30,25 @@ export function createCaretApi(transport: PreloadTransport): CaretApi {
         operation: "cancel",
         payload: { sessionId },
       }),
+    cancelModel: (modelId) =>
+      transport.invoke(IPC_REQUEST_CHANNEL, {
+        operation: "cancelModel",
+        payload: { modelId },
+      }),
+    modelStatus: (modelId) =>
+      transport.invoke(IPC_REQUEST_CHANNEL, {
+        operation: "modelStatus",
+        payload: { modelId },
+      }),
     setupKey: (key) =>
       transport.invoke(IPC_REQUEST_CHANNEL, {
         operation: "setupKey",
         payload: { key },
+      }),
+    startModel: (modelId) =>
+      transport.invoke(IPC_REQUEST_CHANNEL, {
+        operation: "startModel",
+        payload: { modelId },
       }),
     submitAudio: (submission) =>
       transport.invoke(IPC_REQUEST_CHANNEL, {

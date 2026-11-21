@@ -1,0 +1,5 @@
+$ tsc --noEmit -p tsconfig.overlay.json
+src/main/models/model-manager.ts(84,5): error TS2322: Type 'ReadableStreamDefaultReadResult<Uint8Array<ArrayBufferLike>>' is not assignable to type 'ReadableStreamReadResult<Uint8Array<ArrayBufferLike>>'.
+  Type 'ReadableStreamDefaultReadDoneResult' is not assignable to type 'ReadableStreamReadResult<Uint8Array<ArrayBufferLike>>'.
+    Type 'ReadableStreamDefaultReadDoneResult' is not assignable to type 'ReadableStreamReadDoneResult<Uint8Array<ArrayBufferLike>>'.
+      Property 'value' is optional in type 'ReadableStreamDefaultReadDoneResult' but required in type 'ReadableStreamReadDoneResult<Uint8Array<ArrayBufferLike>>'.

@@ -1,0 +1,41 @@
+$ bun test tests/model-manager.test.ts
+bun test v1.4.5 (a7733435c)
+
+tests/model-manager.test.ts:
+(pass) pinned model download and verification > success atomically installs only after hash, reports progress and ready [45.11ms]
+(pass) pinned model download and verification > resume crash-left partial without re-downloading completed bytes [8.18ms]
+(pass) pinned model download and verification > network interruption resumes in the same operation [35.75ms]
+(pass) pinned model download and verification > truncated graceful response is removed [6.10ms]
+(pass) pinned model download and verification > transport truncation exhausts retry and removes partial [27.30ms]
+(pass) pinned model download and verification > same-size corrupted content fails SHA-256 [7.60ms]
+(pass) pinned model download and verification > wrong catalog hash rejects otherwise correct response [7.49ms]
+(pass) pinned model download and verification > oversize chunked response never writes above pinned cap [6.10ms]
+(pass) pinned model download and verification > reject redirect http://models.test/model [6.14ms]
+(pass) pinned model download and verification > reject redirect https://evil.test/model [4.61ms]
+(pass) pinned model download and verification > reject redirect https://models.test.evil.test/model [3.95ms]
+(pass) pinned model download and verification > reject redirect https://user:password@models.test/model [4.00ms]
+(pass) pinned model download and verification > reject redirect https://models.test:444/model [4.37ms]
+(pass) pinned model download and verification > allowlisted relative HTTPS redirect is followed manually [6.50ms]
+(pass) pinned model download and verification > redirect loops have a bounded request count [6.56ms]
+(pass) pinned model download and verification > cancel through AbortSignal stops transfer and deletes partial [6.61ms]
+(pass) pinned model download and verification > cancel by ID waits for cleanup [4.65ms]
+(pass) pinned model download and verification > pre-aborted caller sends no requests and removes crash-left partial [2.87ms]
+(pass) pinned model download and verification > post-verification file swap is detected before use and removed [6.88ms]
+(pass) pinned model download and verification > new app manager re-verifies installed model; corrupt cached ready is not trusted [8.79ms]
+(pass) pinned model download and verification > valid installed model re-verifies on restart without network [7.64ms]
+(pass) pinned model download and verification > concurrent start shares one promise and one writer [5.93ms]
+(pass) pinned model download and verification > disk-write permission error fails closed and cleans partial [4.56ms]
+(pass) pinned model download and verification > server ignores Range: restart rather than append duplicate bytes [6.66ms]
+(pass) pinned model download and verification > wrong Content-Range offset fails rather than installing [4.98ms]
+(pass) pinned model download and verification > already complete partial is verified and renamed with zero download [4.12ms]
+(pass) pinned model download and verification > oversize existing partial is deleted before any request [2.49ms]
+(pass) pinned model download and verification > symlink partial cannot write outside models directory [3.16ms]
+(pass) pinned model download and verification > HTTP error status is rejected and retry works after failure [6.05ms]
+(pass) pinned model download and verification > unknown ID and invalid catalog cannot select arbitrary URL/path [3.28ms]
+(pass) pinned model download and verification > throwing progress consumer cannot corrupt the transfer [6.95ms]
+(pass) pinned model download and verification > production catalog and host list are immutable and exact [0.28ms]
+
+ 32 pass
+ 0 fail
+ 130 expect() calls
+Ran 32 tests across 1 file. [308.00ms]

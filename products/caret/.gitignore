@@ -57,3 +57,7 @@ coverage
 tmp
 temp
 out
+# Downloaded Whisper model weights are never bundled or committed.
+ggml-*.bin
+whisper-*.bin
+*.bin.partial

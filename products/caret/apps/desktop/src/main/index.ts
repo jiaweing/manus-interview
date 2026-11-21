@@ -1,11 +1,14 @@
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { app, BrowserWindow } from "electron";
+import { createModelServices } from "./models/ipc-services";
 import { createOverlayWindow } from "./overlay";
 import { installOverlayFixture } from "./overlay-fixture";
 import { registerCaretIpc } from "./register-ipc";
 import { guardRenderer, RENDERER_PRIVILEGES } from "./renderer-security";
 import { launchCaretTray } from "./tray-runtime";
+
+let modelServices: ReturnType<typeof createModelServices> | undefined;
 
 function createWindow(): BrowserWindow {
   const overlay = createOverlayWindow();
@@ -20,11 +23,19 @@ function createWindow(): BrowserWindow {
   });
   const rendererPath = join(import.meta.dirname, "../renderer/index.html");
   guardRenderer(win.webContents);
+  modelServices ??= createModelServices(app.getPath("userData"));
+  const models = modelServices;
   const boundary = registerCaretIpc(
     win.webContents,
-    pathToFileURL(rendererPath).href
+    pathToFileURL(rendererPath).href,
+    {
+      getActiveSession: () => null,
+      getStatus: () => ({ sessionId: null, state: "idle" }),
+      ...models.services,
+    }
   );
   win.once("closed", () => {
+    models.manager.cancelAll();
     boundary.dispose();
     overlay.dispose();
   });
