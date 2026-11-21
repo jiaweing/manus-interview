@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { afterAll, beforeAll, expect, test } from "bun:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -10,11 +10,21 @@ import {
 import { Hono } from "hono";
 import { startHttpServer } from "../src/http";
 import { createMcpHttpApp } from "../src/mcp/http-app";
+import { launcherFixture } from "./fixtures/launcher";
 
 const productRoot = new URL("../../..", import.meta.url).pathname;
 const httpAddressPattern = /http:\/\/127\.0\.0\.1:(\d+)\/mcp/;
 const linePattern = /\r?\n/;
 const timeoutMs = 5000;
+let fixture: Awaited<ReturnType<typeof launcherFixture>>;
+
+beforeAll(async () => {
+	fixture = await launcherFixture();
+});
+
+afterAll(async () => {
+	await fixture.cleanup();
+});
 
 async function withTimeout<T>(promise: Promise<T>) {
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -94,7 +104,10 @@ test("official SDK client initializes and discovers tools through the stdio root
 		command: process.execPath,
 		cwd: productRoot,
 		env: {
-			PATH: `${new URL(".", `file://${process.execPath}`).pathname}:/usr/bin:/bin`,
+			PATH: fixture.env.PATH,
+			TETHERTERM_APPROVED_EXECUTABLES:
+				fixture.env.TETHERTERM_APPROVED_EXECUTABLES,
+			TETHERTERM_APPROVED_ROOT: fixture.root,
 		},
 		stderr: "pipe",
 	});
@@ -118,9 +131,7 @@ test("official SDK client initializes and discovers tools through the stdio root
 test("stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics", async () => {
 	const child = Bun.spawn([process.execPath, "run", "terminal:stdio"], {
 		cwd: productRoot,
-		env: {
-			PATH: `${new URL(".", `file://${process.execPath}`).pathname}:/usr/bin:/bin`,
-		},
+		env: fixture.env,
 		stderr: "pipe",
 		stdin: "pipe",
 		stdout: "pipe",
@@ -173,6 +184,7 @@ test("stdio stdout contains only complete SDK-valid protocol messages and stderr
 		});
 		expect(diagnostics).toContain("TetherTerm MCP ready on stdio");
 		expect(protocol).not.toContain("TetherTerm MCP ready");
+		expect((protocol + diagnostics).includes(fixture.token)).toBe(false);
 		console.log(
 			"stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0"
 		);
@@ -184,10 +196,7 @@ test("stdio stdout contains only complete SDK-valid protocol messages and stderr
 test("HTTP entrypoint initializes and discovers with the official Streamable HTTP client", async () => {
 	const child = Bun.spawn([process.execPath, "run", "terminal:http"], {
 		cwd: productRoot,
-		env: {
-			PATH: `${new URL(".", `file://${process.execPath}`).pathname}:/usr/bin:/bin`,
-			PORT: "0",
-		},
+		env: fixture.env,
 		stderr: "pipe",
 		stdout: "pipe",
 	});
@@ -219,6 +228,7 @@ test("HTTP entrypoint initializes and discovers with the official Streamable HTT
 		expect(await withTimeout(child.exited)).toBe(0);
 		expect(await stdout.drain()).toBe("");
 		await stderr.drain();
+		expect(stderr.output().includes(fixture.token)).toBe(false);
 		console.log(
 			"HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY"
 		);
@@ -229,7 +239,7 @@ test("HTTP entrypoint initializes and discovers with the official Streamable HTT
 }, 15_000);
 
 test("HTTP listener binds only loopback and isolates concurrent clients without transport sessions", async () => {
-	const listener = startHttpServer(0);
+	const listener = await startHttpServer(fixture.env);
 	const clients = [newClient(), newClient()];
 	try {
 		expect(listener.hostname).toBe("127.0.0.1");
