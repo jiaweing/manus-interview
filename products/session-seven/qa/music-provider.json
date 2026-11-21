@@ -10,7 +10,7 @@
     "https://openrouter.ai/api/v1/models/google/lyria-3-pro-preview/endpoints",
     "https://openrouter.ai/docs/guides/routing/provider-selection"
   ],
-  "checkedAt": "2026-11-21T14:09:56.458Z",
+  "checkedAt": "2026-11-21T14:18:17.401Z",
   "costApproval": {
     "totalBudgetUsd": null,
     "accessApproved": false,
