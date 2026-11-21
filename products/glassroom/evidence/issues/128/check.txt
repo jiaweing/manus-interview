@@ -1,0 +1,7 @@
+Command: bun run check
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
+
+$ ultracite check
+Checked 47 files in 331ms. No fixes applied.
+
+Exit code: 0

@@ -1,0 +1,43 @@
+Command: bun test tests/unit
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
+
+bun test v1.4.5 (a7733435c)
+
+tests/unit/signaling-crypto.test.ts:
+(pass) invitation-authenticated signaling > same-secret round trip [7.52ms]
+(pass) invitation-authenticated signaling > directional key separation [0.92ms]
+(pass) invitation-authenticated signaling > wrong secret [0.57ms]
+(pass) invitation-authenticated signaling > AAD mismatch [1.15ms]
+(pass) invitation-authenticated signaling > ciphertext tamper [0.84ms]
+(pass) invitation-authenticated signaling > replay rejected [0.94ms]
+(pass) invitation-authenticated signaling > failed authentication preserves counter [1.42ms]
+(pass) invitation-authenticated signaling > counter exhaustion closes [1.11ms]
+(pass) invitation-authenticated signaling > invalid encodings do not release plaintext or consume receive state [9.31ms]
+(pass) invitation-authenticated signaling > concurrent sends use unique counters and concurrent receives reject duplicate [4.54ms]
+(pass) invitation-authenticated signaling > room salt separation [0.80ms]
+(pass) invitation-authenticated signaling > uint64 boundary is validated without floating point rounding [0.66ms]
+(pass) invitation-authenticated signaling > invalid initialization and oversized plaintext are redacted [0.74ms]
+(pass) invitation-authenticated signaling > queued plaintext and envelope inputs are snapshotted [0.47ms]
+
+tests/unit/handshake-crypto.test.ts:
+(pass) ephemeral session handshake > creator-first canonical transcript [2.90ms]
+(pass) ephemeral session handshake > matching fingerprint [1.91ms]
+(pass) ephemeral session handshake > directional and purpose separation [3.40ms]
+(pass) ephemeral session handshake > room binding [1.72ms]
+(pass) ephemeral session handshake > role binding [1.00ms]
+(pass) ephemeral session handshake > public-key binding [3.84ms]
+(pass) ephemeral session handshake > nonce binding [0.99ms]
+(pass) ephemeral session handshake > invalid HMAC [0.90ms]
+(pass) ephemeral session handshake > fresh session material [1.75ms]
+(pass) ephemeral session handshake > no private material in envelopes [1.39ms]
+(pass) ephemeral session handshake > both local and peer confirmations are required [1.44ms]
+(pass) ephemeral session handshake > malformed and unknown envelope fields fail closed [7.04ms]
+(pass) ephemeral session handshake > one-shot derivation, copied envelopes, and teardown [1.39ms]
+(pass) ephemeral session handshake > teardown cannot resurrect an in-flight handshake [0.85ms]
+
+ 28 pass
+ 0 fail
+ 764 expect() calls
+Ran 28 tests across 2 files. [103.00ms]
+
+Exit code: 0

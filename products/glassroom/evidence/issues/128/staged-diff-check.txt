@@ -1,0 +1,3 @@
+Command: git diff --cached --check
+(no diagnostic output)
+Exit code: 0
