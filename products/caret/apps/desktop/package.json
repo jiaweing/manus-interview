@@ -5,8 +5,9 @@
   "type": "module",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite build && electron-vite dev",
     "build": "electron-vite build",
+    "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

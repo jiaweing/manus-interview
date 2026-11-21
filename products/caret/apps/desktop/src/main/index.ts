@@ -1,5 +1,8 @@
 import { app, BrowserWindow } from "electron";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+import { registerCaretIpc } from "./register-ipc";
+import { guardRenderer, RENDERER_PRIVILEGES } from "./renderer-security";
 
 function createWindow(): void {
   const win = new BrowserWindow({
@@ -8,17 +11,16 @@ function createWindow(): void {
     show: false,
     webPreferences: {
       preload: join(import.meta.dirname, "../preload/index.cjs"),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true,
+      ...RENDERER_PRIVILEGES,
     },
   });
+  const rendererPath = join(import.meta.dirname, "../renderer/index.html");
+  guardRenderer(win.webContents);
+  const boundary = registerCaretIpc(win.webContents, pathToFileURL(rendererPath).href);
+  win.once("closed", () => boundary.dispose());
   win.once("ready-to-show", () => win.show());
-  if (process.env.ELECTRON_RENDERER_URL) {
-    win.loadURL(process.env.ELECTRON_RENDERER_URL);
-  } else {
-    win.loadFile(join(import.meta.dirname, "../renderer/index.html"));
-  }
+  // Even development uses the bundled renderer, never an environment-provided URL.
+  win.loadFile(rendererPath);
 }
 
 app.whenReady().then(createWindow);

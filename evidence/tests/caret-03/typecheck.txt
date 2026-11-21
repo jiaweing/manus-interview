@@ -1,0 +1,7 @@
+$ tsc --noEmit -p tsconfig.json
+src/preload/caret-api.ts(19,16): error TS7006: Parameter 'key' implicitly has an 'any' type.
+src/preload/caret-api.ts(20,21): error TS7006: Parameter 'listener' implicitly has an 'any' type.
+src/preload/caret-api.ts(45,14): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+src/preload/caret-api.ts(46,19): error TS7006: Parameter 'submission' implicitly has an 'any' type.
+
+EXIT_CODE=2
