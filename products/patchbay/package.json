@@ -29,6 +29,10 @@
   },
   "type": "module",
   "scripts": {
+    "patchbay": "cd apps/server && bun run patchbay",
+    "typecheck": "tsc --noEmit -p apps/server/tsconfig.cli.json",
+    "lint": "biome check apps/server/src/cli.ts apps/server/src/cli apps/server/src/kernel apps/server/test",
+    "test": "bun test apps/server/test",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",

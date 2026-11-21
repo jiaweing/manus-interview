@@ -1,0 +1,747 @@
+# Issue #52 final builder verification
+Date: 2026-11-21T14:00:12Z
+Working directory: /home/ubuntu/wt/i52-scaffold/products/patchbay
+Bun: 1.4.5
+
+Override: swarm section 3 requires an in-repository scaffold with no nested .git.
+
+$ bun install
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1405 installs across 1551 packages (no changes) [5.37s]
+EXIT_CODE=0
+
+$ bun run typecheck
+$ tsc --noEmit -p apps/server/tsconfig.cli.json
+EXIT_CODE=0
+
+$ bun test apps/server/test/cli-boot.test.ts
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [1.42ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [49.77ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [97.40ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [39.52ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [39.90ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [45.69ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [40.12ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [43.90ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [4.16ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [5.07ms]
+
+ 10 pass
+ 0 fail
+ 44 expect() calls
+Ran 10 tests across 1 file. [463.00ms]
+EXIT_CODE=0
+
+$ git rev-parse --show-toplevel
+/home/ubuntu/wt/i52-scaffold
+EXIT_CODE=0
+
+$ test -f bun.lock
+EXIT_CODE=0
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1405 installs across 1551 packages (no changes) [2.40s]
+EXIT_CODE=0
+
+$ bun run lint
+$ biome check apps/server/src/cli.ts apps/server/src/cli apps/server/src/kernel apps/server/test
+Checked 7 files in 556ms. No fixes applied.
+EXIT_CODE=0
+
+$ bun run test
+$ bun test apps/server/test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [1.52ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [65.29ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [94.64ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [52.78ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [53.54ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [63.14ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [47.70ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [41.57ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [4.27ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [4.16ms]
+
+ 10 pass
+ 0 fail
+ 44 expect() calls
+Ran 10 tests across 1 file. [460.00ms]
+EXIT_CODE=0
+
+$ bun test
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/cli-boot.test.ts:
+(pass) empty foreground CLI > kernel starts with zero tools and zero providers [0.98ms]
+(pass) empty foreground CLI > root Bun script boots with a fresh HOME and exits on immediate EOF [40.27ms]
+(pass) empty foreground CLI > unknown commands use a stable error across runs and leave help usable [81.99ms]
+(pass) empty foreground CLI > EOF dispatches a final line without a newline and never hangs [39.12ms]
+(pass) empty foreground CLI > blank lines and CRLF are accepted; explicit exit ends the session [45.56ms]
+(pass) empty foreground CLI > NO_COLOR=1 has no ANSI escapes, even for hostile unknown command text [40.96ms]
+(pass) empty foreground CLI > boots without credentials, database, HTTP listener, or any network access [36.31ms]
+(pass) empty foreground CLI > invalid HOME has a stable startup error and nonzero exit [42.36ms]
+(pass) empty foreground CLI > unsupported platform uses the documented startup exit [4.79ms]
+(pass) empty foreground CLI > fatal input failure returns exit 2 with a redacted stable error [4.57ms]
+
+ 10 pass
+ 0 fail
+ 44 expect() calls
+Ran 10 tests across 1 file. [357.00ms]
+EXIT_CODE=0
+
+$ git diff --check
+EXIT_CODE=0
+
+# Manual foreground boot with temporary HOME and empty stdin
+$ HOME=<temporary-existing-directory> NO_COLOR=1 bun run patchbay </dev/null
+$ cd apps/server && bun run patchbay
+$ bun run --no-env-file src/cli.ts
+Patchbay ready: 0 tools, 0 providers.
+Type "help" for commands; "exit" or EOF ends the session.
+EXIT_CODE=0
+
+# Manual unknown command recovery; repeat foo, and help after each error
+$ printf 'foo\nhelp\nfoo\nhelp\n' | HOME=<temporary-existing-directory> NO_COLOR=1 bun run patchbay
+$ cd apps/server && bun run patchbay
+$ bun run --no-env-file src/cli.ts
+Patchbay ready: 0 tools, 0 providers.
+Type "help" for commands; "exit" or EOF ends the session.
+ERROR [UNKNOWN_COMMAND]: Unknown command. Type "help" for available commands.
+Commands: help, exit
+ERROR [UNKNOWN_COMMAND]: Unknown command. Type "help" for available commands.
+Commands: help, exit
+EXIT_CODE=0
+
+# Fresh HOME remains empty
+EXIT_CODE=0
+
+# Verification exit-code summary
+bun install	0
+bun run typecheck	0
+bun test apps/server/test/cli-boot.test.ts	0
+git rev-parse --show-toplevel	0
+test -f bun.lock	0
+bun install --frozen-lockfile	0
+bun run lint	0
+bun run test	0
+bun test	0
+git diff --check	0
+manual EOF boot	0
+manual foo recovery	0
+manual HOME empty	0
+All recorded verification commands exited 0.
+
+# Optional retained scaffold-wide Ultracite check (not the active CLI lint gate)
+$ bun run check
+$ ultracite check
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:1:1 lint/suspicious/useStrictMode  FIXABLE  ━━━━━━━━━━
+
+  × Unexpected absence of the directive "use strict".
+
+   > 1 │ const fs = require("node:fs");
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   > 2 │
+   > 3 │ const uuid = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+   > 4 │ const isId = (value) => typeof value === "string" && uuid.test(value);
+        ...
+  > 87 │   );
+  > 88 │   process.exitCode = 1;
+  > 89 │ }
+       │ ^
+    90 │
+
+  i Strict mode allows to opt-in some optimisations of the runtime engines, and it eliminates some JavaScript silent errors by changing them to throw errors.
+
+  i Check the MDN web docs for more information regarding strict mode.
+
+  i Safe fix: Insert a top level "use strict".
+
+        1 │ + "use·strict";
+     1  2 │   const fs = require("node:fs");
+     2  3 │
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:18:3 lint/style/useBlockStatements  FIXABLE  ━━━━━━━━━━
+
+  × Block statements are preferred in this position.
+
+    17 │ function isExpoDocsUrl(value) {
+  > 18 │   if (typeof value !== "string" || value.length > 300) return false;
+       │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    19 │   try {
+    20 │     const url = new URL(value);
+
+  i Safe fix: Wrap the statement with a `JsBlockStatement`
+
+    18 │ ··if·(typeof·value·!==·"string"·||·value.length·>·300)·{·return·false;·}
+       │                                                        ++             ++
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:29:7 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    27 │       !url.search &&
+    28 │       !url.hash &&
+  > 29 │       /^\/[a-z0-9/-]+$/.test(url.pathname) &&
+       │       ^^^^^^^^^^^^^^^^^
+    30 │       url.href === value
+    31 │     );
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:39:5 lint/complexity/useSimplifiedLogicExpression  FIXABLE  ━━━━━━━━━━
+
+  × Logical expression contains unnecessary complexity.
+
+    37 │ function summarize(job) {
+    38 │   if (
+  > 39 │     !job ||
+       │     ^^^^^^^
+  > 40 │     !isId(job.id) ||
+       │     ^^^^^^^^^^^^^
+    41 │     !statuses.has(job.status) ||
+    42 │     !["IOS", "ANDROID"].includes(job.platform)
+
+  i Safe fix: Reduce the complexity of the logical expression.
+
+    37 37 │   function summarize(job) {
+    38 38 │     if (
+    39    │ - ····!job·||
+    40    │ - ····!isId(job.id)·||
+       39 │ + ····!(job·&&
+       40 │ + ····isId(job.id)·)·||
+    41 41 │       !statuses.has(job.status) ||
+    42 42 │       !["IOS", "ANDROID"].includes(job.platform)
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:46:21 assist/source/useSortedKeys  FIXABLE  ━━━━━━━━━━
+
+  × The object properties are not sorted by key.
+
+    44 │     throw new Error();
+    45 │   }
+  > 46 │   const summary = { id: job.id, status: job.status, platform: job.platform };
+       │                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    47 │   for (const [key, value] of [
+    48 │     ["projectId", job.app?.id],
+
+  i Safe fix: Sort the object properties by key.
+
+    44 44 │       throw new Error();
+    45 45 │     }
+    46    │ - ··const·summary·=·{·id:·job.id,·status:·job.status,·platform:·job.platform·};
+       46 │ + ··const·summary·=·{·id:·job.id,·platform:·job.platform,·status:·job.status·};
+    47 47 │     for (const [key, value] of [
+    48 48 │       ["projectId", job.app?.id],
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:51:15 lint/suspicious/noEqualsToNull  FIXABLE  ━━━━━━━━━━
+
+  × null comparison with != is disallowed.
+
+    49 │     ["submittedBuildId", job.submittedBuild?.id],
+    50 │   ]) {
+  > 51 │     if (value != null) {
+       │               ^^
+    52 │       if (!isId(value)) throw new Error();
+    53 │       summary[key] = value;
+
+  i Unsafe fix: Use !== instead.
+
+    51 │ ····if·(value·!==·null)·{
+       │                 +
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:52:7 lint/style/useBlockStatements  FIXABLE  ━━━━━━━━━━
+
+  × Block statements are preferred in this position.
+
+    50 │   ]) {
+    51 │     if (value != null) {
+  > 52 │       if (!isId(value)) throw new Error();
+       │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    53 │       summary[key] = value;
+    54 │     }
+
+  i Safe fix: Wrap the statement with a `JsBlockStatement`
+
+    52 │ ······if·(!isId(value))·{·throw·new·Error();·}
+       │                         ++                  ++
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:56:25 lint/suspicious/noEqualsToNull  FIXABLE  ━━━━━━━━━━
+
+  × null comparison with != is disallowed.
+
+    54 │     }
+    55 │   }
+  > 56 │   if (job.gitCommitHash != null) {
+       │                         ^^
+    57 │     if (
+    58 │       typeof job.gitCommitHash !== "string" ||
+
+  i Unsafe fix: Use !== instead.
+
+    56 │ ··if·(job.gitCommitHash·!==·null)·{
+       │                           +
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:57:5 lint/style/useBlockStatements  FIXABLE  ━━━━━━━━━━
+
+  × Block statements are preferred in this position.
+
+    55 │   }
+    56 │   if (job.gitCommitHash != null) {
+  > 57 │     if (
+       │     ^^^^
+  > 58 │       typeof job.gitCommitHash !== "string" ||
+  > 59 │       !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i.test(job.gitCommitHash)
+  > 60 │     )
+  > 61 │       throw new Error();
+       │       ^^^^^^^^^^^^^^^^^^
+    62 │     summary.gitCommitHash = job.gitCommitHash;
+    63 │   }
+
+  i Safe fix: Wrap the statement with a `JsBlockStatement`
+
+    58 58 │         typeof job.gitCommitHash !== "string" ||
+    59 59 │         !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i.test(job.gitCommitHash)
+    60    │ - ····)
+    61    │ - ······throw·new·Error();
+       60 │ + ····)·{
+       61 │ + ······throw·new·Error();
+       62 │ + ····}
+    62 63 │       summary.gitCommitHash = job.gitCommitHash;
+    63 64 │     }
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:59:8 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    57 │     if (
+    58 │       typeof job.gitCommitHash !== "string" ||
+  > 59 │       !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i.test(job.gitCommitHash)
+       │        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    60 │     )
+    61 │       throw new Error();
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:75:9 lint/style/useDestructuring ━━━━━━━━━━
+
+  × Use array destructuring instead of accessing array elements by index.
+
+    73 │ try {
+    74 │   const input = JSON.parse(fs.readFileSync(0, "utf8"));
+  > 75 │   const expectedId = process.argv[2];
+       │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    76 │   if (
+    77 │     process.argv.length > 3 ||
+
+  i Array destructuring is more readable and expressive than accessing individual elements by index.
+
+  i Replace the array index access with array destructuring syntax.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:44:20 lint/suspicious/useErrorMessage ━━━━━━━━━━
+
+  × Provide an error message for the error.
+
+    42 │     !["IOS", "ANDROID"].includes(job.platform)
+    43 │   ) {
+  > 44 │     throw new Error();
+       │                    ^^
+    45 │   }
+    46 │   const summary = { id: job.id, status: job.status, platform: job.platform };
+
+  i Providing meaningful error messages leads to more readable and debuggable code.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:52:40 lint/suspicious/useErrorMessage ━━━━━━━━━━
+
+  × Provide an error message for the error.
+
+    50 │   ]) {
+    51 │     if (value != null) {
+  > 52 │       if (!isId(value)) throw new Error();
+       │                                        ^^
+    53 │       summary[key] = value;
+    54 │     }
+
+  i Providing meaningful error messages leads to more readable and debuggable code.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:61:22 lint/suspicious/useErrorMessage ━━━━━━━━━━
+
+  × Provide an error message for the error.
+
+    59 │       !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i.test(job.gitCommitHash)
+    60 │     )
+  > 61 │       throw new Error();
+       │                      ^^
+    62 │     summary.gitCommitHash = job.gitCommitHash;
+    63 │   }
+
+  i Providing meaningful error messages leads to more readable and debuggable code.
+
+
+.agents/skills/eas-app-stores/scripts/status-summary.cjs:80:20 lint/suspicious/useErrorMessage ━━━━━━━━━━
+
+  × Provide an error message for the error.
+
+    78 │     (expectedId !== undefined && (!isId(expectedId) || input?.id !== expectedId))
+    79 │   ) {
+  > 80 │     throw new Error();
+       │                    ^^
+    81 │   }
+    82 │   const output = Array.isArray(input) ? input.map(summarize) : summarize(input);
+
+  i Providing meaningful error messages leads to more readable and debuggable code.
+
+
+apps/server/package.json:1:1 assist/source/useSortedPackageJson  FIXABLE  ━━━━━━━━━━
+
+  × package.json fields can be organized.
+
+   > 1 │ {
+       │ ^
+   > 2 │   "name": "server",
+   > 3 │   "main": "src/index.ts",
+   > 4 │   "type": "module",
+        ...
+  > 30 │     "typescript": "^6.0.3"
+  > 31 │   }
+  > 32 │ }
+       │ ^
+    33 │
+
+  i Safe fix: Organize package.json fields.
+
+     1  1 │   {
+     2  2 │     "name": "server",
+     3    │ - ··"main":·"src/index.ts",
+     4    │ - ··"type":·"module",
+        3 │ + ··"type":·"module",
+        4 │ + ··"main":·"src/index.ts",
+     5  5 │     "scripts": {
+     6    │ - ····"patchbay":·"bun·run·--no-env-file·src/cli.ts",
+     7  6 │       "build": "tsdown",
+     8  7 │       "check-types": "tsc --noEmit",
+     9  8 │       "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    10  9 │       "dev": "bun run --hot src/index.ts",
+    11    │ - ····"start":·"bun·run·dist/index.mjs",
+    12    │ - ····"env:generate":·"varlock·codegen"
+       10 │ + ····"env:generate":·"varlock·codegen",
+       11 │ + ····"patchbay":·"bun·run·--no-env-file·src/cli.ts",
+       12 │ + ····"start":·"bun·run·dist/index.mjs"
+    13 13 │     },
+    14 14 │     "dependencies": {
+
+
+biome.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+
+     1  1 │   {
+     2  2 │     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+     3    │ - ··"extends":·["ultracite/biome/core",·"ultracite/biome/react",·"ultracite/biome/next"],
+        3 │ + ··"extends":·[
+        4 │ + ····"ultracite/biome/core",
+        5 │ + ····"ultracite/biome/react",
+        6 │ + ····"ultracite/biome/next"
+        7 │ + ··],
+     4  8 │     "vcs": {
+     5  9 │       "enabled": false,
+
+
+package.json:1:1 assist/source/useSortedPackageJson  FIXABLE  ━━━━━━━━━━━━━━━━━━
+
+  × package.json fields can be organized.
+
+   > 1 │ {
+       │ ^
+   > 2 │   "name": "patchbay",
+   > 3 │   "private": true,
+   > 4 │   "workspaces": {
+        ...
+  > 61 │   },
+  > 62 │   "packageManager": "bun@1.4.5"
+  > 63 │ }
+       │ ^
+    64 │
+
+  i Safe fix: Organize package.json fields.
+
+     2  2 │     "name": "patchbay",
+     3  3 │     "private": true,
+     4    │ - ··"workspaces":·{
+        4 │ + ··"type":·"module",
+        5 │ + ··"workspaces":·{
+     5  6 │       "packages": [
+     6  7 │         "apps/*",
+    ····· │
+    28 29 │       }
+    29 30 │     },
+    30    │ - ··"type":·"module",
+    31    │ - ··"scripts":·{
+    32    │ - ····"patchbay":·"cd·apps/server·&&·bun·run·patchbay",
+    33    │ - ····"typecheck":·"tsc·--noEmit·-p·apps/server/tsconfig.cli.json",
+    34    │ - ····"lint":·"biome·check·apps/server/src/cli.ts·apps/server/src/cli·apps/server/src/kernel·apps/server/test",
+    35    │ - ····"test":·"bun·test·apps/server/test",
+    36    │ - ····"dev":·"turbo·run·dev",
+    37    │ - ····"build":·"turbo·run·build",
+    38    │ - ····"check-types":·"turbo·run·check-types",
+    39    │ - ····"dev:native":·"turbo·run·dev·-F·native·--",
+    40    │ - ····"dev:web":·"turbo·run·dev·-F·web·--",
+    41    │ - ····"dev:server":·"turbo·run·dev·-F·server·--",
+       31 │ + ··"scripts":·{
+       32 │ + ····"build":·"turbo·run·build",
+       33 │ + ····"check":·"ultracite·check",
+       34 │ + ····"check-types":·"turbo·run·check-types",
+       35 │ + ····"dev":·"turbo·run·dev",
+       36 │ + ····"dev:native":·"turbo·run·dev·-F·native·--",
+       37 │ + ····"dev:server":·"turbo·run·dev·-F·server·--",
+       38 │ + ····"dev:web":·"turbo·run·dev·-F·web·--",
+    42 39 │       "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    43    │ - ····"postinstall":·"varlock·codegen·--path·./apps/web/·&&·varlock·codegen·--path·./apps/server/·&&·varlock·codegen·--path·./apps/native/·&&·varlock·codegen·--path·./packages/db/",
+    44    │ - ····"check":·"ultracite·check",
+    45    │ - ····"fix":·"ultracite·fix"
+       40 │ + ····"fix":·"ultracite·fix",
+       41 │ + ····"postinstall":·"varlock·codegen·--path·./apps/web/·&&·varlock·codegen·--path·./apps/server/·&&·varlock·codegen·--path·./apps/native/·&&·varlock·codegen·--path·./packages/db/",
+       42 │ + ····"lint":·"biome·check·apps/server/src/cli.ts·apps/server/src/cli·apps/server/src/kernel·apps/server/test",
+       43 │ + ····"patchbay":·"cd·apps/server·&&·bun·run·patchbay",
+       44 │ + ····"test":·"bun·test·apps/server/test",
+       45 │ + ····"typecheck":·"tsc·--noEmit·-p·apps/server/tsconfig.cli.json"
+       46 │ + ··},
+       47 │ + ··"overrides":·{
+       48 │ + ····"@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+    46 49 │     },
+    47 50 │     "dependencies": {
+    ····· │
+    55 58 │       "typescript": "^6.0.3",
+    56 59 │       "ultracite": "8.0.0",
+    57    │ - ····"varlock":·"catalog:"
+    58    │ - ··},
+    59    │ - ··"overrides":·{
+    60    │ - ····"@next/env":·"npm:@varlock/nextjs-integration@2.0.1"
+       60 │ + ····"varlock":·"catalog:"
+    61 61 │     },
+    62 62 │     "packageManager": "bun@1.4.5"
+
+
+packages/ui/src/lib/utils.ts:1:1 lint/performance/noBarrelFile ━━━━━━━━━━━━━━━━━
+
+  × Avoid barrel files, they slow down performance, and cause large module graphs with modules that go unused.
+
+  > 1 │ export { cn } from "cn";
+      │ ^^^^^^^^^^^^^^^^^^^^^^^^
+    2 │
+
+  i Check this thorough explanation to better understand the context.
+
+
+packages/ui/src/styles/globals.css format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+
+      8   8 │
+      9   9 │   :root {
+     10     │ - ··--background:·oklch(1·0·0);
+     11     │ - ··--foreground:·oklch(0.145·0·0);
+     12     │ - ··--card:·oklch(1·0·0);
+     13     │ - ··--card-foreground:·oklch(0.145·0·0);
+     14     │ - ··--popover:·oklch(1·0·0);
+     15     │ - ··--popover-foreground:·oklch(0.145·0·0);
+     16     │ - ··--primary:·oklch(0.205·0·0);
+     17     │ - ··--primary-foreground:·oklch(0.985·0·0);
+     18     │ - ··--secondary:·oklch(0.97·0·0);
+     19     │ - ··--secondary-foreground:·oklch(0.205·0·0);
+     20     │ - ··--muted:·oklch(0.97·0·0);
+     21     │ - ··--muted-foreground:·oklch(0.556·0·0);
+     22     │ - ··--accent:·oklch(0.97·0·0);
+     23     │ - ··--accent-foreground:·oklch(0.205·0·0);
+     24     │ - ··--destructive:·oklch(0.58·0.22·27);
+     25     │ - ··--border:·oklch(0.922·0·0);
+     26     │ - ··--input:·oklch(0.922·0·0);
+     27     │ - ··--ring:·oklch(0.708·0·0);
+     28     │ - ··--chart-1:·oklch(0.809·0.105·251.813);
+     29     │ - ··--chart-2:·oklch(0.623·0.214·259.815);
+     30     │ - ··--chart-3:·oklch(0.546·0.245·262.881);
+     31     │ - ··--chart-4:·oklch(0.488·0.243·264.376);
+     32     │ - ··--chart-5:·oklch(0.424·0.199·265.638);
+     33     │ - ··--radius:·0.625rem;
+     34     │ - ··--sidebar:·oklch(0.985·0·0);
+     35     │ - ··--sidebar-foreground:·oklch(0.145·0·0);
+     36     │ - ··--sidebar-primary:·oklch(0.205·0·0);
+     37     │ - ··--sidebar-primary-foreground:·oklch(0.985·0·0);
+     38     │ - ··--sidebar-accent:·oklch(0.97·0·0);
+     39     │ - ··--sidebar-accent-foreground:·oklch(0.205·0·0);
+     40     │ - ··--sidebar-border:·oklch(0.922·0·0);
+     41     │ - ··--sidebar-ring:·oklch(0.708·0·0);
+         10 │ + → --background:·oklch(1·0·0);
+         11 │ + → --foreground:·oklch(0.145·0·0);
+         12 │ + → --card:·oklch(1·0·0);
+         13 │ + → --card-foreground:·oklch(0.145·0·0);
+         14 │ + → --popover:·oklch(1·0·0);
+         15 │ + → --popover-foreground:·oklch(0.145·0·0);
+         16 │ + → --primary:·oklch(0.205·0·0);
+         17 │ + → --primary-foreground:·oklch(0.985·0·0);
+         18 │ + → --secondary:·oklch(0.97·0·0);
+         19 │ + → --secondary-foreground:·oklch(0.205·0·0);
+         20 │ + → --muted:·oklch(0.97·0·0);
+         21 │ + → --muted-foreground:·oklch(0.556·0·0);
+         22 │ + → --accent:·oklch(0.97·0·0);
+         23 │ + → --accent-foreground:·oklch(0.205·0·0);
+         24 │ + → --destructive:·oklch(0.58·0.22·27);
+         25 │ + → --border:·oklch(0.922·0·0);
+         26 │ + → --input:·oklch(0.922·0·0);
+         27 │ + → --ring:·oklch(0.708·0·0);
+         28 │ + → --chart-1:·oklch(0.809·0.105·251.813);
+         29 │ + → --chart-2:·oklch(0.623·0.214·259.815);
+         30 │ + → --chart-3:·oklch(0.546·0.245·262.881);
+         31 │ + → --chart-4:·oklch(0.488·0.243·264.376);
+         32 │ + → --chart-5:·oklch(0.424·0.199·265.638);
+         33 │ + → --radius:·0.625rem;
+         34 │ + → --sidebar:·oklch(0.985·0·0);
+         35 │ + → --sidebar-foreground:·oklch(0.145·0·0);
+         36 │ + → --sidebar-primary:·oklch(0.205·0·0);
+         37 │ + → --sidebar-primary-foreground:·oklch(0.985·0·0);
+         38 │ + → --sidebar-accent:·oklch(0.97·0·0);
+         39 │ + → --sidebar-accent-foreground:·oklch(0.205·0·0);
+         40 │ + → --sidebar-border:·oklch(0.922·0·0);
+         41 │ + → --sidebar-ring:·oklch(0.708·0·0);
+     42  42 │   }
+     43  43 │
+     44  44 │   .dark {
+     45     │ - ··--background:·oklch(0.145·0·0);
+     46     │ - ··--foreground:·oklch(0.985·0·0);
+     47     │ - ··--card:·oklch(0.205·0·0);
+     48     │ - ··--card-foreground:·oklch(0.985·0·0);
+     49     │ - ··--popover:·oklch(0.205·0·0);
+     50     │ - ··--popover-foreground:·oklch(0.985·0·0);
+     51     │ - ··--primary:·oklch(0.87·0·0);
+     52     │ - ··--primary-foreground:·oklch(0.205·0·0);
+     53     │ - ··--secondary:·oklch(0.269·0·0);
+     54     │ - ··--secondary-foreground:·oklch(0.985·0·0);
+     55     │ - ··--muted:·oklch(0.269·0·0);
+     56     │ - ··--muted-foreground:·oklch(0.708·0·0);
+     57     │ - ··--accent:·oklch(0.371·0·0);
+     58     │ - ··--accent-foreground:·oklch(0.985·0·0);
+     59     │ - ··--destructive:·oklch(0.704·0.191·22.216);
+     60     │ - ··--border:·oklch(1·0·0·/·10%);
+     61     │ - ··--input:·oklch(1·0·0·/·15%);
+     62     │ - ··--ring:·oklch(0.556·0·0);
+     63     │ - ··--chart-1:·oklch(0.809·0.105·251.813);
+     64     │ - ··--chart-2:·oklch(0.623·0.214·259.815);
+     65     │ - ··--chart-3:·oklch(0.546·0.245·262.881);
+     66     │ - ··--chart-4:·oklch(0.488·0.243·264.376);
+     67     │ - ··--chart-5:·oklch(0.424·0.199·265.638);
+     68     │ - ··--sidebar:·oklch(0.205·0·0);
+     69     │ - ··--sidebar-foreground:·oklch(0.985·0·0);
+     70     │ - ··--sidebar-primary:·oklch(0.488·0.243·264.376);
+     71     │ - ··--sidebar-primary-foreground:·oklch(0.985·0·0);
+     72     │ - ··--sidebar-accent:·oklch(0.269·0·0);
+     73     │ - ··--sidebar-accent-foreground:·oklch(0.985·0·0);
+     74     │ - ··--sidebar-border:·oklch(1·0·0·/·10%);
+     75     │ - ··--sidebar-ring:·oklch(0.556·0·0);
+         45 │ + → --background:·oklch(0.145·0·0);
+         46 │ + → --foreground:·oklch(0.985·0·0);
+         47 │ + → --card:·oklch(0.205·0·0);
+         48 │ + → --card-foreground:·oklch(0.985·0·0);
+         49 │ + → --popover:·oklch(0.205·0·0);
+         50 │ + → --popover-foreground:·oklch(0.985·0·0);
+         51 │ + → --primary:·oklch(0.87·0·0);
+         52 │ + → --primary-foreground:·oklch(0.205·0·0);
+         53 │ + → --secondary:·oklch(0.269·0·0);
+         54 │ + → --secondary-foreground:·oklch(0.985·0·0);
+         55 │ + → --muted:·oklch(0.269·0·0);
+         56 │ + → --muted-foreground:·oklch(0.708·0·0);
+         57 │ + → --accent:·oklch(0.371·0·0);
+         58 │ + → --accent-foreground:·oklch(0.985·0·0);
+         59 │ + → --destructive:·oklch(0.704·0.191·22.216);
+         60 │ + → --border:·oklch(1·0·0·/·10%);
+         61 │ + → --input:·oklch(1·0·0·/·15%);
+         62 │ + → --ring:·oklch(0.556·0·0);
+         63 │ + → --chart-1:·oklch(0.809·0.105·251.813);
+         64 │ + → --chart-2:·oklch(0.623·0.214·259.815);
+         65 │ + → --chart-3:·oklch(0.546·0.245·262.881);
+         66 │ + → --chart-4:·oklch(0.488·0.243·264.376);
+         67 │ + → --chart-5:·oklch(0.424·0.199·265.638);
+         68 │ + → --sidebar:·oklch(0.205·0·0);
+         69 │ + → --sidebar-foreground:·oklch(0.985·0·0);
+         70 │ + → --sidebar-primary:·oklch(0.488·0.243·264.376);
+         71 │ + → --sidebar-primary-foreground:·oklch(0.985·0·0);
+         72 │ + → --sidebar-accent:·oklch(0.269·0·0);
+         73 │ + → --sidebar-accent-foreground:·oklch(0.985·0·0);
+         74 │ + → --sidebar-border:·oklch(1·0·0·/·10%);
+         75 │ + → --sidebar-ring:·oklch(0.556·0·0);
+     76  76 │   }
+     77  77 │
+     78  78 │   @theme inline {
+     79     │ - ··--font-sans:·"Inter·Variable",·sans-serif;
+     80     │ - ··--color-sidebar-ring:·var(--sidebar-ring);
+     81     │ - ··--color-sidebar-border:·var(--sidebar-border);
+     82     │ - ··--color-sidebar-accent-foreground:·var(--sidebar-accent-foreground);
+     83     │ - ··--color-sidebar-accent:·var(--sidebar-accent);
+     84     │ - ··--color-sidebar-primary-foreground:·var(--sidebar-primary-foreground);
+     85     │ - ··--color-sidebar-primary:·var(--sidebar-primary);
+     86     │ - ··--color-sidebar-foreground:·var(--sidebar-foreground);
+     87     │ - ··--color-sidebar:·var(--sidebar);
+     88     │ - ··--color-chart-5:·var(--chart-5);
+     89     │ - ··--color-chart-4:·var(--chart-4);
+     90     │ - ··--color-chart-3:·var(--chart-3);
+     91     │ - ··--color-chart-2:·var(--chart-2);
+     92     │ - ··--color-chart-1:·var(--chart-1);
+     93     │ - ··--color-ring:·var(--ring);
+     94     │ - ··--color-input:·var(--input);
+  85 more lines truncated
+
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 323.
+Checked 71 files in 595ms. No fixes applied.
+Found 291 errors.
+Found 52 warnings.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+
+
+error: script "check" exited with code 1
+EXIT_CODE=1
+Dormant/generated scaffold lint and format failures left unchanged; active bun run lint passed above.
+
+# Staged secret scan
+$ python3 /home/ubuntu/work/i52-secret-scan.py
+Staged secret scan: 490 index files inspected (entire index, including prior scaffold commit).
+Known OPENROUTER_API_KEY value available for exact-match scan: yes
+Known environment credential values scanned: 3 (values never printed).
+PASS: no environment credential values, credential signatures, .env files, node_modules, or nested .git in the index.
+EXIT_CODE=0
+
+# Final scope review
+Second commit touches only the CLI/kernel, boot tests, active-path compiler/lint/test configuration, root/server scripts, README, and this evidence log. Dormant application functionality is unchanged.
+No nested .git found under products/patchbay (dependency trees excluded); no .env or node_modules in the index.
+$ git diff --cached --check
+EXIT_CODE=0
+Required verification gates: all exit 0. Optional generated Ultracite check: exit 1, documented above.

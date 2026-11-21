@@ -9,25 +9,14 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
-      "!**/.next",
-      "!**/dist",
-      "!**/.turbo",
-      "!**/.nx",
-      "!**/dev-dist",
-      "!**/.zed",
-      "!**/.vscode",
-      "!**/routeTree.gen.ts",
-      "!**/src-tauri",
-      "!**/.nuxt",
-      "!bts.jsonc",
-      "!**/.expo",
-      "!**/.wrangler",
-      "!**/.alchemy",
-      "!**/.svelte-kit",
-      "!**/wrangler.jsonc",
-      "!**/.source",
-      "!**/convex/_generated"
+      "apps/server/src/cli.ts",
+      "apps/server/src/cli/**",
+      "apps/server/src/kernel/**",
+      "apps/server/test/**",
+      "!!apps/fumadocs",
+      "!!apps/web",
+      "!!apps/native",
+      "!!apps/extension"
     ]
   },
   "formatter": {
@@ -43,7 +32,7 @@
         "useExhaustiveDependencies": "info"
       },
       "nursery": {
-        "useTailwindSortedClasses": {
+        "useSortedClasses": {
           "level": "warn",
           "fix": "safe"
         }
@@ -63,6 +52,7 @@
     }
   },
   "javascript": {
+    "globals": ["Bun"],
     "formatter": {
       "quoteStyle": "double"
     }

@@ -1,1 +1,4 @@
 env = false
+
+[test]
+root = "apps/server/test"
