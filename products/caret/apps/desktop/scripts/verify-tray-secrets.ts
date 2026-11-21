@@ -1,7 +1,9 @@
 import { execFileSync } from "node:child_process";
 
-// Deliberately inspect only this PR's staged additions. Never echo matching lines.
-const diff = execFileSync("git", ["diff", "--cached", "--no-color", "--no-ext-diff", "--unified=0"], { encoding: "utf8" });
+// Inspect staged additions, or the committed/staged PR against main. Never echo matches.
+const args = ["diff", "--cached", "--no-color", "--no-ext-diff", "--unified=0"];
+if (process.argv.includes("--against-main")) args.push("origin/main");
+const diff = execFileSync("git", args, { encoding: "utf8" });
 const additions = diff.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++"));
 const patterns = [
   /sk-or-v1-[a-zA-Z0-9]{32,}/,

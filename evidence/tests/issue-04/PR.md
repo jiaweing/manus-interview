@@ -20,7 +20,7 @@ All output is committed under `evidence/tests/issue-04/`. The following run from
 | `bun run --cwd apps/desktop typecheck` | 0 | `$ tsc --noEmit -p tsconfig.json`; `EXIT_CODE=0` |
 | `bun run --cwd apps/desktop build` | 0 | `out/renderer/index.html 0.35 kB`; `out/renderer/assets/index-DKor02y-.js 565.10 kB`; `✓ built in 181ms`; `EXIT_CODE=0` |
 | From `products/caret/apps/desktop`: `bunx tsc --ignoreConfig --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution bundler --types bun,node tests/tray-hotkey.test.ts` | 0 | No diagnostics; `EXIT_CODE=0` |
-| From repo root after staging: `bun run --cwd products/caret/apps/desktop verify:tray-secrets` | 0 | `Secret check PASS` for staged added lines, OpenRouter/GitHub credential and private-key patterns; `EXIT_CODE=0` |
+| From repo root after staging: `bun run --cwd products/caret/apps/desktop verify:tray-secrets --against-main` | 0 | `Secret check PASS` for PR added lines, OpenRouter/GitHub credential and private-key patterns; `EXIT_CODE=0` |
 | From repo root: `git diff --cached --check` | 0 | No diagnostics; `EXIT_CODE=0` |
 
 The **18 tests are Linux injected fixtures, not Windows evidence**. They cover second-instance exit, successful fixed registration, conflicting and throwing registration, each readiness blocker, readiness changes, busy activation, recording-stop routing, Cancel, minimize/close-to-tray, explicit Setup, shutdown unregister, pre-readiness shutdown, and development-adapter gating/events.
@@ -35,6 +35,7 @@ Exact commands and complete retained diagnostics also appear in `evidence/tests/
 - The same command with `--ignoreConfig` from `products/caret`: **exit 2**; output tail `error TS2688: Cannot find type definition file for 'node'.` Corrected desktop-workspace invocation passed above.
 - `bunx biome check apps/desktop/src/main/tray-hotkey.ts apps/desktop/src/main/tray-runtime.ts apps/desktop/src/main/tray-test-adapter.ts apps/desktop/tests/tray-hotkey.test.ts`: **exit 1**; diagnostic `biome.json:46: Found an unknown key useTailwindSortedClasses`; output tail `Biome exited because the configuration resulted in errors. Please fix them.` This is an existing scaffold configuration problem, left outside issue #4. **Lint was not successfully verified.**
 - First `bun run --cwd products/caret/apps/desktop verify:tray-secrets`: **exit 2**; output tail `Secret check NOT RUN: no staged additions to inspect.` Git's colorized output hid diff prefixes. Fixed by forcing `--no-color`; corrected scan passed.
+- The default staged-only scan after committing again exited **2** with the same no-additions message. The final `--against-main` mode checks committed/staged PR additions and passed. A shell array exit-code capture attempt produced a blank code; checks were rerun using direct exit-code capture.
 - First `git diff --cached --check`: **exit 2**; output tail identifies trailing spaces in `lint-initial.log`. Logs retain diagnostics/exit outcomes with only trailing whitespace normalized; final check passed.
 
 ## NOT RUN: needs Windows
