@@ -1,0 +1,165 @@
+Command: bunx biome check --write
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
+
+apps/web/src/lib/crypto/signaling.ts:37:12 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    35 │ 		.replaceAll("+", "-")
+    36 │ 		.replaceAll("/", "_")
+  > 37 │ 		.replace(/[=]+$/, "");
+       │ 		         ^^^^^^^
+    38 │ }
+    39 │
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+apps/web/src/lib/crypto/signaling.ts:64:4 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    62 │ 	.refine(
+    63 │ 		(value) =>
+  > 64 │ 			/^(0|[1-9][0-9]{0,19})$/.test(value) &&
+       │ 			^^^^^^^^^^^^^^^^^^^^^^^^
+    65 │ 			BigInt(value) <= MAX_SIGNALING_COUNTER
+    66 │ 	);
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+apps/web/src/lib/crypto/signaling.ts:199:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+
+    198 │ export interface SignalingCrypto {
+  > 199 │ 	close(): void;
+        │ 	^^^^^^^^^^^^^^
+    200 │ 	readonly closed: boolean;
+    201 │ 	decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+
+  i Unsafe fix: Convert to property-style signature.
+
+    197 197 │
+    198 198 │   export interface SignalingCrypto {
+    199     │ - → close():·void;
+        199 │ + → close:·()·=>·void;
+    200 200 │     readonly closed: boolean;
+    201 201 │     decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+
+
+apps/web/src/lib/crypto/signaling.ts:201:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+
+    199 │ 	close(): void;
+    200 │ 	readonly closed: boolean;
+  > 201 │ 	decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+        │ 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    202 │ 	encrypt(plaintext: Uint8Array): Promise<CryptoResult<SignalingEnvelope>>;
+    203 │ }
+
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+
+  i Unsafe fix: Convert to property-style signature.
+
+    199 199 │     close(): void;
+    200 200 │     readonly closed: boolean;
+    201     │ - → decrypt(envelope:·unknown):·Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+        201 │ + → decrypt:·(envelope:·unknown)·=>·Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+    202 202 │     encrypt(plaintext: Uint8Array): Promise<CryptoResult<SignalingEnvelope>>;
+    203 203 │   }
+
+
+apps/web/src/lib/crypto/signaling.ts:202:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+
+    200 │ 	readonly closed: boolean;
+    201 │ 	decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+  > 202 │ 	encrypt(plaintext: Uint8Array): Promise<CryptoResult<SignalingEnvelope>>;
+        │ 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    203 │ }
+    204 │
+
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+
+  i Unsafe fix: Convert to property-style signature.
+
+    200 200 │     readonly closed: boolean;
+    201 201 │     decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+    202     │ - → encrypt(plaintext:·Uint8Array):·Promise<CryptoResult<SignalingEnvelope>>;
+        202 │ + → encrypt:·(plaintext:·Uint8Array)·=>·Promise<CryptoResult<SignalingEnvelope>>;
+    203 203 │   }
+    204 204 │
+
+
+apps/web/src/lib/crypto/signaling.ts:328:72 lint/complexity/noExcessiveCognitiveComplexity ━━━━━━━━━━
+
+  × Excessive complexity of 24 detected (max: 20).
+
+    326 │ 		// Validate/snapshot at invocation; never expose raw input or validation issues.
+    327 │ 		const parsed = decodeSignalingEnvelope(input);
+  > 328 │ 		const run = async (): Promise<CryptoResult<Uint8Array<ArrayBuffer>>> => {
+        │ 		                                                                     ^^^
+    329 │ 			if (isClosed || !receiveKey) {
+    330 │ 				return failure("closed");
+
+  i Please refactor this function to reduce its complexity score from 24 to the max allowed complexity 20.
+
+
+tests/unit/signaling-crypto.test.ts:26:12 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    24 │ 		.replaceAll("+", "-")
+    25 │ 		.replaceAll("/", "_")
+  > 26 │ 		.replace(/[=]+$/, "");
+       │ 		         ^^^^^^^
+    27 │ }
+    28 │ const roomId = base64url(new Uint8Array(16).fill(7));
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+tests/unit/signaling-crypto.test.ts:80:2 lint/suspicious/noBitwiseOperators ━━━━━━━━━━
+
+  × Unexpected use of '^='.
+
+    78 │ 	);
+    79 │ 	const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  > 80 │ 	bytes[bytes.length - 1] ^= 1;
+       │ 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    81 │ 	return { ...envelope, ciphertext: base64url(bytes) };
+    82 │ }
+
+  i Bitwise operators are prohibited because their use can be confusing or unintended. If you did want to use the bitwise operator, consider suppressing this diagnostic.
+
+
+Skipped 12 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 47 files in 349ms. Fixed 2 files.
+Found 8 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+
+
+
+Exit code: 1

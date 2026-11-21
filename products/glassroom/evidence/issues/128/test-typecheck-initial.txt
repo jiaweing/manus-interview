@@ -1,7 +1,0 @@
-Command: bunx tsc --noEmit --target esnext --module esnext --moduleResolution bundler --lib esnext,dom --strict --types bun --skipLibCheck tests/unit/signaling-crypto.test.ts
-Working directory: products/glassroom
-PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
-
-error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
-
-Exit code: 1

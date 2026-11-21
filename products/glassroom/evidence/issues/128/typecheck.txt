@@ -1,7 +1,23 @@
-Command: bun run --cwd apps/web check-types
-Working directory: products/glassroom
-PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
+Command: bun run check-types
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
 
-$ tsc --noEmit
+$ turbo run check-types
+
+   • turbo 2.11.13
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+server:check-types: cache miss, executing 4a5761078023a2ee
+@glassroom/ui:check-types: cache miss, executing 26448c8660d227d5
+server:check-types: $ tsc --noEmit
+@glassroom/ui:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing 9c82f23b6da41ab5
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    5.083s
+
 
 Exit code: 0

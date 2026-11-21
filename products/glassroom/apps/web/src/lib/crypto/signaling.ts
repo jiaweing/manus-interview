@@ -6,6 +6,8 @@ export const MAX_SIGNALING_PLAINTEXT_BYTES = 64 * 1024;
 const MAX_CIPHERTEXT_BYTES = MAX_SIGNALING_PLAINTEXT_BYTES + 16;
 const MAX_ENVELOPE_BYTES = Math.ceil((MAX_CIPHERTEXT_BYTES * 4) / 3) + 256;
 const encoder = new TextEncoder();
+const BASE64_PADDING_REGEX = /[=]+$/;
+const COUNTER_REGEX = /^(0|[1-9][0-9]{0,19})$/;
 
 export type SignalingRole = "creator" | "joiner";
 export type SignalingFailure =
@@ -23,7 +25,7 @@ export type CryptoResult<T> =
 	| { ok: false; error: SignalingFailure };
 
 function failure(error: SignalingFailure): CryptoResult<never> {
-	return { ok: false, error };
+	return { error, ok: false };
 }
 
 function encodeBase64url(bytes: Uint8Array): string {
@@ -34,7 +36,7 @@ function encodeBase64url(bytes: Uint8Array): string {
 	return btoa(binary)
 		.replaceAll("+", "-")
 		.replaceAll("/", "_")
-		.replace(/=+$/, "");
+		.replace(BASE64_PADDING_REGEX, "");
 }
 
 function decodeBase64url(text: string): Uint8Array<ArrayBuffer> {
@@ -58,11 +60,10 @@ const roomIdSchema = z
 const roleSchema = z.enum(["creator", "joiner"]);
 const counterSchema = z
 	.string()
-	.regex(/^(0|[1-9][0-9]{0,19})$/)
+	.regex(COUNTER_REGEX)
 	.refine(
 		(value) =>
-			/^(0|[1-9][0-9]{0,19})$/.test(value) &&
-			BigInt(value) <= MAX_SIGNALING_COUNTER,
+			COUNTER_REGEX.test(value) && BigInt(value) <= MAX_SIGNALING_COUNTER
 	);
 const ciphertextSchema = z
 	.string()
@@ -83,25 +84,25 @@ const ciphertextSchema = z
 
 /** Wire counters are canonical decimal strings, never lossy JS numbers. */
 export const signalingEnvelopeSchema = z.strictObject({
-	version: z.literal(SIGNALING_VERSION),
-	roomId: roomIdSchema,
-	role: roleSchema,
-	operation: z.literal("forward"),
-	counter: counterSchema,
 	ciphertext: ciphertextSchema,
+	counter: counterSchema,
+	operation: z.literal("forward"),
+	role: roleSchema,
+	roomId: roomIdSchema,
+	version: z.literal(SIGNALING_VERSION),
 });
 export type SignalingEnvelope = z.infer<typeof signalingEnvelopeSchema>;
 
 /** Zod errors and JSON parse errors never leave this boundary. */
 export function decodeSignalingEnvelope(
-	input: unknown,
+	input: unknown
 ): CryptoResult<SignalingEnvelope> {
 	try {
 		if (typeof input === "string" && input.length > MAX_ENVELOPE_BYTES) {
 			return failure("invalid_envelope");
 		}
 		const parsed = signalingEnvelopeSchema.safeParse(
-			typeof input === "string" ? JSON.parse(input) : input,
+			typeof input === "string" ? JSON.parse(input) : input
 		);
 		return parsed.success
 			? { ok: true, value: parsed.data }
@@ -124,7 +125,7 @@ export interface SignalingKeys {
 /** The secret is exactly 32 bytes; the room ID is canonical base64url of 16 bytes. */
 export async function deriveSignalingKeys(
 	invitationSecret: Uint8Array,
-	roomId: string,
+	roomId: string
 ): Promise<CryptoResult<SignalingKeys>> {
 	if (
 		!(invitationSecret instanceof Uint8Array) ||
@@ -145,21 +146,21 @@ export async function deriveSignalingKeys(
 			secret,
 			"HKDF",
 			false,
-			["deriveKey"],
+			["deriveKey"]
 		);
 		const salt = decodeBase64url(roomId);
 		const derive = (direction: string) =>
 			crypto.subtle.deriveKey(
 				{
-					name: "HKDF",
 					hash: "SHA-256",
-					salt,
 					info: encoder.encode(`glassroom/signaling/v1/${direction}`),
+					name: "HKDF",
+					salt,
 				},
 				material,
-				{ name: "AES-GCM", length: 256 },
+				{ length: 256, name: "AES-GCM" },
 				false,
-				["encrypt", "decrypt"],
+				["encrypt", "decrypt"]
 			);
 		const [creatorToJoiner, joinerToCreator] = await Promise.all([
 			derive("creator-to-joiner"),
@@ -180,7 +181,7 @@ function nonce(counter: bigint): Uint8Array<ArrayBuffer> {
 }
 
 function additionalData(
-	envelope: Omit<SignalingEnvelope, "ciphertext">,
+	envelope: Omit<SignalingEnvelope, "ciphertext">
 ): Uint8Array<ArrayBuffer> {
 	// Fixed-position JSON array is the canonical authenticated header, including direction and counter.
 	return encoder.encode(
@@ -191,23 +192,46 @@ function additionalData(
 			envelope.role,
 			envelope.operation,
 			envelope.counter,
-		]),
+		])
 	);
 }
 
+function validateIncomingCounter(
+	envelope: SignalingEnvelope,
+	roomId: string,
+	peerRole: SignalingRole,
+	acceptedIncoming: bigint | null,
+	counterLimit: bigint
+): CryptoResult<bigint> {
+	if (envelope.roomId !== roomId || envelope.role !== peerRole) {
+		return failure("context_mismatch");
+	}
+	const counter = BigInt(envelope.counter);
+	if (acceptedIncoming !== null && counter <= acceptedIncoming) {
+		return failure("replay_rejected");
+	}
+	if (counter > counterLimit) {
+		// An unauthenticated high counter must not close the session or change state.
+		return failure("counter_exhausted");
+	}
+	return { ok: true, value: counter };
+}
+
 export interface SignalingCrypto {
-	encrypt(plaintext: Uint8Array): Promise<CryptoResult<SignalingEnvelope>>;
-	decrypt(envelope: unknown): Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
-	close(): void;
+	close: () => void;
 	readonly closed: boolean;
+	decrypt: (
+		envelope: unknown
+	) => Promise<CryptoResult<Uint8Array<ArrayBuffer>>>;
+	encrypt: (plaintext: Uint8Array) => Promise<CryptoResult<SignalingEnvelope>>;
 }
 
 export interface SignalingCryptoOptions {
-	invitationSecret: Uint8Array;
-	roomId: string;
-	role: SignalingRole;
 	/** Optional conservative cap for testing/early rotation. Cannot exceed uint64; never seeds state. */
 	counterLimit?: bigint;
+	invitationSecret: Uint8Array;
+	role: SignalingRole;
+	roomId: string;
 }
 
 /**
@@ -216,7 +240,7 @@ export interface SignalingCryptoOptions {
  * room/secret after teardown. Call close() on transport loss to drop key references.
  */
 export async function createSignalingCrypto(
-	options: SignalingCryptoOptions,
+	options: SignalingCryptoOptions
 ): Promise<CryptoResult<SignalingCrypto>> {
 	const { roomId, role, counterLimit = MAX_SIGNALING_COUNTER } = options;
 	if (
@@ -254,7 +278,7 @@ export async function createSignalingCrypto(
 	};
 
 	const encrypt = (
-		plaintext: Uint8Array,
+		plaintext: Uint8Array
 	): Promise<CryptoResult<SignalingEnvelope>> => {
 		// Snapshot at invocation, before queued work can observe caller mutation.
 		const bytes =
@@ -277,22 +301,22 @@ export async function createSignalingCrypto(
 			// Reserve before WebCrypto, including failed sends. No nonce can be reused.
 			outgoing += BigInt(1);
 			const header: Omit<SignalingEnvelope, "ciphertext"> = {
-				version: SIGNALING_VERSION,
-				roomId,
-				role,
-				operation: "forward",
 				counter: counter.toString(),
+				operation: "forward",
+				role,
+				roomId,
+				version: SIGNALING_VERSION,
 			};
 			try {
 				const encrypted = await crypto.subtle.encrypt(
 					{
-						name: "AES-GCM",
-						iv: nonce(counter),
 						additionalData: additionalData(header),
+						iv: nonce(counter),
+						name: "AES-GCM",
 						tagLength: 128,
 					},
 					sendKey,
-					bytes,
+					bytes
 				);
 				if (isClosed) {
 					return failure("closed");
@@ -321,7 +345,7 @@ export async function createSignalingCrypto(
 	};
 
 	const decrypt = (
-		input: unknown,
+		input: unknown
 	): Promise<CryptoResult<Uint8Array<ArrayBuffer>>> => {
 		// Validate/snapshot at invocation; never expose raw input or validation issues.
 		const parsed = decodeSignalingEnvelope(input);
@@ -333,27 +357,27 @@ export async function createSignalingCrypto(
 				return parsed;
 			}
 			const envelope = parsed.value;
-			if (envelope.roomId !== roomId || envelope.role !== peerRole) {
-				return failure("context_mismatch");
+			const validatedCounter = validateIncomingCounter(
+				envelope,
+				roomId,
+				peerRole,
+				acceptedIncoming,
+				counterLimit
+			);
+			if (!validatedCounter.ok) {
+				return validatedCounter;
 			}
-			const counter = BigInt(envelope.counter);
-			if (acceptedIncoming !== null && counter <= acceptedIncoming) {
-				return failure("replay_rejected");
-			}
-			if (counter > counterLimit) {
-				// An unauthenticated high counter must not close the session or change state.
-				return failure("counter_exhausted");
-			}
+			const counter = validatedCounter.value;
 			try {
 				const decrypted = await crypto.subtle.decrypt(
 					{
-						name: "AES-GCM",
-						iv: nonce(counter),
 						additionalData: additionalData(envelope),
+						iv: nonce(counter),
+						name: "AES-GCM",
 						tagLength: 128,
 					},
 					receiveKey,
-					decodeBase64url(envelope.ciphertext),
+					decodeBase64url(envelope.ciphertext)
 				);
 				const bytes = new Uint8Array(decrypted);
 				if (isClosed) {
@@ -378,12 +402,12 @@ export async function createSignalingCrypto(
 	return {
 		ok: true,
 		value: {
-			encrypt,
-			decrypt,
 			close,
 			get closed() {
 				return isClosed;
 			},
+			decrypt,
+			encrypt,
 		},
 	};
 }

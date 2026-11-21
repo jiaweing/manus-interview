@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import {
+	type CryptoResult,
 	createSignalingCrypto,
 	decodeSignalingEnvelope,
 	deriveSignalingKeys,
 	encodeSignalingEnvelope,
 	MAX_SIGNALING_COUNTER,
 	MAX_SIGNALING_PLAINTEXT_BYTES,
-	type CryptoResult,
 	type SignalingCrypto,
 	type SignalingEnvelope,
 	type SignalingFailure,
@@ -19,11 +19,12 @@ const plaintext = encoder.encode(marker);
 // Synthetic fixtures only; no real invitation secrets or payloads are printed.
 const secret = new Uint8Array(32).fill(42);
 const wrongSecret = new Uint8Array(32).fill(43);
+const BASE64_PADDING_REGEX = /[=]+$/;
 function base64url(bytes: Uint8Array): string {
 	return btoa(String.fromCharCode(...bytes))
 		.replaceAll("+", "-")
 		.replaceAll("/", "_")
-		.replace(/=+$/, "");
+		.replace(BASE64_PADDING_REGEX, "");
 }
 const roomId = base64url(new Uint8Array(16).fill(7));
 const otherRoomId = base64url(new Uint8Array(16).fill(8));
@@ -38,9 +39,9 @@ function value<T>(result: CryptoResult<T>): T {
 
 function rejected(
 	result: CryptoResult<unknown>,
-	error: SignalingFailure,
+	error: SignalingFailure
 ): void {
-	expect(result).toEqual({ ok: false, error });
+	expect(result).toEqual({ error, ok: false });
 	expect(result).not.toHaveProperty("value");
 	expect(result).not.toHaveProperty("plaintext");
 	const redacted = JSON.stringify(result);
@@ -60,24 +61,29 @@ async function peer(
 		invitationSecret?: Uint8Array;
 		roomId?: string;
 		counterLimit?: bigint;
-	} = {},
+	} = {}
 ): Promise<SignalingCrypto> {
 	return value(
 		await createSignalingCrypto({
 			invitationSecret: secret,
-			roomId,
 			role,
+			roomId,
 			...options,
-		}),
+		})
 	);
 }
 
 function tamper(envelope: SignalingEnvelope): SignalingEnvelope {
 	const binary = atob(
-		envelope.ciphertext.replaceAll("-", "+").replaceAll("_", "/"),
+		envelope.ciphertext.replaceAll("-", "+").replaceAll("_", "/")
 	);
 	const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-	bytes[bytes.length - 1] ^= 1;
+	const lastByte = bytes.at(-1);
+	if (lastByte === undefined) {
+		throw new Error("Expected non-empty synthetic ciphertext");
+	}
+	// Flip exactly the least-significant bit without a bitwise operator.
+	bytes[bytes.length - 1] = lastByte % 2 === 0 ? lastByte + 1 : lastByte - 1;
 	return { ...envelope, ciphertext: base64url(bytes) };
 }
 
@@ -97,8 +103,8 @@ describe("invitation-authenticated signaling", () => {
 			expect(value(await receiver.decrypt(wire))).toEqual(plaintext);
 			expect(
 				value(
-					await receiver.decrypt(value(await sender.encrypt(new Uint8Array()))),
-				),
+					await receiver.decrypt(value(await sender.encrypt(new Uint8Array())))
+				)
 			).toEqual(new Uint8Array());
 		}
 		creator.close();
@@ -110,23 +116,23 @@ describe("invitation-authenticated signaling", () => {
 		expect(keys.creatorToJoiner.extractable).toBe(false);
 		expect(keys.joinerToCreator.extractable).toBe(false);
 		expect(keys.creatorToJoiner.algorithm as AesKeyAlgorithm).toEqual({
-			name: "AES-GCM",
 			length: 256,
+			name: "AES-GCM",
 		});
 		const parameters = {
-			name: "AES-GCM",
 			iv: new Uint8Array(12),
+			name: "AES-GCM",
 			tagLength: 128,
 		};
 		const first = await crypto.subtle.encrypt(
 			parameters,
 			keys.creatorToJoiner,
-			plaintext,
+			plaintext
 		);
 		const second = await crypto.subtle.encrypt(
 			parameters,
 			keys.joinerToCreator,
-			plaintext,
+			plaintext
 		);
 		expect(new Uint8Array(first)).not.toEqual(new Uint8Array(second));
 		const creator = await peer("creator");
@@ -140,7 +146,7 @@ describe("invitation-authenticated signaling", () => {
 		const joiner = await peer("joiner", { invitationSecret: wrongSecret });
 		rejected(
 			await joiner.decrypt(value(await creator.encrypt(plaintext))),
-			"authentication_failed",
+			"authentication_failed"
 		);
 		creator.close();
 		joiner.close();
@@ -152,23 +158,23 @@ describe("invitation-authenticated signaling", () => {
 		const frame = value(await creator.encrypt(plaintext));
 		rejected(
 			await joiner.decrypt({ ...frame, version: 2 }),
-			"invalid_envelope",
+			"invalid_envelope"
 		);
 		rejected(
 			await joiner.decrypt({ ...frame, roomId: otherRoomId }),
-			"context_mismatch",
+			"context_mismatch"
 		);
 		rejected(
 			await joiner.decrypt({ ...frame, role: "joiner" }),
-			"context_mismatch",
+			"context_mismatch"
 		);
 		rejected(
 			await joiner.decrypt({ ...frame, operation: "join" }),
-			"invalid_envelope",
+			"invalid_envelope"
 		);
 		rejected(
 			await joiner.decrypt({ ...frame, counter: "1" }),
-			"authentication_failed",
+			"authentication_failed"
 		);
 		expect(value(await joiner.decrypt(frame))).toEqual(plaintext);
 		creator.close();
@@ -209,7 +215,7 @@ describe("invitation-authenticated signaling", () => {
 				...tamper(second),
 				counter: MAX_SIGNALING_COUNTER.toString(),
 			}),
-			"authentication_failed",
+			"authentication_failed"
 		);
 		expect(value(await joiner.decrypt(first))).toEqual(plaintext);
 		rejected(await joiner.decrypt(tamper(second)), "authentication_failed");
@@ -230,7 +236,7 @@ describe("invitation-authenticated signaling", () => {
 		expect(first.ciphertext).not.toBe(last.ciphertext);
 		rejected(
 			await joiner.decrypt({ ...last, counter: "2" }),
-			"counter_exhausted",
+			"counter_exhausted"
 		);
 		expect(joiner.closed).toBe(false);
 		value(await joiner.decrypt(first));
@@ -252,7 +258,7 @@ describe("invitation-authenticated signaling", () => {
 			[],
 			{},
 			"not json",
-			`{\"payload\":\"${marker}\"`,
+			`{"payload":"${marker}"`,
 			{ ...frame, extra: marker },
 			{ ...frame, counter: 0 },
 			{ ...frame, counter: "00" },
@@ -265,7 +271,7 @@ describe("invitation-authenticated signaling", () => {
 			{
 				...frame,
 				ciphertext: base64url(
-					new Uint8Array(MAX_SIGNALING_PLAINTEXT_BYTES + 17),
+					new Uint8Array(MAX_SIGNALING_PLAINTEXT_BYTES + 17)
 				),
 			},
 			{ ...frame, roomId: `${roomId}=` },
@@ -285,11 +291,11 @@ describe("invitation-authenticated signaling", () => {
 		const joiner = await peer("joiner");
 		const frames = (
 			await Promise.all(
-				Array.from({ length: 32 }, () => creator.encrypt(plaintext)),
+				Array.from({ length: 32 }, () => creator.encrypt(plaintext))
 			)
 		).map(value);
 		expect(frames.map((frame) => frame.counter)).toEqual(
-			Array.from({ length: 32 }, (_, index) => String(index)),
+			Array.from({ length: 32 }, (_, index) => String(index))
 		);
 		expect(new Set(frames.map((frame) => frame.ciphertext)).size).toBe(32);
 		const results = await Promise.all([
@@ -308,23 +314,23 @@ describe("invitation-authenticated signaling", () => {
 	test("room salt separation", async () => {
 		const first = value(await deriveSignalingKeys(secret, roomId));
 		const second = value(await deriveSignalingKeys(secret, otherRoomId));
-		const parameters = { name: "AES-GCM", iv: new Uint8Array(12) };
+		const parameters = { iv: new Uint8Array(12), name: "AES-GCM" };
 		expect(
 			new Uint8Array(
 				await crypto.subtle.encrypt(
 					parameters,
 					first.creatorToJoiner,
-					plaintext,
-				),
-			),
+					plaintext
+				)
+			)
 		).not.toEqual(
 			new Uint8Array(
 				await crypto.subtle.encrypt(
 					parameters,
 					second.creatorToJoiner,
-					plaintext,
-				),
-			),
+					plaintext
+				)
+			)
 		);
 		const creator = await peer("creator");
 		const wrongRoom = await peer("joiner", { roomId: otherRoomId });
@@ -332,7 +338,7 @@ describe("invitation-authenticated signaling", () => {
 		rejected(await wrongRoom.decrypt(frame), "context_mismatch");
 		rejected(
 			await wrongRoom.decrypt({ ...frame, roomId: otherRoomId }),
-			"authentication_failed",
+			"authentication_failed"
 		);
 		creator.close();
 		wrongRoom.close();
@@ -341,11 +347,11 @@ describe("invitation-authenticated signaling", () => {
 	test("uint64 boundary is validated without floating point rounding", async () => {
 		const keys = value(await deriveSignalingKeys(secret, roomId));
 		const header = {
-			version: 1 as const,
-			roomId,
-			role: "creator" as const,
-			operation: "forward" as const,
 			counter: MAX_SIGNALING_COUNTER.toString(),
+			operation: "forward" as const,
+			role: "creator" as const,
+			roomId,
+			version: 1 as const,
 		};
 		const iv = new Uint8Array(12);
 		new DataView(iv.buffer).setBigUint64(4, MAX_SIGNALING_COUNTER, false);
@@ -357,16 +363,16 @@ describe("invitation-authenticated signaling", () => {
 				"creator",
 				"forward",
 				header.counter,
-			]),
+			])
 		);
 		const ciphertext = base64url(
 			new Uint8Array(
 				await crypto.subtle.encrypt(
-					{ name: "AES-GCM", iv, additionalData: aad, tagLength: 128 },
+					{ additionalData: aad, iv, name: "AES-GCM", tagLength: 128 },
 					keys.creatorToJoiner,
-					plaintext,
-				),
-			),
+					plaintext
+				)
+			)
 		);
 		const frame = { ...header, ciphertext };
 		const joiner = await peer("joiner");
@@ -377,7 +383,7 @@ describe("invitation-authenticated signaling", () => {
 				...frame,
 				counter: (MAX_SIGNALING_COUNTER + BigInt(1)).toString(),
 			}),
-			"invalid_envelope",
+			"invalid_envelope"
 		);
 		joiner.close();
 	});
@@ -387,10 +393,10 @@ describe("invitation-authenticated signaling", () => {
 			rejected(
 				await createSignalingCrypto({
 					invitationSecret,
-					roomId,
 					role: "creator",
+					roomId,
 				}),
-				"invalid_input",
+				"invalid_input"
 			);
 		}
 		for (const counterLimit of [
@@ -399,19 +405,19 @@ describe("invitation-authenticated signaling", () => {
 		]) {
 			rejected(
 				await createSignalingCrypto({
-					invitationSecret: secret,
-					roomId,
-					role: "creator",
 					counterLimit,
+					invitationSecret: secret,
+					role: "creator",
+					roomId,
 				}),
-				"invalid_input",
+				"invalid_input"
 			);
 		}
 		rejected(await deriveSignalingKeys(secret, `${roomId}=`), "invalid_input");
 		const creator = await peer("creator");
 		rejected(
 			await creator.encrypt(new Uint8Array(MAX_SIGNALING_PLAINTEXT_BYTES + 1)),
-			"invalid_input",
+			"invalid_input"
 		);
 		expect(value(await creator.encrypt(plaintext)).counter).toBe("0");
 		creator.close();

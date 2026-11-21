@@ -1,28 +1,27 @@
 Command: bun test tests/unit/signaling-crypto.test.ts
-Working directory: products/glassroom
-PUBLIC_PORT=4128 NEXT_INTERNAL_PORT=5128
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
 
 bun test v1.4.5 (a7733435c)
 
 tests/unit/signaling-crypto.test.ts:
-(pass) invitation-authenticated signaling > same-secret round trip [14.64ms]
-(pass) invitation-authenticated signaling > directional key separation [5.49ms]
-(pass) invitation-authenticated signaling > wrong secret [1.17ms]
-(pass) invitation-authenticated signaling > AAD mismatch [1.66ms]
-(pass) invitation-authenticated signaling > ciphertext tamper [0.89ms]
-(pass) invitation-authenticated signaling > replay rejected [1.40ms]
-(pass) invitation-authenticated signaling > failed authentication preserves counter [1.36ms]
-(pass) invitation-authenticated signaling > counter exhaustion closes [1.22ms]
-(pass) invitation-authenticated signaling > invalid encodings do not release plaintext or consume receive state [14.08ms]
-(pass) invitation-authenticated signaling > concurrent sends use unique counters and concurrent receives reject duplicate [6.14ms]
-(pass) invitation-authenticated signaling > room salt separation [1.18ms]
-(pass) invitation-authenticated signaling > uint64 boundary is validated without floating point rounding [0.87ms]
-(pass) invitation-authenticated signaling > invalid initialization and oversized plaintext are redacted [0.98ms]
-(pass) invitation-authenticated signaling > queued plaintext and envelope inputs are snapshotted [0.52ms]
+(pass) invitation-authenticated signaling > same-secret round trip [8.23ms]
+(pass) invitation-authenticated signaling > directional key separation [2.13ms]
+(pass) invitation-authenticated signaling > wrong secret [0.83ms]
+(pass) invitation-authenticated signaling > AAD mismatch [1.36ms]
+(pass) invitation-authenticated signaling > ciphertext tamper [1.12ms]
+(pass) invitation-authenticated signaling > replay rejected [1.15ms]
+(pass) invitation-authenticated signaling > failed authentication preserves counter [1.53ms]
+(pass) invitation-authenticated signaling > counter exhaustion closes [1.18ms]
+(pass) invitation-authenticated signaling > invalid encodings do not release plaintext or consume receive state [9.63ms]
+(pass) invitation-authenticated signaling > concurrent sends use unique counters and concurrent receives reject duplicate [4.94ms]
+(pass) invitation-authenticated signaling > room salt separation [0.78ms]
+(pass) invitation-authenticated signaling > uint64 boundary is validated without floating point rounding [0.57ms]
+(pass) invitation-authenticated signaling > invalid initialization and oversized plaintext are redacted [0.75ms]
+(pass) invitation-authenticated signaling > queued plaintext and envelope inputs are snapshotted [0.44ms]
 
  14 pass
  0 fail
  647 expect() calls
-Ran 14 tests across 1 file. [108.00ms]
+Ran 14 tests across 1 file. [118.00ms]
 
 Exit code: 0

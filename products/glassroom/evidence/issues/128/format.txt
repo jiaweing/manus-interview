@@ -1,0 +1,6 @@
+Command: bunx biome format --write apps/web/src/lib/crypto/signaling.ts tests/unit/signaling-crypto.test.ts
+Environment: PUBLIC_PORT=4328 NEXT_INTERNAL_PORT=5328
+
+Formatted 2 files in 13ms. Fixed 1 file.
+
+Exit code: 0
