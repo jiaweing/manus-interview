@@ -1,0 +1,76 @@
+== main after PR 198 (issue 101) f6298e9 2026-11-21T14:18:38Z
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1371 packages installed [3.05s]
+install exit=0
+$ ultracite check
+Checked 15 files in 112ms. No fixes applied.
+check exit=0
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+check-types exit=0
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.49ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.50ms]
+(pass) spawn failure closes its terminal and propagates the error [0.88ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [56.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=10008 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [71.07ms]
+python3 PID=PGID=SID=TPGID=10015 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.24ms]
+bash GROUP=10017 GRANDCHILD=10020 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.58ms]
+bash GROUP=10021 GRANDCHILD=10024 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.61ms]
+python3 GROUP=10025 GRANDCHILD=10028 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.49ms]
+python3 GROUP=10029 GRANDCHILD=10031 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [32.39ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.32ms]
+
+ 7 pass
+ 0 fail
+ 93 expect() calls
+Ran 7 tests across 2 files. [266.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=33633 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [24.40ms]
+(pass) server startup fails clearly when setsid is absent on PATH [14.61ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [48.00ms]
+test exit=0

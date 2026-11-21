@@ -1,0 +1,89 @@
+== main after PR 209 (issue 102) ecf3634 2026-11-21T14:35:44Z
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1371 packages installed [3.19s]
+install exit=0
+$ ultracite check
+Checked 20 files in 143ms. No fixes applied.
+check exit=0
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+check-types exit=0
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.45ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.23ms]
+(pass) spawn failure closes its terminal and propagates the error [1.02ms]
+
+ 3 pass
+ 0 fail
+ 9 expect() calls
+Ran 3 tests across 1 file. [73.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=15819 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.78ms]
+python3 PID=PGID=SID=TPGID=15826 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [62.03ms]
+bash GROUP=15828 GRANDCHILD=15831 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.02ms]
+bash GROUP=15832 GRANDCHILD=15835 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.55ms]
+python3 GROUP=15836 GRANDCHILD=15839 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [42.38ms]
+python3 GROUP=15840 GRANDCHILD=15842 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.34ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [166.68ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [175.56ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [193.80ms]
+TetherTerm MCP listening on http://127.0.0.1:44627/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [31.60ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [2.05ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [3.63ms]
+
+ 12 pass
+ 0 fail
+ 128 expect() calls
+Ran 12 tests across 3 files. [988.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=45167 ENV=PATH,PORT ONLY; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots without MongoDB or keys and curl receives HTTP 200 on an ephemeral port [27.38ms]
+(pass) server startup fails clearly when setsid is absent on PATH [15.62ms]
+
+ 2 pass
+ 0 fail
+ 6 expect() calls
+Ran 2 tests across 1 file. [53.00ms]
+test exit=0

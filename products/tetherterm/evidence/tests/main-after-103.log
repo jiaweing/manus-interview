@@ -1,0 +1,198 @@
+== main after PR 211 (issue 103) a8ecb11 2026-11-21T14:55:12Z
+bun install v1.4.5 (a7733435c)
+
+$ bun run env:generate
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
++ @biomejs/biome@2.5.15
++ @types/bun@1.4.5
++ turbo@2.11.13
++ typescript@6.0.3
++ ultracite@8.0.0
++ varlock@1.25.0
++ zod@4.6.7
+
+1371 packages installed [3.27s]
+install exit=0
+$ ultracite check
+Checked 32 files in 150ms. No fixes applied.
+check exit=0
+$ bun run --cwd apps/server check-types
+$ tsc --noEmit
+check-types exit=0
+$ bun run test:unit && bun run test:integration && bun run test:e2e
+$ bun test ./apps/server/test/unit
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/unit/bootstrap.test.ts:
+(pass) only the boot health route is available [3.59ms]
+(pass) missing setsid fails clearly before allocating a PTY [1.87ms]
+(pass) spawn failure closes its terminal and propagates the error [1.81ms]
+
+apps/server/test/unit/spawn-policy.test.ts:
+(pass) spawn policy completes before spawn > approved executable and root cwd reach spawn once [1.62ms]
+(pass) spawn policy completes before spawn > approved executable and nested cwd reach spawn once [0.27ms]
+(pass) spawn policy completes before spawn > approved executable and inside-link cwd reach spawn once [0.19ms]
+(pass) spawn policy completes before spawn > forbidden executable returns POLICY_DENIED with zero spawn calls [0.35ms]
+(pass) spawn policy completes before spawn > shell interpolation returns POLICY_DENIED with zero spawn calls [0.09ms]
+(pass) spawn policy completes before spawn > prototype executable returns POLICY_DENIED with zero spawn calls [0.09ms]
+(pass) spawn policy completes before spawn > traversal returns POLICY_DENIED with zero spawn calls [0.27ms]
+(pass) spawn policy completes before spawn > root prefix sibling returns POLICY_DENIED with zero spawn calls [0.31ms]
+(pass) spawn policy completes before spawn > symlink escape returns POLICY_DENIED with zero spawn calls [0.26ms]
+(pass) spawn policy completes before spawn > symlink traversal escape returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > missing cwd returns POLICY_DENIED with zero spawn calls [0.15ms]
+(pass) spawn policy completes before spawn > relative cwd returns POLICY_DENIED with zero spawn calls [0.21ms]
+(pass) spawn policy completes before spawn > file cwd returns POLICY_DENIED with zero spawn calls [0.14ms]
+(pass) spawn policy completes before spawn > NUL argument returns POLICY_DENIED with zero spawn calls [0.17ms]
+(pass) spawn policy completes before spawn > args remain literal, while canonical executable and cwd are passed [0.41ms]
+(pass) configuration fails before startup > exact PRD configuration is loaded without retaining bearer values [0.07ms]
+(pass) configuration fails before startup > stdio does not require any HTTP credentials or tunnel configuration [0.46ms]
+(pass) configuration fails before startup > legacy PORT=0 is loaded and validated when TETHERTERM_PORT is absent [0.54ms]
+(pass) configuration fails before startup > TETHERTERM_PORT takes precedence over PORT without bypassing validation [0.36ms]
+(pass) configuration fails before startup > missing root produces a readable failure before startup callback [0.38ms]
+(pass) configuration fails before startup > relative root produces a readable failure before startup callback [0.13ms]
+(pass) configuration fails before startup > missing executables produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > invalid executable JSON produces a readable failure before startup callback [0.06ms]
+(pass) configuration fails before startup > empty executables produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > relative executable path produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > missing executable file produces a readable failure before startup callback [0.30ms]
+(pass) configuration fails before startup > missing root directory produces a readable failure before startup callback [0.20ms]
+(pass) configuration fails before startup > file root produces a readable failure before startup callback [0.18ms]
+(pass) configuration fails before startup > invalid port produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > negative port produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > missing hostname produces a readable failure before startup callback [0.07ms]
+(pass) configuration fails before startup > URL instead of hostname produces a readable failure before startup callback [0.10ms]
+(pass) configuration fails before startup > wildcard hostname produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > hostname includes port produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > missing token variable produces a readable failure before startup callback [0.08ms]
+(pass) configuration fails before startup > invalid token variable name produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > missing bearer produces a readable failure before startup callback [0.09ms]
+(pass) configuration fails before startup > short bearer produces a readable failure before startup callback [0.05ms]
+(pass) configuration fails before startup > valid configuration invokes startup once [0.50ms]
+(pass) environment and diagnostic redaction > allowlist drops configured token, credentials, addon settings and unknown variables [0.15ms]
+(pass) environment and diagnostic redaction > configured token variable is excluded even if normally allowlisted [0.03ms]
+(pass) environment and diagnostic redaction > spawn failure and denial logs never include credentials, argv, or terminal content [0.55ms]
+
+ 45 pass
+ 0 fail
+ 204 expect() calls
+Ran 45 tests across 2 files. [106.00ms]
+$ bun test ./apps/server/test/pty-spike.test.ts ./apps/server/test/transport-boot.test.ts ./apps/server/test/integration
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/pty-spike.test.ts:
+bash PID=PGID=SID=TPGID=26158 TTY=true ECHO=true SIGWINCH=43x132 CTRL_C=130 EXIT=7
+(pass) bash: controlling PTY, echo, resize/SIGWINCH, foreground CTRL_C and exit 7 [54.74ms]
+python3 PID=PGID=SID=TPGID=26165 TTY=true ECHO=true SIGWINCH=37x101 CTRL_C=KeyboardInterrupt EXIT=7
+(pass) python3: controlling PTY, echo, resize/SIGWINCH, CTRL_C KeyboardInterrupt and exit 7 [72.03ms]
+bash GROUP=26167 GRANDCHILD=26170 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [22.04ms]
+bash GROUP=26171 GRANDCHILD=26174 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) bash: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [21.27ms]
+python3 GROUP=26176 GRANDCHILD=26178 SIGTERM=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGTERM to isolated group terminates child and sleep grandchild, not Bun [52.32ms]
+python3 GROUP=26179 GRANDCHILD=26181 SIGKILL=TREE_TERMINATED BUN_ALIVE=true
+(pass) python3: SIGKILL to isolated group terminates child and sleep grandchild, not Bun [42.11ms]
+
+apps/server/test/transport-boot.test.ts:
+stdio SDK initialize=OK tools/list=EMPTY protocol_errors=0 stderr_startup=OK
+(pass) official SDK client initializes and discovers tools through the stdio root launcher [165.92ms]
+stdio stdout=2 SDK-valid JSON-RPC lines diagnostics_on_stderr=OK EOF_exit=0
+(pass) stdio stdout contains only complete SDK-valid protocol messages and stderr contains startup diagnostics [170.89ms]
+HTTP SDK initialize=OK tools/list=EMPTY stateless=OK extra_routes=404 stdout=EMPTY
+(pass) HTTP entrypoint initializes and discovers with the official Streamable HTTP client [174.07ms]
+TetherTerm MCP listening on http://127.0.0.1:37499/mcp
+HTTP bound_hostname=127.0.0.1 ephemeral_port=OK concurrent_clients=2 discovery=OK
+(pass) HTTP listener binds only loopback and isolates concurrent clients without transport sessions [29.64ms]
+TetherTerm HTTP transport error
+(pass) Hono middleware installed before mounting /mcp runs before the transport [1.86ms]
+
+apps/server/test/integration/spawn-policy.test.ts:
+(pass) approved real PTY receives literal argv and no server credentials [6.49ms]
+
+apps/server/test/integration/spawn.test.ts:
+(pass) native PTY helper forwards explicit args, cwd and env [2.55ms]
+
+ 13 pass
+ 0 fail
+ 137 expect() calls
+Ran 13 tests across 4 files. [975.00ms]
+$ bun test ./apps/server/test/e2e
+bun test v1.4.5 (a7733435c)
+
+apps/server/test/e2e/boot.test.ts:
+PORT=41905 CONFIG=VALID legacy_PORT=0; curl /healthz: ok
+HTTP_STATUS=200
+(pass) server boots with valid configuration without MongoDB or addon keys and curl receives HTTP 200 on an ephemeral port [65.89ms]
+(pass) server startup fails clearly when setsid is absent on PATH [55.18ms]
+
+apps/server/test/e2e/config-startup.test.ts:
+index.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing required configuration exits before listening or stdio connection [56.79ms]
+index.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing approved root exits before listening or stdio connection [58.11ms]
+index.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing executable allowlist exits before listening or stdio connection [58.67ms]
+index.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid relative root containing a credential exits before listening or stdio connection [52.09ms]
+index.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid executable JSON containing a credential exits before listening or stdio connection [49.75ms]
+index.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [50.89ms]
+index.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid legacy port alias exits before listening or stdio connection [51.69ms]
+index.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [51.63ms]
+index.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: missing configured token exits before listening or stdio connection [55.07ms]
+index.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid bearer value exits before listening or stdio connection [56.13ms]
+index.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) index.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [54.50ms]
+http.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing required configuration exits before listening or stdio connection [126.58ms]
+http.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing approved root exits before listening or stdio connection [136.52ms]
+http.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing executable allowlist exits before listening or stdio connection [125.41ms]
+http.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid relative root containing a credential exits before listening or stdio connection [135.70ms]
+http.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid executable JSON containing a credential exits before listening or stdio connection [129.82ms]
+http.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [134.70ms]
+http.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid legacy port alias exits before listening or stdio connection [130.55ms]
+http.ts missing HTTP token and tunnel configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing HTTP token and tunnel configuration exits before listening or stdio connection [122.09ms]
+http.ts missing configured token: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: missing configured token exits before listening or stdio connection [135.82ms]
+http.ts invalid bearer value: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid bearer value exits before listening or stdio connection [130.84ms]
+http.ts invalid tunnel hostname containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) http.ts: invalid tunnel hostname containing a credential exits before listening or stdio connection [132.51ms]
+stdio.ts missing required configuration: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing required configuration exits before listening or stdio connection [165.95ms]
+stdio.ts missing approved root: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing approved root exits before listening or stdio connection [127.41ms]
+stdio.ts missing executable allowlist: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: missing executable allowlist exits before listening or stdio connection [140.23ms]
+stdio.ts invalid relative root containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid relative root containing a credential exits before listening or stdio connection [137.46ms]
+stdio.ts invalid executable JSON containing a credential: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid executable JSON containing a credential exits before listening or stdio connection [133.31ms]
+stdio.ts invalid canonical port despite legacy PORT=0: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid canonical port despite legacy PORT=0 exits before listening or stdio connection [133.41ms]
+stdio.ts invalid legacy port alias: exit=1 readable_stderr=true listening_socket=false stdout=EMPTY token_in_output=false
+(pass) stdio.ts: invalid legacy port alias exits before listening or stdio connection [127.77ms]
+listener observer positive_control=real_HTTP_200 shutdown_exit=0 listener_closed=true
+(pass) listener observer delegates to a real valid-config HTTP launcher socket [62.74ms]
+
+ 32 pass
+ 0 fail
+ 248 expect() calls
+Ran 32 tests across 2 files. [3.20s]
+test exit=0
