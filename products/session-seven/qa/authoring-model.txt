@@ -1,18 +1,18 @@
-BLOCKED authoring model: anthropic/claude-opus-5.5
+VERIFIED authoring model: anthropic/claude-opus-5.5
 catalog.listed=true
-catalog.checkedAt=2026-11-21T14:07:42.769Z
+catalog.checkedAt=2026-11-21T15:59:22.464Z
 catalog.evidenceUrl=https://openrouter.ai/api/v1/models
-chatRequests=0
-error=no OPENROUTER_API_KEY
+chatRequests=1
+error=none
 
 {
-  "status": "blocked",
+  "status": "verified",
   "modelId": "anthropic/claude-opus-5.5",
-  "requestRef": null,
-  "generationId": null,
+  "requestRef": "sha256:3e566e9599ce4087b4688e09ea18cb75f07e2936488d19c7bb40685d903b8028",
+  "generationId": "gen-1795276765-osnJ2plgjv4ZfRq6VcBU",
   "catalog": {
     "listed": true,
-    "checkedAt": "2026-11-21T14:07:42.769Z",
+    "checkedAt": "2026-11-21T15:59:22.464Z",
     "evidenceUrl": "https://openrouter.ai/api/v1/models",
     "evidence": {
       "id": "anthropic/claude-opus-5.5",
@@ -40,13 +40,50 @@ error=no OPENROUTER_API_KEY
       }
     }
   },
-  "usage": null,
-  "timestamps": {
-    "startedAt": "2026-11-21T14:07:42.769Z",
-    "requestStartedAt": null,
-    "responseReceivedAt": null,
-    "completedAt": "2026-11-21T14:07:46.178Z"
+  "usage": {
+    "prompt_tokens": 356,
+    "completion_tokens": 423,
+    "total_tokens": 779,
+    "cost": 0.009884,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.009884,
+      "upstream_inference_prompt_cost": 0.001424,
+      "upstream_inference_completions_cost": 0.00846
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 304,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
   },
-  "chatRequests": 0,
-  "error": "no OPENROUTER_API_KEY"
+  "timestamps": {
+    "startedAt": "2026-11-21T15:59:22.464Z",
+    "requestStartedAt": "2026-11-21T15:59:24.744Z",
+    "responseReceivedAt": "2026-11-21T15:59:31.730Z",
+    "completedAt": "2026-11-21T15:59:31.730Z"
+  },
+  "chatRequests": 1,
+  "error": null,
+  "responseModel": "anthropic/claude-opus-5.5",
+  "responseCreated": 1795276765,
+  "finishReason": "stop"
 }
+
+Scoped patch output (UNREVIEWED; not applied or accepted):
+```diff
+--- a/authoring/access-check-scene.js
++++ b/authoring/access-check-scene.js
+@@ -1,3 +1,5 @@
+ export function entranceProgress(frame) {
++  if (!(frame > 0)) return 0;
++  if (frame >= 30) return 1;
+   return frame / 30;
+ }
+```
