@@ -1,0 +1,26 @@
+products/glassroom/evidence/issues/132/build.output.txt:11: trailing whitespace.
+[32m+[m[32mserver:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:13: trailing whitespace.
+[32m+[m[32mserver:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:18: trailing whitespace.
+[32m+[m[32mweb:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:25: trailing whitespace.
+[32m+[m[32mweb:build:   Generating static pages using 5 workers (1/4)[m[41m
+[m
+products/glassroom/evidence/issues/132/build.output.txt:26: trailing whitespace.
+[32m+[m[32mweb:build:   Generating static pages using 5 workers (2/4)[m[41m
+[m
+products/glassroom/evidence/issues/132/build.output.txt:27: trailing whitespace.
+[32m+[m[32mweb:build:   Generating static pages using 5 workers (3/4)[m[41m
+[m
+products/glassroom/evidence/issues/132/build.output.txt:30: trailing whitespace.
+[32m+[m[32mweb:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:34: trailing whitespace.
+[32m+[m[32mweb:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:35: trailing whitespace.
+[32m+[m[32mweb:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:37: trailing whitespace.
+[32m+[m[32mweb:build:[m[41m [m
+products/glassroom/evidence/issues/132/build.output.txt:42: new blank line at EOF.
+products/glassroom/evidence/issues/132/e2e.output.txt:18: new blank line at EOF.
+products/glassroom/evidence/issues/132/types.output.txt:18: new blank line at EOF.

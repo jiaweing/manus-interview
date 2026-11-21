@@ -2,7 +2,7 @@
 
 Verified on 2026-11-21 from `products/glassroom` in the isolated `glassroom/132-admission` worktree. This adapts the issue's original product-root paths to the monorepo. The current bootstrap test actually lives in `tests/e2e/boot.spec.ts`, not `apps/web/tests/e2e/boot.spec.ts` in this checkout.
 
-Environment: Bun 1.4.5, `PUBLIC_PORT=4132`, `NEXT_INTERNAL_PORT=5132`, `CHROMIUM_PATH=/usr/bin/chromium`. Every check has a `.command.txt`, complete `.output.txt`, and `.exit.txt` here. Successful final results:
+Environment: Bun 1.4.5, `PUBLIC_PORT=4132`, `NEXT_INTERNAL_PORT=5132`, `CHROMIUM_PATH=/usr/bin/chromium`. Every check has a `.command.txt`, complete `.output.txt`, and `.exit.txt` here. Captured output has trailing whitespace and trailing blank lines normalized; all diagnostic text is retained. Successful final results:
 
 | Check | Command | Exit | Result |
 | --- | --- | --- | --- |
@@ -12,9 +12,11 @@ Environment: Bun 1.4.5, `PUBLIC_PORT=4132`, `NEXT_INTERNAL_PORT=5132`, `CHROMIUM
 | Workspace build | `bun run build` | 0 | 2 successful tasks |
 | Real HTTPS/WSS Chromium tests | `PUBLIC_PORT=4132 NEXT_INTERNAL_PORT=5132 CHROMIUM_PATH=/usr/bin/chromium bun run test:e2e tests/e2e/boot.spec.ts tests/e2e/signal-server.spec.ts` | 0 | 6 passed, including all 3 boot tests |
 | Source/privacy boundary audit | `python3 evidence/issues/132/static-audit.py` | 0 | Route, raw forwarding, no payload logging/decryption/persistence checks passed |
-| Whitespace | `git diff --check` | 0 | No errors |
+| Whole-branch whitespace | `git diff origin/main --check` | 0 | No errors after normalizing captured-output whitespace |
 
 The initial static audit exited 1 because its substring pattern matched `req` inside the existing TLS error word `required`. No product defect was found or changed in response. The audit was corrected to match identifier word boundaries and rerun successfully. The original diagnostic/command/exit are preserved as `static-initial.*.txt`.
+
+An initial committed-diff check reported only trailing whitespace/blank lines in captured Turbo/Playwright output, not code defects. Those formatting artifacts were normalized, and the whole-branch check passes. The initial diagnostic is preserved as `diff-initial.*.txt`.
 
 ## Acceptance criteria
 
