@@ -1,6 +1,8 @@
 # Issue #34 — lifecycle evidence
 
-The gate logs in this directory are the authoritative results of commands run from `products/flopside` on the lifecycle branch after the final source edits and a fresh fetch/rebase onto `origin/main`. Each command and its exit code is retained in `verification.log`. `revision.log` records the source commit/base used for the gates (the subsequent evidence-only commit does not change tested product code).
+The current round-2 handoff is documented in [ROUND2.md](ROUND2.md), with authoritative final gates in `round2-verification.log`, tested revision/hashes in `round2-revision.log`, and output in the individual `round2-*.log` files. Both the exact lifecycle/deadline focused command and the additional composition suite are included. Managed rooms use `startLifecycleMatchAt`, accepted `applyActionAt` → `advanceMatchAt`, `expireTurnAndAdvanceAt`, and `rematchAt`; never `startNextHandAt` or an `assignDeadline`-only lifecycle handoff. Room/match-generation fencing remains #38's adapter responsibility.
+
+The non-prefixed gate logs below are retained historical round-1 results of commands run from `products/flopside` after those source edits and a fresh fetch/rebase onto the then-current `origin/main`. Each command and its exit code is retained in `verification.log`. `revision.log` records the source commit/base used for those gates (the subsequent evidence-only commit does not change tested product code).
 
 - `fix.log`: `bun run fix`
 - `install.log`: `bun install --frozen-lockfile`

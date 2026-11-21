@@ -1,5 +1,12 @@
 import { progressBetting } from "./betting";
+import {
+	assignDeadline,
+	type ExpirationResult,
+	expireTurn,
+	type TurnDeadline,
+} from "./deadline";
 import { startMatch, startNextHand } from "./dealing";
+import { settleHand } from "./settlement";
 import type { DeckSource } from "./shuffle";
 import type { MatchState, SeatInput, SeatState } from "./state";
 
@@ -54,6 +61,21 @@ export function startLifecycleMatch(
 		private: { ...state.private, pendingExpiryConnectedSeatIds: null },
 		public: { ...state.public, handId, matchId, result: null },
 	};
+}
+
+/** Lifecycle-managed hand 1, normalized and timed using the injected room clock. */
+export function startLifecycleMatchAt(
+	seats: readonly SeatInput[],
+	nowMs: number,
+	deckSource: DeckSource | undefined,
+	newIds: IdGenerator
+): MatchState {
+	return advanceMatchAt(
+		startLifecycleMatch(seats, deckSource, newIds),
+		nowMs,
+		deckSource,
+		newIds
+	);
 }
 
 function connectedSeats(
@@ -170,6 +192,86 @@ export function advanceMatch(
 	});
 }
 
+/**
+ * Drain completed hands before publishing: settle once, decide lifecycle, deal
+ * once, and repeat blind-only runouts. At most ten hand boundaries are visited.
+ * Returns a final public result with turn:null or a live actor with a deadline.
+ * Existing live deadlines are preserved; newly dealt hands start turnId at 1.
+ * Never use startNextHandAt on lifecycle-managed state (it drops managed IDs).
+ */
+export function advanceMatchAt(
+	state: MatchState,
+	nowMs: number,
+	deckSource: DeckSource | undefined,
+	newIds: IdGenerator,
+	connectedSeatIds?: ReadonlySet<string>
+): MatchState {
+	// Also validates the injected clock, including on completed-state no-ops.
+	let current = assignDeadline(state, nowMs);
+	for (let boundary = 0; boundary < MAX_HANDS; boundary += 1) {
+		if (current.public.result) {
+			return current;
+		}
+		if (current.public.handStatus === "playing") {
+			if (current.public.turn) {
+				return current;
+			}
+			current = progressBetting(current);
+			if (current.public.handStatus === "playing") {
+				const timed = assignDeadline(current, nowMs);
+				if (!timed.public.turn) {
+					throw new Error(
+						"Lifecycle requires a live timed actor or completed hand"
+					);
+				}
+				return timed;
+			}
+		}
+		if (current.public.handStatus !== "settled") {
+			current = settleHand(current);
+		}
+		// Clear the completed turn before dealing, preserving IDs but resetting the
+		// next hand's within-hand timer identity. Never settle an already-settled hand.
+		current = advanceMatch(
+			assignDeadline(current, nowMs),
+			deckSource,
+			newIds,
+			connectedSeatIds
+		);
+	}
+	if (current.public.result) {
+		return assignDeadline(current, nowMs);
+	}
+	throw new Error("Lifecycle drain exceeded the ten-hand match limit");
+}
+
+/**
+ * Queue callback composition. Early/stale callbacks remain exact identity
+ * no-ops, invoking no deck/ID sources. Room/match-generation fencing is #38's job.
+ */
+export function expireTurnAndAdvanceAt(
+	state: MatchState,
+	capturedTurn: TurnDeadline,
+	nowMs: number,
+	deckSource: DeckSource | undefined,
+	newIds: IdGenerator,
+	connectedSeatIds?: ReadonlySet<string>
+): ExpirationResult {
+	const expired = expireTurn(state, capturedTurn, nowMs);
+	return expired.expired
+		? {
+				expired: true,
+				state: advanceMatchAt(
+					expired.state,
+					nowMs,
+					deckSource,
+					newIds,
+					connectedSeatIds
+				),
+			}
+		: expired;
+}
+
 function reject(state: MatchState, message: string): RematchResult {
 	return { error: { code: "ILLEGAL_ACTION", message }, ok: false, state };
 }
@@ -229,4 +331,36 @@ export function rematch(
 			public: { ...roomCode, ...fresh.public, handId, matchId, result: null },
 		},
 	};
+}
+
+/** Same authorization/reset contract as rematch, with a drained timed new match. */
+export function rematchAt(
+	state: MatchState,
+	requesterSeatId: string,
+	hostSeatId: string,
+	connectedSeatIds: ReadonlySet<string>,
+	nowMs: number,
+	deckSource: DeckSource | undefined,
+	newIds: IdGenerator
+): RematchResult {
+	const result = rematch(
+		state,
+		requesterSeatId,
+		hostSeatId,
+		connectedSeatIds,
+		deckSource,
+		newIds
+	);
+	return result.ok
+		? {
+				ok: true,
+				state: advanceMatchAt(
+					result.state,
+					nowMs,
+					deckSource,
+					newIds,
+					connectedSeatIds
+				),
+			}
+		: result;
 }
