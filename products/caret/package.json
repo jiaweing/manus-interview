@@ -36,7 +36,7 @@
     "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
-    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/ && node ./apps/desktop/node_modules/electron/install.js",
     "check": "ultracite check",
     "fix": "ultracite fix"
   },
@@ -55,8 +55,5 @@
   "overrides": {
     "@next/env": "npm:@varlock/nextjs-integration@2.0.1"
   },
-  "packageManager": "bun@1.4.5",
-  "trustedDependencies": [
-    "electron"
-  ]
+  "packageManager": "bun@1.4.5"
 }
