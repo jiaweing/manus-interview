@@ -1,0 +1,5 @@
+COMMAND: bun run --cwd apps/desktop typecheck
+HOST: linux x64
+EXIT_CODE: 0
+
+$ tsc --noEmit -p tsconfig.json

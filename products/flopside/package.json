@@ -37,9 +37,9 @@
     "dev:web": "bun run --cwd apps/web dev",
     "fix": "biome check --write .",
     "lint": "biome check .",
-    "start": "bun run scripts/run-apps.ts start",
-    "test": "bun test",
-    "typecheck": "bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && tsc --noEmit -p tsconfig.json"
+    "test": "bun test --path-ignore-patterns 'apps/web/tests/**'",
+    "test:e2e": "bunx playwright test --config apps/web/playwright.config.ts --project=chromium",
+    "typecheck": "bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && bun run --cwd packages/engine check-types && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "zod": "catalog:"
@@ -48,6 +48,7 @@
     "@biomejs/biome": "2.5.15",
     "@flopside/config": "workspace:*",
     "@types/bun": "catalog:",
+    "playwright": "1.65.1",
     "turbo": "^2.11.11",
     "typescript": "^6.0.3",
     "ultracite": "8.0.0",

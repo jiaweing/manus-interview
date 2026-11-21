@@ -1,1 +1,1 @@
-git diff origin/main --check
+git -c color.ui=false diff --check

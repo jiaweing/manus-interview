@@ -1,2 +1,4 @@
-// Preload entry. The validated message boundary is added by issue #3.
-export {};
+import { contextBridge, ipcRenderer } from "electron";
+import { createCaretApi } from "./caret-api";
+
+contextBridge.exposeInMainWorld("caret", createCaretApi(ipcRenderer));

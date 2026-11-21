@@ -1,0 +1,43 @@
+COMMAND=bun run lint
+$ biome check .
+apps/web/playwright.config.ts:3:49 lint/correctness/noUndeclaredDependencies ━━━━━━━━━━
+
+  × Dependency playwright isn't specified in apps/web/package.json.
+  
+    1 │ import { existsSync } from "node:fs";
+    2 │ import { fileURLToPath } from "node:url";
+  > 3 │ import { chromium, defineConfig, devices } from "playwright/test";
+      │                                                 ^^^^^^^^^^^^^^^^^
+    4 │ 
+    5 │ const productRoot = fileURLToPath(new URL("../../", import.meta.url));
+  
+  i This could lead to errors.
+  
+  i Add the dependency in your manifest.
+  
+
+apps/web/tests/ingress.spec.ts:3:41 lint/correctness/noUndeclaredDependencies ━━━━━━━━━━
+
+  × Dependency playwright isn't specified in apps/web/package.json.
+  
+    1 │ import { mkdir, writeFile } from "node:fs/promises";
+    2 │ import { fileURLToPath } from "node:url";
+  > 3 │ import { expect, type Page, test } from "playwright/test";
+      │                                         ^^^^^^^^^^^^^^^^^
+    4 │ 
+    5 │ const publicMarkerPattern = /^[0-9a-f-]{36}$/;
+  
+  i This could lead to errors.
+  
+  i Add the dependency in your manifest.
+  
+
+Checked 29 files in 136ms. No fixes applied.
+Found 2 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+error: script "lint" exited with code 1
+EXIT_CODE=1

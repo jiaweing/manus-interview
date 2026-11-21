@@ -1,0 +1,6 @@
+Command: bunx tsc --ignoreConfig --noEmit --strict --target ES2017 --module esnext --moduleResolution bundler --lib esnext\,dom --types bun --skipLibCheck tests/unit/handshake-crypto.test.ts
+Working directory: products/glassroom
+PUBLIC_PORT=4129 NEXT_INTERNAL_PORT=5129
+
+
+Exit code: 0

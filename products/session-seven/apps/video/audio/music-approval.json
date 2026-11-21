@@ -1,0 +1,7 @@
+{
+  "contractValidated": false,
+  "model": null,
+  "budgetUsd": null,
+  "rightsApproved": false,
+  "notes": "Opt-in disabled. Confirm Lyria-specific audio configuration and hard cost control in src/music/contract.js, then explicitly approve the permitted model, accessApproved:true, total budgetUsd, and instrumental-use rights. No credentials or approval exist; real smoke test not run: no key. Never put a key in this file."
+}

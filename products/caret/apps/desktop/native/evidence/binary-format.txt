@@ -1,0 +1,5 @@
+COMMAND: file apps/desktop/native/build/caret-helper.exe
+HOST: linux x64
+EXIT_CODE: 0
+
+apps/desktop/native/build/caret-helper.exe: PE32+ executable (console) x86-64, for MS Windows, 19 sections

@@ -1,31 +1,31 @@
 $ turbo run build
 
-   • turbo 2.11.13
    • Packages in scope: @glassroom/config, @glassroom/ui, server, web
    • Running build in 4 packages
    • Remote caching disabled, using shared worktree cache
 
-server:build: cache hit, replaying logs d485f6f62c5a6f34
+server:build: cache miss, executing 4d4d3efed0a4a4d9
+web:build: cache miss, executing 60fd65db492e22c0
 server:build: $ bun build src/index.ts --target bun --outdir dist
-server:build: Bundled 123 modules in 20ms
-server:build:
-server:build:   index.js  215.92 KB  (entry point)
-server:build:
-web:build: cache hit, replaying logs a2b851a90204d81f
 web:build: $ bun --bun next build
+server:build: Bundled 123 modules in 34ms
+server:build:
+server:build:   index.js  215.91 KB  (entry point)
+server:build:
 web:build: ▲ Next.js 16.4.6 (Turbopack)
-web:build: ✓ Running next.config.ts took 61ms
+web:build: ✓ Running next.config.ts took 51ms
+web:build: ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
 web:build:
 web:build:   Creating an optimized production build ...
-web:build: ✓ Compiled successfully in 3.3s
+web:build: ✓ Compiled successfully in 3.5s
 web:build:   Running TypeScript ...
-web:build:   Finished TypeScript in 2.1s ...
+web:build:   Finished TypeScript in 2.5s ...
 web:build:   Collecting page data using 5 workers ...
 web:build:   Generating static pages using 5 workers (0/4) ...
 web:build:   Generating static pages using 5 workers (1/4)
 web:build:   Generating static pages using 5 workers (2/4)
 web:build:   Generating static pages using 5 workers (3/4)
-web:build: ✓ Generating static pages using 5 workers (4/4) in 490ms
+web:build: ✓ Generating static pages using 5 workers (4/4) in 459ms
 web:build:   Finalizing page optimization ...
 web:build:
 web:build: Route (app)
@@ -37,5 +37,5 @@ web:build: ○  (Static)  prerendered as static content
 web:build:
 
  Tasks:    2 successful, 2 total
-Cached:    2 cached, 2 total
-  Time:    40ms >>> FULL TURBO
+Cached:    0 cached, 2 total
+  Time:    7.649s

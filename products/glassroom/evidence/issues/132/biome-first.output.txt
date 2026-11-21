@@ -1,0 +1,189 @@
+apps/server/src/signal-server.ts:8:22 lint/suspicious/noBitwiseOperators ━━━━━━━━━━
+
+  × Unexpected use of '<<'.
+
+     6 │ export const SIGNAL_CIPHERTEXT_CAP_BYTES = 64 * 1024 + 16;
+     7 │ export const SIGNAL_VERSION = 1;
+   > 8 │ const MAX_COUNTER = (1n << 64n) - 1n;
+       │                      ^^^^^^^^^
+     9 │ const COUNTER = /^(0|[1-9][0-9]{0,19})$/;
+    10 │ const BASE64URL = /^[A-Za-z0-9_-]+$/;
+
+  i Bitwise operators are prohibited because their use can be confusing or unintended. If you did want to use the bitwise operator, consider suppressing this diagnostic.
+
+
+apps/server/src/signal-server.ts:64:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+
+    63 │ export interface SignalSocket {
+  > 64 │ 	close(code?: number, reason?: string): void;
+       │ 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    65 │ 	send(frame: string): unknown;
+    66 │ }
+
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+
+  i Unsafe fix: Convert to property-style signature.
+
+     62  62 │
+     63  63 │   export interface SignalSocket {
+     64     │ - → close(code?:·number,·reason?:·string):·void;
+         64 │ + → close:·(code?:·number,·reason?:·string)·=>·void;
+     65  65 │     send(frame: string): unknown;
+     66  66 │   }
+
+
+apps/server/src/signal-server.ts:65:2 lint/style/useConsistentMethodSignatures  FIXABLE  ━━━━━━━━━━
+
+  × Prefer using property-style over method-style method signatures.
+
+    63 │ export interface SignalSocket {
+    64 │ 	close(code?: number, reason?: string): void;
+  > 65 │ 	send(frame: string): unknown;
+       │ 	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    66 │ }
+    67 │
+
+  i Consistently using a single style of method signatures helps improve readability and consistency.
+
+  i Property-style function declarations also allow for stricter type checking when the strictFunctionTypes compiler option is enabled.
+
+  i If this isn't what you want, consider changing the style option in the rule's settings.
+
+  i Unsafe fix: Convert to property-style signature.
+
+     63  63 │   export interface SignalSocket {
+     64  64 │     close(code?: number, reason?: string): void;
+     65     │ - → send(frame:·string):·unknown;
+         65 │ + → send:·(frame:·string)·=>·unknown;
+     66  66 │   }
+     67  67 │
+
+
+tests/e2e/signal-server.spec.ts:19:15 lint/performance/useTopLevelRegex ━━━━━━━━━━
+
+  × This regex literal is not defined in the top level scope. This can lead to performance issues if this function is called frequently.
+
+    17 │ 					.replace(/\+/g, "-")
+    18 │ 					.replace(/\//g, "_")
+  > 19 │ 					.replace(/[=]+$/, "");
+       │ 					         ^^^^^^^
+    20 │ 				const url = `wss://${location.host}/signal`;
+    21 │ 				async function deadline<T>(promise: Promise<T>): Promise<T> {
+
+  i Move the regex literal outside of this scope, and place it at the top level of this module, as a constant.
+
+
+tests/e2e/signal-server.spec.ts:14:13 lint/suspicious/noShadow ━━━━━━━━━━━━━━━━━
+
+  × This variable shadows another variable with the same name in the outer scope.
+
+    12 │ 		await page.goto("/");
+    13 │ 		const result = await page.evaluate(
+  > 14 │ 			async ({ rejection, cap }) => {
+       │ 			         ^^^^^^^^^
+    15 │ 				const bytes = crypto.getRandomValues(new Uint8Array(16));
+    16 │ 				const roomId = btoa(String.fromCharCode(...bytes))
+
+  i This is the shadowed variable, which is now inaccessible in the inner scope.
+
+    2 │ import { SIGNAL_FRAME_CAP_BYTES } from "../../apps/server/src/signal-server";
+    3 │
+  > 4 │ for (const rejection of [
+      │            ^^^^^^^^^
+    5 │ 	"participant-close",
+    6 │ 	"room-role-spoof",
+
+  i Consider renaming this variable. It's easy to confuse the origin of variables if they share the same name.
+
+
+tests/unit/signal-server.test.ts:27:62 lint/suspicious/noEmptyBlockStatements ━━━━━━━━━━
+
+  × Unexpected empty block.
+
+    25 │ 		return raw.length;
+    26 │ 	});
+  > 27 │ 	readonly close = mock((_code?: number, _reason?: string) => {});
+       │ 	                                                            ^^
+    28 │ }
+    29 │
+
+  i Empty blocks are usually the result of an incomplete refactoring. Remove the empty block or add a comment inside it if it is intentional.
+
+
+tests/unit/signal-server.test.ts:179:22 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  × Template literals are preferred over string concatenation.
+
+    177 │ 			forward({ version: "1" }),
+    178 │ 			forward({ roomId: "not-a-room" }),
+  > 179 │ 			forward({ roomId: "A".repeat(21) + "B" }),
+        │ 			                  ^^^^^^^^^^^^^^^^^^^^
+    180 │ 			forward({ roomId: "a1".repeat(16) }),
+    181 │ 			forward({ roomId: undefined }),
+
+  i Unsafe fix: Use a template literal.
+
+    177 177 │         forward({ version: "1" }),
+    178 178 │         forward({ roomId: "not-a-room" }),
+    179     │ - → → → forward({·roomId:·"A".repeat(21)·+·"B"·}),
+        179 │ + → → → forward({·roomId:·`${"A".repeat(21)}B`·}),
+    180 180 │         forward({ roomId: "a1".repeat(16) }),
+    181 181 │         forward({ roomId: undefined }),
+
+
+tests/unit/signal-server.test.ts:190:26 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  × Template literals are preferred over string concatenation.
+
+    188 │ 			forward({ ciphertext: "not+base64/url=" }),
+    189 │ 			forward({ ciphertext: "A" }),
+  > 190 │ 			forward({ ciphertext: CIPHERTEXT + "=" }),
+        │ 			                      ^^^^^^^^^^^^^^^^
+    191 │ 			forward({ ciphertext: undefined }),
+    192 │ 			forward({ ciphertext: "A".repeat(21) + "B" }),
+
+  i Unsafe fix: Use a template literal.
+
+    188 188 │         forward({ ciphertext: "not+base64/url=" }),
+    189 189 │         forward({ ciphertext: "A" }),
+    190     │ - → → → forward({·ciphertext:·CIPHERTEXT·+·"="·}),
+        190 │ + → → → forward({·ciphertext:·`${CIPHERTEXT}=`·}),
+    191 191 │         forward({ ciphertext: undefined }),
+    192 192 │         forward({ ciphertext: "A".repeat(21) + "B" }),
+
+
+tests/unit/signal-server.test.ts:192:26 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  × Template literals are preferred over string concatenation.
+
+    190 │ 			forward({ ciphertext: CIPHERTEXT + "=" }),
+    191 │ 			forward({ ciphertext: undefined }),
+  > 192 │ 			forward({ ciphertext: "A".repeat(21) + "B" }),
+        │ 			                      ^^^^^^^^^^^^^^^^^^^^
+    193 │ 			forward({ ciphertext: Buffer.alloc(15).toString("base64url") }),
+    194 │ 			forward({
+
+  i Unsafe fix: Use a template literal.
+
+    190 190 │         forward({ ciphertext: CIPHERTEXT + "=" }),
+    191 191 │         forward({ ciphertext: undefined }),
+    192     │ - → → → forward({·ciphertext:·"A".repeat(21)·+·"B"·}),
+        192 │ + → → → forward({·ciphertext:·`${"A".repeat(21)}B`·}),
+    193 193 │         forward({ ciphertext: Buffer.alloc(15).toString("base64url") }),
+    194 194 │         forward({
+
+
+Skipped 14 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 48 files in 251ms. Fixed 5 files.
+Found 9 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.

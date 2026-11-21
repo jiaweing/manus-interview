@@ -1,10 +1,11 @@
-import { Hono } from "hono";
+import { createProxyApp } from "./agent/app";
+import { loadProxyConfig } from "./agent/config";
 
-const app = new Hono();
-
-app.get("/", (c) => c.text("OK"));
+const config = loadProxyConfig(process.env);
+const app = createProxyApp(config);
 
 export default {
-port: Number(process.env.PORT ?? 8787),
-fetch: app.fetch,
+	fetch: app.fetch,
+	hostname: "0.0.0.0",
+	port: config.port,
 };

@@ -1,0 +1,81 @@
+{
+  "recordedAt": "2026-11-21T14:12:41.355Z",
+  "platform": "linux",
+  "arch": "x64",
+  "bunVersion": "1.4.5",
+  "results": [
+    {
+      "command": "bun install --frozen-lockfile",
+      "exitCode": 0,
+      "log": "install.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop test:helper-protocol",
+      "exitCode": 0,
+      "log": "test-helper-protocol.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop typecheck",
+      "exitCode": 0,
+      "log": "typecheck.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop typecheck:helper",
+      "exitCode": 0,
+      "log": "typecheck-helper.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop build:helper",
+      "exitCode": 0,
+      "log": "build-helper.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop verify:helper-secrets",
+      "exitCode": 0,
+      "log": "verify-helper-secrets.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop test:windows:helper-protocol",
+      "exitCode": 2,
+      "log": "test-windows-helper-protocol.txt"
+    },
+    {
+      "command": "bun run --cwd apps/desktop helper:snapshot",
+      "exitCode": 2,
+      "log": "helper-snapshot.txt"
+    },
+    {
+      "command": "file apps/desktop/native/build/caret-helper.exe",
+      "exitCode": 0,
+      "log": "binary-format.txt"
+    },
+    {
+      "command": "bunx biome check apps/desktop/src/main/helper apps/desktop/native/scripts apps/desktop/native/tests/client.test.ts apps/desktop/native/tests/fake-helper.ts apps/desktop/native/tsconfig.json",
+      "exitCode": 1,
+      "log": "scoped-lint.txt"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "log": "diff-check.txt"
+    },
+    {
+      "command": "g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer apps/desktop/native/protocol.cpp apps/desktop/native/tests/protocol_test.cpp -o apps/desktop/native/build/protocol-sanitized",
+      "exitCode": 0,
+      "log": "sanitizer-build.txt"
+    },
+    {
+      "command": "apps/desktop/native/build/protocol-sanitized",
+      "exitCode": 0,
+      "log": "sanitizer-tests.txt"
+    }
+  ],
+  "notVerified": [
+    "NOT RUN: needs Windows — real Windows build/toolchain execution and packaged helper startup",
+    "NOT RUN: needs Windows — Notepad foreground/focused-control comparison with independent Win32 handles",
+    "NOT RUN: needs Windows — real desktop no-target/foreground-change behavior and native-side-effect counters",
+    "Windows verification/snapshot commands exercised only their Linux guards (exit 2), not Windows tests",
+    "Scoped lint blocked by unchanged scaffold biome.json: unknown nursery.useTailwindSortedClasses",
+    "Clipboard and paste behavior not implemented; reserved for issues #7/#8"
+  ]
+}

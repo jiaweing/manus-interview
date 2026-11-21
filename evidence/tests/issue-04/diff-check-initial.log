@@ -1,0 +1,11 @@
+evidence/tests/issue-04/lint-initial.log:4: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/issue-04/lint-initial.log:11: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/issue-04/lint-initial.log:13: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/issue-04/lint-initial.log:146: trailing whitespace.
+[32m+[m[41m  [m
+evidence/tests/issue-04/lint-initial.log:151: trailing whitespace.
+[32m+[m[41m  [m
+EXIT_CODE=2

@@ -1,36 +1,46 @@
-# Issue 132 builder verification
+# Issue 132 / PR 204 — admission fix-round evidence
 
-Verified on 2026-11-21 from `products/glassroom` in the isolated `glassroom/132-admission` worktree. This adapts the issue's original product-root paths to the monorepo. The current bootstrap test actually lives in `tests/e2e/boot.spec.ts`, not `apps/web/tests/e2e/boot.spec.ts` in this checkout.
+This replaces the earlier builder outputs. The Git root is the monorepo; all commands run in `products/glassroom`, not a separate Glassroom repository. The dedicated worktree was `/home/ubuntu/wt/f132`, tracking `origin/glassroom/132-admission`.
 
-Environment: Bun 1.4.5, `PUBLIC_PORT=4132`, `NEXT_INTERNAL_PORT=5132`, `CHROMIUM_PATH=/usr/bin/chromium`. Every check has a `.command.txt`, complete `.output.txt`, and `.exit.txt` here. Captured output has trailing whitespace and trailing blank lines normalized; all diagnostic text is retained. Successful final results:
+## Changes
 
-| Check | Command | Exit | Result |
+Merged `origin/main` at `fde493efcc7c4ad3e0ebabf77b4eb08d3b3a9f9a` into the admission branch. Resolved `apps/server/src/index.ts` and `tests/e2e/boot.spec.ts` by preserving issue 132's admission/forwarding/teardown callbacks and successful admission assertions alongside main's secure boot, strict `https://` origin matching, proxy behavior, and insecure/foreign-origin rejection tests. Main's `bun --bun` runtime flags, disabled Next request logging, formatting, and fixed Biome evidence exclusions are retained unchanged.
+
+Ran `bunx biome check --write` first. It safely formatted five source/test files and reported nine remaining lint errors (exit 1); `biome-first.*.txt` retains that diagnostic output. Corrected them by hand: equivalent uint64 maximum via exponentiation instead of a bit shift; property-style socket function signatures; nonshadowing browser test arguments; equivalent string-based base64url conversion instead of nested regex literals; a documented intentionally inert close mock; and template literals for the same negative test values. No tests, assertions, rejection cases, or Biome rules were removed or weakened. The final Biome run exited 0 without further edits (`biome-final.*.txt`).
+
+The existing static audit's length-validation assertion now tolerates formatting whitespace while still requiring both bounds. No additional product feature or dependency was introduced.
+
+## Reproduction
+
+`python3 evidence/issues/132/verify.py` runs the commands below with `PUBLIC_PORT=4332`, `NEXT_INTERNAL_PORT=5332`, `CHROMIUM_PATH=/usr/bin/chromium`, `NEXT_TELEMETRY_DISABLED=1`, `CI=1`, and `NO_COLOR=1`. The runner preserves each command, exit code, and complete text output as `<name>.command.txt`, `<name>.exit.txt`, and `<name>.output.txt`. ANSI escapes and trailing whitespace are normalized only in captured outputs, not product code.
+
+| Evidence prefix | Command run verbatim | Exit | Result |
 | --- | --- | --- | --- |
-| Locked dependencies | `bun install --frozen-lockfile` | 0 | No dependency or lockfile changes |
-| Required issue verification | `bun test tests/unit/signal-server.test.ts` | 0 | 11 pass, 0 fail, 408 assertions |
-| Workspace types | `bun run check-types` | 0 | 3 successful tasks |
-| Workspace build | `bun run build` | 0 | 2 successful tasks |
-| Real HTTPS/WSS Chromium tests | `PUBLIC_PORT=4132 NEXT_INTERNAL_PORT=5132 CHROMIUM_PATH=/usr/bin/chromium bun run test:e2e tests/e2e/boot.spec.ts tests/e2e/signal-server.spec.ts` | 0 | 6 passed, including all 3 boot tests |
-| Source/privacy boundary audit | `python3 evidence/issues/132/static-audit.py` | 0 | Route, raw forwarding, no payload logging/decryption/persistence checks passed |
-| Whole-branch whitespace | `git diff origin/main --check` | 0 | No errors after normalizing captured-output whitespace |
+| `install` | `bun install --frozen-lockfile` | 0 | Frozen dependencies installed; no lockfile change |
+| `unit` | `bun test tests/unit/signal-server.test.ts` | 0 | 11 pass, 0 fail, 408 assertions |
+| `check` | `bun run check` | 0 | 48 files checked; no fixes applied |
+| `types` | `bun run check-types` | 0 | All three type-check tasks successful |
+| `build` | `bun run build` | 0 | Server and Next production builds successful |
+| `all-unit` | `bun test tests/unit` | 0 | 25 pass, 0 fail, 525 assertions; includes main's handshake tests |
+| `e2e` | `bun run test:e2e tests/e2e/boot.spec.ts tests/e2e/signal-server.spec.ts` | 0 | All six Chromium boot/signaling tests passed |
+| `static` | `python3 evidence/issues/132/static-audit.py` | 0 | Sole signal route, strict origin/cap, unchanged forwarding, no logging/decryption/persistence |
+| `diff` | `git -c color.ui=false diff --check` | 0 | No whitespace errors in fix-round unstaged edits |
 
-The initial static audit exited 1 because its substring pattern matched `req` inside the existing TLS error word `required`. No product defect was found or changed in response. The audit was corrected to match identifier word boundaries and rerun successfully. The original diagnostic/command/exit are preserved as `static-initial.*.txt`.
-
-An initial committed-diff check reported only trailing whitespace/blank lines in captured Turbo/Playwright output, not code defects. Those formatting artifacts were normalized, and the whole-branch check passes. The initial diagnostic is preserved as `diff-initial.*.txt`.
+The issue's Verification section command, `bun test tests/unit/signal-server.test.ts`, was executed exactly. All eight required named cases passed: `creator plus one joiner`, `third participant rejected`, `duplicate role rejected`, `join nonexistent room rejected`, `socket room-role binding`, `schema and over-cap rejection`, `ciphertext forwarded unchanged`, and `termination deletes room`. Existing cap-inclusive and no-queue cases also passed.
 
 ## Acceptance criteria
 
-- [x] **PASS — at most one creator and one joiner.** Named unit cases `creator plus one joiner`, `third participant rejected`, `duplicate role rejected`, and `join nonexistent room rejected` verify admission, original-peer identity, and unchanged admitted peers. Browser tests reject both outsider roles and then successfully forward between the original pair.
-- [x] **PASS — invalid versions/schemas, room-role spoofing, and over-cap frames rejected without forwarding.** Named `socket room-role binding` and `schema and over-cap rejection` assert zero ciphertext peer-forward calls for every negative frame. Coverage includes malformed JSON, missing/extra fields, binary frames, invalid operations, plaintext-body keys, canonical room/counter/base64url encoding, uint64 overflow, decoded ciphertext length, and whole-frame UTF-8 size. Boundary tests include both exact caps. Real WSS verifies spoofing (1008) and transport-level over-cap (1009).
-- [x] **PASS — ciphertext forwarded unchanged; no message route, decryption, or persistence integration.** Named `ciphertext forwarded unchanged` checks exact original text (including whitespace) in both directions. Browser WSS does the same. The sole Hono route remains `/signal`; source audit verifies no payload logging, server decryption, or storage integration. No new dependencies were added.
-- [x] **PASS — admitted termination deletes the room and ends the remaining membership.** Named `termination deletes room` checks both roles, immediate absence of the room ID, peer notification/close, single-creator close, idempotence, and stale callbacks after replacement admission. Browser WSS covers ordinary participant close and rejection-driven teardown, followed by nonexistent-room joiner rejection and fresh creator admission.
+- [x] **PASS — at most one creator and one joiner.** Duplicate roles, nonexistent-room joiners, and both outsider roles fail closed without evicting or forwarding to the original pair. Browser WSS checks continued bidirectional forwarding after outsiders are rejected.
+- [x] **PASS — invalid schema/version, room/role spoofing, and over-cap frames are rejected without forwarding.** Every rejected-frame unit case retains zero-peer-forward assertions. Canonical room/ciphertext/counter validation, uint64 overflow, exact byte caps, malformed JSON, binary input, missing/extra fields, and forbidden message-body keys remain covered. Real WSS spoofing closes with 1008 and transport-level over-cap closes with 1009.
+- [x] **PASS — opaque ciphertext is forwarded unchanged.** Unit and browser tests compare the exact original frame, including surrounding whitespace, in both directions. The source audit checks the sole Hono `/signal` route and absence of signal-core payload logging, decryption, and persistence APIs.
+- [x] **PASS — admitted termination deletes the room and closes its peer.** Both-role unit teardown explicitly checks that the map no longer contains the ID, handles late callbacks, and preserves replacement admission. Browser tests verify normal-close, spoof, and over-cap teardown, nonexistent-room late join rejection, and fresh creator admission.
 
-## Wire contract and integration
+## Wire contract
 
-The server follows the contemporaneous #128 wire contract: `{version:1, roomId, role, operation:"forward", counter, ciphertext}`, with a separate strict join envelope. `roomId` is canonical base64url encoding of 16 bytes. Ciphertext length is derived and validated (16 through `64 * 1024 + 16` decoded bytes), not a caller-supplied/extra `length` field. The complete UTF-8 JSON cap is 128 KiB to accommodate the crypto module's 64 KiB plaintext limit plus GCM/base64url overhead. Details are in `apps/server/README.md`. No #128/#129/#127 files were edited.
+The strict forward envelope remains `{version:1, roomId, role, operation:"forward", counter, ciphertext}` with a separate join envelope. The room ID is canonical base64url encoding of 16 bytes. Ciphertext length is derived from canonical decoding (16 through `64 * 1024 + 16` bytes), not trusted caller metadata. The whole UTF-8 JSON frame cap remains 128 KiB. Details are in `apps/server/README.md`. The server validates opaque encoding, not AES-GCM authenticity, which remains the client's responsibility.
 
-The boot test keeps the ready control frame and malformed-payload 1008 checks, but now proves a valid creator join succeeds between them. Its secure context, HTTPS URL, and foreign/insecure-origin checks remain green.
+## Evidence limits and cleanup
 
-## Unverified / limits
+No requested command or issue-132 acceptance criterion remains unverified. Full client/chat integration with other unmerged issues, production deployment, load testing, infrastructure retention, and an audited-security assessment are outside this server-admission fix round; no such claims are made. Next/Playwright emitted only harmless color-environment warnings in the passing browser run.
 
-No issue-132 acceptance criterion is left unverified. Full application integration with the concurrent invitation crypto, ECDH/fingerprint, and WebRTC preflight branches was not run; their files are deliberately outside this issue. The server validates opaque encodings, not authenticity of AES-GCM bytes, which is the client's responsibility. No production deployment, load test, infrastructure-retention audit, or audited-security claim is made. No screenshots were requested or captured; verification is unit assertions, actual browser/WSS transport tests, and source checks. Playwright's ignored local HTML report is not committed; complete textual results are retained here.
+No screenshots were requested or captured; these changes introduce no UI. Generated Playwright HTML reports and test results remain ignored and are not committed. Playwright's test-managed servers released ports 4332 and 5332 after the run. The PR is updated, not merged.

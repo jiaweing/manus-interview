@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/biome/core", "ultracite/biome/react", "ultracite/biome/next"],
+  "extends": ["ultracite/biome/core"],
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -9,25 +9,24 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
-      "!**/.next",
-      "!**/dist",
-      "!**/.turbo",
-      "!**/.nx",
-      "!**/dev-dist",
-      "!**/.zed",
-      "!**/.vscode",
-      "!**/routeTree.gen.ts",
-      "!**/src-tauri",
-      "!**/.nuxt",
+      "!!**/node_modules",
+      "!!**/dist",
+      "!!**/.turbo",
+      "!!apps/web",
+      "!!apps/native",
+      "!!apps/extension",
+      "!!apps/fumadocs",
+      "!!apps/docs",
+      "!!packages/auth",
+      "!!packages/db",
+      "!!packages/ui",
+      "!!evidence",
+      "!!.agents",
+      "!!.claude",
+      "!!.cursor",
+      "!.mcp.json",
       "!bts.jsonc",
-      "!**/.expo",
-      "!**/.wrangler",
-      "!**/.alchemy",
-      "!**/.svelte-kit",
-      "!**/wrangler.jsonc",
-      "!**/.source",
-      "!**/convex/_generated"
+      "!skills-lock.json"
     ]
   },
   "formatter": {
@@ -38,38 +37,13 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended",
-      "correctness": {
-        "useExhaustiveDependencies": "info"
-      },
-      "nursery": {
-        "useTailwindSortedClasses": {
-          "level": "warn",
-          "fix": "safe"
-        }
-      },
-      "style": {
-        "noParameterAssign": "error",
-        "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
-        "useEnumInitializers": "error",
-        "useSelfClosingElements": "error",
-        "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error"
-      }
+      "preset": "recommended"
     }
   },
   "javascript": {
+    "globals": ["Bun"],
     "formatter": {
       "quoteStyle": "double"
-    }
-  },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
     }
   }
 }

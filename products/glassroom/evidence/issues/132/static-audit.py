@@ -12,7 +12,7 @@ assert 'signal.open(ws)' in index and 'signal.message(ws, message)' in index and
 assert 'peer.send(raw)' in core
 assert 'this.roomMap.delete(membership.roomId)' in core
 assert 'z.strictObject' in core and 'signalEnvelopeSchema.safeParse(decoded)' in core
-assert 'bytes.byteLength >= minimum && bytes.byteLength <= maximum' in core
+assert re.search(r'bytes\.byteLength >= minimum\s*&&\s*bytes\.byteLength <= maximum', core)
 for pattern in [
     r'console\.', r'crypto\.subtle\.(?:decrypt|deriveKey|importKey)',
     r'\b(?:localStorage|sessionStorage|indexedDB)\b',
