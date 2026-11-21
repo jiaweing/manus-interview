@@ -1,0 +1,7 @@
+PASS: sole Hono route /signal; all other HTTP requests proxy to the existing Next client.
+PASS: same-origin HTTPS check unchanged; Bun payload cap uses the declared constant.
+PASS: open/message/close handlers use memory-only signal core; termination deletes room.
+PASS: strict Zod envelopes; canonical decoding validates ciphertext byte length.
+PASS: forwarding uses exact original raw text, not reserialization or decryption.
+PASS: no payload logging, crypto decryption, persistence API, or storage integration in signal core.
+Limit: source audit is not an audited-security claim or deployed-infrastructure inspection.
