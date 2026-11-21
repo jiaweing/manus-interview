@@ -7,7 +7,7 @@
   "scripts": {
     "build": "wxt build",
     "dev": "wxt --port 5555",
-    "postinstall": "wxt prepare",
+    "postinstall": "NODE_ENV=development wxt prepare",
     "typecheck": "tsc --noEmit",
     "zip": "wxt zip"
   },
