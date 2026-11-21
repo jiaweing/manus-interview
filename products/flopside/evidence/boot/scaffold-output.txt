@@ -1,0 +1,100 @@
+│  ◼ shadcn/ui (npx -y shadcn@latest mcp)
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  SETUP
+◆  Select MCP servers to install
+│  ◻ Better T Stack (bunx create-better-t-stack@latest mcp)
+│  ◼ Context7 (@upstash/context7-mcp)
+│  ◼ shadcn/ui (npx -y shadcn@latest mcp)
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Better T Stack
+│  ◼ Context7 (@upstash/context7-mcp)
+│  ◼ shadcn/ui (npx -y shadcn@latest mcp)
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Context7 (@upstash/context7-mcp)│  ◻ Context7
+│  ◼ shadcn/ui (npx -y shadcn@latest mcp)
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ shadcn/ui (npx -y shadcn@latest mcp)│  ◻ shadcn/ui
+│  ◼ Next Devtools (npx -y next-devtools-mcp@latest)
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Next Devtools (npx -y next-devtools-mcp@latest)│  ◻ Next Devtools
+│  ◼ Better Auth (https://mcp.better-auth.com/mcp)
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Better Auth (https://mcp.better-auth.com/mcp)│  ◻ Better Auth
+│  ◼ Expo (https://mcp.expo.dev/mcp)
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Expo (https://mcp.expo.dev/mcp)│  ◻ Expo
+│  ◼ Polar (https://mcp.polar.sh/mcp/polar-mcp)
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+│  ◻ Polar (https://mcp.polar.sh/mcp/polar-mcp)│  ◻ Better T Stack (bunx create-better-t-stack@latest mcp)
+│  ◻ Context7
+│  ◻ shadcn/ui
+│  ◻ Next Devtools
+│  ◻ Better Auth
+│  ◻ Expo
+│  ◻ Polar
+└   ↑↓  move   space  toggle   enter  choose   b  back   ^c  cancel
+◇  Select MCP servers to install › none
+│
+◆  Project scaffolded
+│
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/
+
+◇  Dependencies installed
+│
+│ ╭─Next steps─────────────────────────────────────────────────────────────────╮
+│ │  1. cd flopside                                                            │
+│ │  2. bun run dev                                                            │
+│ │                                                                            │
+│ │  Local development                                                         │
+│ │  Frontend  http://localhost:3001                                           │
+│ │  API       http://localhost:3000                                           │
+│ │  Fumadocs  http://localhost:4000                                           │
+│ │                                                                            │
+│ │  NOTE: For Expo connectivity issues, update                                │
+│ │     apps/native/.env with your local IP address:                           │
+│ │     EXPO_PUBLIC_SERVER_URL=http://<YOUR_LOCAL_IP>:3000                     │
+│ │                                                                            │
+│ │  Linting and formatting:                                                   │
+│ │  • Run checks: bun run check                                               │
+│ │                                                                            │
+│ │  Polar Payments Setup:                                                     │
+│ │  • Get access token & product ID from https://sandbox.polar.sh/            │
+│ │  • Set POLAR_ACCESS_TOKEN in apps/server/.env                              │
+│ │                                                                            │
+│ │  WARNING: 'bun' might cause issues with web + native apps in a monorepo.   │
+│ │     Use 'pnpm' if problems arise.                                          │
+│ ╰────────────────────────────────────────────────────────────────────────────╯
+│
+│  Like Better T Stack? Star the project on GitHub
+│  https://github.com/AmanVarshney01/create-better-t-stack
+│
+│  Setup saved to history
+│  bunx create-better-t-stack@latest history
+│
+└  Project ready in 124.6s
+
+
+SCAFFOLD_EXIT=0

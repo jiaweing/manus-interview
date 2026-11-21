@@ -1,0 +1,20 @@
+{
+  "name": "@patchbay/db",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "mongoose": "^9.12.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@patchbay/config": "workspace:*",
+    "typescript": "^6.0.3",
+    "varlock": "catalog:"
+  }
+}

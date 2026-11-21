@@ -5,10 +5,11 @@
   "type": "module",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite build && electron-vite dev",
     "build": "electron-vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "verify:tray-secrets": "bun scripts/verify-tray-secrets.ts"
   },
   "dependencies": {

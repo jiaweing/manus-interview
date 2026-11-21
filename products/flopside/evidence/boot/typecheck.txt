@@ -1,0 +1,5 @@
+$ bun run typecheck
+$ bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && tsc --noEmit -p tsconfig.json
+$ tsc --noEmit
+$ tsc --noEmit
+EXIT_CODE=0

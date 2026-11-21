@@ -1,0 +1,9 @@
+bun test v1.4.5 (a7733435c)
+
+apps/server/tests/https.smoke.test.ts:
+(pass) HTTPS hosting gate: reachable turn shell authenticates without a model call [102.16ms]
+
+ 1 pass
+ 0 fail
+ 3 expect() calls
+Ran 1 test across 1 file. [108.00ms]

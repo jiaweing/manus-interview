@@ -1,0 +1,21 @@
+bun test v1.4.5 (a7733435c)
+
+apps/video/tests/authoring-model.test.js:
+(pass) authoring model gate (fake transport only) > catalog present + exactly one scoped completion produces verified metadata [2.51ms]
+(pass) authoring model gate (fake transport only) > missing catalog model blocks without sending chat, even with a key [0.62ms]
+(pass) authoring model gate (fake transport only) > no key still checks catalog, records blocker and sends zero chat requests [3.13ms]
+(pass) authoring model gate (fake transport only) > no key + missing model truthfully records both independent blockers [0.28ms]
+(pass) authoring model gate (fake transport only) > product .env key works unchanged; all saved/output fields redact echoed key [2.57ms]
+(pass) authoring model gate (fake transport only) > HTTP denial and thrown transport errors redact keys without retries [1.19ms]
+(pass) authoring model gate (fake transport only) > malformed, truncated, or substitute-model responses cannot pass [1.62ms]
+(pass) authoring model gate (fake transport only) > malformed catalog records failure and cannot authorize a completion [0.38ms]
+(pass) authoring model gate (fake transport only) > tiny parser handles comments, whitespace, quotes and export without expansion [1.24ms]
+(pass) authoring model gate (fake transport only) > other provider environment variables are never a substitute [1.46ms]
+(pass) authoring model gate (fake transport only) > nothing in apps/video/src imports the authoring verifier (directly or transitively) [1.37ms]
+
+ 11 pass
+ 0 fail
+ 105 expect() calls
+Ran 11 tests across 1 file. [36.00ms]
+
+Builder test exit code: 0

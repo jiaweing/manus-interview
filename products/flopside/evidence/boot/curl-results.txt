@@ -1,0 +1,6 @@
+$ curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3270/
+200
+EXIT_CODE=0
+$ curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3271/
+200
+EXIT_CODE=0

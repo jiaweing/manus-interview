@@ -1,0 +1,98 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/react",
+    "ultracite/biome/next"
+  ],
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "!**/.next",
+      "!**/evidence/playwright-report",
+      "!**/test-results",
+      "!**/.certs",
+      "!**/dist",
+      "!**/.turbo",
+      "!**/.nx",
+      "!**/dev-dist",
+      "!**/.zed",
+      "!**/.vscode",
+      "!**/routeTree.gen.ts",
+      "!**/src-tauri",
+      "!**/.nuxt",
+      "!bts.jsonc",
+      "!**/.expo",
+      "!**/.wrangler",
+      "!**/.alchemy",
+      "!**/.svelte-kit",
+      "!**/wrangler.jsonc",
+      "!**/.source",
+      "!**/convex/_generated"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab"
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "useExhaustiveDependencies": "info"
+      },
+      "style": {
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error",
+        "useDestructuring": "off",
+        "noNestedTernary": "off",
+        "useConsistentTypeDefinitions": "off",
+        "noExportedImports": "off"
+      },
+      "performance": {
+        "noAwaitInLoops": "off",
+        "noBarrelFile": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    },
+    "globals": ["Bun"]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/ui/**"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
+}

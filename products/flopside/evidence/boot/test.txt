@@ -1,0 +1,14 @@
+$ bun run test
+$ bun test
+bun test v1.4.5 (a7733435c)
+
+apps/server/src/app.test.ts:
+(pass) credential-free scaffold > Hono root returns 200 without service initialization [3.03ms]
+(pass) credential-free scaffold > Bun native WebSocket adapter is available [0.04ms]
+(pass) credential-free scaffold > generated integration routes are not mounted [0.90ms]
+
+ 3 pass
+ 0 fail
+ 7 expect() calls
+Ran 3 tests across 1 file. [33.00ms]
+EXIT_CODE=0

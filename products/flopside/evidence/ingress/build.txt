@@ -1,0 +1,31 @@
+COMMAND=bun run build
+$ bun run --cwd apps/web build && bun run --cwd apps/server build
+$ NEXT_TELEMETRY_DISABLED=1 bun ./node_modules/next/dist/bin/next build
+▲ Next.js 16.4.6 (Turbopack)
+✓ Running next.config.ts took 99ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.7s
+  Running TypeScript ...
+  Finished TypeScript in 2.7s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/4) ...
+  Generating static pages using 5 workers (1/4) 
+  Generating static pages using 5 workers (2/4) 
+  Generating static pages using 5 workers (3/4) 
+✓ Generating static pages using 5 workers (4/4) in 460ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+└ ○ /_not-found
+
+
+○  (Static)  prerendered as static content
+
+$ bun build ./src/index.ts --target bun --outdir dist
+Bundled 51 modules in 9ms
+
+  index.js  66.46 KB  (entry point)
+
+EXIT_CODE=0

@@ -1,0 +1,17 @@
+bun test v1.4.5 (a7733435c)
+
+apps/server/tests/https.smoke.test.ts:
+3 |
+4 | test("HTTPS hosting gate: reachable turn shell authenticates without a model call", async () => {
+5 | 	const origin = process.env.SIDEKICK_PROXY_URL;
+6 | 	const token = process.env.SIDEKICK_DEMO_TOKEN;
+7 | 	if (!(origin && token)) {
+8 | 		throw new Error(
+                ^
+error: HTTPS hosting gate FAILED: smoke requests not run; privately supply SIDEKICK_PROXY_URL (HTTPS) and SIDEKICK_DEMO_TOKEN. An absent HTTPS host is a failing gate, not a passing skip.
+      at <anonymous> (/home/ubuntu/wt/78/products/sidekick/apps/server/tests/https.smoke.test.ts:8:13)
+(fail) HTTPS hosting gate: reachable turn shell authenticates without a model call [6.32ms]
+
+ 0 pass
+ 1 fail
+Ran 1 test across 1 file. [29.00ms]
