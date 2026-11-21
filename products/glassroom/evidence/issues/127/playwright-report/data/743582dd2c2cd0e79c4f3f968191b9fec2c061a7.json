@@ -1,0 +1,125 @@
+{
+  "timestamp": "2026-11-21T14:09:45.853Z",
+  "testedOrigin": "https://localhost:4127",
+  "network": "Manus Ubuntu sandbox local network; two desktop Chromium processes on the same host, origin https://localhost:4127; not the judge network",
+  "networkInterfaces": [
+    {
+      "name": "lo",
+      "family": "IPv4",
+      "internal": true
+    },
+    {
+      "name": "lo",
+      "family": "IPv6",
+      "internal": true
+    },
+    {
+      "name": "eth0",
+      "family": "IPv4",
+      "internal": false
+    },
+    {
+      "name": "eth0",
+      "family": "IPv6",
+      "internal": false
+    }
+  ],
+  "networkLimit": "This establishes same-host direct connectivity only; rerun on the intended demo/judge network before delivery.",
+  "chromiumVersions": [
+    "156.0.8078.73",
+    "156.0.8078.73"
+  ],
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-C6Nnwb",
+    "/tmp/glassroom-preflight-b-hFqR1E"
+  ],
+  "desktop": true,
+  "headless": true,
+  "scenario": "two-profile direct channel",
+  "faultInjection": "none",
+  "negotiationBoundMs": 10000,
+  "probeTimeoutMs": 9500,
+  "negotiationElapsedMs": 220.859555,
+  "status": "passed",
+  "deliveryBlocked": false,
+  "failure": null,
+  "droppedCandidates": 0,
+  "fallbackAttempts": [],
+  "relayCandidates": 0,
+  "peers": [
+    {
+      "status": "passed",
+      "reason": null,
+      "elapsedMs": 183.69999999995343,
+      "received": [
+        "glassroom-preflight-from-b"
+      ],
+      "channelSettings": {
+        "label": "glassroom-preflight",
+        "ordered": true,
+        "maxRetransmits": null,
+        "maxPacketLifeTime": null
+      },
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [
+        {
+          "localType": "host",
+          "remoteType": "host"
+        }
+      ],
+      "connectionState": "connected",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    },
+    {
+      "status": "passed",
+      "reason": null,
+      "elapsedMs": 178.80000000004657,
+      "received": [
+        "glassroom-preflight-from-a"
+      ],
+      "channelSettings": {
+        "label": "glassroom-preflight",
+        "ordered": true,
+        "maxRetransmits": null,
+        "maxPacketLifeTime": null
+      },
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [
+        {
+          "localType": "host",
+          "remoteType": "host"
+        }
+      ],
+      "connectionState": "connected",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    }
+  ]
+}

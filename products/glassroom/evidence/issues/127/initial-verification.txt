@@ -1,0 +1,457 @@
+Verification timestamp: 2026-11-21T14:08:03Z
+Working directory: /home/ubuntu/wt/b127/products/glassroom
+PUBLIC_PORT=4127 NEXT_INTERNAL_PORT=5127 CHROMIUM_PATH=/usr/bin/chromium
+PREFLIGHT_NETWORK=Manus Ubuntu sandbox local network; two desktop Chromium processes on the same host, origin https://localhost:4127; not the judge network
+
+$ bun install --frozen-lockfile
+bun install v1.4.5 (a7733435c)
+
+Checked 327 installs across 393 packages (no changes) [43.00ms]
+Exit code: 0
+
+$ bunx tsc --noEmit -p tsconfig.json
+Exit code: 0
+
+$ bun run check-types
+$ turbo run check-types
+
+   • turbo 2.11.13
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+@glassroom/ui:check-types: cache miss, executing 08a423cde930a838
+server:check-types: cache miss, executing 445ceee6b3e51669
+@glassroom/ui:check-types: $ tsc --noEmit
+server:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing d3211ecee27efb32
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    4.383s
+
+Exit code: 0
+
+$ /usr/bin/chromium --version
+Chromium 156.0.8078.73 built on Ubuntu 24.04.5 LTS
+Exit code: 0
+
+$ bun run dev:https > /home/ubuntu/evidence-tmp/127/server.txt 2>&1 &
+HTTPS readiness: PASS
+
+$ bunx playwright test tests/e2e/preflight.spec.ts --project=chromium
+
+Running 2 tests using 1 worker
+
+{
+  "timestamp": "2026-11-21T14:08:17.701Z",
+  "testedOrigin": "https://localhost:4127",
+  "network": "Manus Ubuntu sandbox local network; two desktop Chromium processes on the same host, origin https://localhost:4127; not the judge network",
+  "networkInterfaces": [
+    {
+      "name": "lo",
+      "family": "IPv4",
+      "internal": true
+    },
+    {
+      "name": "lo",
+      "family": "IPv6",
+      "internal": true
+    },
+    {
+      "name": "eth0",
+      "family": "IPv4",
+      "internal": false
+    },
+    {
+      "name": "eth0",
+      "family": "IPv6",
+      "internal": false
+    }
+  ],
+  "networkLimit": "This establishes same-host direct connectivity only; rerun on the intended demo/judge network before delivery.",
+  "chromiumVersions": [
+    "156.0.8078.73",
+    "156.0.8078.73"
+  ],
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-pQu9Qc",
+    "/tmp/glassroom-preflight-b-aUJ526"
+  ],
+  "desktop": true,
+  "headless": true,
+  "scenario": "two-profile direct channel",
+  "faultInjection": "none",
+  "negotiationBoundMs": 10000,
+  "probeTimeoutMs": 9500,
+  "negotiationElapsedMs": 179.29081099999985,
+  "status": "passed",
+  "deliveryBlocked": false,
+  "failure": null,
+  "droppedCandidates": 0,
+  "fallbackAttempts": [
+    "HTTP GET /favicon.ico"
+  ],
+  "relayCandidates": 0,
+  "peers": [
+    {
+      "status": "passed",
+      "reason": null,
+      "elapsedMs": 160.80000000004657,
+      "received": [
+        "glassroom-preflight-from-b"
+      ],
+      "channelSettings": {
+        "label": "glassroom-preflight",
+        "ordered": true,
+        "maxRetransmits": null,
+        "maxPacketLifeTime": null
+      },
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [
+        {
+          "localType": "host",
+          "remoteType": "host"
+        }
+      ],
+      "connectionState": "connected",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    },
+    {
+      "status": "passed",
+      "reason": null,
+      "elapsedMs": 160.19999999995343,
+      "received": [
+        "glassroom-preflight-from-a"
+      ],
+      "channelSettings": {
+        "label": "glassroom-preflight",
+        "ordered": true,
+        "maxRetransmits": null,
+        "maxPacketLifeTime": null
+      },
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [
+        {
+          "localType": "host",
+          "remoteType": "host"
+        }
+      ],
+      "connectionState": "connected",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    }
+  ]
+}
+  ✘  1 [chromium] › tests/e2e/preflight.spec.ts:312:1 › two-profile direct channel (2.8s)
+{
+  "timestamp": "2026-11-21T14:08:30.727Z",
+  "testedOrigin": "https://localhost:4127",
+  "network": "Manus Ubuntu sandbox local network; two desktop Chromium processes on the same host, origin https://localhost:4127; not the judge network",
+  "networkInterfaces": [
+    {
+      "name": "lo",
+      "family": "IPv4",
+      "internal": true
+    },
+    {
+      "name": "lo",
+      "family": "IPv6",
+      "internal": true
+    },
+    {
+      "name": "eth0",
+      "family": "IPv4",
+      "internal": false
+    },
+    {
+      "name": "eth0",
+      "family": "IPv6",
+      "internal": false
+    }
+  ],
+  "networkLimit": "This establishes same-host direct connectivity only; rerun on the intended demo/judge network before delivery.",
+  "chromiumVersions": [
+    "156.0.8078.73",
+    "156.0.8078.73"
+  ],
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-QMgh2H",
+    "/tmp/glassroom-preflight-b-LtQv3k"
+  ],
+  "desktop": true,
+  "headless": true,
+  "scenario": "blocked-connectivity",
+  "faultInjection": "runner withholds all SDP ICE candidates in both directions",
+  "negotiationBoundMs": 10000,
+  "probeTimeoutMs": 9500,
+  "negotiationElapsedMs": 9527.415704000001,
+  "status": "failed",
+  "deliveryBlocked": true,
+  "failure": null,
+  "droppedCandidates": 2,
+  "fallbackAttempts": [],
+  "relayCandidates": 0,
+  "peers": [
+    {
+      "status": "failed",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "elapsedMs": 9503.800000000047,
+      "received": [],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [],
+      "connectionState": "closed",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    },
+    {
+      "status": "failed",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "elapsedMs": 9503,
+      "received": [],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [],
+      "connectionState": "closed",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    }
+  ]
+}
+  ✓  2 [chromium] › tests/e2e/preflight.spec.ts:317:1 › blocked-connectivity fails without relay or fallback (12.3s)
+
+
+  1) [chromium] › tests/e2e/preflight.spec.ts:312:1 › two-profile direct channel ───────────────────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "HTTP GET /favicon.ico",
+    + ]
+
+      259 |     console.log(JSON.stringify(record, null, 2));
+      260 |     expect(profiles[0]).not.toBe(profiles[1]);
+    > 261 |     expect(fallbackAttempts).toEqual([]);
+          |                              ^
+      262 |     expect(record.relayCandidates).toBe(0);
+      263 |     expect(negotiationElapsedMs).toBeLessThan(NEGOTIATION_BOUND_MS);
+      264 |     for (const peer of peers) {
+        at runPreflight (/home/ubuntu/wt/b127/products/glassroom/tests/e2e/preflight.spec.ts:261:30)
+        at /home/ubuntu/wt/b127/products/glassroom/tests/e2e/preflight.spec.ts:314:3
+
+    attachment #1: preflight-network-version (application/json) ────────────────────────────────────
+    test-results/preflight-two-profile-direct-channel-chromium/attachments/preflight-network-version-5be4fbd8593552fdc552da48adae4629d3435d15.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/preflight-two-profile-direct-channel-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/preflight-two-profile-direct-channel-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/preflight-two-profile-direct-channel-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/preflight.spec.ts:312:1 › two-profile direct channel ────────────────────
+  1 passed (16.7s)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+Exit code: 1
+
+$ bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity
+
+Running 1 test using 1 worker
+
+{
+  "timestamp": "2026-11-21T14:08:44.833Z",
+  "testedOrigin": "https://localhost:4127",
+  "network": "Manus Ubuntu sandbox local network; two desktop Chromium processes on the same host, origin https://localhost:4127; not the judge network",
+  "networkInterfaces": [
+    {
+      "name": "lo",
+      "family": "IPv4",
+      "internal": true
+    },
+    {
+      "name": "lo",
+      "family": "IPv6",
+      "internal": true
+    },
+    {
+      "name": "eth0",
+      "family": "IPv4",
+      "internal": false
+    },
+    {
+      "name": "eth0",
+      "family": "IPv6",
+      "internal": false
+    }
+  ],
+  "networkLimit": "This establishes same-host direct connectivity only; rerun on the intended demo/judge network before delivery.",
+  "chromiumVersions": [
+    "156.0.8078.73",
+    "156.0.8078.73"
+  ],
+  "separatePersistentProfiles": [
+    "/tmp/glassroom-preflight-a-VpZCec",
+    "/tmp/glassroom-preflight-b-op8HdS"
+  ],
+  "desktop": true,
+  "headless": true,
+  "scenario": "blocked-connectivity",
+  "faultInjection": "runner withholds all SDP ICE candidates in both directions",
+  "negotiationBoundMs": 10000,
+  "probeTimeoutMs": 9500,
+  "negotiationElapsedMs": 9536.25504,
+  "status": "failed",
+  "deliveryBlocked": true,
+  "failure": null,
+  "droppedCandidates": 2,
+  "fallbackAttempts": [],
+  "relayCandidates": 0,
+  "peers": [
+    {
+      "status": "failed",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "elapsedMs": 9504.90000000014,
+      "received": [],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [],
+      "connectionState": "closed",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    },
+    {
+      "status": "failed",
+      "reason": "direct-connectivity-timeout; delivery blocked",
+      "elapsedMs": 9503.699999999953,
+      "received": [],
+      "channelSettings": null,
+      "configuration": {
+        "alwaysNegotiateDataChannels": false,
+        "bundlePolicy": "balanced",
+        "certificates": [],
+        "encodedInsertableStreams": false,
+        "iceCandidatePoolSize": 0,
+        "iceServers": [],
+        "iceTransportPolicy": "all",
+        "rtcpMuxPolicy": "require"
+      },
+      "candidateTypes": [
+        "host"
+      ],
+      "selectedPairs": [],
+      "connectionState": "closed",
+      "secureContext": true,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "origin": "https://localhost:4127"
+    }
+  ]
+}
+  ✓  1 [chromium] › tests/e2e/preflight.spec.ts:317:1 › blocked-connectivity fails without relay or fallback (12.2s)
+
+  1 passed (13.2s)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+Exit code: 0
+
+$ bunx playwright test tests/e2e/boot.spec.ts --project=chromium
+
+Running 3 tests using 1 worker
+
+  ✓  1 [chromium] › tests/e2e/boot.spec.ts:3:1 › secure client boot (1.3s)
+  ✓  2 [chromium] › tests/e2e/boot.spec.ts:10:1 › same-origin signal upgrade (1.2s)
+  ✓  3 [chromium] › tests/e2e/boot.spec.ts:36:1 › signal upgrade rejects a foreign or insecure origin (1.2s)
+
+  3 passed (5.2s)
+
+To open last HTML report run:
+
+  npx playwright show-report
+
+Exit code: 0
+
+Unverified: intended judge/demo network and remote-host connectivity (no access; this run is same-host sandbox only). No TURN configuration or fallback integration is requested or tested.
+Verification runner exit code: 1
