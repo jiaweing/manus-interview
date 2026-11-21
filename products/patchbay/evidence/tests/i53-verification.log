@@ -2413,3 +2413,4 @@ AGGREGATE EXIT CODE: 0
  0 fail
  5899 expect() calls
 Ran 283 tests across 1 file. [4.03s]
+--- round 5 (lead fix): guard semver comparison; 301 pass ---

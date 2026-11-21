@@ -720,6 +720,35 @@ describe("stable rejection of malformed declarations", () => {
 	});
 
 	for (const field of ["version", "min_host_version"] as const) {
+		for (const big of [
+			"9007199254740992.0.0",
+			"0.9007199254740992.0",
+			"0.0.9007199254740992",
+			"99999999999999999999.0.0",
+		]) {
+			test(`${field} ${big} beyond the safe-integer range never raises a native error`, async () => {
+				const manifest = toolManifest();
+				manifest[field] = big;
+				const source = stringify(manifest as never);
+				for (const attempt of [
+					() => parseManifest(source),
+					() => validateManifest(manifest),
+				]) {
+					try {
+						attempt();
+					} catch (error) {
+						expect(error).toBeInstanceOf(ManifestValidationError);
+						expect(typeof (error as ManifestValidationError).code).toBe(
+							"string"
+						);
+					}
+				}
+				if (field === "min_host_version") {
+					await rejectsThroughAllPaths(manifest);
+				}
+			});
+		}
+
 		test(`over-long ${field} (300 chars) is a stable error, never a native exception`, async () => {
 			const manifest = toolManifest();
 			manifest[field] = `1.0.0+${"b".repeat(294)}`;

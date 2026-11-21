@@ -166,7 +166,17 @@ function validateCompatibility(
 		throw new ManifestValidationError("INVALID_MANIFEST");
 	}
 	const hostVersion = options.hostVersion ?? HOST_VERSION;
-	if (!(valid(hostVersion) && gte(hostVersion, manifest.min_host_version))) {
+	let hostCompatible: boolean;
+	try {
+		hostCompatible =
+			valid(hostVersion) !== null &&
+			gte(hostVersion, manifest.min_host_version);
+	} catch {
+		// The semver library throws native errors for components beyond the safe-integer range; treat them as unsupported versions.
+		// biome-ignore lint/style/useErrorCause: Library causes can echo manifest values; discard them deliberately.
+		throw new ManifestValidationError("INVALID_MANIFEST");
+	}
+	if (!hostCompatible) {
 		throw new ManifestValidationError("INCOMPATIBLE_HOST_VERSION");
 	}
 	if (
