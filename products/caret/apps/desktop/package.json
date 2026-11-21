@@ -7,7 +7,13 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build:helper": "bun native/scripts/build.ts",
+    "test:helper-protocol": "bun native/scripts/test.ts",
+    "typecheck:helper": "tsc --noEmit -p native/tsconfig.json",
+    "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
+    "helper:snapshot": "bun native/scripts/test.ts --snapshot",
+    "verify:helper-secrets": "bun native/scripts/check-secrets.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

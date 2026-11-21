@@ -1,0 +1,13 @@
+COMMAND: apps/desktop/native/build/protocol-sanitized
+HOST: linux x64
+EXIT_CODE: 0
+
+PASS invalid JSON/schema/operation: 79 fixtures; snapshot=0 insert=0 clipboard=0 input=0 (fake platform counters)
+PASS 2000 deterministic request mutations; rejected requests have zero adapter calls
+PASS valid snapshot and duplicate request (fixture handles, NOT Windows evidence)
+PASS duplicate session ID: rejected call delta insert=0 clipboard=0 input=0
+PASS UTF-8/escaped Unicode and text boundary
+PASS no usable target and failure consumes session ID
+PASS four typed outcomes (fixture only; no paste implementation)
+PASS bounded framing, resynchronization, and truncated EOF
+PASS bounded app-lifetime ID ledger, no eviction, fail closed

@@ -1,0 +1,49 @@
+COMMAND: bun run --cwd apps/desktop test:helper-protocol
+HOST: linux x64
+EXIT_CODE: 0
+
+PASS compiled protocol-fixtures
+PASS invalid JSON/schema/operation: 79 fixtures; snapshot=0 insert=0 clipboard=0 input=0 (fake platform counters)
+PASS 2000 deterministic request mutations; rejected requests have zero adapter calls
+PASS valid snapshot and duplicate request (fixture handles, NOT Windows evidence)
+PASS duplicate session ID: rejected call delta insert=0 clipboard=0 input=0
+PASS UTF-8/escaped Unicode and text boundary
+PASS no usable target and failure consumes session ID
+PASS four typed outcomes (fixture only; no paste implementation)
+PASS bounded framing, resynchronization, and truncated EOF
+PASS bounded app-lifetime ID ledger, no eviction, fail closed
+bun test v1.4.5 (a7733435c)
+$ bun native/scripts/test.ts
+
+native/tests/client.test.ts:
+(pass) helper main-process client > PASS valid snapshot and split response framing [57.48ms]
+(pass) helper main-process client > PASS typed insert outcome target_changed (fixture only) [26.87ms]
+(pass) helper main-process client > PASS typed insert outcome clipboard_busy (fixture only) [27.26ms]
+(pass) helper main-process client > PASS typed insert outcome unsupported (fixture only) [27.47ms]
+(pass) helper main-process client > PASS typed insert outcome paste_requested (fixture only) [28.99ms]
+(pass) helper main-process client > PASS malformed response: malformed; no retry [28.75ms]
+(pass) helper main-process client > PASS malformed response: wrong-id; no retry [26.67ms]
+(pass) helper main-process client > PASS malformed response: null-id; no retry [26.63ms]
+(pass) helper main-process client > PASS malformed response: extra; no retry [27.70ms]
+(pass) helper main-process client > PASS malformed response: wrong-type; no retry [26.89ms]
+(pass) helper main-process client > PASS malformed response: wrong-op; no retry [26.43ms]
+(pass) helper main-process client > PASS malformed response: duplicate-key; no retry [26.51ms]
+(pass) helper main-process client > PASS malformed response: invalid-utf8; no retry [28.04ms]
+(pass) helper main-process client > PASS malformed response: overlong; no retry [27.19ms]
+(pass) helper main-process client > PASS malformed response: truncated; no retry [27.48ms]
+(pass) helper main-process client > PASS helper exit: exit; no retry [30.00ms]
+(pass) helper main-process client > PASS pending insert malformed is terminal; never request another insertion [29.14ms]
+(pass) helper main-process client > PASS pending insert exit is terminal; never request another insertion [27.12ms]
+(pass) helper main-process client > PASS helper timeout is terminal and never replays insert [101.28ms]
+(pass) helper main-process client > PASS no usable target is a typed rejection, not an automatic insertion [27.34ms]
+(pass) helper main-process client > PASS invalid insert requests never write to the helper [27.86ms]
+(pass) helper main-process client > PASS escaped text exceeding wire line bound never writes [1.53ms]
+(pass) helper main-process client > PASS pending request limit is bounded [1.42ms]
+(pass) helper main-process client > PASS spawn failure and closure are terminal [2.36ms]
+(pass) helper main-process client > PASS portable C++ helper round trip and app-lifetime insert deduplication [2.47ms]
+(pass) strict helper response schema > PASS unknown fields, invalid handles, wrong types, outcomes and duplicate keys rejected [0.58ms]
+
+ 26 pass
+ 0 fail
+ 100 expect() calls
+Ran 26 tests across 1 file. [710.00ms]

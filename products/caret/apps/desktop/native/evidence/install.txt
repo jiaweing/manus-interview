@@ -1,0 +1,13 @@
+COMMAND: bun install --frozen-lockfile
+HOST: linux x64
+EXIT_CODE: 0
+
+bun install v1.4.5 (a7733435c)
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1414 installs across 1560 packages (no changes) [4.96s]
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/ && node ./apps/desktop/node_modules/electron/install.js
