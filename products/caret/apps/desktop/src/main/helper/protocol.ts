@@ -9,6 +9,7 @@ export interface Target {
 export type InsertOutcome =
   | "target_changed"
   | "clipboard_busy"
+  | "clipboard_restore_failed"
   | "unsupported"
   | "paste_requested";
 export type HelperErrorCode =
@@ -35,6 +36,7 @@ export type HelperResponse =
 const outcomes = new Set<string>([
   "target_changed",
   "clipboard_busy",
+  "clipboard_restore_failed",
   "unsupported",
   "paste_requested",
 ]);

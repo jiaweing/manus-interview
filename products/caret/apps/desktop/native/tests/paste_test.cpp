@@ -1,4 +1,4 @@
-#include "../paste.hpp"
+#include "recording_platform.hpp"
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -6,59 +6,11 @@
 #include <vector>
 
 namespace {
-const caret::Target target{"0x1234", "0x5678"};
-const std::string fixture = "Jia Wei Ng \xe2\x80\x94 Manus 42";
+using caret_test::target;
+using caret_test::fixture;
+using caret_test::check;
+using caret_test::Fake;
 unsigned cases = 0;
-void check(bool ok, const char* why) { if (!ok) throw std::runtime_error(why); }
-struct Fake final : caret::PastePlatform {
-  std::vector<std::string> calls;
-  std::vector<caret::KeyEvent> keys;
-  std::u16string clipboard;
-  std::vector<std::optional<caret::Target>> targets{target, target};
-  std::vector<caret::Modifiers> modifier_states;
-  std::function<void(Fake&, const std::string&)> on_call;
-  std::size_t snapshots = 0;
-  unsigned held_polls = 0;
-  unsigned polls = 0;
-  unsigned waits = 0;
-  unsigned writes = 0;
-  unsigned inputs = 0;
-  unsigned accepted = 4;
-  unsigned foreground_setting = 0;  // No refocusing method exists in adapter.
-  std::uint64_t clock = 0;
-  bool stop = false;
-  bool elevated = false;
-  bool busy = false;
-  void record(const std::string& call) {
-    calls.push_back(call);
-    if (on_call) on_call(*this, call);
-  }
-  std::optional<caret::Target> snapshot() override {
-    record("snapshot");
-    return targets.at(std::min(snapshots++, targets.size() - 1));
-  }
-  bool cancelled() override { record("cancelled"); return stop; }
-  bool supported_target(const caret::Target&) override { record("elevation"); return !elevated; }
-  caret::Modifiers modifiers() override {
-    record("modifiers");
-    if (!modifier_states.empty())
-      return modifier_states.at(std::min<std::size_t>(polls++, modifier_states.size() - 1));
-    return {polls++ < held_polls, false, false};
-  }
-  std::uint64_t now_ms() override { record("clock"); return clock; }
-  void wait_ms(unsigned duration) override { record("wait"); ++waits; clock += duration; }
-  bool write_unicode(const std::u16string& text) override {
-    record("clipboard"); ++writes;
-    if (busy) return false;
-    clipboard = text;
-    return true;
-  }
-  unsigned send_input(std::span<const caret::KeyEvent> events) override {
-    record("input"); ++inputs;
-    keys.assign(events.begin(), events.begin() + std::min<std::size_t>(accepted, events.size()));
-    return accepted;
-  }
-};
 std::string request(const std::string& id, const std::string& session) {
   return "{\"requestId\":" + caret::quote_json(id) + ",\"op\":\"insert\","
     "\"expectedTarget\":{\"foreground\":\"0x1234\",\"focus\":\"0x5678\"},"
@@ -88,11 +40,13 @@ void run() {
     caret::Protocol protocol(fake);
     check(protocol.dispatch(request("unicode", "unicode")).find("paste_requested") != std::string::npos,
           "Unicode outcome");
-    check(fake.clipboard == u"Jia Wei Ng — Manus 42", "Unicode clipboard");
+    check(fake.input_clipboard == u"Jia Wei Ng — Manus 42" && fake.clipboard == caret_test::sentinel, "Unicode clipboard");
     check(fake.keys == std::vector<caret::KeyEvent>(std::begin(caret::paste_keys), std::end(caret::paste_keys)),
           "exact Ctrl+V sequence");
     check(fake.calls == std::vector<std::string>{"cancelled", "elevation", "snapshot", "cancelled",
-          "clipboard", "clock", "cancelled", "modifiers", "elevation", "snapshot", "cancelled", "input"},
+          "open", "formats", "read", "cancelled", "empty", "clipboard", "sequence", "close",
+          "clock", "cancelled", "modifiers", "elevation", "snapshot", "cancelled", "input",
+          "wait", "open", "sequence", "formats", "read", "empty", "clipboard", "close"},
           "guard ordering");
     counts("Unicode insertion", fake, 1);
     const auto calls = fake.calls.size();
@@ -107,7 +61,7 @@ void run() {
     fake.modifier_states = {{true, false, false}, {false, true, false},
                             {false, false, true}, {false, false, false}};
     check(fake.insert(target, "release", fixture) == caret::Outcome::paste_requested, "release outcome");
-    check(fake.waits == 3 && fake.snapshots == 2, "release not awaited/rechecked");
+    check(fake.waits == 4 && fake.snapshots == 2, "release not awaited/rechecked");
     counts("modifier-release ordering (Ctrl/Alt/Space OR)", fake, 1);
   }
   for (const bool control : {false, true}) {
@@ -119,7 +73,7 @@ void run() {
                                   std::vector<std::optional<caret::Target>>{changed};
       fake.held_polls = after_wait ? 2 : 0;
       check(fake.insert(target, "change", fixture) == caret::Outcome::target_changed, "target change outcome");
-      check(fake.writes == (after_wait ? 1u : 0u) && fake.inputs == 0, "changed target side effects");
+      check(fake.writes == (after_wait ? 2u : 0u) && fake.inputs == 0, "changed target side effects");
       counts(control ? (after_wait ? "control change after wait" : "control change before clipboard") :
                        (after_wait ? "foreground change after wait" : "foreground change before clipboard"), fake, 0);
     }
@@ -155,16 +109,16 @@ void run() {
     Fake fake;
     fake.held_polls = 1000;
     check(fake.insert(target, "timeout", fixture) == caret::Outcome::unsupported, "timeout outcome");
-    check(fake.clock == caret::modifier_wait_ms && fake.inputs == 0, "unbounded wait");
+    check(fake.clock == caret::modifier_wait_ms + caret::clipboard_restore_ms && fake.inputs == 0, "unbounded wait");
     // Keep bounded-wait trace concise without losing its call count assertion.
-    check(fake.waits == 200, "poll bound");
+    check(fake.waits == 201, "poll bound");
     counts("bounded modifier timeout", fake, 0);
   }
   {
     Fake fake;
     fake.busy = true;
     check(fake.insert(target, "busy", fixture) == caret::Outcome::clipboard_busy, "busy outcome");
-    check(fake.inputs == 0 && fake.writes == 1, "busy retried");
+    check(fake.inputs == 0 && fake.writes == 0 && fake.opens == 1, "busy retried");
     counts("clipboard failure no retry", fake, 0);
   }
   for (const unsigned accepted : {0u, 1u, 2u, 3u}) {

@@ -200,6 +200,7 @@ const char* name(Outcome outcome) {
   switch (outcome) {
     case Outcome::target_changed: return "target_changed";
     case Outcome::clipboard_busy: return "clipboard_busy";
+    case Outcome::clipboard_restore_failed: return "clipboard_restore_failed";
     case Outcome::unsupported: return "unsupported";
     case Outcome::paste_requested: return "paste_requested";
   }

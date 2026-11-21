@@ -1,0 +1,10 @@
+COMMAND: bun run --cwd apps/desktop build:helper
+
+$ bun native/scripts/build.ts
+PASS compiled protocol-fixtures.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled paste-fixtures.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled clipboard-policy-fixtures.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled caret-helper.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled clipboard-policy-windows.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled record-target.exe (cross-compile only; NOT Windows behavioral evidence)
+PASS compiled paste-target.exe (cross-compile only; NOT Windows behavioral evidence)

@@ -16,6 +16,11 @@ if ((windowsOnly || snapshotOnly) && process.platform !== "win32") {
 function run(command: string, args: string[]): void {
   const result = spawnSync(command, args, {
     cwd: desktop,
+    env: {
+      ...process.env,
+      ASAN_OPTIONS: "detect_leaks=1",
+      UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1",
+    },
     shell: false,
     stdio: "inherit",
   });
@@ -30,6 +35,10 @@ if (!snapshotOnly) {
   }
   run(resolve(build, `protocol-fixtures${suffix}`), []);
   run(resolve(build, `paste-fixtures${suffix}`), []);
+  run(resolve(build, `clipboard-policy-fixtures${suffix}`), []);
+  if (process.platform === "linux" && !windowsOnly) {
+    run(resolve(build, "win32-resource-fixtures"), []);
+  }
   run(process.execPath, ["test", "native/tests/client.test.ts"]);
 }
 

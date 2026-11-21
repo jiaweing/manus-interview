@@ -5,6 +5,13 @@ import { TerminalError } from "../errors";
 import { spawnWithPolicy } from "../policy";
 import { type SpawnPtyOptions, spawnPty } from "../pty/spawn";
 import {
+	dimensionsSchema,
+	type ResizeSessionRequest,
+	type ResizeSessionResult,
+	resizeSession,
+} from "./resize";
+import { SessionRetention } from "./retention";
+import {
 	type PtyHandle,
 	type Session,
 	type SessionState,
@@ -15,9 +22,9 @@ import {
 export const MAX_LIVE_SESSIONS = 4;
 export const DEFAULT_RUNTIME_MS = 15 * 60 * 1000;
 
-const limitsSchema = z.object({
-	cols: z.number().int().min(1).max(240).default(80),
-	rows: z.number().int().min(1).max(80).default(24),
+const limitsSchema = dimensionsSchema.extend({
+	cols: dimensionsSchema.shape.cols.default(80),
+	rows: dimensionsSchema.shape.rows.default(24),
 	timeoutMs: z.number().int().positive().default(DEFAULT_RUNTIME_MS),
 });
 
@@ -53,6 +60,7 @@ export class SessionManager {
 	private readonly config: ServerConfig;
 	private readonly options: SessionManagerOptions;
 	private readonly clock: SessionClock;
+	private readonly retention: SessionRetention;
 	// Includes in-flight policy checks as well as running/terminating sessions.
 	private liveSlots = 0;
 
@@ -60,6 +68,7 @@ export class SessionManager {
 		this.config = config;
 		this.options = options;
 		this.clock = options.clock ?? { now: Date.now };
+		this.retention = new SessionRetention(this.sessions, this.clock);
 	}
 
 	async create(request: CreateSessionRequest): Promise<CreateSessionResult> {
@@ -130,19 +139,21 @@ export class SessionManager {
 		};
 		session = record;
 		this.sessions.set(record.id, record);
-		// Observe actual exit without awaiting it in create/status/list. Retention,
-		// final output draining and runtime/kill timers belong to lifecycle services.
+		this.retention.prune();
+		// Observe actual exit without awaiting it in create/status/list.
 		pty.child.exited.then(() => {
 			record.state = "exited";
 			record.exitCode = pty.child.exitCode;
 			record.signal = pty.child.signalCode ?? null;
 			this.liveSlots -= 1;
+			this.retention.retain(record);
 		});
 		return { cursor: "0", sessionId: record.id, state: record.state };
 	}
 
 	/** Internal service access for later output/input/lifecycle modules. */
 	get(sessionId: string): Session {
+		this.retention.prune();
 		const session = this.sessions.get(sessionId);
 		if (!session) {
 			throw new TerminalError("NOT_FOUND", "Session was not found");
@@ -150,11 +161,19 @@ export class SessionManager {
 		return session;
 	}
 
+	resize(
+		sessionId: string,
+		request: ResizeSessionRequest
+	): ResizeSessionResult {
+		return resizeSession(this.get(sessionId), request);
+	}
+
 	status(sessionId: string): SessionSummary {
 		return summarize(this.get(sessionId));
 	}
 
 	list(): { sessions: SessionSummary[] } {
+		this.retention.prune();
 		return { sessions: [...this.sessions.values()].map(summarize) };
 	}
 }

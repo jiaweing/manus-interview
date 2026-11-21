@@ -4,11 +4,11 @@
 
 **Real Windows results: NOT RUN: needs Windows.** Linux fixtures and x64 cross-compilation are not desktop behavioral evidence. Wine is not acceptance evidence. The native harness is implemented, not certified. The PR references #7 rather than closing it.
 
-Issue #7 writes `CF_UNICODETEXT` and requests Ctrl+V once. **It intentionally overwrites the clipboard and does not restore it.** Do not use a valuable clipboard during these checks. Snapshot, supported-format rejection, the 700 ms conditional restore, and newer-copy protection belong solely to issue #8. The clearly marked `write_unicode` seam is where that issue should add them.
+Issue #7 introduced the one-way `CF_UNICODETEXT` write and one Ctrl+V request. Issue #8 has now filled that seam with supported-format rejection and 700 ms conditional restoration; see [CLIPBOARD-RUNBOOK.md](CLIPBOARD-RUNBOOK.md). Use only an expendable **empty/plain-text** clipboard during these input checks. This runbook and its historical issue-#7 evidence concern input safety; they do not certify the issue-#8 Windows clipboard gate.
 
 ## Shared algorithm and main cancellation
 
-`PastePlatform::insert` is the shared C++ state machine, used by the real Win32 adapter and Linux recording fake. Protocol validation and app-lifetime session reservation precede it, including failed attempts. It converts UTF-8 to UTF-16, checks cancellation/elevation and both target handles before writing, writes Unicode text once, waits at most **2,000 ms**, polling Ctrl OR Alt OR Space every **10 ms**, then checks elevation, both handles and cancellation again immediately before the single input call. Missing/changed target gives `target_changed`, clipboard-write failure gives `clipboard_busy`, and cancellation/modifier timeout/unknown or elevated process/input failure gives existing `unsupported`. Only a complete four-event input request gives `paste_requested`. That outcome is a request, never proof an application accepted the text.
+`PastePlatform::insert` is the shared C++ state machine, used by the real Win32 adapter and Linux recording fake. Protocol validation and app-lifetime session reservation precede it, including failed attempts. It converts UTF-8 to UTF-16, checks cancellation/elevation and both target handles before writing, writes Unicode text once, waits at most **2,000 ms**, polling Ctrl OR Alt OR Space every **10 ms**, then checks elevation, both handles and cancellation again immediately before the single input call. Missing/changed target gives `target_changed`, initial clipboard-open failure gives `clipboard_busy`, and cancellation/modifier timeout/unknown or elevated process/input failure gives existing `unsupported`. Only a complete four-event input request followed by non-failing conditional clipboard cleanup gives `paste_requested`; restoration failure overrides it with `clipboard_restore_failed`. That outcome is a request, never proof an application accepted the text.
 
 The sole sequence is Ctrl-down, V-down, V-up, Ctrl-up. There is no Enter, typing/accessibility fallback, foreground-setting, thread attachment, or refocusing primitive. A failed or short `SendInput` batch is never retried. A **partial batch can already have pasted or left Ctrl down**, so an error is not proof of zero OS side effects. The fixtures cover 0, 1, 2 and 3 accepted events honestly; two/three accepted events can contain one V-down. Manually release Ctrl if needed and start a fresh session, never automatically replay the old one.
 
@@ -31,7 +31,7 @@ bun run --cwd apps/desktop verify:helper-secrets
 bun run --cwd apps/desktop test:windows:paste-target
 ```
 
-The last command must exit **2** with `NOT RUN: needs Windows`, before compiling or running any desktop harness. `test:helper-protocol` keeps all issue-#6 fixtures and adds the recording fake paste fixtures; the fake records every guard/write/wait/input call and checks exact ordering. `build:helper` uses `x86_64-w64-mingw32-g++-posix` and produces five x64 executables; compile success is not behavior evidence.
+The last command must exit **2** with `NOT RUN: needs Windows`, before compiling or running any desktop harness. `test:helper-protocol` keeps all issue-#6 fixtures and adds the recording fake paste fixtures; the fake records every guard/write/wait/input call and checks exact ordering. `build:helper` uses `x86_64-w64-mingw32-g++-posix` and produces seven x64 executables; compile success is not behavior evidence.
 
 ## Real Windows 11 x64 procedure (NOT RUN)
 
@@ -65,4 +65,4 @@ Immediately after the Unicode case, before moving focus or continuing, save a sc
 
 Retain the complete input-event log, screenshot, Windows version, compiler/Bun versions, exit code, and source commit. A successful complete run must exit 0 and print PASS for all listed cases. A hook, handle, elevation, modifier, confirmation, or cancellation failure must exit nonzero. Have an independent verifier rerun from a clean clone. Natural OS input-failure behavior and Electron runtime pipe semantics remain unverified until separately exercised on Windows; the native harness checks the shared failure-return contract and equivalent pipe cancellation transport.
 
-No issue-#8 clipboard preservation, packaged tray/hotkey loop, cloud processing, or end-to-end application acceptance beyond the operator-confirmed Notepad fixture is covered here.
+No separate issue-#8 Windows clipboard-policy acceptance, packaged tray/hotkey loop, cloud processing, or end-to-end application acceptance beyond the operator-confirmed Notepad fixture is covered here.

@@ -17,6 +17,12 @@ class Win32Platform : public PastePlatform {
   Modifiers modifiers() override;
   std::uint64_t now_ms() override;
   void wait_ms(unsigned duration) override;
+  bool open_clipboard() override;
+  bool clipboard_formats(std::vector<std::uint32_t>& formats) override;
+  bool read_plain_text(std::u16string& text) override;
+  bool empty_clipboard() override;
+  std::optional<std::uint32_t> clipboard_sequence() override;
+  bool close_clipboard() override;
   bool write_unicode(const std::u16string& text) override;
   unsigned send_input(std::span<const KeyEvent> events) override;
   void cancel() { cancelled_.store(true); }

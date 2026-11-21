@@ -1,0 +1,3 @@
+COMMAND: bun run --cwd apps/desktop typecheck:overlay
+
+$ tsc --noEmit -p tsconfig.overlay.json

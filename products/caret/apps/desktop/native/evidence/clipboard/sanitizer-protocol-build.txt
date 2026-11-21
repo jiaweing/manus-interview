@@ -1,0 +1,1 @@
+COMMAND: g++ -std=c++20 -Wall -Wextra -Werror -pedantic -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -no-pie apps/desktop/native/protocol.cpp apps/desktop/native/tests/protocol_test.cpp -o apps/desktop/native/build/protocol-sanitizer

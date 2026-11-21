@@ -1,0 +1,5 @@
+Command: bun run fix
+$ biome check --write .
+Checked 45 files in 241ms. No fixes applied.
+
+Exit code: 0

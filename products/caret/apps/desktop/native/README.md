@@ -1,6 +1,6 @@
-# Caret helper — issues #6 and #7
+# Caret helper — issues #6, #7 and #8
 
-The helper implements bounded JSON framing/validation, target snapshot, app-lifetime deduplication, a persistent typed Electron-main client, and **guarded Unicode clipboard paste**. Real Windows behavioral acceptance remains **NOT RUN: needs Windows**. Clipboard save/restore and unsupported-format rejection are intentionally left to issue #8; the current one-way write is destructive. See [PASTE-RUNBOOK.md](PASTE-RUNBOOK.md) for the safety algorithm, cancellation hook, limitations, and exact real-Windows procedure.
+The helper implements bounded JSON framing/validation, target snapshot, app-lifetime deduplication, a persistent typed Electron-main client, and **guarded Unicode clipboard paste**. Real Windows behavioral acceptance remains **NOT RUN: needs Windows**. Issue #8 now rejects unsupported formats before mutation and conditionally restores owned plain text after a 700 ms wait; see [CLIPBOARD-RUNBOOK.md](CLIPBOARD-RUNBOOK.md) for policy and real-Windows verification. See [PASTE-RUNBOOK.md](PASTE-RUNBOOK.md) for the safety algorithm, cancellation hook, limitations, and exact real-Windows procedure.
 
 ## Wire contract
 
@@ -20,7 +20,7 @@ Exact schemas only: extra/missing fields, wrong types, duplicate object keys (in
 {"requestId":null,"ok":false,"error":"invalid_request"}
 ```
 
-The four typed insert outcomes remain `target_changed`, `clipboard_busy`, `unsupported`, and `paste_requested`. `unsupported` also covers cancellation, modifier-release timeout, elevated/unknown targets and failed/short input; no new wire outcome or cancellation operation is added. Error codes remain `invalid_request`, `duplicate_request`, `duplicate_session`, `no_target`, `limit_exceeded`, and `internal_error`. A recoverable request ID is included on schema errors; unparseable/unidentified input uses `null`.
+The five typed insert outcomes are `target_changed`, `clipboard_busy`, `clipboard_restore_failed`, `unsupported`, and `paste_requested`. Issue #8 adds the strictly validated `clipboard_restore_failed` failure outcome when conditional cleanup cannot safely complete; a paste may already have happened. `unsupported` also covers cancellation, modifier-release timeout, elevated/unknown targets and failed/short input; no cancellation operation is added. Error codes remain `invalid_request`, `duplicate_request`, `duplicate_session`, `no_target`, `limit_exceeded`, and `internal_error`. A recoverable request ID is included on schema errors; unparseable/unidentified input uses `null`.
 
 Accepted request IDs and accepted insert session IDs are reserved **before** the platform call, even if it returns an error/unsupported or throws. Duplicate IDs never reach the adapter. There is one ledger per helper process, no eviction, and at most 4,096 accepted request IDs and 4,096 session IDs. Capacity fails closed with `limit_exceeded`; it does not reset or recycle IDs. Oversized lines are drained without buffering more than the limit; partial EOF lines are rejected, not executed.
 
@@ -44,9 +44,9 @@ bun run --cwd apps/desktop build:helper
 bun run --cwd apps/desktop verify:helper-secrets
 ```
 
-`test:helper-protocol` retains all original C++ schema/framing/ledger fixtures and Bun client tests, adds the portable guarded-paste suite, and includes a real pipe round trip to the protocol fixture executable. Its counters and call traces are the **fake platform**, not observed Windows API behavior. The protocol-only fake intentionally retains its `unsupported` stub; the separate paste fake exercises the production shared C++ insertion algorithm and records every call.
+`test:helper-protocol` retains all original C++ schema/framing/ledger fixtures and Bun client tests, adds the portable guarded-paste and clipboard-policy suites, and includes a real pipe round trip to the protocol fixture executable. Its counters and call traces are the **fake platform**, not observed Windows API behavior. The protocol-only fake intentionally retains its `unsupported` stub; the separate paste fake exercises the production shared C++ insertion algorithm and records every call.
 
-`build:helper` uses `x86_64-w64-mingw32-g++-posix` on Linux to produce statically linked x64 `native/build/caret-helper.exe`, `protocol-fixtures.exe`, `paste-fixtures.exe`, independent `record-target.exe`, and the real native `paste-target.exe` harness. Cross-compilation proves compile/link success, **not Windows behavior**. Artifacts are ignored. `CXX` can select another compatible compiler. On Windows, use an x64 Visual Studio Developer Prompt (`cl.exe`) or x64 MinGW `g++` on PATH; the build invokes the compiler directly, without a shell.
+`build:helper` uses `x86_64-w64-mingw32-g++-posix` on Linux to produce statically linked x64 `native/build/caret-helper.exe`, `protocol-fixtures.exe`, `paste-fixtures.exe`, independent `record-target.exe`, and the real native `paste-target.exe` harness, plus `clipboard-policy-fixtures.exe` and `clipboard-policy-windows.exe`. Cross-compilation proves compile/link success, **not Windows behavior**. Artifacts are ignored. `CXX` can select another compatible compiler. On Windows, use an x64 Visual Studio Developer Prompt (`cl.exe`) or x64 MinGW `g++` on PATH; the build invokes the compiler directly, without a shell.
 
 ## Required real Windows gates — NOT RUN
 
@@ -57,6 +57,7 @@ bun run --cwd apps/desktop build:helper
 bun run --cwd apps/desktop test:windows:helper-protocol
 bun run --cwd apps/desktop helper:snapshot
 bun run --cwd apps/desktop test:windows:paste-target
+bun run --cwd apps/desktop test:windows:clipboard-policy
 ```
 
 The protocol/snapshot harness gives five seconds to focus Notepad and uses an independent Win32 observer (not linked to helper code) to compare both handles. Its insertion contract check now uses a deliberately stale target so it cannot mutate the clipboard or paste; duplicate session rejection is retained. This replaces the old issue-#6 assumption that every real insert is unsupported.
@@ -64,3 +65,5 @@ The protocol/snapshot harness gives five seconds to focus Notepad and uses an in
 The issue-#7 command runs the native input hook and operator-driven target/modifier/cancellation/elevation/duplicate/failure cases; follow [PASTE-RUNBOOK.md](PASTE-RUNBOOK.md). Save the full numeric injected-event log and resulting exact-text Notepad screenshot. The failed-input return is explicitly fault-injected, not naturally reproduced from the OS. The native cancellation case uses a real helper pipe closure. All Windows-only commands refuse on Linux with exit **2**, `NOT RUN: needs Windows`. No screenshots or real-Windows results have been fabricated.
 
 Issue-#6 committed evidence remains historical. Issue-#7 evidence lives under `evidence/paste/`, with actual host, commands, exit codes, counts and unverified items. Until a real desktop runs the gates, Windows target snapshot, Unicode insertion, modifier ordering, focus safety, cancellation, elevation rejection, and captured input behavior are **NOT RUN: needs Windows**.
+
+Issue-#8 Linux evidence is under `evidence/clipboard/`. The real clipboard format/hash/timing, restoration, newer-copy, and busy-lock gates are **NOT RUN: needs Windows**. Follow [CLIPBOARD-RUNBOOK.md](CLIPBOARD-RUNBOOK.md); do not mistake its implemented native harness or cross-build for execution evidence.

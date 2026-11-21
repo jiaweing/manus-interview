@@ -1,0 +1,14 @@
+Host: Linux sandbox, NOT a Windows desktop
+Linux 6.18.38+ x86_64
+1.4.5
+g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+x86_64-w64-mingw32-g++-posix (GCC) 13-posix
+Base commit: f6e9f7a81b34fdde1186991a68ddf01a702f57bf
+Compiler artifacts: cross-compile only, NOT behavioral evidence
+apps/desktop/native/build/caret-helper.exe:              PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/clipboard-policy-fixtures.exe: PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/clipboard-policy-windows.exe:  PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/paste-fixtures.exe:            PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/paste-target.exe:              PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/protocol-fixtures.exe:         PE32+ executable (console) x86-64, for MS Windows, 19 sections
+apps/desktop/native/build/record-target.exe:             PE32+ executable (console) x86-64, for MS Windows, 19 sections

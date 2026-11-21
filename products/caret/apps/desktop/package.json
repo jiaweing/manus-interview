@@ -14,6 +14,7 @@
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "test:overlay": "bun test tests/overlay-state.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
+    "test:windows:clipboard-policy": "bun native/scripts/clipboard-policy.ts",
     "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
     "test:windows:paste-target": "bun native/scripts/paste-target.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
