@@ -203,6 +203,15 @@
         "varlock": "catalog:",
       },
     },
+    "packages/engine": {
+      "name": "@flopside/engine",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@flopside/config": "workspace:*",
+        "@types/bun": "catalog:",
+        "typescript": "^6.0.3",
+      },
+    },
     "packages/ui": {
       "name": "@flopside/ui",
       "version": "0.0.0",
@@ -641,6 +650,8 @@
     "@flopside/config": ["@flopside/config@workspace:packages/config"],
 
     "@flopside/db": ["@flopside/db@workspace:packages/db"],
+
+    "@flopside/engine": ["@flopside/engine@workspace:packages/engine"],
 
     "@flopside/ui": ["@flopside/ui@workspace:packages/ui"],
 

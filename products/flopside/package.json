@@ -39,7 +39,7 @@
     "lint": "biome check .",
     "test": "bun test --path-ignore-patterns 'apps/web/tests/**'",
     "test:e2e": "bunx playwright test --config apps/web/playwright.config.ts --project=chromium",
-    "typecheck": "bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && tsc --noEmit -p tsconfig.json"
+    "typecheck": "bun run --cwd apps/web check-types && bun run --cwd apps/server check-types && bun run --cwd packages/engine check-types && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "zod": "catalog:"
