@@ -37,12 +37,12 @@ Paths below are relative to `products/glassroom` in this monorepo (not a separat
 Glassroom Git root).
 
 ```sh
-export PUBLIC_PORT=4127 NEXT_INTERNAL_PORT=5127
+export PUBLIC_PORT=4327 NEXT_INTERNAL_PORT=5327
 export PREFLIGHT_NETWORK="describe the actual demo network and host arrangement"
 bun run dev:https
 # In another terminal with the same environment:
 bunx playwright test tests/e2e/preflight.spec.ts --project=chromium
-bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity
+bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity --reporter=list
 ```
 
 The harness launches full desktop Chromium with two independent temporary

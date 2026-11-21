@@ -1,74 +1,93 @@
 # Issue #127 — direct-WebRTC preflight evidence
 
-## Final verification
+## Fix-round verification
 
-Run from `products/glassroom` on 2026-11-21 UTC with
-`PUBLIC_PORT=4127`, `NEXT_INTERNAL_PORT=5127`, and
-`CHROMIUM_PATH=/usr/bin/chromium`. Both independent persistent desktop Chromium
-processes reported version **156.0.8078.73**. The actual tested origin was
-`https://localhost:4127` on the Manus Ubuntu sandbox's local network, using two
-profiles on the **same host**. This is not evidence for a separate judge network.
+PR: https://github.com/jiaweing/manus-interview/pull/195. The fix round merged
+`origin/main` at `fde493e` into `glassroom/127-preflight`, preserving main's
+formatted baseline and evidence exclusions. No `biome.json` rule was changed.
+Source changes repair lint and guarantee nested-finally cleanup; all original
+preflight assertions remain intact.
 
-- [Full commands, output, and exit codes](verification.txt)
-- [Final two-case Playwright HTML report](playwright-report/index.html)
-- [Explicit blocked-case rerun report](blocked-report/index.html)
-- [Scaffold regression report](boot-report/index.html)
-- [Direct network/version record](records/preflight-two-profile-direct-channel-chromium/preflight-network-version.json)
-- [Blocked network/version record](records/preflight-blocked-connecti-8ad7c-s-without-relay-or-fallback-chromium/preflight-network-version.json)
+Run from this monorepo's `products/glassroom` on **2026-11-21 UTC**, with
+`PUBLIC_PORT=4327` and `NEXT_INTERNAL_PORT=5327`. `bun run dev:https` was running
+while the issue's exact preflight command and separate blocked case were run.
+The tested origin was **https://localhost:4327** on the local Ubuntu sandbox
+network, using independent full desktop Chromium **159.0.8154.6** processes,
+headless, with separate temporary persistent profiles on the **same host**.
+No external judge network was available.
 
-The two-case report contains its own JSON attachments; the standalone blocked
-record is from the additional `--grep blocked-connectivity` verification run.
-The HTML files are local Playwright reports, not shipped application pages.
+## Commands and outputs
+
+Every command below exited **0**. Fresh output replaces the previous run.
+
+| Command | Output |
+| --- | --- |
+| `bun install --frozen-lockfile` | [install.log](install.log) |
+| `bun run check` | [check.log](check.log) |
+| `bun run check-types` | [check-types.log](check-types.log) |
+| `bun run build` | [build.log](build.log) |
+| `bun test tests/unit` | [unit.log](unit.log) |
+| `bunx tsc --noEmit -p tsconfig.json` | [root-types.log](root-types.log) |
+| `bun /home/ubuntu/work/f127/cleanup-probe.mjs` | [cleanup-probe.log](cleanup-probe.log) |
+| `bunx playwright test tests/e2e/preflight.spec.ts --project=chromium` | [preflight.log](preflight.log) |
+| `bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity --reporter=list` | [blocked.log](blocked.log) |
+
+The exact issue command passed **2/2** tests; the blocked rerun passed **1/1**.
+Unit tests passed **14/14** with 117 assertions. Root TypeScript also includes
+the preflight spec. See [commands.json](commands.json) for machine-readable
+verification exits and [verification.txt](verification.txt) for retained tails.
+The posted PR fix-round comment identifies the final verified commit SHA.
+
+Only the [required two-case preflight HTML report](playwright-report/index.html)
+is retained; it includes both JSON attachments. Duplicate `blocked-report/` and
+unrelated `boot-report/` HTML directories were deleted. Standalone compact
+records are [direct.json](records/direct.json), [blocked.json](records/blocked.json),
+and [blocked-rerun.json](records/blocked-rerun.json).
 
 ## Acceptance criteria
 
-- [x] **PASS:** Two distinct persistent desktop profile directories, empty
-  `iceServers` arrays (no TURN or STUN provider), `ordered=true`,
-  `maxRetransmits=null`, and `maxPacketLifeTime=null`. Both negotiated candidate
-  pairs were host-to-host, not relayed.
-- [x] **PASS on the recorded network:** A received
-  `glassroom-preflight-from-b`; B received `glassroom-preflight-from-a` through
-  their RTC data channels in **220.860 ms**, below the ten-second bound.
-- [x] **PASS:** Withholding all ICE candidates in both SDP directions produced
-  explicit `failed` / `delivery blocked` states, no received probes, closed
-  peer connections, and zero relay candidates or fallback attempts. The
-  independent blocked-case rerun ended in **9533.812 ms**, below ten seconds.
-  The negative test passes only because the preflight itself failed as required.
+- [x] **PASS:** Distinct persistent desktop profile directories; both peers have
+  `iceServers=[]`, with no TURN/STUN provider. The negotiated channel is
+  `ordered=true`, `maxRetransmits=null`, `maxPacketLifeTime=null`; selected
+  candidate pairs are host/host, with zero relay candidates.
+- [x] **PASS on the recorded sandbox network:** A received
+  `glassroom-preflight-from-b` and B received `glassroom-preflight-from-a` over
+  their data channels. Total negotiation and collection took **189.467 ms**,
+  below the ten-second upper bound.
+- [x] **PASS:** Candidate withholding produces the explicit `failed` preflight
+  state and `deliveryBlocked=true`, closed peers, no received strings or selected
+  pairs, and zero relay/fallback attempts. The independent blocked rerun finished
+  in **9525.914 ms**, below ten seconds. The negative test passes because it
+  asserts an actual failed preflight; it does not skip a failing positive case.
 
-`bun install --frozen-lockfile`, root `bunx tsc --noEmit -p tsconfig.json`, and
-`bun run check-types` exited 0. The specified preflight command passed 2/2 tests;
-its explicit blocked-case rerun passed 1/1; the existing boot test passed 3/3.
-Terminal ANSI styling and trailing whitespace are normalized in the saved text.
-The HTTPS stack was running during browser verification. Its processes were
-stopped by PID after the run, and all temporary Chromium profiles were deleted.
-No screenshots were requested or captured.
+## Cleanup verification
 
-## Initial run and correction
+Evidence writing/attachment is wrapped in `try/finally`; browser closure and
+profile removal have their own nested `try/finally`. Every context close is
+settled before proceeding, and every profile removal is attempted even when
+an earlier operation rejects. Cleanup rejection remains a failing assertion.
+A temporary failure-injection probe extracted and executed the actual final
+cleanup block with mocked browser contexts and real temporary directories.
+Success, evidence-write rejection, attachment rejection, and one rejected close
+with a delayed second close each settled both closes and removed all profiles.
 
-[Initial output](initial-verification.txt) is preserved for honesty: the direct
-channel exchanged both strings, but a delayed Chromium `/favicon.ico` asset
-request was mistakenly classified as a fallback attempt and failed the test.
-The request monitor now excludes that GET asset, as it already excluded Next
-assets/HMR. All other HTTP requests/new non-framework WebSockets remain blocked
-and counted. The final complete verification above passed after this correction.
-The initial report/trace paths in that historical log were superseded by the
-final reports.
+All six profile paths from the three browser scenarios were independently
+checked absent. Assigned ports were checked free after stopping the owned HTTPS
+processes by PID; see [cleanup.log](cleanup.log). The temporary Python
+verification orchestrator encountered a missing `psutil` import only after all
+eight checks had returned 0; server process cleanup was completed separately,
+not falsely reported as successful by that runner. See [dev-https.log](dev-https.log).
+No screenshots were requested, captured, or committed.
 
 ## Scope and unverified items
 
-Only a Playwright harness and documentation were added. SDP/ICE goes through
-runner `page.evaluate` calls, not `/signal` or a shipped UI/chat route. There is
-no TURN configuration, server relay, WSS message fallback, or plaintext downgrade.
-The deterministic blocked case withholds candidates; it is not an OS firewall
-or remote-network integration test. A 9.5-second endpoint timeout reserves
-500 ms for runner failure collection/closure within the ten-second upper bound.
+Only test-harness source and documentation/evidence changed after merging main.
+SDP/ICE stays in runner `page.evaluate` calls, not `/signal` or a shipped UI/chat
+route. No TURN, relay, WSS message fallback, plaintext downgrade, or application
+persistence was added. A failed direct positive case remains a delivery blocker.
 
-**Unverified / release prerequisite:** The intended judge/demo network and
-remote-host connectivity were inaccessible from this task. Rerun the preflight
-there and preserve its evidence before delivery. A failed direct positive case
-must continue to block delivery, never authorize fallback. No TURN integration
-is requested or tested.
-
-**Layout adaptation:** All issue paths and commands were adapted to this
-repository's `products/glassroom` product root, not a separate Glassroom Git
-repository, as required by the swarm protocol.
+**Unverified / release prerequisite:** Rerun on the intended demo/judge network
+before delivery; this evidence covers same-host sandbox connectivity only.
+Remote-host/NAT connectivity and physical firewall blocking were not tested.
+The blocked case is deterministic SDP-candidate withholding, not an OS/network
+firewall test or TURN integration test.

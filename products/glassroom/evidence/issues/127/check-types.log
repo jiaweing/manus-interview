@@ -1,0 +1,21 @@
+$ bun run check-types
+$ turbo run check-types
+
+   • turbo 2.11.13
+   • Packages in scope: @glassroom/config, @glassroom/ui, server, web
+   • Running check-types in 4 packages
+   • Remote caching disabled, using shared worktree cache
+
+@glassroom/ui:check-types: cache miss, executing 824625eb9ecc68d5
+server:check-types: cache miss, executing e31cec1c55a11dd3
+@glassroom/ui:check-types: $ tsc --noEmit
+server:check-types: $ tsc --noEmit
+web:check-types: cache miss, executing e3370c769715fd9b
+web:check-types: $ tsc --noEmit
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    5.143s
+
+
+exit_code=0

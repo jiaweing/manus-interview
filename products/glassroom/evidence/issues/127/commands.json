@@ -1,0 +1,42 @@
+[
+  {
+    "command": "bun run check",
+    "exit_code": 0,
+    "log": "check.log"
+  },
+  {
+    "command": "bun run check-types",
+    "exit_code": 0,
+    "log": "check-types.log"
+  },
+  {
+    "command": "bun run build",
+    "exit_code": 0,
+    "log": "build.log"
+  },
+  {
+    "command": "bun test tests/unit",
+    "exit_code": 0,
+    "log": "unit.log"
+  },
+  {
+    "command": "bunx tsc --noEmit -p tsconfig.json",
+    "exit_code": 0,
+    "log": "root-types.log"
+  },
+  {
+    "command": "bun /home/ubuntu/work/f127/cleanup-probe.mjs",
+    "exit_code": 0,
+    "log": "cleanup-probe.log"
+  },
+  {
+    "command": "bunx playwright test tests/e2e/preflight.spec.ts --project=chromium",
+    "exit_code": 0,
+    "log": "preflight.log"
+  },
+  {
+    "command": "bunx playwright test tests/e2e/preflight.spec.ts --project=chromium --grep blocked-connectivity --reporter=list",
+    "exit_code": 0,
+    "log": "blocked.log"
+  }
+]

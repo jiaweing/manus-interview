@@ -1,0 +1,7 @@
+$ bun /home/ubuntu/work/f127/cleanup-probe.mjs
+PASS: success; both closes settled; all profiles removed; failure visibility preserved
+PASS: write rejection; both closes settled; all profiles removed; failure visibility preserved
+PASS: attach rejection; both closes settled; all profiles removed; failure visibility preserved
+PASS: close rejection; both closes settled; all profiles removed; failure visibility preserved
+
+exit_code=0
