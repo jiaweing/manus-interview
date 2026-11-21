@@ -1,5 +1,6 @@
 import type { Card } from "./cards";
 import type { TurnDeadline } from "./deadline";
+import type { MatchResult } from "./lifecycle";
 
 export const STARTING_STACK = 200;
 export const BLINDS = { big: 10, small: 5 } as const;
@@ -78,9 +79,14 @@ export interface PublicMatchState {
 	board: Card[];
 	currentBet: number;
 	dealerIndex: number;
+	/** Injected by lifecycle entry points; independent of turn identity (#33). */
+	handId?: string;
 	handNumber: number;
 	handStatus: HandStatus;
 	lastFullRaiseIncrement: number;
+	matchId?: string;
+	/** One shared result after settlement; null in lifecycle-managed live matches. */
+	result?: MatchResult | null;
 	seats: SeatState[];
 	/** Null until settlement; reset by startNextHand. */
 	settlement: HandSettlement | null;
@@ -97,6 +103,8 @@ export interface PrivateHandState {
 	/** Indexed by seat; inactive seats have an empty array. */
 	holeCards: Card[][];
 	nextCardIndex: number;
+	/** Null/absent until expiry is requested; [] still means termination pending. */
+	pendingExpiryConnectedSeatIds?: string[] | null;
 }
 
 /** Plain JSON data; no RNG, functions, clocks or transport revisions are stored. */
