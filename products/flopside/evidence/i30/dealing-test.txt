@@ -1,0 +1,46 @@
+COMMAND: bun test packages/engine/dealing.test.ts
+BASE_COMMIT=d038172d0e12f10e58c429d0a0adae8e585983d5
+bun test v1.4.5 (a7733435c)
+
+packages/engine/dealing.test.ts:
+(pass) dealing and clockwise action order > 2 seats: 200 chips, 5/10 blinds, and first actors [2.05ms]
+(pass) dealing and clockwise action order > 2 seats: every preflop and postflop turn is clockwise [0.21ms]
+(pass) dealing and clockwise action order > 2 seats: board 0/3/4/5, no burns, and unique cards [0.79ms]
+(pass) dealing and clockwise action order > 2 seats: dealer rotates and new-hand fields reset [0.94ms]
+(pass) dealing and clockwise action order > 3 seats: 200 chips, 5/10 blinds, and first actors [0.22ms]
+(pass) dealing and clockwise action order > 3 seats: every preflop and postflop turn is clockwise [0.10ms]
+(pass) dealing and clockwise action order > 3 seats: board 0/3/4/5, no burns, and unique cards [0.37ms]
+(pass) dealing and clockwise action order > 3 seats: dealer rotates and new-hand fields reset [0.38ms]
+(pass) dealing and clockwise action order > 4 seats: 200 chips, 5/10 blinds, and first actors [0.19ms]
+(pass) dealing and clockwise action order > 4 seats: every preflop and postflop turn is clockwise [0.08ms]
+(pass) dealing and clockwise action order > 4 seats: board 0/3/4/5, no burns, and unique cards [0.24ms]
+(pass) dealing and clockwise action order > 4 seats: dealer rotates and new-hand fields reset [0.66ms]
+(pass) dealing and clockwise action order > heads-up deals round-robin left of dealer, and dealer acts last postflop [0.27ms]
+(pass) dealing and clockwise action order > folded and all-in seats are skipped without mutating state [0.19ms]
+(pass) dealing and clockwise action order > no eligible actor is null; all-in hands can still run out [0.16ms]
+(pass) dealing and clockwise action order > a single eligible actor is circular; round completion belongs to betting [0.09ms]
+(pass) dealing and clockwise action order > dealer rotation skips busted seats and switches to heads-up order [0.22ms]
+(pass) dealing and clockwise action order > three funded seats in a four-seat roster use multi-seat order across gaps [0.14ms]
+(pass) dealing and clockwise action order > a heads-up short small blind leaves the big blind as the first eligible actor [0.12ms]
+(pass) dealing and clockwise action order > 2 seats: short small/big blinds post only their stacks [0.25ms]
+(pass) dealing and clockwise action order > 3 seats: short small/big blinds post only their stacks [0.15ms]
+(pass) dealing and clockwise action order > 4 seats: short small/big blinds post only their stacks [0.11ms]
+(pass) dealing and clockwise action order > exact blind stacks also become all-in [0.17ms]
+(pass) dealing and clockwise action order > each new street resets new contributions but preserves stacks, totals, flags and holes [0.14ms]
+(pass) dealing and clockwise action order > state is plain JSON and fixtures are copied, not retained as runtime config [0.25ms]
+(pass) dealing and clockwise action order > match/hand/deck preconditions reject invalid inputs [0.68ms]
+(pass) unbiased server shuffle > rejection sampling discards the incomplete high bucket, including its boundary [0.15ms]
+(pass) unbiased server shuffle > bounded-index endpoints and power-of-two bounds are exact [0.06ms]
+(pass) unbiased server shuffle > bounded indices have a chi-square sanity check with deterministic uint32 entropy [8.37ms]
+(pass) unbiased server shuffle > bounded-index source contract and invalid bounds fail closed [0.22ms]
+(pass) unbiased server shuffle > Fisher–Yates uses each descending bound, operates on a copy, and yields a permutation [0.22ms]
+(pass) unbiased server shuffle > all six three-card permutations are reachable with the expected bounds [0.10ms]
+(pass) unbiased server shuffle > default production entropy produces complete deck permutations [2.06ms]
+(pass) unbiased server shuffle > every engine TypeScript source is free of non-cryptographic randomness [0.62ms]
+
+ 34 pass
+ 0 fail
+ 563 expect() calls
+Ran 34 tests across 1 file. [43.00ms]
+
+EXIT_CODE=0

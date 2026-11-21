@@ -1,0 +1,6 @@
+COMMAND: bun run fix
+BASE_COMMIT=d038172d0e12f10e58c429d0a0adae8e585983d5
+$ biome check --write .
+Checked 36 files in 207ms. No fixes applied.
+
+EXIT_CODE=0

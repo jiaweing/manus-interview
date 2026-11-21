@@ -1,0 +1,65 @@
+$ biome check --write .
+packages/engine/dealing.test.ts:125:16 lint/style/useConsistentBuiltinInstantiation  FIXABLE  ━━━━━━━━━━
+
+  × Use new Array() instead of Array().
+
+    123 │ 					expect(
+    124 │ 						state.public.seats.map((seat) => seat.streetContribution)
+  > 125 │ 					).toEqual(Array(scenario.count).fill(0));
+        │ 					          ^^^^^^^^^^^^^^^^^^^^^
+    126 │ 				}
+    127 │ 				expect(seatAt(state, scenario.small).handContribution).toBe(5);
+
+  i Unsafe fix: Add new keyword.
+
+    125 │ → → → → → ).toEqual(new·Array(scenario.count).fill(0));
+        │                     ++++
+
+packages/engine/dealing.test.ts:335:32 lint/style/useConsistentBuiltinInstantiation  FIXABLE  ━━━━━━━━━━
+
+  × Use new Array() instead of Array().
+
+    333 │ 		);
+    334 │ 		expect(() =>
+  > 335 │ 			startMatch(roster(2), () => Array(52).fill(cards("As")[0]))
+        │ 			                            ^^^^^^^^^
+    336 │ 		).toThrow("52-card");
+    337 │ 		expect(() =>
+
+  i Unsafe fix: Add new keyword.
+
+    335 │ → → → startMatch(roster(2),·()·=>·new·Array(52).fill(cards("As")[0]))
+        │                                   ++++
+
+packages/engine/dealing.test.ts:387:18 lint/style/useConsistentBuiltinInstantiation  FIXABLE  ━━━━━━━━━━
+
+  × Use new Array() instead of Array().
+
+    385 │ 	test("bounded indices have a chi-square sanity check with deterministic uint32 entropy", () => {
+    386 │ 		let value = 42;
+  > 387 │ 		const counts = Array<number>(10).fill(0);
+        │ 		               ^^^^^^^^^^^^^^^^^
+    388 │ 		const source = () => {
+    389 │ 			value = (value * 1_664_525 + 1_013_904_223) % UINT32_RANGE;
+
+  i Unsafe fix: Add new keyword.
+
+    385 385 │     test("bounded indices have a chi-square sanity check with deterministic uint32 entropy", () => {
+    386 386 │       let value = 42;
+    387     │ - → → const·counts·=·Array<number>(10).fill(0);
+        387 │ + → → const·counts·=·new·Array(10).fill(0);
+    388 388 │       const source = () => {
+    389 389 │         value = (value * 1_664_525 + 1_013_904_223) % UINT32_RANGE;
+
+
+Skipped 9 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 36 files in 226ms. Fixed 4 files.
+Found 3 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.
+
+
+error: script "fix" exited with code 1
