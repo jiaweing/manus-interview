@@ -1,0 +1,11 @@
+$ bun run preview:stills --scene flopside --frames 420,450,540,630,659
+$ bun apps/video/scripts/preview-stills.js --scene flopside --frames "420,450,540,630,659"
+PNG qa/stills/flopside/frame-0420.png frame=420
+PNG qa/stills/flopside/frame-0450.png frame=450
+PNG qa/stills/flopside/frame-0540.png frame=540
+PNG qa/stills/flopside/frame-0630.png frame=630
+PNG qa/stills/flopside/frame-0659.png frame=659
+TIMING bundle=3.384s renders=5.538s total=10.159s concurrency=1
+STILLS ok count=5
+
+EXIT_CODE=0
