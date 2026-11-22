@@ -1,0 +1,26 @@
+bun install --frozen-lockfile -> 0
+lint -> 0
+typecheck -> 0
+typecheck:overlay -> 0
+typecheck:helper -> 0
+build -> 0
+build:helper -> 0
+test:ipc-boundary -> 0
+test:tray-hotkey -> 0
+test:overlay -> 0
+test:helper-protocol -> 0
+test:session -> 0
+bun test apps/desktop/tests/session-machine.test.ts -> 0
+session test TypeScript check -> 1
+bunx tsc --ignoreConfig (session test) -> 0
+final biome formatting -> 0
+final bun run lint -> 0
+final bun run --cwd apps/desktop test:session -> 0
+final bun test apps/desktop/tests/session-machine.test.ts -> 0
+final session TypeScript check with --ignoreConfig -> 0
+bun run --cwd apps/desktop verify:helper-secrets -> 0
+bun run --cwd apps/desktop verify:overlay-secrets -> 0
+bun run --cwd apps/desktop verify:tray-secrets -> 0
+after final staging verify:helper-secrets -> 0
+after final staging verify:overlay-secrets -> 0
+after final staging verify:tray-secrets -> 0

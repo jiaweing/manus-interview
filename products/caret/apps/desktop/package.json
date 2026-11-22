@@ -13,6 +13,7 @@
     "test:helper-protocol": "bun native/scripts/test.ts",
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "test:overlay": "bun test tests/overlay-state.test.ts",
+    "test:session": "bun test tests/session-machine.test.ts",
     "test:tray-hotkey": "bun test tests/tray-hotkey.test.ts",
     "test:windows:clipboard-policy": "bun native/scripts/clipboard-policy.ts",
     "test:windows:helper-protocol": "bun native/scripts/test.ts --windows",
