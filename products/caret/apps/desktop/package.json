@@ -10,6 +10,8 @@
     "dev": "electron-vite build && electron-vite dev",
     "fixture:overlay": "bun run build && bun scripts/overlay-fixture.ts",
     "helper:snapshot": "bun native/scripts/test.ts --snapshot",
+    "smoke:cleanup": "bun scripts/smoke-cleanup.ts",
+    "test:cleanup": "bun test tests/cleanup-adapter.test.ts",
     "test:helper-protocol": "bun native/scripts/test.ts",
     "test:ipc-boundary": "bun test tests/ipc-boundary.test.ts",
     "test:overlay": "bun test tests/overlay-state.test.ts",

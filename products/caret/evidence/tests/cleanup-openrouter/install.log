@@ -1,0 +1,9 @@
+bun install v1.4.5 (a7733435c)
+
+$ varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./apps/native/ && varlock codegen --path ./packages/db/ && node ./apps/desktop/node_modules/electron/install.js
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+✅ Code generated successfully
+
+Checked 1417 installs across 1563 packages (no changes) [2.92s]
