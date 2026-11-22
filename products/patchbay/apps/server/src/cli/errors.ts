@@ -24,6 +24,6 @@ export class CliError extends Error {
 }
 
 /** Never include raw exception messages, command text, paths, or secrets. */
-export function formatError(error: CliError): string {
+export function formatError(error: { code: string; message: string }): string {
 	return `ERROR [${error.code}]: ${error.message}\n`;
 }
