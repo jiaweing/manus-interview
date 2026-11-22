@@ -1,0 +1,12 @@
+PASS production packaged script: isolated listener, valid envelope routing, removed-target rejection, zero mutations
+{
+  "before": "First",
+  "after": "Delete all data",
+  "outcome": {
+    "reason": "target-changed",
+    "reobserveRequired": true,
+    "status": "stale-target"
+  },
+  "mutations": "0",
+  "expected": "stale-target / target-changed / zero mutations"
+}

@@ -1,0 +1,68 @@
+{
+  "productionManifestUnchanged": true,
+  "providerCalls": 0,
+  "trustedFixtureExecutorOnly": true,
+  "productionPackagedScript": "PASS: installed isolated dispatcher rejects removed target, no executor added before tool issues",
+  "cssChangedVisibleIdentity": {
+    "before": "First",
+    "after": "Delete all data",
+    "outcome": {
+      "reason": "target-changed",
+      "reobserveRequired": true,
+      "status": "stale-target"
+    },
+    "mutations": "0",
+    "rawTargetUnchanged": true
+  },
+  "removed": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "replaced": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "reordered": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "hidden": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "disabled": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "snapshot": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "malformed": {
+    "status": "invalid-action",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "unknown-index": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "navigation": {
+    "status": "stale-target",
+    "mutations": 0,
+    "reobserveRequired": true
+  },
+  "matching": {
+    "status": "dispatched",
+    "mutations": 1,
+    "duplicateRejected": true,
+    "isolatedFromPageWorld": true
+  }
+}
